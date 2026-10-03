@@ -1,7 +1,8 @@
 # Unit 1: Finding files and controlling access
 
-Five short teaching labs and one transfer assessment, approximately 30–40 minutes
-when the planned lab is available. This is original introductory practice, not an
+Five short teaching labs and one transfer assessment, approximately 30–40 minutes.
+All six labs are available; labs 4 and 5 use the existing import workflow.
+This is original introductory practice, not an
 LPI product, endorsement, complete exam course or claim of full objective coverage.
 
 LPI's current objectives are version **5.0**, exams **101-500 / 102-500**:
@@ -22,7 +23,7 @@ Prerequisites are recommendations, not locks. All paths below are relative to
 | 2 | **Restore access to your file** — built in; `linux-file-permissions.lab.json` | After 1. Add missing owner-read access while retaining private owner read/write; verify with a read. Partial 104.5, ordinary file permissions. |
 | 3 | **Why can’t I enter this directory?** — built in; `linux-directory-permissions.lab.json` | After 1–2. Distinguish names (directory read) from traversal (execute/search); restore 0400 to 0500. Partial 104.5, directories. |
 | 4 | **Make an overexposed note private** — available by import; `linux-private-note.lab.json` | After 2. Reading already works at 0777. Remove unnecessary execute and group/other access, require 0600, then verify reading. Partial 104.5: reducing excessive access. |
-| 5 | **Read a known file without listing its folder** — **planned, not available** | After 3. Intended contrast: search-only 0100 permits entry and a known readable child, while name listing stays denied. No pack is supplied yet. |
+| 5 | **Read a known file without listing its folder** — available by import; `linux-search-only-directory.lab.json` | After 3. Search-only 0100 permits entry and a known readable child, while name listing stays denied. Partial 104.5: search without listing; denied listing is demonstrated, not separately graded. |
 | 6 | **Read the fieldwork handover** — built in; `linux-archive-access.lab.json` | After 1–3; useful again after 5. Transfer assessment in another directory tree. Reinforces directory access; it is not an additional objective or new coverage. |
 
 The service labs remain available for a later services unit. This batch does not
@@ -63,6 +64,46 @@ import workflow; it does not add an entry to the built-in collection.
 Changing permissions after verification clears that evidence, even if a later
 change restores 0600. Read again. A no-op chmod does not clear evidence. Nothing
 requires an exact transcript. Hints are recorded without a hidden score penalty.
+
+## Import and play lab 5 in a disposable profile
+
+Use the launch command above with a **new** temporary directory, or reuse that
+disposable profile to check both pilots together. In Library choose **Import
+scenario…** and select:
+
+`/home/drak/Documents/dlms_lab/app/examples/linux-search-only-directory.lab.json`
+
+Library title: **Read a known file without listing its folder**. Identity:
+`linux-search-only-directory`, content version `1.0.0`, permissions contract 3,
+behavior `linux-permissions-2`. This is an imported lab, not a new collection entry.
+
+1. Learn starts in `/home/learner`. Inspect with `ls -l .`: Lookup is `d---------`
+   (0000). `ls Lookup`, `cd Lookup` and `cat Lookup/message.txt` initially fail.
+2. Follow the repair suggestion `chmod u+x Lookup`, or use `chmod 100 Lookup`.
+   Enter with `cd Lookup`. Directory x permits search/traversal; it does not run
+   the directory as a program. The child already has file-read permission.
+3. At the read step, try the suggested comparison `ls .`: it reports
+   `Permission denied (list names)`. Then `cat message.txt` works because its
+   name is known. No directory read permission is needed for this access.
+4. Submit: 70 points for final directory mode 0100, 15 for successful entry and
+   15 for reading the known child after the final actual permission change.
+   Denied listing is demonstrated and regression-tested, **not a separately
+   graded action**. The guide does not wait for a successful listing or require
+   a failed command. There is no denial predicate or new lesson action.
+5. Reset into Challenge. It states desired access and verification constraints
+   without a repair command. Numeric/symbolic repairs, equivalent paths and
+   reading-before-entry all count. `0400` cannot traverse; `0500` and `0777`
+   permit unwanted listing and fail the exact-mode objective even if reading
+   and entry work. Later permission changes clear entry/read evidence.
+6. Close/reopen with the same profile arguments, export/reimport the scenario,
+   or use Backup and explicitly restore into a **new empty disposable profile**.
+   Existing attempts stay pinned; no history import is claimed.
+
+No listing is **not a confidentiality guarantee**. Someone with search access
+can resolve a known or guessed name, and can read it if that file's permissions
+allow. Here only the owner has directory search, and the child is owner-readable
+0600. Other-user sessions are not simulated. On real Linux, use only a disposable
+directory to compare directory read/search and file read, never a personal folder.
 
 ## Simulation boundaries
 
@@ -228,3 +269,87 @@ The complete candidate regression rerun is in ignored
 `app/evidence/private-note-commit-tests.log`. The private-note offscreen workflow
 was rerun at 100/150/200%, including same-profile fresh-process reopening; it does
 not add native acceptance.
+
+## Batch 2: search-only directory verification — 3 October 2026
+
+Verified starting baseline: `2c32d6d9f51b9a3141c79b9067b240ec0c6b1639`, clean
+working tree. Before editing, all 199 tracked files were copied and SHA-256
+verified at:
+
+`/home/drak/.local/state/omarchy-learning-lab/recovery/search-only-source-20261003T203606109431Z`
+
+The recovery copy remains verified. All 198 tracked files other than this guide
+remain byte-identical, including every existing pack, application module, QML,
+template, collection and test. Added only `examples/linux-search-only-directory.lab.json`,
+`tests/test_search_only.py` and `tests/search_only_acceptance.py`. No engine,
+contract, collection loader, storage or backup-format change was required.
+The installed application and real profile were not opened or changed.
+
+- **266 regression tests pass** (257 baseline plus 9 new). Focused cases cover
+  numeric/symbolic repairs, relative/absolute paths, either verification order,
+  denied listing at 0100, incorrect 0400/0500/0777 modes, invalidated evidence,
+  both modes, hints, reset, reopening, imports/conflicts, separate scenario/history
+  exports, exact-byte backup/restore, pinned versions and earlier attempts.
+  Host API tripwires and inert imported text tests pass.
+- **67 Qt offscreen checks per scale** at 100/150/200%: 51 workflow checks,
+  8 fresh-process source-profile checks and 8 fresh-process restored-profile
+  checks. Each restored attempt retained its exact pin, mode, history, pending
+  command and applied state, then completed successfully. Window sizes were
+  800×600, 1024×768 and 1280×900 logical pixels. Tests exercise Enter/Run, focus,
+  non-modal details alongside Command reference, guidance scroll reachability,
+  Challenge hiding, the denied-listing comparison and reset. No QML errors.
+  Representative offscreen screenshots were inspected for wrapping and contrast.
+- The existing four-Property shutdown warning reproduced unchanged in the full
+  suite; its baseline investigation above remains applicable. No suppression or
+  unrelated fix was added.
+- Native Wayland connection still fails at `/run/user/1000/wayland-1` with
+  errno 1, `Operation not permitted`. Physical-keyboard, native chooser,
+  accessibility and exhaustive native scaling checks remain outstanding.
+  The subsequent owner review is recorded below without extending it to these
+  unverified checks.
+
+Reproduce from `app/` using disposable test fixtures:
+
+```bash
+python3 -B tools/validate_scenario.py examples/linux-search-only-directory.lab.json
+python3 -B -m unittest discover -s tests -v
+QT_QPA_PLATFORM=offscreen QT_QPA_PLATFORMTHEME= QT_QUICK_BACKEND=software QT_SCALE_FACTOR=1 \
+  python3 -B tests/search_only_acceptance.py --label search-only-final-1 --expected-dpr 1 --offscreen
+```
+
+Repeat with scale/DPR 1.5 and 2 and distinct labels. Generated evidence remains
+ignored under `app/evidence/search-only-*`. No push or installation was performed.
+
+### Owner review and local commit preparation
+
+The owner reports completing the search-only directory lab review and authorizes
+the local commit. This records review completion, not specific additional native
+keyboard, accessibility, chooser or exhaustive scaling results.
+
+Commit review is limited to the new JSON pack, this guide and the two search-only
+test files. Existing application and pack bytes remain unchanged. No personal
+profile, credentials, recovery copy, environment or generated evidence is included;
+excluded local files remain in place. The known baseline four-Property shutdown
+warning remains documented above, with no suppression or application change.
+
+## Proposed next cohesive batch — not implemented
+
+**Deliver Unit 1 as a discoverable Library collection**, using these six exact
+scenario identities rather than creating more near-duplicate permissions labs.
+
+| Scope | Work to deliver together |
+| --- | --- |
+| Content/resources | A six-entry unit manifest, short skill/prerequisite descriptions, partial-objective labels and the guide; bundle the two pilots without changing their content bytes. |
+| Application shell, separately approved | Generalize the current single six-item Fundamentals collection assumption. Render both collections using existing card components, share availability/status for identical pack identities and preserve imported versions, pins, hidden states and Learn/Challenge distinctions. This is application work, not content-only work. |
+| Engine capabilities | **None needed for this unit.** Existing contract 1/2/3 behavior remains unchanged. No profile migration or backup-format change is proposed; if implementation reveals such a requirement, stop for review. |
+| Acceptance | Fresh/existing profiles, overlap with Fundamentals and imported pilots, version conflicts, hidden/restored labs, truthful per-mode progress, backup round trips, installed-wheel resource loading and native owner review. |
+
+For the next *new-skills* unit after that, a coherent candidate is **create,
+organize and locate files**. Content can supply a small project tree and three
+missions (create a folder, copy/rename a file, find and read a specified file), but
+that unit requires an explicitly scoped engine capability for filesystem mutation
+and discovery/grading. Navigation is currently immutable, and the service engine's
+mkdir must not be repurposed with unrelated service goals. Commands/options,
+permission checks, error atomicity, size limits, pinned state and an opt-in
+compatibility version need design and tests before authoring those packs. No such
+extension or new unit is included in this batch.
