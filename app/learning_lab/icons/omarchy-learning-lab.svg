@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <title>Learning Lab</title>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="#10182f"/>
+  <path d="M25 34h78v59H25z" fill="#182647" stroke="#97beff" stroke-width="5" stroke-linejoin="round"/>
+  <path d="m38 48 12 10-12 10m21 0h18" fill="none" stroke="#f5c99a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M46 94v12m36-12v12m-36 0h36" fill="none" stroke="#97beff" stroke-width="5"/>
+  <circle cx="46" cy="106" r="6" fill="#a8d5b1"/>
+  <circle cx="82" cy="106" r="6" fill="#a8d5b1"/>
+</svg>

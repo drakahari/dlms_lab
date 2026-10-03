@@ -4,6 +4,19 @@ Three networking labs and a six-lab Linux Fundamentals collection in a standalon
 
 ## Launch
 
+For an isolated user-local venv and application-menu entry, see the reviewed
+[installation, update, rollback and uninstall workflow](docs/user-installation.md).
+The owner-run command is:
+
+```bash
+python3 -B /home/drak/Documents/dlms_lab/app/tools/user_install.py install
+```
+
+It prepares and tests a new wheel installation before activating it. Personal
+progress/configuration keep their established locations. Development verification
+used temporary destinations. The owner subsequently reports successful installation
+and Omarchy menu launch, with the Learning Lab entry and icon visible.
+
 From the existing Omarchy graphical session:
 
 ```bash

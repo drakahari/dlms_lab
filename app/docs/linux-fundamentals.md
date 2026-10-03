@@ -89,6 +89,12 @@ build dependencies. No wheel was produced, so installation into a second test
 environment and testing resources from that installed wheel were not possible.
 No restrictions were bypassed, and no system Python packages were changed.
 
+Subsequent owner verification: the owner successfully built and installed the
+committed wheel in separate environments, passed `pip check`, and launched with
+all six entries visible. The later [installation-workflow smoke](user-installation.md)
+also verified basic installed-pack start/resume in that environment. Individual
+installed-lab completion and native file dialogs are still not fully verified.
+
 The earlier staged-layout test verifies declared resource inclusion and runtime
 lookup, not execution of the wheel build backend or an actual wheel installation.
 The complete Qt application still expects ordinary unpacked QML resources; ZIP
@@ -164,3 +170,7 @@ The owner authorizes the local commit **Add built-in Linux Fundamentals
 collection** after review and available tests. Commit execution or a Git-write
 blocker is reported separately; this document does not assert commit success.
 No push, deployment, real-history migration or system-setting change was performed.
+
+The owner also reports successful user-local installation and Omarchy menu launch,
+with the Learning Lab entry and icon visible. See [installation acceptance](user-installation.md#evidence-and-acceptance-limits).
+This does not close the remaining installed-lab, keyboard or accessibility checks.

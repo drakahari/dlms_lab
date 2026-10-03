@@ -1,5 +1,24 @@
 # Framework acceptance — checkpoints 2 onward
 
+## User-local installation workflow — current
+
+The owner reports successfully building and installing the committed collection
+wheel in separate environments, passing `pip check`, and launching it with all
+six Fundamentals entries visible. That does not establish every installed-lab
+workflow, native file dialog or accessibility check.
+
+The [user-local installer](user-installation.md) adds versioned venv releases,
+guarded activation/rollback, a desktop entry and original project icon, plus a
+standalone installed-wheel smoke harness. **197 regression tests pass** (183 prior
+plus 14 installer tests). The new smoke harness passes start/resume for all six
+packs using the owner's existing installed wheel, outside the checkout.
+The agent’s earlier icon-inclusive staging build was blocked by PyPI DNS.
+The owner subsequently reports successful installation and application-menu launch
+in Omarchy, with the **Learning Lab entry and icon visible**. These are
+owner-reported checks; this review does not reinstall or change that installation.
+Physical-keyboard workflows, individual installed-lab completion, native file
+dialogs, accessibility and exhaustive native scaling remain **outstanding**.
+
 ## Linux Fundamentals collection — current
 
 Six existing approved packs are available directly from the Library, with no
@@ -11,7 +30,8 @@ draft confirmation, reset/modes and fresh-process restart.
 [Collection verification](linux-fundamentals.md) distinguishes source/resource
 and staged-package checks from the actual isolated wheel-build attempt. Fetching
 the declared `setuptools` dependency failed because `pypi.org` could not resolve;
-no wheel was produced or installed, so that verification gap remains open.
+no wheel was produced or installed by that agent run. The later owner-reported
+wheel build/install and launch evidence is recorded above.
 The owner reports that the Library collection works great. This records successful
 functional review, not exhaustive native acceptance. Physical keyboard,
 accessibility, native scaling and mixed-monitor checks remain outstanding.
