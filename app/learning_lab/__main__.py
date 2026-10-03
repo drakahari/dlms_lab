@@ -20,6 +20,28 @@ def load_bundled_scenarios():
     return packs, gateway
 
 
+class ProfileLocks:
+    """One lifecycle handle for both authoritative profile roots."""
+    def __init__(self, data_root, config_root):
+        self.locks = []
+        try:
+            for root in dict.fromkeys((data_root.resolve(), config_root.resolve())):
+                lock = QLockFile(str(root / 'writer.lock'))
+                lock.setStaleLockTime(0)
+                if not lock.tryLock(0):
+                    raise RuntimeError('Learning Lab is already using this data or settings directory. Close its other window first.')
+                self.locks.append(lock)
+            if len(self.locks) == 1: self.locks.append(self.locks[0])
+        except Exception:
+            self.unlock()
+            raise
+
+    def isLocked(self): return bool(self.locks) and all(lock.isLocked() for lock in self.locks)
+
+    def unlock(self):
+        for lock in self.locks: lock.unlock()
+
+
 def build_application(data_root=None, config_root=None):
     from .catalog import CatalogBridge
     app = QGuiApplication.instance() or QGuiApplication(sys.argv)
@@ -31,12 +53,10 @@ def build_application(data_root=None, config_root=None):
     config_root = Path(config_root or QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation))
     data_root.mkdir(parents=True, exist_ok=True)
     config_root.mkdir(parents=True, exist_ok=True)
-    lock = QLockFile(str(data_root / 'writer.lock'))
-    lock.setStaleLockTime(0)
-    if not lock.tryLock(0):
-        raise RuntimeError('Learning Lab is already running for this data directory. Close its other window first.')
+    lock = ProfileLocks(data_root, config_root)
     packs, gateway = load_bundled_scenarios()
     bridge = CatalogBridge(packs, data_root, config_root)
+    bridge.profile_locks = lock
     # Runtime identity is deliberately outside pack dictionaries and records.
     bridge.gateway_scenario = gateway
     engine = QQmlApplicationEngine()

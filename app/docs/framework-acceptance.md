@@ -1,5 +1,46 @@
 # Framework acceptance — checkpoints 2 onward
 
+## User-triggered profile backup / restore — current
+
+Baseline verified clean at `e76016071260731b02824a893c016b4150b97cf8`
+(**Add user-local installer and desktop launcher**). The new workflow is documented
+in [profile backup](profile-backup.md). It uses existing record/pack schemas;
+there is no migration, merge, automatic profile switch or installation update.
+All development transfers use temporary profiles, never the owner's real data.
+
+**219 regression tests pass** (197 previous plus 22 profile-transfer tests).
+A restored profile reopens in a fresh Qt process with exact attempts, seven pinned
+packs including a custom import, saved command/layout, mode and theme settings.
+Corruption, unsupported formats, reference failures, unsafe paths/types, size
+limits, failed writes, explicit confirmation and destination conflicts are tested.
+
+The existing Library collection, Linux reference/editor and networking framework
+UI suites also pass at all three scales (nine runs). Their fresh-process restart
+checks pass with the combined data/settings lock lifecycle.
+
+The new UI has **90 checks per scale** at 100/150/200%, across 800×600, 1024×768
+and 1280×900 logical windows. These are offscreen rendered checks with synthesized
+Qt input. The offscreen picker test explicitly reactivates the main window;
+it does not verify native compositor focus restoration. Native file/folder
+choosers, physical keyboard, accessibility and native scaling remain outstanding.
+The new read-only Wayland socket probe returned errno 1, **Operation not permitted**.
+Owner-reported checks **passed**: backup/restore into a separate disposable
+profile; updated Library and backup/restore spacing; reopening that restored
+profile with the original service-lab progress intact. This records those specific
+functional and visual checks, not exhaustive native keyboard, accessibility or
+scaling acceptance. The revised Library and transfer views share 20-pixel content insets with a scrollbar lane. Dialogs
+separate summary/counts/paths/warnings; paths and launch arguments are selectable
+with Copy actions. Long-path, word-wrap, font-size, keyboard-copy/focus and
+explicit-confirmation checks pass without shrinking text or changing storage.
+
+Ignored local evidence: `evidence/profile-insets-regressions.txt`,
+`evidence/insets-{100,150,200}-profile_backup_acceptance.json` and captures,
+`evidence/insets-{100,150,200}-results.json`,
+`evidence/profile-backup-native-probe.json`. The commit-review rerun is recorded
+in `evidence/profile-commit-regressions.txt` and
+`evidence/profile-commit-{100,150,200}-results.json`. Generated evidence remains
+excluded locally. Commit execution or a Git-write blocker is reported separately.
+
 ## User-local installation workflow — current
 
 The owner reports successfully building and installing the committed collection

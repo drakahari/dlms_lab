@@ -35,6 +35,11 @@ class CatalogBridge(QObject):
         self.selection_readonly = False
         self.notice = '\n'.join(pack_warnings + ([collection_warning] if collection_warning else []))
         self.transfer_message = ''
+        self.profile_locks = None
+        self.restore_pending = None
+        self.profile_preview = ''
+        self.profile_preview_details = {}
+        self.profile_result_details = {}
         self.layout_notice = ''
         self.workspace_layout = {}
         self.layout_path = self.config_root/'workspace-layout.json'
@@ -93,6 +98,10 @@ class CatalogBridge(QObject):
         result['otherLabs'] = [row for row in result['labs'] if row['labKey'] not in curated]
         result['provenance'] = ('Pinned content ' + self.portables[active_key].identity.content_digest + ' · engine ' + self.portables[active_key].pin['engine']['behavior_version']
                                 if active_key in self.portables else 'Legacy attempt: original content digest and engine provenance were not recorded.')
+        result['profilePreviewDetails'] = self.profile_preview_details
+        result['profileResultDetails'] = self.profile_result_details
+        result['profilePreview'] = self.profile_preview
+        result['restoreReady'] = self.restore_pending is not None
         result['transferMessage'] = self.transfer_message
         result['catalogNotice'] = self.notice
         result['workspaceLayout'] = dict(self.linux_layout if self.active.domain.workspace=='linux-service' else self.workspace_layout)
@@ -225,6 +234,112 @@ class CatalogBridge(QObject):
         except (OSError,ValueError) as exc:
             self.transfer_message='Attempt export failed: '+str(exc)
             self.changed.emit();return False
+
+    @staticmethod
+    def _profile_error(summary, error):
+        # OS errors can embed arbitrarily long paths; keep those selectable and
+        # horizontally scrollable instead of splitting words in the prose.
+        return {'summary': summary, 'paths': [{'label': 'Error details', 'value': str(error)}]}
+
+    @Slot(str, result=bool)
+    def backupProfile(self, value):
+        try:
+            from .profile_backup import snapshot, write_backup
+            path = self._local_path(value)
+            if any(path.resolve().is_relative_to(root.resolve()) for root in (self.data_root, self.config_root)):
+                raise ValidationError('Save the backup outside the active profile folders.')
+            if self.profile_locks is None or not self.profile_locks.isLocked():
+                raise ValidationError('Backup needs the running app’s profile writer locks.')
+            if any(lab.store.read_only or lab.config_readonly for lab in self.labs.values()) or self.selection_readonly or self.layout_readonly or self.linux_layout_readonly:
+                raise ValidationError('Resolve profile recovery or unsupported settings before creating a restorable backup.')
+            # Preflight before save: do not silently replace damaged files or links.
+            snapshot(self.data_root, self.config_root, self.profile_locks.locks)
+            # Synchronous GUI slot: actions/timers remain paused until this returns.
+            self.flush()
+            if any(lab.save_failed for lab in self.labs.values()):
+                raise ValidationError('Progress could not be saved. Retry save before backing up.')
+            backup = snapshot(self.data_root, self.config_root, self.profile_locks.locks)
+            write_backup(backup, path)
+            self.transfer_message = 'Profile backup saved and verified: '+str(path)+'. It includes personal progress; keep it private.'
+            self.profile_result_details = {'summary': 'Profile backup saved and verified.',
+                'paths': [{'label': 'Backup file', 'value': str(path)}],
+                'warning': 'This backup includes personal progress. Keep it private.'}
+            self.changed.emit(); return True
+        except (OSError, ValueError) as exc:
+            self.transfer_message = 'Backup failed: '+str(exc)
+            self.profile_result_details = self._profile_error('Backup failed.', exc)
+            self.changed.emit(); return False
+
+    @Slot(str, str, result=bool)
+    def previewRestore(self, archive, parent):
+        self.restore_pending = None
+        self.profile_preview = ''
+        self.profile_preview_details = {}
+        try:
+            from datetime import datetime, timezone
+            from uuid import uuid4
+            from .profile_backup import read_backup, validate_destination
+            backup = read_backup(self._local_path(archive))
+            name = 'Learning-Lab-restored-'+datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')+'-'+uuid4().hex[:6]
+            destination = validate_destination(self._local_path(parent)/name)
+            if any(destination.resolve().is_relative_to(root.resolve()) for root in (self.data_root, self.config_root)):
+                raise ValidationError('Choose a destination outside the active profile folders.')
+            self.restore_pending = (backup, destination)
+            summary = backup.summary
+            self.profile_preview_details = {
+                'summary': 'Restore this backup into a new, separate profile. Your open profile will not change.',
+                'created': 'Created: '+backup.manifest['created_utc'],
+                'counts': (f"{summary['profiles']} lab profiles · {summary['packs']} installed packs\n"
+                           f"{summary['history_records']} archived attempts\n"
+                           f"{summary['learn_records']} Learn / {summary['challenge_records']} Challenge records\n"
+                           f"{summary['files']} files · {summary['bytes']} bytes, including drafts, workspace state and saved settings."),
+                'labs': '; '.join(summary['lab_titles']),
+                'paths': [{'label': 'New profile folder', 'value': str(destination)},
+                          {'label': 'Progress and packs', 'value': str(destination/'data')},
+                          {'label': 'Settings', 'value': str(destination/'config')}],
+                'warning': 'Nothing is merged or overwritten. Hashes detect corruption, but do not authenticate an untrusted backup. Restore only backups you trust.'}
+            self.profile_preview = (f"Created: {backup.manifest['created_utc']}\n"
+                f"{summary['profiles']} lab profiles · {summary['packs']} installed scenario packs\n"
+                f"{summary['history_records']} archived attempts · {summary['learn_records']} Learn / {summary['challenge_records']} Challenge records\n"
+                f"{summary['files']} files · {summary['bytes']} bytes, including drafts, workspace state and saved settings.\n\n"
+                "Included labs: "+"; ".join(summary['lab_titles'])+"\n\n"
+                f"New destination: {destination}\nData: {destination/'data'}\nSettings: {destination/'config'}\n\n"
+                "The open profile will not change. Nothing is merged or overwritten. Hashes detect corruption, but do not authenticate an untrusted backup. Restore only backups you trust.")
+            self.changed.emit(); return True
+        except (OSError, ValueError) as exc:
+            self.transfer_message = 'Restore validation failed: '+str(exc)
+            self.profile_result_details = self._profile_error('Restore validation failed.', exc)
+            self.changed.emit(); return False
+
+    @Slot()
+    def cancelRestore(self):
+        self.restore_pending = None; self.profile_preview = ''; self.profile_preview_details = {}; self.changed.emit()
+
+    @Slot(bool, result=bool)
+    def confirmRestore(self, confirmed):
+        try:
+            import shlex
+            from .profile_backup import restore
+            if confirmed is not True or self.restore_pending is None:
+                raise ValidationError('Preview the backup and explicitly confirm the new destination first.')
+            backup, destination = self.restore_pending
+            restore(backup, destination, confirmed=True)
+            self.transfer_message = ('Profile restored to '+str(destination)+'. Your open profile is unchanged. '
+                'Reopen using Learning Lab with --data-dir '+shlex.quote(str(destination/'data'))+
+                ' --config-dir '+shlex.quote(str(destination/'config')))
+            self.profile_result_details = {'summary': 'Profile restored. Your open profile is unchanged.',
+                'paths': [{'label': 'Restored profile folder', 'value': str(destination)},
+                          {'label': 'Launch arguments', 'value': '--data-dir '+shlex.quote(str(destination/'data'))+' --config-dir '+shlex.quote(str(destination/'config'))}],
+                'warning': 'Close the app normally, then use these arguments when launching Learning Lab to open the restored copy.'}
+            self.profile_preview = self.transfer_message
+            self.restore_pending = None
+            self.changed.emit(); return True
+        except (OSError, ValueError) as exc:
+            self.transfer_message = 'Restore failed: '+str(exc)+' The open profile is unchanged.'
+            self.profile_result_details = self._profile_error('Restore failed. Your open profile is unchanged.', exc)
+            self.restore_pending = None
+            self.profile_preview = self.transfer_message
+            self.changed.emit(); return False
 
     # Python access for native acceptance and diagnostics; QML uses view/slots.
     @property

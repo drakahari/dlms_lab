@@ -19,6 +19,7 @@ ApplicationWindow {
     property string activeLab: v.labKey
     property string pendingMode: ""
     property string pendingLab: ""
+    property string restoreArchive: ""
     property string exportAttemptId: ""
     property var returnFocus: null
     property bool discardFailedSave: false
@@ -65,55 +66,60 @@ ApplicationWindow {
         }
         StackLayout {
             currentIndex: v.page; Layout.fillWidth: true; Layout.fillHeight: true
-            LabScrollView {
-                id: library; objectName: "libraryPage"; clip: true; contentWidth: availableWidth
+            InsetScrollView {
+                id: library; objectName: "libraryPage"
+                LabText { objectName: "pageHeading"; text: "Lab library"; font.pixelSize: 27; font.bold: true; Layout.fillWidth: true }
+                LabText { text: "Original, offline learning simulations. Choose a scenario to begin or resume."; color: colors.muted; Layout.fillWidth: true }
+                RowLayout {
+                    LabButton { objectName: "importPackButton"; text: "Import scenario…"; onClicked: importDialog.open() }
+                    LabText { text: "Self-contained .lab.json files · data only"; color: colors.muted; Layout.fillWidth: true }
+                }
                 ColumnLayout {
-                    width: library.availableWidth; spacing: 16
-                    LabText { objectName: "pageHeading"; text: "Lab library"; font.pixelSize: 27; font.bold: true; Layout.fillWidth: true }
-                    LabText { text: "Original, offline learning simulations. Choose a scenario to begin or resume."; color: colors.muted; Layout.fillWidth: true }
+                    Layout.fillWidth: true; spacing: 4
                     RowLayout {
-                        LabButton { objectName: "importPackButton"; text: "Import scenario…"; onClicked: importDialog.open() }
-                        LabText { text: "Self-contained .lab.json files · data only"; color: colors.muted; Layout.fillWidth: true }
+                        LabButton { objectName: "backupProfileButton"; text: "Backup profile…"; onClicked: { returnFocus=this; backupProfileDialog.open() } }
+                        LabButton { objectName: "restoreProfileButton"; text: "Restore profile…"; onClicked: { returnFocus=this; restoreArchiveDialog.open() } }
                     }
-                    LabText { text: "Linux Fundamentals"; objectName: "fundamentalsHeading"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
-                    LabText { text: v.fundamentals.length ? "A suggested path through six short labs. Start anywhere; no completion prerequisites." : "This collection is unavailable. Existing labs remain below."; color: colors.muted; Layout.fillWidth: true }
-                    Repeater {
-                        model: v.fundamentals
-                        delegate: Rectangle {
-                            required property var modelData
-                            required property int index
-                            objectName: "fundamentalsCard-"+index
-                            Layout.fillWidth: true; implicitHeight: collectionCard.implicitHeight+24
-                            color: colors.surface; radius: 8
-                            RowLayout {
-                                id: collectionCard; anchors.fill: parent; anchors.margins: 12; spacing: 12
-                                ColumnLayout {
-                                    Layout.fillWidth: true; spacing: 4
-                                    LabText { text: (index+1)+". "+modelData.title; font.bold: true; Layout.fillWidth: true }
-                                    LabText { text: modelData.skill; color: colors.muted; Layout.fillWidth: true }
-                                    LabText { text: modelData.status; visible: text.length>0; Layout.fillWidth: true }
-                                    LabText { text: modelData.problem; visible: text.length>0; color: colors.danger; Layout.fillWidth: true }
-                                }
-                                LabButton { objectName: "start-fundamentals-"+index; text: modelData.action; enabled: modelData.available; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent); onClicked: window.openLab(modelData.labKey,this) }
+                    LabText { text: "Restorable personal backup, separate from scenario/history exports. Backup briefly pauses actions to save consistently."; color: colors.muted; Layout.fillWidth: true }
+                }
+                LabText { text: "Linux Fundamentals"; objectName: "fundamentalsHeading"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
+                LabText { text: v.fundamentals.length ? "A suggested path through six short labs. Start anywhere; no completion prerequisites." : "This collection is unavailable. Existing labs remain below."; color: colors.muted; Layout.fillWidth: true }
+                Repeater {
+                    model: v.fundamentals
+                    delegate: Rectangle {
+                        required property var modelData
+                        required property int index
+                        objectName: "fundamentalsCard-"+index
+                        Layout.fillWidth: true; implicitHeight: collectionCard.implicitHeight+2*library.contentInset
+                        color: colors.surface; radius: 8
+                        RowLayout {
+                            id: collectionCard; anchors.fill: parent; anchors.margins: library.contentInset; spacing: 12
+                            ColumnLayout {
+                                Layout.fillWidth: true; spacing: 4
+                                LabText { text: (index+1)+". "+modelData.title; font.bold: true; Layout.fillWidth: true }
+                                LabText { text: modelData.skill; color: colors.muted; Layout.fillWidth: true }
+                                LabText { text: modelData.status; visible: text.length>0; Layout.fillWidth: true }
+                                LabText { text: modelData.problem; visible: text.length>0; color: colors.danger; Layout.fillWidth: true }
                             }
+                            LabButton { objectName: "start-fundamentals-"+index; text: modelData.action; enabled: modelData.available; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent); onClicked: window.openLab(modelData.labKey,this) }
                         }
                     }
-                    LabText { text: "Networking and other scenarios"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
-                    Repeater {
-                        model: v.otherLabs.length
-                        delegate: Rectangle {
-                            required property int index
-                            property var info: v.otherLabs[index]
-                            Layout.fillWidth: true; implicitHeight: card.implicitHeight+28
-                            color: colors.surface; radius: 8
-                            ColumnLayout {
-                                id: card; anchors.fill: parent; anchors.margins: 14; spacing: 7
-                                LabText { text: info.metadata.title; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
-                                LabText { text: info.origin + " · v" + info.version + " · " + info.metadata.topic + " · " + info.metadata.minutes + " minutes"; color: colors.muted; Layout.fillWidth: true }
-                                RowLayout {
-                                    LabButton { objectName: "open-"+info.labKey; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent.parent); text: "Open lab"; onClicked: window.openLab(info.labKey,this) }
-                                    LabText { text: info.libraryStatus + " · Best: " + info.libraryBest + " · " + info.historyCount + " prior attempts"; Layout.fillWidth: true }
-                                }
+                }
+                LabText { text: "Networking and other scenarios"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
+                Repeater {
+                    model: v.otherLabs.length
+                    delegate: Rectangle {
+                        required property int index
+                        property var info: v.otherLabs[index]
+                        Layout.fillWidth: true; implicitHeight: card.implicitHeight+2*library.contentInset
+                        color: colors.surface; radius: 8
+                        ColumnLayout {
+                            id: card; anchors.fill: parent; anchors.margins: library.contentInset; spacing: 7
+                            LabText { text: info.metadata.title; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
+                            LabText { text: info.origin + " · v" + info.version + " · " + info.metadata.topic + " · " + info.metadata.minutes + " minutes"; color: colors.muted; Layout.fillWidth: true }
+                            RowLayout {
+                                LabButton { objectName: "open-"+info.labKey; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent.parent); text: "Open lab"; onClicked: window.openLab(info.labKey,this) }
+                                LabText { text: info.libraryStatus + " · Best: " + info.libraryBest + " · " + info.historyCount + " prior attempts"; Layout.fillWidth: true }
                             }
                         }
                     }
@@ -235,6 +241,54 @@ ApplicationWindow {
             LabText { objectName: "statusText"; text: v.page===1 ? v.message : v.transferMessage || v.catalogNotice || (v.page===0 ? "Choose a scenario to begin or resume." : v.historyWarnings || "History preserves drafts, hints, and submissions."); Layout.fillWidth: true; font.pixelSize: 12; color: colors.muted; maximumLineCount: 3; elide: Text.ElideRight }
             LabButton { text: "Retry save"; visible: v.canRetry; onClicked: controller.retrySave() }
         }
+    }
+    FileDialogs.FileDialog {
+        id: backupProfileDialog; objectName: "backupProfileFileDialog"; title: "Save a new personal profile backup"
+        fileMode: FileDialogs.FileDialog.SaveFile; defaultSuffix: "llbackup"
+        nameFilters: ["Learning Lab profile backup (*.llbackup)"]
+        onAccepted: { controller.backupProfile(selectedFile.toString()); profileResult.open() }
+        onRejected: Qt.callLater(function(){ window.restoreFocus() })
+    }
+    FileDialogs.FileDialog {
+        id: restoreArchiveDialog; objectName: "restoreProfileFileDialog"; title: "Choose a profile backup to validate"
+        nameFilters: ["Learning Lab profile backup (*.llbackup)"]
+        onAccepted: { restoreArchive=selectedFile.toString(); restoreParentDialog.open() }
+        onRejected: Qt.callLater(function(){ window.restoreFocus() })
+    }
+    FileDialogs.FolderDialog {
+        id: restoreParentDialog; title: "Choose where to create a NEW restored profile folder"
+        onAccepted: {
+            if(controller.previewRestore(restoreArchive,selectedFolder.toString())) restorePreview.open()
+            else profileResult.open()
+        }
+        onRejected: { controller.cancelRestore(); Qt.callLater(function(){ window.restoreFocus() }) }
+    }
+    Dialog {
+        id: restorePreview; objectName: "restoreProfilePreview"
+        anchors.centerIn: parent; width: Math.min(640,window.width-40); height: Math.min(480,window.height-40)
+        modal: true; title: "Restore into a new profile?"
+        contentItem: ProfileTransferView {
+            id: profilePreviewScroll; objectName: "profilePreviewScroll"
+            details: v.profilePreviewDetails; fieldPrefix: "preview"
+        }
+        footer: DialogButtonBox {
+            LabButton { id: cancelProfileRestore; objectName: "cancelProfileRestore"; text: "Cancel"; onClicked: restorePreview.reject() }
+            LabButton { objectName: "confirmProfileRestore"; text: "Restore new profile"; enabled: v.restoreReady; onClicked: restorePreview.accept() }
+        }
+        onOpened: cancelProfileRestore.forceActiveFocus()
+        onRejected: controller.cancelRestore()
+        onAccepted: { controller.confirmRestore(true); profileResult.open() }
+        onClosed: Qt.callLater(function(){ window.restoreFocus() })
+    }
+    Dialog {
+        id: profileResult; objectName: "profileResult"
+        anchors.centerIn: parent; width: Math.min(640,window.width-40); height: Math.min(360,window.height-40)
+        modal: true; title: "Profile backup / restore"; standardButtons: Dialog.Ok
+        contentItem: ProfileTransferView {
+            id: profileResultScroll; objectName: "profileResultScroll"
+            details: v.profileResultDetails; fieldPrefix: "result"
+        }
+        onClosed: Qt.callLater(function(){ window.restoreFocus() })
     }
     FileDialogs.FileDialog { id: importDialog; objectName: "importDialog"; title: "Import a data-only scenario"; nameFilters: ["Learning Lab scenarios (*.lab.json)","JSON files (*.json)"]; onAccepted: controller.importPack(selectedFile.toString()) }
     FileDialogs.FileDialog { id: exportDialog; title: "Export scenario only"; fileMode: FileDialogs.FileDialog.SaveFile; defaultSuffix: "lab.json"; nameFilters: ["Learning Lab scenarios (*.lab.json)"]; onAccepted: controller.exportScenario(selectedFile.toString()) }

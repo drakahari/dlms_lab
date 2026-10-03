@@ -30,6 +30,15 @@ Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can for
 
 ## Use
 
+### Profile backup and restore
+
+Library includes **Backup profile…** and **Restore profile…**, separate from
+scenario/history exports. Backup briefly pauses app actions, saves pending work,
+and creates a validated personal `.llbackup` file. Restore previews and requires
+confirmation before creating a **new** profile folder; the open profile stays
+unchanged. See [included files, compatibility, safety and disposable test](docs/profile-backup.md).
+These source changes do not update the working installed application.
+
 ### Linux Fundamentals
 
 The Library offers six short labs in a suggested order, from file navigation to
