@@ -56,6 +56,8 @@ preferences.json
 selection.json
 workspace-layout.json
 linux-workspace-layout.json
+library-state.json
+*.llbackup
 *.attempt.json
 attempts/
 **/portable/packs/

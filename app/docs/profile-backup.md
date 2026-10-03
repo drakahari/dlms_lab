@@ -1,4 +1,4 @@
-# Restorable profile backups (format 1)
+# Restorable profile backups (formats 1 and 2)
 
 Use **Library → Backup profile…** or **Restore profile…**. These actions preserve
 the current interface and simulations. A backup contains personal work; keep it
@@ -19,6 +19,7 @@ The existing XDG data/config roots stay unchanged. Explicit `--data-dir` and
 | Data `portable/attempts/<content-digest>/` with the same record names | Pinned attempts, drafts, applied simulation state, mode, hints, logs, assessments and history |
 | Each attempt store's `workspace/<UUID>.json` | Pending command and diagnostic results/revision, including archived workspace sidecars |
 | Config `selection.json` | Selected lab |
+| Config `library-state.json` (optional, backup v2) | Hidden built-ins and removed imports, by exact identity |
 | Config `preferences.json` | Built-in theme preference |
 | Config `workspace-layout.json`, `linux-workspace-layout.json` | Persisted networking/Linux splitter sizes |
 
@@ -82,7 +83,7 @@ recompute its hashes. Restore only backups you trust. This format is not encrypt
 
 Limits: 10,000 payload files, 128 MiB total payload, 136 MiB archive, 2 MiB manifest;
 10 MiB per attempt record, 256 KiB per pack/workspace sidecar, 4 KiB per settings
-file, and at most 256 installed packs. Sizes are checked before decompression and
+file (64 KiB for Library settings), and at most 256 installed packs. Sizes are checked before decompression and
 against decoded bytes. Excessive or unsupported profiles fail without pruning.
 
 Existing strict JSON, scenario, attempt, domain-state, grading and workspace
@@ -97,6 +98,16 @@ historical provenance. A restore requires those same bundled resources, supporte
 record/settings schemas and every pinned engine version. A newer incompatible
 backup or unavailable engine is rejected; there is no automatic migration.
 
+## Library settings compatibility
+
+The reader accepts backup versions 1 and 2. Profiles without `library-state.json`
+still write version 1. Profiles with that optional file write version 2, including
+its integrity hash and reference validation. Version-1 backups restore with all
+Library entries active; version 1 cannot carry Library choices. Version 2 requires
+the choices file and an app supporting it. Older readers reject version 2 rather
+than dropping the choices. No existing record migration is required. See
+[reversible Library cleanup](library-cleanup.md).
+
 ## Restore preview and publication
 
 Choose a backup and a parent folder. Validation finishes before the preview shows
@@ -105,7 +116,7 @@ counts, payload size and the exact destination. No destination is created yet.
 Cancel releases the pending validated snapshot. **Restore new profile** is the
 explicit confirmation; merely choosing a file/folder never restores anything.
 
-Version 1 always creates a new generated `Learning-Lab-restored-<time>-<id>` folder
+Restore always creates a new generated `Learning-Lab-restored-<time>-<id>` folder
 containing `data/` and `config/`. Even a pre-existing empty folder is refused.
 The open profile stays selected and unchanged. Restore does not merge, overwrite,
 replace default XDG roots, modify a launcher or automatically restart the app.
@@ -180,3 +191,27 @@ The new checks use long nested destination paths at all supported sizes/scales,
 verify exact keyboard/button clipboard copies, focus visibility, insets and font
 sizes. Clipboard checks run on the isolated offscreen platform. Storage validators,
 archive format and restore publication semantics are unchanged by this revision.
+
+
+### Previous-reader compatibility evidence
+
+The actual source at `673e4f0c2e435920188da629744a52196f589e41` was run in a
+separate temporary directory. Its v1 reader rejects a valid v2 archive with
+“Backup contains an unsupported path; only profile files are allowed.” This is
+its original path allowlist rejecting `config/library-state.json`, before any
+restore staging. Both low-level restore and UI preview/confirmation fail safely:
+no destination or partial restore, and the open disposable profile stays byte
+identical. A v1 archive restored successfully with the same previous reader.
+Reproduce with `python3 -B tests/backup_compatibility_acceptance.py` from `app/`.
+
+Current tests also restore v1 and round-trip v2 with exact file bytes, inactive
+choices, archived attempts, pinned current content, mode and drafts; a new process
+reopens the restored profile and explicitly restores/resumes its current attempt.
+The version bump is necessary because choices are authoritative profile data,
+while v1 allows no such file. Omitting it would silently lose choices; pretending
+it were a v1 extension would violate the previous strict file allowlist.
+
+No further format change was made for Restore and resume. Compatibility was tested
+against that previous commit, not every historical release. Downgrading an in-use
+profile is not supported or tested; use v1 backups only with the older app, or
+restore v2 with the current compatible app. Hashes do not authenticate a backup.

@@ -8,6 +8,7 @@ from .domain.validation import decode, ValidationError
 from .portable import PackRepository, portable_from_legacy
 from .pinned_storage import PinnedStore
 from .collections import linux_fundamentals
+from .library_state import LibraryState
 
 
 class CatalogBridge(QObject):
@@ -24,16 +25,18 @@ class CatalogBridge(QObject):
         except (OSError, ValueError) as exc:
             self.collection = []
             collection_warning = 'Linux Fundamentals unavailable: ' + str(exc)
+        scenarios, pack_warnings = self.repository.scan()
+        self.builtin_keys = {p['lab_id'] for p in packs} | {e['scenario'].key for e in self.collection}
+        self.visibility = LibraryState(self.config_root/'library-state.json', self.builtin_keys, {s.key for s in scenarios})
         # Gateway's original root is a compatibility exception. IDs have already
         # passed the strict pack validator; packs never supply filesystem paths.
         roots = {p['lab_id']: data_root if p['lab_id'] == 'gateway-dns' else data_root / 'labs' / p['lab_id'] for p in packs}
         self.labs = {p['lab_id']: Bridge(p, Store(roots[p['lab_id']], p), config_root / 'preferences.json', self) for p in packs}
-        scenarios, pack_warnings = self.repository.scan()
         for scenario in scenarios: self._add_portable(scenario, connect=False)
         self.active = self.labs.get('gateway-dns', next(iter(self.labs.values())))
         self.selection_path = config_root / 'selection.json'
         self.selection_readonly = False
-        self.notice = '\n'.join(pack_warnings + ([collection_warning] if collection_warning else []))
+        self.notice = '\n'.join(pack_warnings + ([collection_warning] if collection_warning else []) + ([self.visibility.notice] if self.visibility.notice else []))
         self.transfer_message = ''
         self.profile_locks = None
         self.restore_pending = None
@@ -91,11 +94,33 @@ class CatalogBridge(QObject):
             result['allHistory'] += [{**row,'labTitle':lab.pack['metadata']['title'],'labKey':key} for row in view['history']]
             result['labs'].append({**{k:view[k] for k in ('labId','metadata','libraryBest','libraryStatus','historyCount')},
                                    'labKey':key,'version':lab.pack['content_version'],
-                                   'origin':'Portable pack' if key in self.portables else 'Bundled legacy'})
+                                   'origin':'Portable pack' if key in self.portables else 'Bundled legacy',
+                                   'hasHistory':True, 'builtIn':key in self.builtin_keys, 'libraryState':self.visibility.state(key),
+                                   'canResume':not lab.store.read_only and lab.session.attempt['ended'] is None,
+                                   'status': ' · '.join(k+': '+v for k,v in (lab.library_progress() or {}).items())})
+        for key, scenario in self.portables.items():
+            if key not in self.labs:
+                result['labs'].append({'labKey':key, 'labId':scenario.identity.scenario_id,
+                    'metadata':scenario.value()['metadata'], 'version':scenario.identity.content_version,
+                    'origin':'Portable pack', 'builtIn':key in self.builtin_keys,
+                    'libraryState':self.visibility.state(key), 'canResume':False,
+                    'hasHistory':False, 'libraryBest':'Unavailable', 'libraryStatus':'Saved attempt unavailable', 'historyCount':0, 'status':''})
         result['scenarioVersion'] = self.pack['content_version']
         result['fundamentals'] = self.collection_rows()
         curated = {row['labKey'] for row in result['fundamentals']}
-        result['otherLabs'] = [row for row in result['labs'] if row['labKey'] not in curated]
+        result['otherLabs'] = [row for row in result['labs'] if row['labKey'] not in curated and row['libraryState']=='active']
+        result['visibleFundamentals'] = [row for row in result['fundamentals'] if row['libraryState']=='active']
+        result['inactiveLabs'] = ([{**row, 'metadata':{'title':row['title']}, 'origin':'Built-in collection'}
+                                   for row in result['fundamentals'] if row['libraryState']!='active'] +
+                                  [row for row in result['labs'] if row['labKey'] not in curated and row['libraryState']!='active'])
+        result['hiddenCount'] = sum(state=='hidden' for state in self.visibility.entries.values())
+        result['removedCount'] = sum(state=='removed' for state in self.visibility.entries.values())
+        result['libraryChoicesReadOnly'] = self.visibility.read_only
+        result['activeLibraryState'] = self.visibility.state(active_key)
+        result['canStartAttempt'] = self.visibility.state(active_key) == 'active' and not self.visibility.read_only
+        if not result['canStartAttempt']:
+            result['readOnly'] = True
+            result['message'] += ' Restore this entry to the Library before practicing. Saved history remains available.'
         result['provenance'] = ('Pinned content ' + self.portables[active_key].identity.content_digest + ' · engine ' + self.portables[active_key].pin['engine']['behavior_version']
                                 if active_key in self.portables else 'Legacy attempt: original content digest and engine provenance were not recorded.')
         result['profilePreviewDetails'] = self.profile_preview_details
@@ -113,7 +138,7 @@ class CatalogBridge(QObject):
 
     def collection_rows(self):
         rows = []
-        for entry in self.collection:
+        for order, entry in enumerate(self.collection):
             scenario = entry['scenario']; key = scenario.key
             conflict = any((s.identity.scenario_id, s.identity.content_version) ==
                            (scenario.identity.scenario_id, scenario.identity.content_version)
@@ -129,12 +154,18 @@ class CatalogBridge(QObject):
                          'skill': entry['skill'], 'status': status,
                          'action': 'Continue' if started else 'Start', 'available': not conflict,
                          'problem': 'A different pack with this ID/version is installed. It is preserved below; this collection version cannot replace it.' if conflict else '',
-                         'version': scenario.identity.content_version})
+                         'version': scenario.identity.content_version, 'order':order, 'builtIn':True,
+                         'hasHistory':lab is not None, 'libraryState':self.visibility.state(key), 'canResume':bool(self.resumableAttempts(key))})
         return rows
 
     def _add_portable(self, scenario, connect=True):
+        self.visibility.imported.add(scenario.key)
         if scenario.key in self.labs: return
-        store = PinnedStore(self.data_root/'portable'/'attempts'/scenario.key[5:], scenario)
+        self.portables[scenario.key] = scenario
+        root = self.data_root/'portable'/'attempts'/scenario.key[5:]
+        if (self.visibility.state(scenario.key)!='active' or self.visibility.read_only) and not ((root/'current.json').exists() or (root/'current.backup.json').exists()):
+            return  # Listing an inactive pack must not manufacture a new attempt.
+        store = PinnedStore(root, scenario)
         lab = Bridge(scenario.legacy_pack(), store, self.config_root/'preferences.json', self, domain=scenario.domain())
         self.labs[scenario.key] = lab
         self.portables[scenario.key] = scenario
@@ -181,14 +212,48 @@ class CatalogBridge(QObject):
     def importPack(self, value):
         try:
             scenario, added = self.repository.import_file(self._local_path(value))
+            self.visibility.imported.add(scenario.key)
             self._add_portable(scenario)
             self.transfer_message = ('Imported ' if added else 'Already installed: ') + scenario.identity.scenario_id + ' · ' + scenario.identity.content_version
+            if self.visibility.state(scenario.key) != 'active':
+                self.transfer_message += ' Still '+self.visibility.state(scenario.key)+'. Use Show hidden and Restore to return this exact entry to the active Library.'
             self.changed.emit()
             return True
         except (OSError, ValueError) as exc:
             self.transfer_message = str(exc) + ' Existing labs and attempts are preserved.'
             self.changed.emit()
             return False
+
+    @Slot(str, str, bool, result=bool)
+    def setLibraryState(self, key, state, confirmed=False):
+        try:
+            if key not in self.builtin_keys and key not in self.portables:
+                raise ValidationError('Unknown Library entry; nothing changed.')
+            if state not in ('active', 'hidden', 'removed'):
+                raise ValidationError('Unsupported Library action.')
+            if state == 'removed' and confirmed is not True:
+                raise ValidationError('Confirm removal first. Saved attempts and exact pack versions will be retained.')
+            entries = dict(self.visibility.entries)
+            if state == 'active': entries.pop(key, None)
+            else: entries[key] = state
+            self.visibility.save(entries)
+            if state != 'active' and self.labs.get(key) is self.active:
+                self.active.navigate(0)
+            self.transfer_message = ('Restored to Library. ' if state=='active' else 'Hidden from Library. ' if state=='hidden' else 'Removed from active Library. ') + 'Attempts, drafts, history and pack versions are retained.'
+            self.changed.emit(); return True
+        except (OSError, ValueError) as exc:
+            self.transfer_message = 'Library choice was not changed: '+str(exc)
+            self.changed.emit(); return False
+
+    @Slot(result=bool)
+    def restoreVisibility(self):
+        try:
+            self.visibility.save({key:state for key,state in self.visibility.entries.items() if state!='hidden'})
+            self.transfer_message = 'All hidden built-in labs are visible again. Removed imports remain in the inactive list.'
+            self.changed.emit(); return True
+        except (OSError, ValueError) as exc:
+            self.transfer_message = 'Visibility could not be restored: '+str(exc)
+            self.changed.emit(); return False
 
     @Slot(str, result=bool)
     def exportScenario(self, value):
@@ -204,11 +269,12 @@ class CatalogBridge(QObject):
 
     @Slot(str)
     def setCommandDraft(self, value):
-        if isinstance(value,str) and len(value)<=512:
+        if self._practice_allowed() and isinstance(value,str) and len(value)<=512:
             self.active.edit_command(value)
 
     @Slot(str)
     def execute(self, command):
+        if not self._practice_allowed(): return
         self.active.command_draft=''
         self.active.execute(command)
 
@@ -250,7 +316,7 @@ class CatalogBridge(QObject):
                 raise ValidationError('Save the backup outside the active profile folders.')
             if self.profile_locks is None or not self.profile_locks.isLocked():
                 raise ValidationError('Backup needs the running app’s profile writer locks.')
-            if any(lab.store.read_only or lab.config_readonly for lab in self.labs.values()) or self.selection_readonly or self.layout_readonly or self.linux_layout_readonly:
+            if any(lab.store.read_only or lab.config_readonly for lab in self.labs.values()) or self.selection_readonly or self.layout_readonly or self.linux_layout_readonly or self.visibility.read_only:
                 raise ValidationError('Resolve profile recovery or unsupported settings before creating a restorable backup.')
             # Preflight before save: do not silently replace damaged files or links.
             snapshot(self.data_root, self.config_root, self.profile_locks.locks)
@@ -359,17 +425,34 @@ class CatalogBridge(QObject):
 
     @Slot(str, bool, result=bool)
     def selectLab(self, lab_id, confirmed=False):
+        if self.session.attempt['draft'] and not confirmed and self.labs.get(lab_id) is not self.active:
+            return False
+        if self.visibility.state(lab_id) != 'active' or self.visibility.read_only:
+            self.transfer_message = 'Restore this entry to the Library before practicing (or resolve Library settings recovery). History is still available.'
+            self.changed.emit(); return False
+        if lab_id not in self.labs:
+            if self.visibility.read_only:
+                self.transfer_message = 'Resolve Library settings recovery before starting an attempt.'
+                self.changed.emit(); return False
+            # A restored imported entry with no current attempt can now initialize.
+            if lab_id in self.portables:
+                self._add_portable(self.portables[lab_id])
         if lab_id not in self.labs:
             entry = next((e for e in self.collection if e['scenario'].key == lab_id), None)
             if entry is None or (self.session.attempt['draft'] and not confirmed):
                 return False
             try:
                 scenario, _ = self.repository.install(entry['scenario'].original_bytes)
+                self.visibility.imported.add(scenario.key)
                 self._add_portable(scenario)
             except (OSError, ValueError) as exc:
                 self.transfer_message = 'Collection could not open: ' + str(exc) + ' Existing files are preserved.'
                 self.changed.emit()
                 return False
+        return self._activate(lab_id, 1, confirmed)
+
+    def _activate(self, lab_id, page, confirmed):
+        if lab_id not in self.labs: return False
         if self.active is not self.labs[lab_id]:
             if self.session.attempt['draft'] and not confirmed:
                 return False
@@ -382,8 +465,44 @@ class CatalogBridge(QObject):
                     atomic_write(self.selection_path, json.dumps({'schema_version': 1, 'lab_id': lab_id}).encode())
                 except OSError as exc:
                     self.notice = f' Selection is temporary; could not save library selection: {exc}'
-        self.active.navigate(1)
+        self.active.navigate(page)
         return True
+
+    @Slot(str, bool, result=bool)
+    def viewHistory(self, key, confirmed=False):
+        # History selection never opens an interactive workspace or creates an attempt.
+        return self._activate(key, 2, confirmed)
+
+    @Slot(str, result='QVariantList')
+    def resumableAttempts(self, key):
+        lab = self.labs.get(key)
+        if lab is None or lab.store.read_only or lab.session.attempt['ended'] is not None:
+            return []
+        attempt = lab.session.attempt
+        # One current attempt per exact pack version. Ended archives are history,
+        # not candidates to resurrect; return a list so the UI selects explicitly.
+        return [{'id': attempt['id'], 'mode': attempt['mode'], 'started': attempt['started'],
+                 'version': lab.pack['content_version']}]
+
+    @Slot(str, str, bool, result=bool)
+    def restoreAndResume(self, key, attempt_id, confirmed=False):
+        if not any(row['id'] == attempt_id for row in self.resumableAttempts(key)):
+            self.transfer_message = 'This attempt is no longer resumable. Refresh the Library and select the current attempt. Nothing was restored.'
+            self.changed.emit(); return False
+        if self.active is not self.labs[key]:
+            if self.session.attempt['draft'] and not confirmed: return False
+            self.active.flush()
+            if self.active.save_failed: return False
+        if not self.setLibraryState(key, 'active'): return False
+        return self.selectLab(key, confirmed)
+
+    def _practice_allowed(self):
+        key = next(key for key, lab in self.labs.items() if lab is self.active)
+        if self.visibility.state(key) == 'active' and not self.visibility.read_only:
+            return True
+        self.transfer_message = 'Restore this entry to the Library before practicing. Saved history remains available.'
+        self.changed.emit()
+        return False
 
     @Slot()
     def flush(self):
@@ -392,35 +511,52 @@ class CatalogBridge(QObject):
     def retrySave(self):
         for lab in self.labs.values(): lab.retrySave()
     @Slot(str, str)
-    def edit(self, field, value): self.active.edit(field, value)
+    def edit(self, field, value):
+        if self._practice_allowed(): self.active.edit(field, value)
     @Slot()
-    def apply(self): self.active.apply()
+    def apply(self):
+        if self._practice_allowed(): self.active.apply()
     @Slot(int)
-    def selectRule(self, index): self.active.selectRule(index)
+    def selectRule(self, index):
+        if self._practice_allowed(): self.active.selectRule(index)
     @Slot(str, str)
-    def editRule(self, field, value): self.active.editRule(field, value)
+    def editRule(self, field, value):
+        if self._practice_allowed(): self.active.editRule(field, value)
     @Slot(str)
-    def editDefault(self, value): self.active.editDefault(value)
+    def editDefault(self, value):
+        if self._practice_allowed(): self.active.editDefault(value)
     @Slot()
-    def addRule(self): self.active.addRule()
+    def addRule(self):
+        if self._practice_allowed(): self.active.addRule()
     @Slot()
-    def removeRule(self): self.active.removeRule()
+    def removeRule(self):
+        if self._practice_allowed(): self.active.removeRule()
     @Slot(int)
-    def moveRule(self, offset): self.active.moveRule(offset)
+    def moveRule(self, offset):
+        if self._practice_allowed(): self.active.moveRule(offset)
     @Slot()
-    def test(self): self.active.test()
+    def test(self):
+        if self._practice_allowed(): self.active.test()
     @Slot()
-    def hint(self): self.active.hint()
+    def hint(self):
+        if self._practice_allowed(): self.active.hint()
     @Slot()
-    def submit(self): self.active.submit()
+    def submit(self):
+        if self._practice_allowed(): self.active.submit()
     @Slot(str)
-    def restart(self, mode): self.active.restart(mode)
-    @Slot(int)
-    def navigate(self, page): self.active.navigate(page)
+    def restart(self, mode):
+        if self._practice_allowed(): self.active.restart(mode)
+    @Slot(int, result=bool)
+    def navigate(self, page):
+        if page == 1 and not self._practice_allowed(): return False
+        self.active.navigate(page)
+        return True
     @Slot(str)
-    def selectDevice(self, device): self.active.selectDevice(device)
+    def selectDevice(self, device):
+        if self._practice_allowed(): self.active.selectDevice(device)
     @Slot(int, result=str)
-    def commandHistory(self, distance): return self.active.commandHistory(distance)
+    def commandHistory(self, distance):
+        return self.active.commandHistory(distance) if self._practice_allowed() else self.active.command_draft
     @Slot(int)
     def historyPage(self, offset): self.active.historyPage(offset)
     @Slot()

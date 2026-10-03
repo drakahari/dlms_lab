@@ -19,7 +19,7 @@ from .pinned_storage import PinnedStore
 from .workspace_state import validate as validate_workspace
 
 FORMAT = 'learning-lab.profile-backup'
-VERSION = 1
+VERSION = 2
 MAX_FILES = 10000
 MAX_TOTAL = 128 * 1024 * 1024
 MAX_ARCHIVE = MAX_TOTAL + 8 * 1024 * 1024
@@ -30,7 +30,7 @@ STORE = r'data(?:/labs/(?:subnet-boundary|service-firewall)|/portable/attempts/'
 RECORD = re.compile('('+STORE+r')/(current(?:\.backup)?\.json|attempts/('+UUID+r')\.json)$')
 WORKSPACE = re.compile('('+STORE+r')/workspace/('+UUID+r')\.json$')
 PACK = re.compile(r'data/portable/packs/('+DIGEST+r')\.json$')
-CONFIG = {'preferences.json', 'selection.json', 'workspace-layout.json', 'linux-workspace-layout.json'}
+CONFIG = {'preferences.json', 'selection.json', 'workspace-layout.json', 'linux-workspace-layout.json', 'library-state.json'}
 
 
 def file_limit(name):
@@ -38,6 +38,7 @@ def file_limit(name):
     if RECORD.fullmatch(name): return MAX_RECORD
     if WORKSPACE.fullmatch(name): return 262144
     if PACK.fullmatch(name): return LIMIT
+    if name == 'config/library-state.json': return 65536
     if name.startswith('config/') and name[7:] in CONFIG: return 4096
     raise ValidationError('Backup contains an unsupported path; only profile files are allowed.')
 
@@ -103,10 +104,15 @@ def validate_contents(files):
             require(state['diagnostic_revision'] <= max(a['revision'] for a in attempts), 'Workspace diagnostics reference a future revision.')
     for name in CONFIG:
         if 'config/'+name not in files: continue
-        value = decode(files['config/'+name], 4096)
+        value = decode(files['config/'+name], file_limit('config/'+name))
         require(isinstance(value, dict) and type(value.get('schema_version')) is int and value['schema_version'] == 1,
                 'Unsupported profile settings version.')
-        if name == 'preferences.json':
+        if name == 'library-state.json':
+            from .library_state import validate as validate_library
+            from .collections import linux_fundamentals
+            builtin_keys = set(packs) | {e['scenario'].key for e in linux_fundamentals()}
+            validate_library(value, builtin_keys, {'pack:'+digest for digest in scenarios})
+        elif name == 'preferences.json':
             keys(value, {'schema_version', 'fallback_theme'}, 'preferences')
             require(type(value['fallback_theme']) is bool, 'Invalid theme preference.')
         elif name == 'selection.json':
@@ -181,7 +187,7 @@ def snapshot(data_root, config_root, locks):
             for path in directory(folder).iterdir(): store(path, 'data/portable/attempts/'+path.name)
     for name in CONFIG: add(config_root/name, 'config/'+name)
     validate_contents(files)
-    manifest = {'format': FORMAT, 'schema_version': VERSION,
+    manifest = {'format': FORMAT, 'schema_version': VERSION if 'config/library-state.json' in files else 1,
                 'created_utc': datetime.now(timezone.utc).isoformat(),
                 'legacy_resources': legacy_resources(),
                 'files': {name: {'size': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(), 'mtime_ns': times[name]}
@@ -232,13 +238,15 @@ def read_backup(path):
             require(total <= MAX_TOTAL+MAX_MANIFEST, 'Backup exceeds total size limit.')
             manifest = decode(archive.read('manifest.json'), MAX_MANIFEST)
             keys(manifest, {'format', 'schema_version', 'created_utc', 'legacy_resources', 'files'}, 'backup manifest')
-            require(manifest['format'] == FORMAT and type(manifest['schema_version']) is int and manifest['schema_version'] == VERSION,
+            require(manifest['format'] == FORMAT and type(manifest['schema_version']) is int and manifest['schema_version'] in (1, VERSION),
                     'Unsupported profile backup version; no migration will be performed.')
             require(isinstance(manifest['created_utc'], str) and len(manifest['created_utc']) <= 64
                     and datetime.fromisoformat(manifest['created_utc']).tzinfo is not None, 'Invalid backup timestamp.')
             require(manifest['legacy_resources'] == legacy_resources(), 'Bundled legacy scenarios differ; use the matching app version. No migration is available.')
             entries = manifest['files']
             require(isinstance(entries, dict) and set(entries) == set(names)-{'manifest.json'}, 'Manifest file inventory differs from archive.')
+            require(('config/library-state.json' in entries) == (manifest['schema_version'] == 2),
+                    'Library settings require backup version 2; version 1 remains unchanged.')
             files = {}
             for name, expected in entries.items():
                 keys(expected, {'size', 'sha256', 'mtime_ns'}, 'file integrity record')

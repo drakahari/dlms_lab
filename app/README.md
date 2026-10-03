@@ -30,6 +30,17 @@ Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can for
 
 ## Use
 
+### Hide or remove Library entries
+
+Use a card's **Actions ▾** menu to hide a built-in or reversibly remove an imported
+version. **Show hidden / removed** provides **Restore and resume**, history and
+**Restore to Library** actions;
+**Restore visibility** shows all hidden built-ins. Nothing is deleted. Removed
+and hidden entries retain their attempts but require restoration before any practice.
+Restore to Library does not launch; Restore and resume confirms the exact saved attempt.
+Choices are profile-local and included in version-2 profile backups; old backups
+remain readable. See [identity rules and a disposable owner test](docs/library-cleanup.md).
+
 ### Profile backup and restore
 
 Library includes **Backup profile…** and **Restore profile…**, separate from

@@ -1,5 +1,61 @@
 # Framework acceptance — checkpoints 2 onward
 
+## Reversible Library cleanup — current
+
+Baseline remains `673e4f0c2e435920188da629744a52196f589e41`. The initial cleanup
+started clean; its uncommitted work was preserved for the restore-action revision.
+The original 180-file snapshot was reverified; another verified source-only
+snapshot covers all 185 files then present. Paths and scope are documented in
+[Library cleanup](library-cleanup.md). Real profiles and the working installation
+were not used as fixtures or modified.
+
+**Owner-reported acceptance:** the following specific checks passed:
+
+- Hiding/restoring built-ins and removing/restoring an imported lab with its saved
+  attempt preserved.
+- **Restore to Library** without launching the lab.
+- **Restore and resume** with the existing **Learn** attempt preserved.
+- Closing/reopening with progress retained.
+
+These reports do not establish exhaustive native acceptance. Physical-keyboard
+navigation, accessibility and exhaustive native display-scaling checks remain
+outstanding.
+
+**238 regression tests pass** (219 earlier plus 19 cleanup tests). Coverage includes
+identity/version independence, cancellation, reimport without restoration, current
+and completed attempts, multiple ended history records, drafts, Learn/Challenge
+status, settings failures and same-profile restart. Inactive practice is blocked
+through navigation and backend calls. Restore without launch stays in Library;
+Restore and resume checks the exact current ID and rejects stale/ended selections.
+The store still has one current resumable attempt per exact version; archived
+ended attempts remain history, not arbitrarily resurrected sessions.
+
+**Backup compatibility:** current v1 restore and v2 byte-preserving round trips
+pass, including choices, archived records, pinned attempts and drafts on fresh
+process reopening. The actual previous commit's v1 reader rejects v2 at its
+unsupported-path check before staging; UI preview/confirmation also reject, no
+partial destination exists, and its open disposable profile is unchanged. A v1
+positive control restores successfully with that same old reader. No further
+backup-format, engine-contract or attempt-schema change was made for this revision.
+
+**71 cleanup UI checks per scale** pass at 100/150/200%, across 800×600,
+1024×768 and 1280×900 logical windows. These are **offscreen** rendered QtTest
+checks, including menu/confirmation focus, history, restore without launch and
+restored normal controls. Profile-transfer, collection, Linux reference/editor and
+networking framework UI regressions also passed at all three scales (**15 UI runs
+total**). Native
+Wayland socket access returns errno 1, Operation not permitted; offscreen checks
+are not native acceptance. The full regression run emits a shutdown ResourceWarning
+about two uncollectable objects; no assertion fails.
+
+Local ignored evidence: `evidence/restore-actions-regressions.txt`,
+`evidence/restore-actions-{100,150,200}.json` and captures,
+`evidence/restore-actions-ui-matrix.json`, `evidence/restore-actions-native.json`,
+and `evidence/restore-actions-backup-compatibility.json`. The commit review reruns
+are stored locally as `evidence/library-commit-regressions.txt`,
+`evidence/library-commit-ui-matrix.json`, `evidence/library-commit-*.json` and
+associated captures; generated evidence is excluded from the commit.
+
 ## User-triggered profile backup / restore — current
 
 Baseline verified clean at `e76016071260731b02824a893c016b4150b97cf8`
