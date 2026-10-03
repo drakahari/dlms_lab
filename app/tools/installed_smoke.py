@@ -25,6 +25,13 @@ def phase(root, resume, require_icon):
     if not dist.read_text('WHEEL') or '"editable": true' in (dist.read_text('direct_url.json') or ''):
         raise RuntimeError('Expected a wheel installation, not an editable source tree.')
     assert (package/'qml/Main.qml').is_file()
+    assert (package/'qml/AuthoringDialog.qml').is_file()
+    from learning_lab.authoring import resource
+    from learning_lab.portable import load_portable
+    load_portable(resource('permissions.lab.json').encode())
+    assert 'disposable profile' in resource('guide.txt')
+    assert 'untrusted' in resource('guide.txt')
+    assert 'contract 3' in resource('prompt.txt')
     if require_icon:assert (package/'icons/omarchy-learning-lab.svg').is_file()
     entries = linux_fundamentals(); assert len(entries) == 6
     app, engine, bridge, lock = build_application(root/'data', root/'config')
@@ -45,12 +52,28 @@ def phase(root, resume, require_icon):
                 assert bridge.session.attempt['console']
                 bridge.setCommandDraft('help'); bridge.flush()
             assert len(bridge.labs) == 9
+            source=root/'authored.lab.json';author=bridge.authoring
+            assert author.prepareStarter(str(source)) and author.confirmStarter(True)
+            value=json.loads(source.read_text());value['metadata']['title']='Installed authoring proof'
+            value['domain']['filesystem']['/home/learner/notes.txt']['content']='Original disposable authored note.\n'
+            source.write_text(json.dumps(value))
+            before={str(p):p.read_bytes() for folder in (root/'data',root/'config') for p in folder.rglob('*') if p.is_file()}
+            assert author.validateLab(str(source)) and len(bridge.labs)==9
+            assert before=={str(p):p.read_bytes() for folder in (root/'data',root/'config') for p in folder.rglob('*') if p.is_file()}
+            assert author.importValidated()
+            scenario=load_portable(source.read_bytes());assert bridge.selectLab(scenario.key)
+            for _ in range(4):bridge.execute(bridge.view['guide']['command'])
+            bridge.submit();assert bridge.view['grade']['score']==100
+            bridge.restart('Challenge');assert bridge.view['guide']=={}
+            bridge.execute('chmod 600 notes.txt');bridge.execute('cat notes.txt');bridge.submit()
+            assert bridge.view['grade']['score']==100
+            bridge.setCommandDraft('help');bridge.flush()
             (root/'expected.json').write_text(json.dumps({
                 'selected': bridge.view['labKey'],
                 'attempts': {k: lab.session.attempt for k, lab in bridge.labs.items()}}))
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
                 'package': str(package), 'platform': app.platformName(),
-                'collection_packs': len(entries), 'pyside': version('PySide6')}
+                'collection_packs': len(entries), 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
         window.close(); app.processEvents(); lock.unlock()
 

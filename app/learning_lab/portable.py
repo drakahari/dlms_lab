@@ -165,7 +165,8 @@ class PackRepository:
             except (OSError,ValidationError) as exc: warnings.append(f'Preserved unavailable pack {path.name}: {exc}')
         return scenarios,warnings
 
-    def install(self, raw):
+    def check(self, raw):
+        """Same validation/conflict checks as install, with no filesystem writes."""
         scenario=load_portable(raw)
         existing,warnings=self.scan()
         if len(list(self.root.glob('*.json')))>=MAX_PACKS and not any(s.key==scenario.key for s in existing):
@@ -176,6 +177,12 @@ class PackRepository:
                 return old,False
         path=self.root/(scenario.key[5:]+'.json')
         require(not path.exists() and not path.is_symlink(),'Existing content file is unavailable; it will not be overwritten.')
+        return scenario,True
+
+    def install(self, raw):
+        scenario, added = self.check(raw)
+        if not added: return scenario,False
+        path = self.root/(scenario.key[5:]+'.json')
         self.root.mkdir(parents=True,exist_ok=True)
         atomic_write(path,scenario.original_bytes)
         return scenario,True

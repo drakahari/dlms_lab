@@ -101,6 +101,7 @@ ApplicationWindow {
                     LabButton { objectName: "restoreVisibilityButton"; text: "Restore visibility"; visible: v.hiddenCount>0; enabled: !v.libraryChoicesReadOnly; onClicked: { controller.restoreVisibility(); showHiddenControl.forceActiveFocus() } }
                 }
                 RowLayout {
+                    LabButton { id: createLabButton; objectName: "createLabButton"; text: "Create a lab…"; onClicked: authoringPanel.open(); onActiveFocusChanged: if(activeFocus) library.ensureVisible(this) }
                     LabButton { objectName: "importPackButton"; text: "Import scenario…"; onClicked: importDialog.open() }
                     LabText { text: "Self-contained .lab.json files · data only"; color: colors.muted; Layout.fillWidth: true }
                 }
@@ -428,6 +429,7 @@ ApplicationWindow {
         }
         onClosed: Qt.callLater(function(){ window.restoreFocus() })
     }
+    AuthoringDialog { id: authoringPanel; workflow: controller.authoring; onClosed: createLabButton.forceActiveFocus() }
     FileDialogs.FileDialog { id: importDialog; objectName: "importDialog"; title: "Import a data-only scenario"; nameFilters: ["Learning Lab scenarios (*.lab.json)","JSON files (*.json)"]; onAccepted: controller.importPack(selectedFile.toString()) }
     FileDialogs.FileDialog { id: exportDialog; title: "Export scenario only"; fileMode: FileDialogs.FileDialog.SaveFile; defaultSuffix: "lab.json"; nameFilters: ["Learning Lab scenarios (*.lab.json)"]; onAccepted: controller.exportScenario(selectedFile.toString()) }
     FileDialogs.FileDialog { id: attemptExport; title: "Export personal attempt history"; fileMode: FileDialogs.FileDialog.SaveFile; defaultSuffix: "attempt.json"; nameFilters: ["Personal attempt (*.attempt.json)"]; onAccepted: controller.exportAttempt(selectedFile.toString(),exportAttemptId) }

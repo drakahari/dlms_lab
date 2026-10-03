@@ -1,0 +1,11 @@
+Help me draft an original Learning Lab permissions scenario using the JSON example below as the exact schema. I will provide my saved starter (with its unique identity) and the intended exercise. Preserve my starter ID; bump content_version for meaningful edits to an already imported/published version. Never reuse the example ID for a new scenario.
+
+Return one self-contained UTF-8 JSON object, no Markdown fence. Preserve outer format/schema 1, engine linux-navigation contract 3, behavior linux-permissions-2, all seven capabilities, domain schema 3 and assets []. No scripts, plugins, host commands, expressions, dynamic fields or external assets. This engine only models a bounded virtual filesystem and permissions. Do not invent service, network, editor, sudo or shell capabilities.
+
+Use only help, pwd, ls [-l] [PATH], cd [PATH], cat PATH, chmod u+r PATH, chmod u+x PATH, and chmod NNN PATH (exactly three octal digits). JSON modes use four digits. Only declared learner-owned targets have mutable modes; paths/content/ownership stay fixed. Keep ancestors accessible and all goals feasible. Owner/group/other classes are exclusive. Directory r lists names and x permits traversal.
+
+Use mode_equals, read_verified and traversal_verified only, with points totaling 100. Distinguish final-state goals from successful read/cd evidence after the last actual mode change. No mandatory initial mistake or fixed transcript. Provide concise Challenge goal/constraints, progressive Learn steps (inspect/list/try-read/try-enter/repair/read/enter), and reasoning-first hints. Include repair/read/enter steps matching the objectives. Require least privilege, not 777. Keep text original and free of credentials or personal data.
+
+Respect 256 KiB pack size, 64 nodes, 8 KiB per text file, 64 KiB total file text, 16 targets/objectives/steps, 32 hints/constraints and the example's exact field structure. If my request cannot be modeled with this contract, explain the gap instead of inventing mechanics. Your output still requires Learning Lab validation and Learn/Challenge playtesting by me; do not claim it has been validated or played.
+
+Complete schema example follows. Replace its identity with my starter's identity, not this example ID:

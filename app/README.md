@@ -30,6 +30,14 @@ Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can for
 
 ## Use
 
+### Create your own lab
+
+**Library → Create a lab…** offers a permissions starter, a complete worked
+example, a plain-language quick guide and an optional copyable AI prompt. Save
+and edit JSON in your text editor; **Validate lab…** checks it without installing.
+Read the summary, then explicitly import. Packs supply data to supported engines;
+they cannot add commands or run scripts. See the [disposable beginner walkthrough](docs/in-app-authoring.md).
+
 ### Hide or remove Library entries
 
 Use a card's **Actions ▾** menu to hide a built-in or reversibly remove an imported

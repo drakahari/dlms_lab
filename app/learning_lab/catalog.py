@@ -9,6 +9,7 @@ from .portable import PackRepository, portable_from_legacy
 from .pinned_storage import PinnedStore
 from .collections import linux_fundamentals
 from .library_state import LibraryState
+from .authoring import AuthoringBridge
 
 
 class CatalogBridge(QObject):
@@ -17,6 +18,7 @@ class CatalogBridge(QObject):
     def __init__(self, packs, data_root, config_root):
         super().__init__()
         self.data_root, self.config_root = Path(data_root), Path(config_root)
+        self._authoring = AuthoringBridge(self)
         self.repository = PackRepository(self.data_root / 'portable' / 'packs')
         self.portables = {}
         try:
@@ -81,6 +83,9 @@ class CatalogBridge(QObject):
             self.notice += ' Invalid or unsupported library selection preserved; selection is temporary.'
         for lab in self.labs.values():
             lab.changed.connect(self.changed)
+
+    @Property(QObject, constant=True)
+    def authoring(self): return self._authoring
 
     @Property('QVariantMap', notify=changed)
     def view(self):
@@ -211,7 +216,15 @@ class CatalogBridge(QObject):
     @Slot(str, result=bool)
     def importPack(self, value):
         try:
-            scenario, added = self.repository.import_file(self._local_path(value))
+            from .authoring import read_json_file
+            return self._import_raw(read_json_file(self._local_path(value)))
+        except (OSError, ValueError) as exc:
+            self.transfer_message = str(exc) + ' Existing labs and attempts are preserved.'
+            self.changed.emit(); return False
+
+    def _import_raw(self, raw):
+        try:
+            scenario, added = self.repository.install(raw)
             self.visibility.imported.add(scenario.key)
             self._add_portable(scenario)
             self.transfer_message = ('Imported ' if added else 'Already installed: ') + scenario.identity.scenario_id + ' · ' + scenario.identity.content_version

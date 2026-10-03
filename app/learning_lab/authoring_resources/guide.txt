@@ -1,0 +1,68 @@
+Create your first lab: private file access
+
+A JSON scenario supplies content and starting conditions to a supported simulation engine. It cannot add Linux commands, run scripts, load plugins or invent engine behavior. This first authoring template supports virtual file and directory permissions only. Other installed labs are playable; their domains do not yet have a complete in-app authoring template.
+
+1. Save a starter
+Choose Save starter…, select an existing folder, and use a name such as my-notes.lab.json. Confirm the destination. A fresh scenario ID is generated each time; saving does not import anything. Existing files require explicit replacement confirmation. Keep scenario files outside your profile folders.
+
+2. Edit ordinary JSON in your preferred text editor
+Open your saved file. For a first exercise, change metadata.title to “Read my project notes” and domain.filesystem["/home/learner/notes.txt"].content to a short original note. Adjust the mission, lesson explanations/expected results and hints to match. Save as UTF-8 JSON. Use double quotes, escape newlines in strings as \n, and do not add comments or trailing commas.
+
+The Worked example tab contains the complete, validated source template. Do not copy its example identity unchanged: Save starter creates your own. Use only original content; never put credentials or personal history in a pack.
+
+3. Know what to edit and preserve
+identity.id: a stable unique name, lowercase letters/digits/hyphens, starting with a letter, at most 64 characters. Keep your generated ID for this scenario. identity.content_version: your content version, initially 1.0.0. After importing/publishing meaningful edits, increase it, e.g. 1.0.1. Same ID/version with different content is rejected. Identical reimport is harmless and does not restore removed labs. New versions keep separate pinned attempts; they do not rewrite existing work.
+
+Preserve format “learning-lab.scenario”, outer schema_version 1, engine.id “linux-navigation”, contract_version 3, supported_behavior_versions [“linux-permissions-2”], all seven required_capabilities, domain.schema_version 3 and assets []. These are compatibility declarations, not your content version. Packs cannot select arbitrary code. Unknown fields and versions are rejected.
+
+metadata: title, topic, difficulty, minutes. mission.brief: the Challenge goal in plain language. mission.constraints: necessary rules, exact required permissions, and what verifies success; do not reveal the command sequence. Hints: 0–32 progressive strings, reasoning first. Only Learn shows hints; usage is recorded without a score penalty.
+
+domain.filesystem: map canonical absolute virtual paths to kind, owner, group, mode and content. Directories have empty content. Every ancestor including / must exist. Supported identities are learner, root and www-data; commands run as learner with group learner. Owner bits take precedence, otherwise matching group bits, otherwise other bits. Classes are not combined.
+
+Mode strings have four digits in JSON, e.g. "0200". File r means readable content. Directory r means listing names; x means traversal/search to reach known children. ls -l needs r+x in the listed directory. There are no ACLs, supplementary groups, symlinks or host objects. Readable content and accessible ancestors matter.
+
+domain.cwd: an initially searchable directory. permission_targets: 1–16 learner-owned files/directories whose modes can change; never /. All other paths, modes, ownership and contents stay fixed. Targets must have accessible ancestors. If you rename a path, update every filesystem key, cwd/target/objective/lesson reference and matching learning text.
+
+4. Define final goals and verification
+objectives: 1–16 unique IDs, plain labels, positive integer points totaling 100. Predicates are allowlisted data, not expressions:
+• mode_equals: params.path and params.mode; an exact final mode for each mutable target.
+• read_verified: params.path to a file; successful cat after the latest actual permission change.
+• traversal_verified: params.path to a directory; successful cd after the latest actual permission change.
+Labels should say whether they check final state or action evidence. Do not require an initial mistake. Equivalent supported paths and command orders count. Changing a mode clears verification; a no-op chmod does not. A broad 777 solution fails a private 0600 or 0500 goal.
+
+For the complete example, notes.txt starts at 0200, requires 0600 for 70 points, and a successful read earns 30. Learn inspects, tries reading, repairs, then verifies. Challenge can directly use chmod 600 notes.txt and cat notes.txt; an initial denial is not required. Successful execution gives 100, whereas just changing the mode gives 70.
+
+domain.lesson: a short goal and 1–16 steps, each with action, absolute path, short explanation and expected result. Actions: inspect (target’s parent long listing), list (directory names), try-read/try-enter (optional denied access), repair, read, enter. Include repair for every mode goal and read/enter for every verification goal. Guidance advances one unmet step at a time; Challenge hides it. Keep explanations and expected results under 512 characters and the short goal under 240.
+
+Directory variation: use a learner-owned directory starting at 0400, its readable child at 0600, and a final directory mode of 0500. Add traversal_verified on the directory and read_verified on the child; provide the corresponding Learn steps. Do not add a new contract or service-start goal.
+
+5. Supported simulated commands
+help
+pwd
+ls [-l] [PATH]
+cd [PATH]
+cat PATH
+chmod u+r PATH
+chmod u+x PATH
+chmod NNN PATH
+
+Numeric command modes have exactly three octal digits (600 or 500), unlike the four-digit JSON strings. Only the two listed symbolic forms exist. No sudo, mkdir, editors, chown, pipes, quoting, variables, redirection, recursive flags, multiple targets, scripts, network or real shell commands. File contents are data; the simulation cannot execute them. Above-root navigation is rejected. ls without search lists names with r; ls -l reports an error instead of emulating partial Linux metadata rows.
+
+Limits: a pack ≤256 KiB, at most 64 virtual nodes, each text file ≤8 KiB, combined file text ≤64 KiB, canonical paths ≤256 characters using letters/digits / . _ -. Title ≤120, topic ≤80, difficulty ≤40; duration 1–240 minutes. Keep all required fields; external assets and archives are unsupported.
+
+6. Validate, then explicitly import
+Choose Validate lab… and select the edited file. Validation uses the same checks as import, including JSON syntax, contracts/capabilities, limits, identity conflicts and the engine’s declared goal feasibility. Errors retain JSON line/column or field/path information when available; not every validator error has an exact field index. Correct the reported issue and retry.
+
+A valid result shows title, identity, engine, content version and goals. It has not installed anything or changed your profile. Structural validity and engine goal checks are not a gameplay test or a teaching-quality review. Only Import validated lab installs the reviewed content. Changing the file after validation requires validation again. Import does not launch the lab or discard current work.
+
+7. Playtest in a disposable profile
+Close the app normally. In a real host terminal, create a disposable profile with:
+trial=$(mktemp -d /tmp/learning-lab-author.XXXXXX)
+~/.local/opt/omarchy-learning-lab/launch --data-dir "$trial/data" --config-dir "$trial/config"
+
+Use the installed launcher when running an installed version that includes this workflow. These are owner-run setup commands, NOT commands for the simulated terminal. The app never runs them for you. Use the same two paths to reopen that test profile. Do not copy your real profile into it.
+
+Validate and import your file there. Follow every Learn step; check hints and wrong fixes. Submit, then change to Challenge (a new attempt). Solve without guidance, verify full credit and preservation of the Learn result. Reset, close/reopen and test another valid approach. Export scenario… excludes personal history; validate and reimport it in another disposable profile. History export is separate and history import does not exist. Check readability, keyboard access and teaching quality yourself before sharing.
+
+AI assistance is optional
+The AI prompt tab contains copyable drafting instructions plus the complete example. Supply your saved starter and desired changes. No AI service is connected, and no text is uploaded by Learning Lab. Treat any assistant output as untrusted JSON: validate it, inspect its text and playtest both modes before use.

@@ -1,5 +1,57 @@
 # Framework acceptance — checkpoints 2 onward
 
+## In-app permissions authoring — current
+
+Baseline `0277a15d033dd99d979688b1d8867cda4e5affae` verified clean. The 186-file
+source-only recovery snapshot was verified before edits; details and the exact
+beginner review recipe are in [in-app authoring](in-app-authoring.md).
+
+The authoring guide, complete JSON example and optional AI prompt are packaged
+resources. No storage, backup-format or engine-contract change was required.
+**Owner-reported checks passed:** starter saving, JSON editing, validation,
+explicit import, custom-text display, Learn completion, Challenge completion,
+and reopening the same profile with results retained. Previous Library/terminal
+approvals remain recorded below. These specific results do not establish
+accessibility, exhaustive scaling or comprehensive physical-keyboard acceptance.
+
+Automated coverage includes unique starter identity, explicit save/replacement,
+cancellation, changed destinations, symlink/profile protection, bounded reads,
+malformed/unsupported/infeasible packs, ID/version conflicts, byte-unchanged
+profiles during validation, stale preview rejection, explicit import, reimport of
+removed entries, authored Learn/Challenge completion, reset/export and restart.
+Script-like virtual text remains data; host execution/network sentinels stay quiet.
+
+**249 regression tests pass** (238 baseline plus 11 authoring tests). **78 new
+rendered authoring checks per scale** pass at 100/150/200%, across 800×600,
+1024×768 and 1280×900 logical windows. Existing Library cleanup, profile transfer,
+collection, Linux reference/editor and networking UI suites also pass at all three
+scales: **18 suite/scale combinations**, with the new authoring suite rerun after
+the final stale-preview guard. The existing v1/v2 backup compatibility probe
+passes. The regression process reports four uncollectable objects at shutdown;
+no assertion fails.
+
+The isolated declared-package-copy test passes without source examples. An actual
+new wheel build is blocked: the isolated build venv's pip could not obtain
+`setuptools` (“No matching distribution found”). No package-source settings or
+working installation were changed. Actual installed-wheel verification remains
+outstanding; the updated installed smoke harness is ready for an owner-built
+matching test wheel. The existing installed app was inspected read-only and has
+no authoring resources yet.
+
+Automated GUI evidence is offscreen Qt rendering and synthesized QtTest input;
+the owner reports the successful workflows listed above. Agent access to the
+native Wayland socket is denied (errno 1). Untested native file-dialog edge cases,
+comprehensive physical-keyboard navigation, accessibility and exhaustive native
+scaling remain outstanding.
+The commit review reran the 249-test suite and applicable UI matrix; local logs
+use `evidence/authoring-commit-*` and remain excluded from Git. The wheel retry
+used the project's declared PEP 517 build workflow in an isolated build venv at
+`/tmp/authoring-commit-wheel-gbchx6fw`; build dependency resolution again failed
+with “No matching distribution found for setuptools”. No wheel was built or
+installed, so this review does not claim installed-wheel acceptance. A separate
+hash-verified host verification command is documented in the authoring guide.
+Local generated logs/captures under `evidence/authoring-*` are excluded from Git.
+
 ## Reversible Library cleanup — current
 
 Baseline remains `673e4f0c2e435920188da629744a52196f589e41`. The initial cleanup
