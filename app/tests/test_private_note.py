@@ -32,7 +32,10 @@ class PrivateNoteTests(unittest.TestCase):
         self.assertEqual(self.lab.value()['engine'], template.value()['engine'])
         self.assertNotEqual(self.lab.value()['identity']['id'], template.value()['identity']['id'])
         for p in (ROOT / 'learning_lab/collections/packs').glob('*.json'):
-            self.assertNotEqual(self.lab.value()['identity']['id'], load_portable(p.read_bytes()).value()['identity']['id'])
+            bundled = load_portable(p.read_bytes())
+            if bundled.identity.scenario_id == self.lab.identity.scenario_id:
+                self.assertEqual(bundled.original_bytes, self.lab.original_bytes)
+                self.assertEqual(bundled.pin, self.lab.pin)
         s = self.session()
         self.assertEqual(s.attempt['applied']['filesystem'][TARGET]['mode'], '0777')
         s.execute('cat notes.txt')

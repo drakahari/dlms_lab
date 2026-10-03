@@ -7,7 +7,7 @@ from .storage import Store, atomic_write
 from .domain.validation import decode, ValidationError
 from .portable import PackRepository, portable_from_legacy
 from .pinned_storage import PinnedStore
-from .collections import linux_fundamentals
+from .collections import load_collections
 from .library_state import LibraryState
 from .authoring import AuthoringBridge
 
@@ -22,13 +22,15 @@ class CatalogBridge(QObject):
         self.repository = PackRepository(self.data_root / 'portable' / 'packs')
         self.portables = {}
         try:
-            self.collection = linux_fundamentals()
+            self.collections = load_collections()
             collection_warning = ''
         except (OSError, ValueError) as exc:
-            self.collection = []
-            collection_warning = 'Linux Fundamentals unavailable: ' + str(exc)
+            self.collections = []
+            collection_warning = 'Built-in collections unavailable: ' + str(exc)
+        self.collection = next((c['entries'] for c in self.collections if c['id']=='fundamentals'), [])
+        self.curated = {e['scenario'].key: e for c in self.collections for e in c['entries']}
         scenarios, pack_warnings = self.repository.scan()
-        self.builtin_keys = {p['lab_id'] for p in packs} | {e['scenario'].key for e in self.collection}
+        self.builtin_keys = {p['lab_id'] for p in packs} | set(self.curated)
         self.visibility = LibraryState(self.config_root/'library-state.json', self.builtin_keys, {s.key for s in scenarios})
         # Gateway's original root is a compatibility exception. IDs have already
         # passed the strict pack validator; packs never supply filesystem paths.
@@ -111,12 +113,22 @@ class CatalogBridge(QObject):
                     'libraryState':self.visibility.state(key), 'canResume':False,
                     'hasHistory':False, 'libraryBest':'Unavailable', 'libraryStatus':'Saved attempt unavailable', 'historyCount':0, 'status':''})
         result['scenarioVersion'] = self.pack['content_version']
-        result['fundamentals'] = self.collection_rows()
-        curated = {row['labKey'] for row in result['fundamentals']}
+        result['collections'] = []
+        for collection in self.collections:
+            rows = self.collection_rows(collection['entries'])
+            counts = {mode: sum(r['progress'].get(mode)=='Completed' for r in rows) for mode in ('Learn','Challenge')}
+            result['collections'].append({**{k:v for k,v in collection.items() if k!='entries'},
+                'rows':rows, 'visibleRows':[r for r in rows if r['libraryState']=='active'],
+                'inactiveCount':sum(r['libraryState']!='active' for r in rows),
+                'total':len(rows), 'completed':counts,
+                'progressKnown':all(bool(r['progress']) for r in rows)})
+        result['fundamentals'] = next((c['rows'] for c in result['collections'] if c['id']=='fundamentals'), [])
+        unique_rows = {r['labKey']:r for c in result['collections'] for r in c['rows']}
+        curated = set(unique_rows)
         result['otherLabs'] = [row for row in result['labs'] if row['labKey'] not in curated and row['libraryState']=='active']
         result['visibleFundamentals'] = [row for row in result['fundamentals'] if row['libraryState']=='active']
         result['inactiveLabs'] = ([{**row, 'metadata':{'title':row['title']}, 'origin':'Built-in collection'}
-                                   for row in result['fundamentals'] if row['libraryState']!='active'] +
+                                   for row in unique_rows.values() if row['libraryState']!='active'] +
                                   [row for row in result['labs'] if row['labKey'] not in curated and row['libraryState']!='active'])
         result['hiddenCount'] = sum(state=='hidden' for state in self.visibility.entries.values())
         result['removedCount'] = sum(state=='removed' for state in self.visibility.entries.values())
@@ -141,9 +153,9 @@ class CatalogBridge(QObject):
         result['message'] += self.notice + self.layout_notice
         return result
 
-    def collection_rows(self):
+    def collection_rows(self, entries=None):
         rows = []
-        for order, entry in enumerate(self.collection):
+        for order, entry in enumerate(self.collection if entries is None else entries):
             scenario = entry['scenario']; key = scenario.key
             conflict = any((s.identity.scenario_id, s.identity.content_version) ==
                            (scenario.identity.scenario_id, scenario.identity.content_version)
@@ -156,7 +168,7 @@ class CatalogBridge(QObject):
             status = ' · '.join(mode + ': ' + state for mode, state in progress.items()) if progress else ''
             started = prior or (progress and any(v != 'Not started' for v in progress.values()))
             rows.append({'labKey': key, 'title': scenario.value()['metadata']['title'],
-                         'skill': entry['skill'], 'status': status,
+                         'skill': entry['skill'], 'status': status, 'progress':progress or {},
                          'action': 'Continue' if started else 'Start', 'available': not conflict,
                          'problem': 'A different pack with this ID/version is installed. It is preserved below; this collection version cannot replace it.' if conflict else '',
                          'version': scenario.identity.content_version, 'order':order, 'builtIn':True,
@@ -246,13 +258,15 @@ class CatalogBridge(QObject):
                 raise ValidationError('Unsupported Library action.')
             if state == 'removed' and confirmed is not True:
                 raise ValidationError('Confirm removal first. Saved attempts and exact pack versions will be retained.')
+            if state == 'removed' and key in self.builtin_keys:
+                raise ValidationError('Built-in resources can be hidden, not newly removed. Existing removed-import choices are preserved until restored.')
             entries = dict(self.visibility.entries)
             if state == 'active': entries.pop(key, None)
             else: entries[key] = state
             self.visibility.save(entries)
             if state != 'active' and self.labs.get(key) is self.active:
                 self.active.navigate(0)
-            self.transfer_message = ('Restored to Library. ' if state=='active' else 'Hidden from Library. ' if state=='hidden' else 'Removed from active Library. ') + 'Attempts, drafts, history and pack versions are retained.'
+            self.transfer_message = ('Restored to Library. ' if state=='active' else 'Hidden from Library. ' if state=='hidden' else 'Removed from active Library. ') + 'This choice applies across every collection appearance of this exact lab. Attempts, drafts, history and pack versions are retained.'
             self.changed.emit(); return True
         except (OSError, ValueError) as exc:
             self.transfer_message = 'Library choice was not changed: '+str(exc)
@@ -451,7 +465,7 @@ class CatalogBridge(QObject):
             if lab_id in self.portables:
                 self._add_portable(self.portables[lab_id])
         if lab_id not in self.labs:
-            entry = next((e for e in self.collection if e['scenario'].key == lab_id), None)
+            entry = self.curated.get(lab_id)
             if entry is None or (self.session.attempt['draft'] and not confirmed):
                 return False
             try:

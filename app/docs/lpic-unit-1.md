@@ -1,7 +1,10 @@
 # Unit 1: Finding files and controlling access
 
 Five short teaching labs and one transfer assessment, approximately 30–40 minutes.
-All six labs are available; labs 4 and 5 use the existing import workflow.
+All six labs are built into **LPIC-1 Foundations: Files & Permissions** in Library.
+Linux Fundamentals keeps its original six labs and order. Shared labs use the
+same attempts and separate Learn/Challenge results in either collection.
+See [collection delivery and disposable review](lpic-collection.md).
 This is original introductory practice, not an
 LPI product, endorsement, complete exam course or claim of full objective coverage.
 
@@ -15,21 +18,22 @@ Exam 102 objective coverage. No supplied LPIC curriculum guide was available.
 ## Suggested sequence
 
 Prerequisites are recommendations, not locks. All paths below are relative to
-`app/examples/`. The existing Library collection remains unchanged.
+`app/examples/` for optional export/import comparisons. No import is needed
+to start these labs from the new built-in collection.
 
 | # | Lab and availability | Outcome and relationship to earlier practice |
 | --- | --- | --- |
 | 1 | **Find your way around Linux** — built in; `linux-file-navigation.lab.json` | No prerequisite. Use pwd/ls/cd/cat; distinguish recorded actions from the final working directory. Introductory 103.1/103.3 preparation. |
 | 2 | **Restore access to your file** — built in; `linux-file-permissions.lab.json` | After 1. Add missing owner-read access while retaining private owner read/write; verify with a read. Partial 104.5, ordinary file permissions. |
 | 3 | **Why can’t I enter this directory?** — built in; `linux-directory-permissions.lab.json` | After 1–2. Distinguish names (directory read) from traversal (execute/search); restore 0400 to 0500. Partial 104.5, directories. |
-| 4 | **Make an overexposed note private** — available by import; `linux-private-note.lab.json` | After 2. Reading already works at 0777. Remove unnecessary execute and group/other access, require 0600, then verify reading. Partial 104.5: reducing excessive access. |
-| 5 | **Read a known file without listing its folder** — available by import; `linux-search-only-directory.lab.json` | After 3. Search-only 0100 permits entry and a known readable child, while name listing stays denied. Partial 104.5: search without listing; denied listing is demonstrated, not separately graded. |
+| 4 | **Make an overexposed note private** — built in; `linux-private-note.lab.json` | After 2. Reading already works at 0777. Remove unnecessary execute and group/other access, require 0600, then verify reading. Partial 104.5: reducing excessive access. |
+| 5 | **Read a known file without listing its folder** — built in; `linux-search-only-directory.lab.json` | After 3. Search-only 0100 permits entry and a known readable child, while name listing stays denied. Partial 104.5: search without listing; denied listing is demonstrated, not separately graded. |
 | 6 | **Read the fieldwork handover** — built in; `linux-archive-access.lab.json` | After 1–3; useful again after 5. Transfer assessment in another directory tree. Reinforces directory access; it is not an additional objective or new coverage. |
 
-The service labs remain available for a later services unit. This batch does not
-add a separate LPIC Library collection or change the six Fundamentals entries.
+The service labs remain in Linux Fundamentals. Collection membership is
+organization, not another copy of a scenario or a separate progress record.
 
-## Import and play lab 4 in a disposable profile
+## Play lab 4 in a disposable profile (optional import comparison)
 
 From a terminal in the existing graphical session:
 
@@ -40,10 +44,10 @@ printf 'Disposable profile: %s\n' "$review_profile"
 python3 -B -m learning_lab --data-dir "$review_profile/data" --config-dir "$review_profile/config"
 ```
 
-Keep the printed path for reopening. In Library, choose **Import scenario…** and
-select `/home/drak/Documents/dlms_lab/app/examples/linux-private-note.lab.json`.
-Its Library title is **Make an overexposed note private**. This uses the existing
-import workflow; it does not add an entry to the built-in collection.
+Keep the printed path for reopening. In Library, expand **LPIC-1 Foundations:
+Files & Permissions** and start **Make an overexposed note private**. Optionally
+import `/home/drak/Documents/dlms_lab/app/examples/linux-private-note.lab.json`
+to confirm that an exact existing pack does not create a second entry or reset progress.
 
 1. In Learn, optionally run `cat notes.txt` immediately: it succeeds, but submission
    earns only the read-verification points. Reading is not proof of privacy.
@@ -65,17 +69,17 @@ Changing permissions after verification clears that evidence, even if a later
 change restores 0600. Read again. A no-op chmod does not clear evidence. Nothing
 requires an exact transcript. Hints are recorded without a hidden score penalty.
 
-## Import and play lab 5 in a disposable profile
+## Play lab 5 in a disposable profile (optional import comparison)
 
 Use the launch command above with a **new** temporary directory, or reuse that
-disposable profile to check both pilots together. In Library choose **Import
-scenario…** and select:
+disposable profile to check both pilots together. Start the fifth entry in
+the LPIC collection. For an optional exact-pack import comparison, select:
 
 `/home/drak/Documents/dlms_lab/app/examples/linux-search-only-directory.lab.json`
 
 Library title: **Read a known file without listing its folder**. Identity:
 `linux-search-only-directory`, content version `1.0.0`, permissions contract 3,
-behavior `linux-permissions-2`. This is an imported lab, not a new collection entry.
+behavior `linux-permissions-2`. Bundled and imported copies share this exact identity.
 
 1. Learn starts in `/home/learner`. Inspect with `ls -l .`: Lookup is `d---------`
    (0000). `ls Lookup`, `cd Lookup` and `cat Lookup/message.txt` initially fail.
@@ -332,9 +336,10 @@ profile, credentials, recovery copy, environment or generated evidence is includ
 excluded local files remain in place. The known baseline four-Property shutdown
 warning remains documented above, with no suppression or application change.
 
-## Proposed next cohesive batch — not implemented
+## Collection batch — implemented for review
 
-**Deliver Unit 1 as a discoverable Library collection**, using these six exact
+The previously proposed batch is now implemented; see [verification](lpic-collection.md).
+The scope was **deliver Unit 1 as a discoverable Library collection**, using these six exact
 scenario identities rather than creating more near-duplicate permissions labs.
 
 | Scope | Work to deliver together |

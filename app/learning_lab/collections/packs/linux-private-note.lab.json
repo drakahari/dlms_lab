@@ -1,0 +1,154 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-private-note",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 3,
+    "supported_behavior_versions": [
+      "linux-permissions-2"
+    ],
+    "required_capabilities": [
+      "activity-evidence",
+      "directory-name-listing",
+      "directory-permissions",
+      "file-navigation",
+      "mutable-permissions",
+      "traversal-evidence",
+      "virtual-filesystem"
+    ]
+  },
+  "metadata": {
+    "title": "Make an overexposed note private",
+    "topic": "Linux file permissions · least privilege",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Your personal notes are readable, but their permissions grant too much access. Leave only owner read/write access, then read the note to verify the final repair. You own /home/learner/notes.txt and start in /home/learner.",
+    "constraints": [
+      "The final note must allow its owner to read and write, with no execute permission and no group or other access (0600). Being able to read it does not establish that it is private.",
+      "Grading checks the final mode and a successful read of notes.txt after the last actual permission change. Inspection and an initial read are optional for credit; no fixed command sequence is required.",
+      "Only notes.txt permissions can change. Ownership, content and all other virtual objects are fixed. Parents are accessible. Permission changes apply immediately; there is no Apply step.",
+      "Everything is simulated. Command reference documents the limited syntax. No host files, shell, processes or network are used. No user switching, ownership changes, ACLs, file execution or content writing are supported."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "private-mode",
+      "label": "Final state: private owner read/write access only",
+      "points": 70,
+      "predicate": "mode_equals",
+      "params": {
+        "path": "/home/learner/notes.txt",
+        "mode": "0600"
+      }
+    },
+    {
+      "id": "verified-read",
+      "label": "Verification: read the file after the last permission change",
+      "points": 30,
+      "predicate": "read_verified",
+      "params": {
+        "path": "/home/learner/notes.txt"
+      }
+    }
+  ],
+  "hints": [
+    "A successful read answers “Can I read this?” It does not answer “Who else has access?” Inspect the owner, group and other triplets separately.",
+    "This note needs owner read and write, not execute. Group and other need no access. Adding an owner bit cannot remove the unnecessary bits already set.",
+    "Use chmod 600 notes.txt: 6 is read (4) plus write (2), followed by zero group and other access. Then cat notes.txt to verify after the final change. 644 still grants group and other read access."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/root": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700",
+        "content": ""
+      },
+      "/etc/motd": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "Learning Lab: a small simulated filesystem.\n"
+      },
+      "/root/private.txt": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0600",
+        "content": "This virtual file is reserved for the simulated root user.\n"
+      },
+      "/home/learner/notes.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0777",
+        "content": "Personal learning notes\nReading works, but access should be limited to the owner.\nThese are ordinary text notes, not a program to execute.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "permission_targets": [
+      "/home/learner/notes.txt"
+    ],
+    "lesson": {
+      "goal": "Make your notes private: owner read/write only, then verify by reading.",
+      "steps": [
+        {
+          "action": "inspect",
+          "path": "/home/learner/notes.txt",
+          "explanation": "Read the triplets after the file marker: owner, group, other. Each rwx grants read, write and execute. You can already read the note; that does not make its permissions appropriate.",
+          "expected": "The parent listing shows -rwxrwxrwx for learner-owned notes.txt: all three classes have every ordinary permission."
+        },
+        {
+          "action": "repair",
+          "path": "/home/learner/notes.txt",
+          "explanation": "Keep owner read/write (4 + 2 = 6). Remove unnecessary execute and all group/other bits. Numeric 600 sets the whole mode; u+r only adds a bit and cannot make an overexposed file private.",
+          "expected": "Mode 0600, shown as -rw-------. Only owner read/write remains. Reading must still be verified after this change."
+        },
+        {
+          "action": "read",
+          "path": "/home/learner/notes.txt",
+          "explanation": "Read the note after the final permission change. This supplies verification evidence; the separate final-mode check proves the stated privacy requirement. Changing permissions again requires a new read.",
+          "expected": "The text begins “Personal learning notes”. Submit when both objectives are met."
+        }
+      ]
+    }
+  }
+}

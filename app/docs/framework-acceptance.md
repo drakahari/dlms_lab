@@ -1,3 +1,24 @@
+## LPIC Foundations collection — 3 October 2026
+
+Implemented for one consolidated owner review against `9e7403eb2ea5e2e33853febdaf5b34ce49729e7b`.
+See [collection delivery](lpic-collection.md) for exact resource identities,
+compatibility details, changed files and the short disposable acceptance check.
+
+Verified: 275 regressions; six relevant offscreen UI suites at 100/150/200%;
+actual isolated wheel build/install, pip check, packaged resources, both collections,
+all six LPIC entries, both pilots completing and fresh-process resume outside the
+checkout. Six installed unit packs equal accepted source bytes. Recovery snapshot
+of all 202 baseline tracked files was reverified. Existing engine/pack bytes and
+Fundamentals order/content remain unchanged. No migration or backup-format change.
+
+Owner-reported checks passed: finding the new collection, continuing the same
+saved attempt between collections, and launching the bundled private-note lab
+without importing. These reports establish those specific workflows. Wayland
+access from the agent is denied (errno 1); comprehensive native visuals, physical
+keyboard, accessibility, native dialogs and exhaustive scaling remain outstanding.
+The known four-Property shutdown warning is retained without suppression.
+Installed app and real profile were untouched during development and commit review.
+
 # Framework acceptance — checkpoints 2 onward
 
 ## In-app permissions authoring — current

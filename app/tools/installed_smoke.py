@@ -17,7 +17,7 @@ def phase(root, resume, require_icon):
     import learning_lab
     from PySide6.QtTest import QTest
     from learning_lab.__main__ import build_application
-    from learning_lab.collections import linux_fundamentals
+    from learning_lab.collections import load_collections
     package = Path(learning_lab.__file__).resolve().parent
     if sys.prefix == sys.base_prefix or not package.is_relative_to(Path(sys.prefix).resolve()):
         raise RuntimeError('Smoke test requires an installed package inside this venv.')
@@ -33,7 +33,13 @@ def phase(root, resume, require_icon):
     assert 'untrusted' in resource('guide.txt')
     assert 'contract 3' in resource('prompt.txt')
     if require_icon:assert (package/'icons/omarchy-learning-lab.svg').is_file()
-    entries = linux_fundamentals(); assert len(entries) == 6
+    collections = load_collections(); assert len(collections) == 2
+    unit = next(c for c in collections if c['id']=='lpic-foundations')
+    assert [e['scenario'].identity.scenario_id for e in unit['entries']] == [
+        'linux-file-navigation', 'linux-file-permissions', 'linux-directory-permissions',
+        'linux-private-note', 'linux-search-only-directory', 'linux-archive-access']
+    entries = list({e['scenario'].key:e for c in collections for e in c['entries']}.values())
+    assert len(entries) == 8
     app, engine, bridge, lock = build_application(root/'data', root/'config')
     window = engine.rootObjects()[0]
     try:
@@ -51,14 +57,21 @@ def phase(root, resume, require_icon):
                 bridge.execute('pwd')
                 assert bridge.session.attempt['console']
                 bridge.setCommandDraft('help'); bridge.flush()
-            assert len(bridge.labs) == 9
+            assert len(bridge.labs) == 11
+            # Both newly bundled pilots complete through the installed engine.
+            for entry in unit['entries'][3:5]:
+                assert bridge.selectLab(entry['scenario'].key, True)
+                for _ in range(4):
+                    if bridge.session.engine.grade()['complete']:break
+                    bridge.execute(bridge.view['guide']['command'])
+                bridge.submit(); assert bridge.view['grade']['score']==100
             source=root/'authored.lab.json';author=bridge.authoring
             assert author.prepareStarter(str(source)) and author.confirmStarter(True)
             value=json.loads(source.read_text());value['metadata']['title']='Installed authoring proof'
             value['domain']['filesystem']['/home/learner/notes.txt']['content']='Original disposable authored note.\n'
             source.write_text(json.dumps(value))
             before={str(p):p.read_bytes() for folder in (root/'data',root/'config') for p in folder.rglob('*') if p.is_file()}
-            assert author.validateLab(str(source)) and len(bridge.labs)==9
+            assert author.validateLab(str(source)) and len(bridge.labs)==11
             assert before=={str(p):p.read_bytes() for folder in (root/'data',root/'config') for p in folder.rglob('*') if p.is_file()}
             assert author.importValidated()
             scenario=load_portable(source.read_bytes());assert bridge.selectLab(scenario.key)
@@ -73,7 +86,7 @@ def phase(root, resume, require_icon):
                 'attempts': {k: lab.session.attempt for k, lab in bridge.labs.items()}}))
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
                 'package': str(package), 'platform': app.platformName(),
-                'collection_packs': len(entries), 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
+                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
         window.close(); app.processEvents(); lock.unlock()
 

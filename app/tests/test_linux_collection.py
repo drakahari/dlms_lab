@@ -121,7 +121,7 @@ class CollectionTests(unittest.TestCase):
         again=self.build();self.assertEqual(again.view['fundamentals'][2]['status'],'')
 
     def test_unavailable_collection_or_install_error_preserves_library(self):
-        with patch('learning_lab.catalog.linux_fundamentals',side_effect=ValueError('invalid resource')):
+        with patch('learning_lab.catalog.load_collections',side_effect=ValueError('invalid resource')):
             b=self.build();self.assertEqual(b.view['fundamentals'],[]);self.assertEqual(len(b.view['otherLabs']),3)
             self.assertIn('unavailable',b.notice)
         b=self.build();key=b.view['fundamentals'][0]['labKey']

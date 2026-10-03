@@ -1,0 +1,178 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-search-only-directory",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 3,
+    "supported_behavior_versions": [
+      "linux-permissions-2"
+    ],
+    "required_capabilities": [
+      "activity-evidence",
+      "directory-name-listing",
+      "directory-permissions",
+      "file-navigation",
+      "mutable-permissions",
+      "traversal-evidence",
+      "virtual-filesystem"
+    ]
+  },
+  "metadata": {
+    "title": "Read a known file without listing its folder",
+    "topic": "Linux directories · search without name listing",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "You know the file /home/learner/Lookup/message.txt exists. Enable only owner search/traversal on Lookup, enter the directory and read that file. Keep directory name listing and writing disabled, with no group or other access. The file is already readable and ancestors are accessible.",
+    "constraints": [
+      "Lookup must finish at 0100: owner search/execute only, no directory read or write and no group/other access. Directory x permits traversal and lookup of a known child; r permits listing names.",
+      "Grading checks the final directory mode (70 points), successful entry (15) and reading message.txt (15) after the last actual permission change. Equivalent supported paths and either verification order count. No initial mistake is required.",
+      "Listing names must remain denied at the target mode. This behavior is tested and implied by the exact-mode objective; a failed listing is not separately graded evidence.",
+      "Only Lookup permissions can change. The child has fixed mode 0600. Ownership, ancestors and content are fixed. Permission changes apply immediately.",
+      "No listing is not a confidentiality guarantee: someone with search permission and a known or guessed name can access a child if its own permissions allow it. File access permissions matter too.",
+      "Virtual-only commands: no host filesystem, shell, processes or network. No links, ACLs, user switching or full Linux shell. Command reference documents supported syntax; above-root traversal is rejected."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "search-only",
+      "label": "Final state: Lookup permits owner search only",
+      "points": 70,
+      "predicate": "mode_equals",
+      "params": {
+        "path": "/home/learner/Lookup",
+        "mode": "0100"
+      }
+    },
+    {
+      "id": "entered-directory",
+      "label": "Action evidence: enter Lookup after the last mode change",
+      "points": 15,
+      "predicate": "traversal_verified",
+      "params": {
+        "path": "/home/learner/Lookup"
+      }
+    },
+    {
+      "id": "read-note",
+      "label": "Action evidence: read message.txt after the last mode change",
+      "points": 15,
+      "predicate": "read_verified",
+      "params": {
+        "path": "/home/learner/Lookup/message.txt"
+      }
+    }
+  ],
+  "hints": [
+    "Directory read lists names. Directory search (x) lets you traverse it and resolve a known child. You already know message.txt; listing is unnecessary.",
+    "Add only owner search. Read would allow unwanted listing; write and group/other permissions are unnecessary. The file already allows its owner to read.",
+    "From /home/learner, chmod u+x Lookup or chmod 100 Lookup sets the required mode. Enter Lookup, try ls . to observe denial, and cat message.txt. The failed listing is optional for credit; entry and reading must follow the final mode change."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/root": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700",
+        "content": ""
+      },
+      "/etc/motd": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "Learning Lab: a small simulated filesystem.\n"
+      },
+      "/root/private.txt": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0600",
+        "content": "This virtual file is reserved for the simulated root user.\n"
+      },
+      "/home/learner/Lookup": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0000",
+        "content": ""
+      },
+      "/home/learner/Lookup/message.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0600",
+        "content": "Known-file access works.\nSearch permission lets you reach this file without listing its folder.\nA hidden listing is not a confidentiality guarantee: file permissions still control reading.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "permission_targets": [
+      "/home/learner/Lookup"
+    ],
+    "lesson": {
+      "goal": "Enter Lookup and read its known message, keeping name listing disabled.",
+      "steps": [
+        {
+          "action": "inspect",
+          "path": "/home/learner/Lookup",
+          "explanation": "Inspect Lookup from its accessible parent. Directory r lists names; x permits search/traversal, not running the folder as a program. Neither is currently allowed.",
+          "expected": "The parent listing shows d--------- for learner-owned Lookup."
+        },
+        {
+          "action": "repair",
+          "path": "/home/learner/Lookup",
+          "explanation": "Add owner search only. You know the child name, so directory read is unnecessary. Numeric 100 also sets search only; 400 cannot traverse and 500 permits unwanted listing.",
+          "expected": "Lookup becomes 0100 (d--x------). The child remains readable at 0600."
+        },
+        {
+          "action": "enter",
+          "path": "/home/learner/Lookup",
+          "explanation": "Enter Lookup to record traversal. Search permits entry without listing names. It also lets you resolve the known child path, but the child still needs its own read permission.",
+          "expected": "The prompt becomes /home/learner/Lookup. Entry works even though listing names is denied."
+        },
+        {
+          "action": "read",
+          "path": "/home/learner/Lookup/message.txt",
+          "explanation": "Try ls . to see listing denied, then read the known message. Knowing or guessing a name can permit access when directory search and file read allow it; hidden listings do not guarantee confidentiality.",
+          "expected": "The text begins Known-file access works. Submit after entry and reading; a failed listing is optional and earns no points."
+        }
+      ]
+    }
+  }
+}

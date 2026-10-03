@@ -17,7 +17,10 @@ def validate(value, builtins, imported):
     for key, state in entries.items():
         require(isinstance(key, str) and len(key) <= 80, 'Invalid Library identity.')
         if key in builtins:
-            require(state == 'hidden', 'Built-in resources can only be hidden, never removed.')
+            # A previously removed import may now be bundled. Preserve its exact
+            # stored choice without rewriting settings or reactivating the lab.
+            require(state == 'hidden' or (state == 'removed' and key in imported),
+                    'Removed bundled entry needs its exact previously installed pack.')
         else:
             require(key in imported and state == 'removed', 'Removed Library entry needs its exact installed pack.')
     return dict(entries)

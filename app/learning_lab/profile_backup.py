@@ -109,8 +109,8 @@ def validate_contents(files):
                 'Unsupported profile settings version.')
         if name == 'library-state.json':
             from .library_state import validate as validate_library
-            from .collections import linux_fundamentals
-            builtin_keys = set(packs) | {e['scenario'].key for e in linux_fundamentals()}
+            from .collections import load_collections
+            builtin_keys = set(packs) | {e['scenario'].key for c in load_collections() for e in c['entries']}
             validate_library(value, builtin_keys, {'pack:'+digest for digest in scenarios})
         elif name == 'preferences.json':
             keys(value, {'schema_version', 'fallback_theme'}, 'preferences')

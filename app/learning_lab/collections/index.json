@@ -1,0 +1,20 @@
+{
+  "collections": [
+    {
+      "id": "fundamentals",
+      "file": "linux-fundamentals.json",
+      "purpose": "A suggested path through six short labs.",
+      "sequence": "Start anywhere; no completion prerequisites.",
+      "prerequisites": "No prior Linux experience required.",
+      "coverage": "Original simulations of selected Linux navigation, permissions and service tasks."
+    },
+    {
+      "id": "lpic-foundations",
+      "file": "lpic-foundations.json",
+      "purpose": "Build confidence finding files and controlling ordinary file and directory access.",
+      "sequence": "Recommended order: navigation, file access, directory access, private files, search-only access, then handover practice. Start any lab; nothing is locked.",
+      "prerequisites": "Beginner friendly. Start with navigation if paths are new to you; the final handover reinforces earlier directory skills.",
+      "coverage": "LPIC-1 objectives v5.0: introductory shell/path practice (103.1/103.3 preparation) and partial 104.5 permissions coverage. Not full LPIC-1 preparation: no shell processing, ownership changes, special bits or umask. Original content; no LPI affiliation."
+    }
+  ]
+}

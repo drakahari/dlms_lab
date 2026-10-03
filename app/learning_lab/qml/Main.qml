@@ -25,6 +25,7 @@ ApplicationWindow {
     property var resumeChoices: []
     property int resumeIndex: -1
     property bool showHidden: false
+    property var collapsedCollections: ({})
     property string restoreArchive: ""
     property string exportAttemptId: ""
     property var returnFocus: null
@@ -113,32 +114,67 @@ ApplicationWindow {
                     }
                     LabText { text: "Restorable personal backup, separate from scenario/history exports. Backup briefly pauses actions to save consistently."; color: colors.muted; Layout.fillWidth: true }
                 }
-                LabText { visible: !window.showHidden; text: "Linux Fundamentals"; objectName: "fundamentalsHeading"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
-                LabText { visible: !window.showHidden; text: v.fundamentals.length ? "A suggested path through six short labs. Start anywhere; no completion prerequisites." + (v.hiddenCount ? " Hidden entries are available with Show hidden / removed." : "") : "This collection is unavailable. Existing labs remain below."; color: colors.muted; Layout.fillWidth: true }
+                LabText { visible: !window.showHidden; text: "Shared labs use the same progress in every collection. Hiding or restoring a lab applies everywhere it appears. Use Show hidden / removed to find inactive entries."; color: colors.muted; Layout.fillWidth: true }
+                LabText { visible: !window.showHidden && !v.collections.length; text: "Built-in collections are unavailable. Existing labs remain below."; Layout.fillWidth: true }
                 Repeater {
-                    model: window.showHidden ? [] : v.visibleFundamentals
-                    delegate: Rectangle {
+                    model: window.showHidden ? [] : v.collections
+                    delegate: ColumnLayout {
+                        id: section
                         required property var modelData
-                        required property int index
-                        objectName: "fundamentalsCard-"+modelData.order
-                        Layout.fillWidth: true; implicitHeight: collectionCard.implicitHeight+2*library.contentInset
-                        color: colors.surface; radius: 8
-                        RowLayout {
-                            id: collectionCard; anchors.fill: parent; anchors.margins: library.contentInset; spacing: 12
-                            ColumnLayout {
-                                Layout.fillWidth: true; spacing: 4
-                                LabText { text: (modelData.order+1)+". "+modelData.title; font.bold: true; Layout.fillWidth: true }
-                                LabText { text: modelData.skill; color: colors.muted; Layout.fillWidth: true }
-                                LabText { text: modelData.status; visible: text.length>0; Layout.fillWidth: true }
-                                LabText { text: modelData.problem; visible: text.length>0; color: colors.danger; Layout.fillWidth: true }
-                            }
-                            LabButton { objectName: "start-fundamentals-"+modelData.order; text: modelData.action; enabled: modelData.available; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent); onClicked: window.openLab(modelData.labKey,this) }
-                            LibraryActions {
-                                objectName: "actions-fundamentals-"+modelData.order
-                                entry: modelData; readOnly: v.libraryChoicesReadOnly; hasHistory: modelData.hasHistory; viewport: library
-                                onChoose: function(action) { window.libraryAction(modelData,action,this) }
+                        property var info: modelData
+                        property bool expanded: !window.collapsedCollections[info.id]
+                        Layout.fillWidth: true; spacing: 10
+                        LabButton {
+                            objectName: section.info.id+"Heading"
+                            Layout.fillWidth: true
+                            implicitHeight: Math.max(48, contentItem.implicitHeight+20)
+                            Accessible.name: section.info.title + (section.expanded ? ", expanded" : ", collapsed")
+                            text: section.info.title
+                            contentItem: LabText { text: (section.expanded ? "▾ " : "▸ ")+section.info.title; font.pixelSize: 22; font.bold: true; verticalAlignment: Text.AlignVCenter }
+                            onActiveFocusChanged: if(activeFocus) library.ensureVisible(this)
+                            onClicked: {
+                                var states=Object.assign({},window.collapsedCollections)
+                                states[section.info.id]=section.expanded
+                                window.collapsedCollections=states
                             }
                         }
+                        LabText {
+                            Layout.fillWidth: true; color: colors.muted
+                            text: (section.info.progressKnown ? "Learn: "+section.info.completed.Learn+"/"+section.info.total+" completed · Challenge: "+section.info.completed.Challenge+"/"+section.info.total+" completed" : "Completion totals unavailable: some saved progress cannot be read reliably.") + (section.info.inactiveCount ? " · "+section.info.inactiveCount+" hidden / removed — use Show hidden / removed" : "")
+                        }
+                        ColumnLayout {
+                            Layout.fillWidth: true; spacing: 6; visible: section.expanded
+                            LabText { text: section.info.purpose+" "+section.info.sequence; Layout.fillWidth: true }
+                            LabText { text: "Suggested preparation: "+section.info.prerequisites; color: colors.muted; Layout.fillWidth: true }
+                            LabText { text: section.info.coverage; color: colors.muted; Layout.fillWidth: true }
+                        }
+                        Repeater {
+                            model: section.expanded ? section.info.visibleRows : []
+                            delegate: Rectangle {
+                                required property var modelData
+                                required property int index
+                                objectName: section.info.id+"Card-"+modelData.order
+                                Layout.fillWidth: true; implicitHeight: collectionCard.implicitHeight+2*library.contentInset
+                                color: colors.surface; radius: 8
+                                RowLayout {
+                                    id: collectionCard; anchors.fill: parent; anchors.margins: library.contentInset; spacing: 12
+                                    ColumnLayout {
+                                        Layout.fillWidth: true; spacing: 4
+                                        LabText { text: (modelData.order+1)+". "+modelData.title; font.bold: true; Layout.fillWidth: true }
+                                        LabText { text: modelData.skill; color: colors.muted; Layout.fillWidth: true }
+                                        LabText { text: modelData.status; visible: text.length>0; Layout.fillWidth: true }
+                                        LabText { text: modelData.problem; visible: text.length>0; color: colors.danger; Layout.fillWidth: true }
+                                    }
+                                    LabButton { objectName: "start-"+section.info.id+"-"+modelData.order; text: modelData.action; enabled: modelData.available; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent); onClicked: window.openLab(modelData.labKey,this) }
+                                    LibraryActions {
+                                        objectName: "actions-"+section.info.id+"-"+modelData.order
+                                        entry: modelData; readOnly: v.libraryChoicesReadOnly; hasHistory: modelData.hasHistory; viewport: library
+                                        onChoose: function(action) { window.libraryAction(modelData,action,this) }
+                                    }
+                                }
+                            }
+                        }
+                        Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: colors.muted; opacity: 0.4 }
                     }
                 }
                 LabText { visible: !window.showHidden; text: "Networking and other scenarios"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }

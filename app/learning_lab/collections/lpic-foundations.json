@@ -1,0 +1,29 @@
+{
+  "title": "LPIC-1 Foundations: Files & Permissions",
+  "items": [
+    {
+      "file": "linux-file-navigation.lab.json",
+      "skill": "Find your location, navigate paths, and read a known file."
+    },
+    {
+      "file": "linux-file-permissions.lab.json",
+      "skill": "Restore missing owner-read access while keeping your file private."
+    },
+    {
+      "file": "linux-directory-permissions.lab.json",
+      "skill": "Distinguish listing names from entering a directory."
+    },
+    {
+      "file": "linux-private-note.lab.json",
+      "skill": "Remove excessive file permissions; reading alone does not prove privacy."
+    },
+    {
+      "file": "linux-search-only-directory.lab.json",
+      "skill": "Reach a known child while keeping directory name listing disabled."
+    },
+    {
+      "file": "linux-archive-access.lab.json",
+      "skill": "Transfer practice: reuse directory-access skills in a new handover task."
+    }
+  ]
+}
