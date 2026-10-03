@@ -1,0 +1,141 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-prepare-workspace",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 4,
+    "supported_behavior_versions": [
+      "linux-file-management-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-file-management"
+    ]
+  },
+  "metadata": {
+    "title": "Prepare a workspace",
+    "topic": "Linux file management",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Create /home/learner/Workshop and its drafts subdirectory. Finish inside Workshop. Both directories must exist; commands and order are your choice.",
+    "constraints": [
+      "All paths and files are virtual. Commands act immediately; there is no Apply step and no host access.",
+      "Use only the syntax in Command reference. No quotes, wildcards, shell expansion, pipes, recursion, links, archives, or unsupported options.",
+      "Relative and absolute paths are equivalent. The final state and explicitly named activity evidence earn credit; no exact transcript is required.",
+      "File-management commands may change only descendants of /home/learner. Other paths and mutation-root nodes are pinned.",
+      "Any actual filesystem change clears cat/find verification. Read or discover the final result again. Skipped no-clobber commands do not clear evidence."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "workspace",
+      "label": "Final state: Workshop is a directory",
+      "points": 40,
+      "predicate": "node_exists",
+      "params": {
+        "path": "/home/learner/Workshop",
+        "kind": "directory"
+      }
+    },
+    {
+      "id": "drafts",
+      "label": "Final state: drafts is a directory",
+      "points": 40,
+      "predicate": "node_exists",
+      "params": {
+        "path": "/home/learner/Workshop/drafts",
+        "kind": "directory"
+      }
+    },
+    {
+      "id": "cwd",
+      "label": "Final state: finish inside Workshop",
+      "points": 20,
+      "predicate": "cwd_equals",
+      "params": {
+        "path": "/home/learner/Workshop"
+      }
+    }
+  ],
+  "hints": [
+    "Check your location and parent directories before creating a folder.",
+    "mkdir needs an existing parent unless -p is used. You may create the whole tree in one command.",
+    "mkdir -p /home/learner/Workshop/drafts creates both folders; cd /home/learner/Workshop finishes the task."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 2,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt/reference": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      }
+    },
+    "cwd": "/home/learner",
+    "mutable_roots": [
+      "/home/learner"
+    ],
+    "lesson": {
+      "goal": "Create Workshop/drafts and finish inside Workshop.",
+      "steps": [
+        {
+          "objective": "workspace",
+          "command": "mkdir /home/learner/Workshop",
+          "explanation": "mkdir creates a folder beneath an existing parent. New folders use simulated 0755.",
+          "expected": "Workshop exists."
+        },
+        {
+          "objective": "drafts",
+          "command": "mkdir -p /home/learner/Workshop/drafts",
+          "explanation": "-p creates missing parents and accepts an existing directory; it never replaces a file.",
+          "expected": "Workshop/drafts exists."
+        },
+        {
+          "objective": "cwd",
+          "command": "cd /home/learner/Workshop",
+          "explanation": "Enter the completed workspace. An earlier visit does not satisfy the final-directory objective.",
+          "expected": "Prompt: /home/learner/Workshop"
+        }
+      ]
+    }
+  }
+}

@@ -45,7 +45,7 @@ class LpicCollectionTests(unittest.TestCase):
 
     def test_exact_resources_order_digests_and_no_initial_install(self):
         collections = load_collections()
-        self.assertEqual([c['id'] for c in collections], ['fundamentals','lpic-foundations'])
+        self.assertEqual([c['id'] for c in collections], ['fundamentals','lpic-foundations','lpic-file-management'])
         unit = collections[1]
         self.assertEqual(unit['title'], 'LPIC-1 Foundations: Files & Permissions')
         self.assertEqual([e['scenario'].identity.scenario_id for e in unit['entries']], IDS)
@@ -55,7 +55,7 @@ class LpicCollectionTests(unittest.TestCase):
             self.assertEqual(s.original_bytes, accepted.original_bytes)
             self.assertEqual(s.pin, accepted.pin)
         b = self.build(); self.assertEqual(len(b.labs),3)
-        self.assertFalse(b.repository.root.exists()); self.assertEqual(len(b.curated),8)
+        self.assertFalse(b.repository.root.exists()); self.assertEqual(len(b.curated),14)
         for c in b.view['collections']:
             self.assertEqual(c['completed'], {'Learn':0,'Challenge':0})
             self.assertEqual(len(c['rows']),6); self.assertTrue(c['progressKnown'])
@@ -67,12 +67,12 @@ class LpicCollectionTests(unittest.TestCase):
         attempt = deepcopy(b.session.attempt)
         b.selectLab(self.unit(b)['rows'][1]['labKey'])
         self.assertEqual(b.session.attempt,attempt)
-        for c in b.view['collections']: self.assertEqual(c['completed']['Learn'],1)
+        for c in b.view['collections'][:2]: self.assertEqual(c['completed']['Learn'],1)
         b.restart('Challenge'); b.execute('pwd')
         self.assertEqual(self.unit(b)['rows'][1]['status'],b.view['fundamentals'][2]['status'])
         b.execute('chmod u+r notes.txt'); b.execute('cat notes.txt'); b.submit()
         b.selectLab(b.view['fundamentals'][2]['labKey'])
-        for c in b.view['collections']: self.assertEqual(c['completed'],{'Learn':1,'Challenge':1})
+        for c in b.view['collections'][:2]: self.assertEqual(c['completed'],{'Learn':1,'Challenge':1})
         self.assertEqual(len(b.labs),4); b.restart('Learn')
         self.assertEqual(b.view['historyCount'],2)
         self.assertEqual(self.unit(b)['completed']['Learn'],1)
@@ -101,7 +101,7 @@ class LpicCollectionTests(unittest.TestCase):
         b.execute('chmod 600 notes.txt'); b.execute('cat notes.txt'); b.submit(); b.flush()
         saved=b.store.current.read_bytes()
         self.assertTrue(b.setLibraryState(key,'hidden'))
-        for c in b.view['collections']:
+        for c in b.view['collections'][:2]:
             self.assertEqual(c['inactiveCount'],1); self.assertEqual(c['total'],6)
             self.assertEqual(c['completed']['Learn'],1)
             self.assertNotIn(key,[r['labKey'] for r in c['visibleRows']])
@@ -168,13 +168,14 @@ class LpicCollectionTests(unittest.TestCase):
         self.assertEqual(restored.view['commandDraft'],'cat message.txt')
         self.assertTrue(restored.restoreAndResume(scenario.key,restored.session.attempt['id']))
         restored.execute('cat message.txt'); restored.submit(); self.assertEqual(restored.view['grade']['score'],100)
-        self.assertEqual([c['inactiveCount'] for c in restored.view['collections']],[1,2])
+        self.assertEqual([c['inactiveCount'] for c in restored.view['collections']],[1,2,0])
 
     def test_corrupt_progress_omits_totals_and_visibility_validation(self):
         b=self.build(); key=self.unit(b)['rows'][0]['labKey']; b.selectLab(key)
         b.store.current.write_bytes(b'{"schema_version":999}')
         new=self.build()
-        for c in new.view['collections']: self.assertFalse(c['progressKnown'])
+        for c in new.view['collections'][:2]: self.assertFalse(c['progressKnown'])
+        self.assertTrue(new.view['collections'][2]['progressKnown'])
         with self.assertRaises(ValidationError):
             validate({'schema_version':1,'entries':{key:'removed'}},{key},set())
         self.assertEqual(validate({'schema_version':1,'entries':{key:'removed'}},{key},{key}),{key:'removed'})

@@ -15,6 +15,14 @@
       "sequence": "Recommended order: navigation, file access, directory access, private files, search-only access, then handover practice. Start any lab; nothing is locked.",
       "prerequisites": "Beginner friendly. Start with navigation if paths are new to you; the final handover reinforces earlier directory skills.",
       "coverage": "LPIC-1 objectives v5.0: introductory shell/path practice (103.1/103.3 preparation) and partial 104.5 permissions coverage. Not full LPIC-1 preparation: no shell processing, ownership changes, special bits or umask. Original content; no LPI affiliation."
+    },
+    {
+      "id": "lpic-file-management",
+      "file": "lpic-file-management.json",
+      "purpose": "Build a working tree, preserve originals, organize files and verify a clean handover.",
+      "sequence": "Recommended: locations, workspace, copy, move/rename, discover, then final assessment. Start any lab; nothing is locked.",
+      "prerequisites": "Complete Files & Permissions or be comfortable with pwd, ls, cd, cat and directory access.",
+      "coverage": "LPIC-1 objectives v5.0: introductory 104.7 location practice and partial 103.3 file-management/discovery coverage. No wildcards, recursive operations, archives, links or full shell semantics. Original content; no LPI affiliation."
     }
   ]
 }

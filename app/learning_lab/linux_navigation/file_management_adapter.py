@@ -1,0 +1,27 @@
+"""Contract-4 runtime pin and existing terminal/session integration."""
+from ..scenario_identity import EngineVersion
+from ..session import Session, new_attempt
+from .adapter import NavigationSession, NavigationDomain
+from .file_management import FileManagementEngine, initial_state, validate_state, guide, HELP
+
+RUNTIME=EngineVersion('linux-navigation',4,'linux-file-management-1')
+
+
+class FileManagementSession(NavigationSession):
+    def __init__(self,pack,attempt=None,domain=None,mode='Learn'):
+        Session.__init__(self,pack,attempt or new_attempt(pack,mode,initial=initial_state(pack)),domain)
+
+
+class FileManagementDomain(NavigationDomain):
+    test_message='Checks finished on the final virtual tree and declared activity evidence.'
+    def session(self,attempt=None,mode='Learn'):return FileManagementSession(self.pack,attempt,self,mode)
+    def engine(self,applied):return FileManagementEngine(self.pack,applied)
+    def validate_state(self,state):return validate_state(self.pack,state)
+    def presentation(self,applied,selected):
+        return {**super().presentation(applied,selected),'terminalHelp':HELP,
+                'simulationNotice':'Simulated Linux. Bounded virtual files only; no host commands, filesystem, processes or network.'}
+    def view_state(self,session,selected,rule_index):
+        return {'hasFirewall':False,'editable':[],'devices':[],'deviceLinks':'','inputs':{},
+                'virtualFilePath':'','virtualFileApplied':'','virtualFileDraft':'','canEditVirtualFile':False,
+                'missionGoal':self.pack['domain']['lesson']['goal'],'conciseObjectives':[],
+                'guide':guide(self.pack,session.attempt['applied']) if session.attempt['mode']=='Learn' else {}}

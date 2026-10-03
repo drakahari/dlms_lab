@@ -1,0 +1,29 @@
+{
+  "title": "LPIC-1 Foundations: Organize and Find Files",
+  "items": [
+    {
+      "file": "linux-file-locations.lab.json",
+      "skill": "Locate and inspect representative configuration, log and personal files; introductory FHS practice."
+    },
+    {
+      "file": "linux-prepare-workspace.lab.json",
+      "skill": "Create a directory tree and finish in the intended workspace."
+    },
+    {
+      "file": "linux-copy-reference.lab.json",
+      "skill": "Make a content-preserving working copy using no-clobber behavior."
+    },
+    {
+      "file": "linux-organize-report.lab.json",
+      "skill": "Move and rename a regular file, preserving its contents."
+    },
+    {
+      "file": "linux-find-handover.lab.json",
+      "skill": "Use bounded find to discover a matching file, then read the discovered path."
+    },
+    {
+      "file": "linux-deliver-workspace.lab.json",
+      "skill": "Combine creation, copying, cleanup, discovery and final verification."
+    }
+  ]
+}

@@ -1,3 +1,31 @@
+## Organize and Find Files — 3 October 2026
+
+New six-lab unit implemented against `c46ad12f36d554ab79d8f45b0077ef0c638d43cb`
+after its authorized non-force push and live remote-hash verification. See
+[unit guide, owner check and consolidated evidence](lpic-unit-2.md) and the
+[contract written before implementation](file-management-contract.md).
+
+Engine checkpoint: 288 tests passed before content work. Final: 302 regressions;
+24 offscreen UI suite/scale runs at 100/150/200%; new unit 192 checks plus 8 restart
+checks per scale. Actual isolated wheel build/install and pip check passed; all six
+new labs completed in both modes and reopened outside the checkout. Existing
+baseline-created contract-1/2/3 progress reopened with saved bytes unchanged;
+older readers reject new-contract backups before activation. No storage/backup
+migration, legacy engine/pack change, QML redesign or working-installation update.
+
+Owner-reported check passed: the Unit 2 final assessment works. This report does
+not establish other native workflows. Native Wayland access remains denied;
+physical keyboard, accessibility, native dialogs and exhaustive native scaling
+remain outstanding. Current UI evidence is offscreen and synthesized. Known
+baseline shutdown warning is retained without suppression. Earlier owner approvals
+remain limited to the workflows actually reported below.
+
+Routine validation, grading, persistence, regression and instructional review are
+agent-owned. Owner testing is optional, not a standing commit gate. Request a
+targeted owner check only for a material issue that cannot otherwise be verified,
+and state the specific evidence gap. Unverified native/accessibility checks remain
+outstanding regardless of commit readiness.
+
 ## LPIC Foundations collection — 3 October 2026
 
 Implemented for one consolidated owner review against `9e7403eb2ea5e2e33853febdaf5b34ce49729e7b`.

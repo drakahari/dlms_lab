@@ -57,7 +57,7 @@ try:
         check('shared progress retained',b.view['collections'][0]['rows'][2]['status']==b.view['collections'][1]['rows'][1]['status'])
         check('pending command retained',b.view['commandDraft']=='help')
     else:
-        check('two collections',len(b.view['collections'])==2)
+        check('three collections',len(b.view['collections'])==3)
         check('no portable profile writes before start',not b.repository.root.exists())
         for size in ((800,600),(1024,768),(1280,900)):
             w.resize(*size);QTest.qWait(120)
@@ -88,7 +88,7 @@ try:
         activate('libraryNav');activate('actions-lpic-foundations-1')
         activate('actions-lpic-foundations-1Visibility')
         check('shared lab hidden once',b.view['hiddenCount']==1 and len(b.view['inactiveLabs'])==1)
-        check('hidden completion remains truthful',all(c['completed']['Learn']==1 and c['inactiveCount']==1 for c in b.view['collections']))
+        check('hidden completion remains truthful',all(c['completed']['Learn']==1 and c['inactiveCount']==1 for c in b.view['collections'][:2]))
         focus('showHiddenControl');QTest.keyClick(w,Qt.Key_Space);QTest.qWait(100);check('inactive discoverable',item('inactive-'+shared) is not None)
         activate('restore-primary-'+shared)
         activate('confirmLibraryResume')

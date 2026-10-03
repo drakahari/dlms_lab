@@ -1,0 +1,209 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-file-locations",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 1,
+    "supported_behavior_versions": [
+      "linux-navigation-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence"
+    ]
+  },
+  "metadata": {
+    "title": "What lives where?",
+    "topic": "Linux filesystem locations",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Locate and read web.conf in configuration storage, web.log in log storage, and todo.txt in your home. List the log directory and finish in /home/learner. Learn explains each location. Grading checks successful inspection at the correct paths, not a verbal explanation of their purposes.",
+    "constraints": [
+      "Read-only virtual filesystem. No file-management mutations in this introductory lab.",
+      "Successful cat at each required file and ls of /var/log are action evidence; current directory is a final-state objective. Equivalent supported paths/order count.",
+      "Use help, pwd, ls [-l] [PATH], cd [PATH], cat PATH only. No shell expansion, scripts or host actions."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "config",
+      "label": "Action: cat /etc/web.conf",
+      "points": 25,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/etc/web.conf",
+        "operation": "cat"
+      }
+    },
+    {
+      "id": "log-names",
+      "label": "Action: ls /var/log",
+      "points": 15,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/var/log",
+        "operation": "ls"
+      }
+    },
+    {
+      "id": "log",
+      "label": "Action: cat /var/log/web.log",
+      "points": 25,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/var/log/web.log",
+        "operation": "cat"
+      }
+    },
+    {
+      "id": "personal",
+      "label": "Action: cat /home/learner/todo.txt",
+      "points": 25,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/home/learner/todo.txt",
+        "operation": "cat"
+      }
+    },
+    {
+      "id": "home",
+      "label": "Final state: finish in your home",
+      "points": 10,
+      "predicate": "cwd_equals",
+      "params": {
+        "path": "/home/learner"
+      }
+    }
+  ],
+  "hints": [
+    "Use ls to inspect likely directories before reading a file. The location matters, not just the filename.",
+    "Configuration commonly belongs under /etc; changing logs under /var/log; your work under your home. This small tree is a preparation exercise, not a full FHS assessment.",
+    "Read /etc/web.conf, list /var/log and read /var/log/web.log, then read /home/learner/todo.txt and finish in /home/learner."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 1,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt/reference": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc/web.conf": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "SiteTitle=Training site\n# /etc contains system-wide configuration.\n"
+      },
+      "/var": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/var/log": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/var/log/web.log": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "2026-10-03 web: training page loaded\n# /var/log stores changing log data.\n"
+      },
+      "/home/learner/todo.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "Prepare a workspace and organize the handover.\n# Your home stores your own work.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "lesson": {
+      "goal": "Locate configuration, log and personal files, read them, then finish in your home.",
+      "steps": [
+        {
+          "objective": "config",
+          "path_style": "absolute",
+          "explanation": "System-wide configuration commonly lives in /etc. Read this small simulated setting.",
+          "expected": "SiteTitle=Training site"
+        },
+        {
+          "objective": "log-names",
+          "path_style": "absolute",
+          "explanation": "Logs are changing data; /var/log is a common location. List the directory to find the file.",
+          "expected": "/var/log/web.log"
+        },
+        {
+          "objective": "log",
+          "path_style": "absolute",
+          "explanation": "Read the log entry at its actual location. This is a simulated text log, not a journal query.",
+          "expected": "web: training page loaded"
+        },
+        {
+          "objective": "personal",
+          "path_style": "absolute",
+          "explanation": "A home directory holds personal working files. Read your task note.",
+          "expected": "Prepare a workspace and organize the handover."
+        },
+        {
+          "objective": "home",
+          "path_style": "absolute",
+          "explanation": "Return to your own working directory. The rubric checks where you finish.",
+          "expected": "/home/learner"
+        }
+      ]
+    }
+  }
+}

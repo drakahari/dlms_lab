@@ -1,0 +1,182 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-find-handover",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 4,
+    "supported_behavior_versions": [
+      "linux-file-management-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-file-management"
+    ]
+  },
+  "metadata": {
+    "title": "Find the handover",
+    "topic": "Linux file management",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Use the simulated find command to discover the regular file named handover.txt beneath Projects. Read that file after any changes. Discovery and reading are separate action objectives; finding other paths or reading an unrelated note does not earn them. Equivalent supported start paths and filter order count.",
+    "constraints": [
+      "All paths and files are virtual. Commands act immediately; there is no Apply step and no host access.",
+      "Use only the syntax in Command reference. No quotes, wildcards, shell expansion, pipes, recursion, links, archives, or unsupported options.",
+      "Relative and absolute paths are equivalent. The final state and explicitly named activity evidence earn credit; no exact transcript is required.",
+      "File-management commands may change only descendants of /home/learner. Other paths and mutation-root nodes are pinned.",
+      "Any actual filesystem change clears cat/find verification. Read or discover the final result again. Skipped no-clobber commands do not clear evidence."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "find",
+      "label": "Action: discover the handover with supported find",
+      "points": 50,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/home/learner/Projects/site/docs/handover.txt",
+        "operation": "find"
+      }
+    },
+    {
+      "id": "read",
+      "label": "Action: read the discovered handover",
+      "points": 50,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/home/learner/Projects/site/docs/handover.txt",
+        "operation": "cat"
+      }
+    }
+  ],
+  "hints": [
+    "Listing one directory does not inspect all its descendants. Try the supported discovery command.",
+    "Start find at Projects and filter by regular-file type and exact name. The filters may be in either order.",
+    "find /home/learner/Projects -name handover.txt -type f, then cat the returned path."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 2,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt/reference": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Projects": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Projects/site": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Projects/site/docs": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Projects/site/data": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Projects/other": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Projects/site/docs/handover.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "Handover: keep reference copies and check final locations.\n"
+      },
+      "/home/learner/Projects/site/data/values.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "7\n"
+      },
+      "/home/learner/Projects/other/readme.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "Different project.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "mutable_roots": [
+      "/home/learner"
+    ],
+    "lesson": {
+      "goal": "Discover handover.txt beneath Projects with find, then read it.",
+      "steps": [
+        {
+          "objective": "find",
+          "command": "find /home/learner/Projects -type f -name handover.txt",
+          "explanation": "find walks the virtual tree. -type f keeps regular files; -name uses an exact basename here, with no wildcards.",
+          "expected": "/home/learner/Projects/site/docs/handover.txt"
+        },
+        {
+          "objective": "read",
+          "command": "cat /home/learner/Projects/site/docs/handover.txt",
+          "explanation": "Use the returned absolute path to read the file. Reading alone cannot establish the find objective.",
+          "expected": "Handover: keep reference copies and check final locations."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-organize-report",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 4,
+    "supported_behavior_versions": [
+      "linux-file-management-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-file-management"
+    ]
+  },
+  "metadata": {
+    "title": "Rename and organize",
+    "topic": "Linux file management",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Move the incoming draft to /home/learner/Reports/report.txt. Preserve its original contents, remove the old inbox/draft.txt entry, and read the final report. A second copy without removing the old entry is incomplete.",
+    "constraints": [
+      "All paths and files are virtual. Commands act immediately; there is no Apply step and no host access.",
+      "Use only the syntax in Command reference. No quotes, wildcards, shell expansion, pipes, recursion, links, archives, or unsupported options.",
+      "Relative and absolute paths are equivalent. The final state and explicitly named activity evidence earn credit; no exact transcript is required.",
+      "File-management commands may change only descendants of /home/learner. Other paths and mutation-root nodes are pinned.",
+      "Any actual filesystem change clears cat/find verification. Read or discover the final result again. Skipped no-clobber commands do not clear evidence."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "report",
+      "label": "Final state: report matches original draft content",
+      "points": 45,
+      "predicate": "file_matches_initial",
+      "params": {
+        "path": "/home/learner/Reports/report.txt",
+        "source": "/home/learner/inbox/draft.txt"
+      }
+    },
+    {
+      "id": "old",
+      "label": "Final state: old draft entry absent",
+      "points": 35,
+      "predicate": "node_absent",
+      "params": {
+        "path": "/home/learner/inbox/draft.txt"
+      }
+    },
+    {
+      "id": "read",
+      "label": "Action: read the final report",
+      "points": 20,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/home/learner/Reports/report.txt",
+        "operation": "cat"
+      }
+    }
+  ],
+  "hints": [
+    "Moving changes the name/location while copying keeps both entries.",
+    "Give mv a destination filename to rename, or an existing folder to keep the basename. This simulation moves regular files only.",
+    "mv -n /home/learner/inbox/draft.txt /home/learner/Reports/report.txt, then read the new path."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 2,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt/reference": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/inbox": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Reports": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/inbox/draft.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "Report: organized files are easier to hand over.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "mutable_roots": [
+      "/home/learner"
+    ],
+    "lesson": {
+      "goal": "Put the draft in Reports as report.txt, remove the old name, and read the result.",
+      "steps": [
+        {
+          "objective": "report",
+          "command": "mv -n /home/learner/inbox/draft.txt /home/learner/Reports/report.txt",
+          "explanation": "mv renames/moves a regular file in this virtual filesystem. -n skips an existing target.",
+          "expected": "Report exists at its final path."
+        },
+        {
+          "objective": "old",
+          "command": "ls /home/learner/inbox",
+          "explanation": "A move removes the old name; the directory remains. Check the source location.",
+          "expected": "No draft.txt in inbox."
+        },
+        {
+          "objective": "read",
+          "command": "cat /home/learner/Reports/report.txt",
+          "explanation": "Read the final destination after all changes. Either a direct move or an equivalent copy-and-remove approach can pass.",
+          "expected": "Report: organized files are easier to hand over."
+        }
+      ]
+    }
+  }
+}

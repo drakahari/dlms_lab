@@ -1,0 +1,148 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-copy-reference",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 4,
+    "supported_behavior_versions": [
+      "linux-file-management-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-file-management"
+    ]
+  },
+  "metadata": {
+    "title": "Copy without losing the original",
+    "topic": "Linux file management",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Create /home/learner/worksheet.txt with the same contents as /opt/reference/worksheet.txt, preserve the original unchanged, and read your final copy. Reading the source alone does not verify your copy.",
+    "constraints": [
+      "All paths and files are virtual. Commands act immediately; there is no Apply step and no host access.",
+      "Use only the syntax in Command reference. No quotes, wildcards, shell expansion, pipes, recursion, links, archives, or unsupported options.",
+      "Relative and absolute paths are equivalent. The final state and explicitly named activity evidence earn credit; no exact transcript is required.",
+      "File-management commands may change only descendants of /home/learner. Other paths and mutation-root nodes are pinned.",
+      "Any actual filesystem change clears cat/find verification. Read or discover the final result again. Skipped no-clobber commands do not clear evidence."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "copy",
+      "label": "Final state: working copy matches the reference",
+      "points": 60,
+      "predicate": "file_matches_initial",
+      "params": {
+        "path": "/home/learner/worksheet.txt",
+        "source": "/opt/reference/worksheet.txt"
+      }
+    },
+    {
+      "id": "source",
+      "label": "Final state: original reference preserved",
+      "points": 20,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/opt/reference/worksheet.txt"
+      }
+    },
+    {
+      "id": "read",
+      "label": "Action: read the final working copy after changes",
+      "points": 20,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/home/learner/worksheet.txt",
+        "operation": "cat"
+      }
+    }
+  ],
+  "hints": [
+    "A copy creates another file; it should leave the source available.",
+    "cp requires -n in this bounded simulation. An existing target is skipped, so inspect it rather than assuming it changed.",
+    "cp -n /opt/reference/worksheet.txt /home/learner/worksheet.txt, then cat /home/learner/worksheet.txt."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 2,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt/reference": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt/reference/worksheet.txt": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "Worksheet: identify paths before changing files.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "mutable_roots": [
+      "/home/learner"
+    ],
+    "lesson": {
+      "goal": "Copy the reference without replacing the original, then read the final copy.",
+      "steps": [
+        {
+          "objective": "copy",
+          "command": "cp -n /opt/reference/worksheet.txt /home/learner/worksheet.txt",
+          "explanation": "cp copies one regular file here. -n avoids overwriting an existing destination.",
+          "expected": "A learner-owned working copy appears."
+        },
+        {
+          "objective": "source",
+          "command": "cat /opt/reference/worksheet.txt",
+          "explanation": "The reference stays in place; copying and moving are different operations.",
+          "expected": "The unchanged reference text."
+        },
+        {
+          "objective": "read",
+          "command": "cat /home/learner/worksheet.txt",
+          "explanation": "Read the destination after the final change to verify your result.",
+          "expected": "Worksheet: identify paths before changing files."
+        }
+      ]
+    }
+  }
+}

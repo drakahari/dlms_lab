@@ -1,0 +1,246 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-deliver-workspace",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 4,
+    "supported_behavior_versions": [
+      "linux-file-management-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-file-management"
+    ]
+  },
+  "metadata": {
+    "title": "Tidy and deliver",
+    "topic": "Linux file management",
+    "difficulty": "Beginner",
+    "minutes": 8
+  },
+  "mission": {
+    "brief": "Prepare Delivery/brief.txt with the original incoming/brief.txt contents. Preserve the incoming source, remove scratch/temporary.txt and the now-empty scratch folder, discover the delivered brief using find, read the final delivered file, and finish inside Delivery. Only the specified virtual temporary data should be removed. Choose any supported approach.",
+    "constraints": [
+      "All paths and files are virtual. Commands act immediately; there is no Apply step and no host access.",
+      "Use only the syntax in Command reference. No quotes, wildcards, shell expansion, pipes, recursion, links, archives, or unsupported options.",
+      "Relative and absolute paths are equivalent. The final state and explicitly named activity evidence earn credit; no exact transcript is required.",
+      "File-management commands may change only descendants of /home/learner. Other paths and mutation-root nodes are pinned.",
+      "Any actual filesystem change clears cat/find verification. Read or discover the final result again. Skipped no-clobber commands do not clear evidence."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "directory",
+      "label": "Final state: Delivery directory exists",
+      "points": 10,
+      "predicate": "node_exists",
+      "params": {
+        "path": "/home/learner/Delivery",
+        "kind": "directory"
+      }
+    },
+    {
+      "id": "copy",
+      "label": "Final state: delivered brief matches incoming content",
+      "points": 15,
+      "predicate": "file_matches_initial",
+      "params": {
+        "path": "/home/learner/Delivery/brief.txt",
+        "source": "/home/learner/incoming/brief.txt"
+      }
+    },
+    {
+      "id": "source",
+      "label": "Final state: incoming original unchanged",
+      "points": 10,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/home/learner/incoming/brief.txt"
+      }
+    },
+    {
+      "id": "junk",
+      "label": "Final state: temporary file absent",
+      "points": 10,
+      "predicate": "node_absent",
+      "params": {
+        "path": "/home/learner/scratch/temporary.txt"
+      }
+    },
+    {
+      "id": "scratch",
+      "label": "Final state: empty scratch directory removed",
+      "points": 10,
+      "predicate": "node_absent",
+      "params": {
+        "path": "/home/learner/scratch"
+      }
+    },
+    {
+      "id": "find",
+      "label": "Action: discover the final delivered brief",
+      "points": 15,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/home/learner/Delivery/brief.txt",
+        "operation": "find"
+      }
+    },
+    {
+      "id": "read",
+      "label": "Action: read the final delivered brief",
+      "points": 20,
+      "predicate": "activity_observed",
+      "params": {
+        "path": "/home/learner/Delivery/brief.txt",
+        "operation": "cat"
+      }
+    },
+    {
+      "id": "cwd",
+      "label": "Final state: finish in Delivery",
+      "points": 10,
+      "predicate": "cwd_equals",
+      "params": {
+        "path": "/home/learner/Delivery"
+      }
+    }
+  ],
+  "hints": [
+    "Plan the final tree and protect the original. Complete changes before the final discovery/read checks.",
+    "An empty folder and a regular file require different removal commands. rmdir refuses a folder with contents.",
+    "Create Delivery, copy incoming/brief.txt there with cp -n, remove the temporary file then scratch, find/read the final brief, and finish in Delivery."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 2,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/opt/reference": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/incoming": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/incoming/brief.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "Delivery brief: keep the source and verify your final copy.\n"
+      },
+      "/home/learner/scratch": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/scratch/temporary.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "Disposable preparation note.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "mutable_roots": [
+      "/home/learner"
+    ],
+    "lesson": {
+      "goal": "Create the delivery copy, keep its source, clean only scratch, then find/read and finish in Delivery.",
+      "steps": [
+        {
+          "objective": "directory",
+          "command": "mkdir -p /home/learner/Delivery",
+          "explanation": "Create the final destination directory without touching the incoming source.",
+          "expected": "Delivery exists; copying is still required."
+        },
+        {
+          "objective": "copy",
+          "command": "cp -n /home/learner/incoming/brief.txt /home/learner/Delivery/brief.txt",
+          "explanation": "Copy with no-clobber protection. The original source remains separate.",
+          "expected": "Delivery/brief.txt matches incoming/brief.txt."
+        },
+        {
+          "objective": "source",
+          "command": "cat /home/learner/incoming/brief.txt",
+          "explanation": "Keep the incoming file unchanged. The original is a final-state constraint, not an exact transcript requirement.",
+          "expected": "Original delivery brief."
+        },
+        {
+          "objective": "junk",
+          "command": "rm /home/learner/scratch/temporary.txt",
+          "explanation": "rm removes one specified regular file. Parent write/search governs removal; no recursive options are supported.",
+          "expected": "Only temporary.txt removed."
+        },
+        {
+          "objective": "scratch",
+          "command": "rmdir /home/learner/scratch",
+          "explanation": "rmdir removes an empty folder; it cannot remove a nonempty tree.",
+          "expected": "scratch removed."
+        },
+        {
+          "objective": "find",
+          "command": "find /home/learner/Delivery -name brief.txt -type f",
+          "explanation": "Discover the delivered file after cleanup so the evidence describes the final tree.",
+          "expected": "Delivered brief path."
+        },
+        {
+          "objective": "read",
+          "command": "cat /home/learner/Delivery/brief.txt",
+          "explanation": "Read the final copy after every filesystem change.",
+          "expected": "Delivery brief: keep the source and verify your final copy."
+        },
+        {
+          "objective": "cwd",
+          "command": "cd /home/learner/Delivery",
+          "explanation": "Finish at the handover location. Submit evaluates all final state and evidence together.",
+          "expected": "Prompt: /home/learner/Delivery"
+        }
+      ]
+    }
+  }
+}
