@@ -97,16 +97,36 @@ class Bridge(QObject):
         try:
             self.history_cache = self.store.history(self.session.attempt['id'], self.history_page)
             if recount:
+                self.saved_mode_progress = {'Learn': 'Not started', 'Challenge': 'Not started'}
+                self.history_reliable = not self.history_cache[2]
                 self.saved_best = None
                 self.saved_complete = False
                 for page in range((self.history_cache[1] + 24) // 25):
-                    rows, _, _ = self.store.history(self.session.attempt['id'], page)
+                    rows, _, warnings = self.store.history(self.session.attempt['id'], page)
+                    self.history_reliable = self.history_reliable and not warnings
                     for attempt in rows:
+                        mode = attempt['mode']
+                        if self.saved_mode_progress[mode] != 'Completed':
+                            self.saved_mode_progress[mode] = 'Completed' if any(r['complete'] for r in attempt['assessments'].values()) else 'In progress'
                         for result in attempt['assessments'].values():
                             self.saved_best = max(self.saved_best or 0, result['score'])
                             self.saved_complete = self.saved_complete or result['complete']
         except OSError as exc:
+            self.history_reliable = False
             self.history_cache = ([], 0, [f'History cannot be read: {exc}. Files are preserved.'])
+
+    def library_progress(self):
+        """Mode-specific evidence only; omit claims when records need recovery."""
+        if self.store.read_only or self.store.notice or not self.history_reliable:
+            return None
+        result = dict(self.saved_mode_progress)
+        a = self.session.attempt; mode = a['mode']
+        if any(r['complete'] for r in a['assessments'].values()):
+            result[mode] = 'Completed'
+        elif result[mode] != 'Completed' and (a['revision'] or a['console'] or a['hints']
+                or a['draft'] or a['assessments'] or self.command_draft or self.diagnostics):
+            result[mode] = 'In progress'
+        return result
 
     @staticmethod
     def policy_text(value):

@@ -1,0 +1,196 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-archive-access",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 3,
+    "supported_behavior_versions": [
+      "linux-permissions-2"
+    ],
+    "required_capabilities": [
+      "activity-evidence",
+      "directory-name-listing",
+      "directory-permissions",
+      "file-navigation",
+      "mutable-permissions",
+      "traversal-evidence",
+      "virtual-filesystem"
+    ]
+  },
+  "metadata": {
+    "title": "Read the fieldwork handover",
+    "topic": "Linux directory access · private archives",
+    "difficulty": "Beginner",
+    "minutes": 4
+  },
+  "mission": {
+    "brief": "Your private Archive contains the next fieldwork handover. Keep its name-listing access, restore entry, then enter Archive and read handover.txt. You start in /srv/fieldwork.",
+    "constraints": [
+      "Archive must finish at 0500: owner read and execute, no write, group or other access. Broader access is unnecessary.",
+      "Successful entry and reading the handover after the last mode change are verification objectives. Either order and equivalent supported paths count. An initial failure is not required.",
+      "Only Archive permissions can change. Its note is already readable and ancestors are accessible. Changes apply immediately.",
+      "This is virtual-only Linux: Command reference defines the supported syntax. Plain ls lists names with read permission; ls -l needs read and search here. No full shell, host access or file execution."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "private-archive",
+      "label": "Final state: Archive has owner read/search only",
+      "points": 70,
+      "predicate": "mode_equals",
+      "params": {
+        "path": "/srv/fieldwork/Archive",
+        "mode": "0500"
+      }
+    },
+    {
+      "id": "entered-archive",
+      "label": "Action evidence: enter Archive after the last mode change",
+      "points": 15,
+      "predicate": "traversal_verified",
+      "params": {
+        "path": "/srv/fieldwork/Archive"
+      }
+    },
+    {
+      "id": "read-handover",
+      "label": "Action evidence: read the handover after the last mode change",
+      "points": 15,
+      "predicate": "read_verified",
+      "params": {
+        "path": "/srv/fieldwork/Archive/handover.txt"
+      }
+    }
+  ],
+  "hints": [
+    "Seeing handover.txt in a list proves you can list names, not that you can enter its parent or read it.",
+    "The directory owner already has read permission. Search, represented by x, is the missing access; write and access for other people are not needed.",
+    "From /srv/fieldwork, chmod u+x Archive or chmod 500 Archive restores the stated access. Read Archive/handover.txt and enter Archive to verify. Mode 777 fails the privacy goal."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/root": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700",
+        "content": ""
+      },
+      "/etc/motd": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "Learning Lab: a small simulated filesystem.\n"
+      },
+      "/root/private.txt": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0600",
+        "content": "This virtual file is reserved for the simulated root user.\n"
+      },
+      "/srv": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/srv/fieldwork": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/srv/fieldwork/Archive": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0400",
+        "content": ""
+      },
+      "/srv/fieldwork/Archive/handover.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0600",
+        "content": "Fieldwork handover\nMeet at the west gate at nine. Bring the paper map.\n"
+      }
+    },
+    "cwd": "/srv/fieldwork",
+    "permission_targets": [
+      "/srv/fieldwork/Archive"
+    ],
+    "lesson": {
+      "goal": "Open your private Archive and read the fieldwork handover.",
+      "steps": [
+        {
+          "action": "inspect",
+          "path": "/srv/fieldwork/Archive",
+          "explanation": "Inspect Archive in its parent listing. The owner has r for names but lacks x for entry and search.",
+          "expected": "Archive appears as dr--------, owned by learner."
+        },
+        {
+          "action": "list",
+          "path": "/srv/fieldwork/Archive",
+          "explanation": "List the names already visible inside Archive. Directory read permission provides this limited access.",
+          "expected": "handover.txt is listed; listing alone does not verify reading it."
+        },
+        {
+          "action": "repair",
+          "path": "/srv/fieldwork/Archive",
+          "explanation": "Add only owner search. Preserve read; do not grant write or access to other people.",
+          "expected": "Archive has mode 0500. Numeric 500 is also supported; 777 is too broad."
+        },
+        {
+          "action": "read",
+          "path": "/srv/fieldwork/Archive/handover.txt",
+          "explanation": "Read the known file through its path. Search permission on Archive and read permission on the note work together.",
+          "expected": "The fieldwork meeting instructions are displayed."
+        },
+        {
+          "action": "enter",
+          "path": "/srv/fieldwork/Archive",
+          "explanation": "Enter Archive to verify traversal too. Reading and entry may be performed in either order.",
+          "expected": "The prompt shows /srv/fieldwork/Archive. Submit when ready."
+        }
+      ]
+    }
+  }
+}

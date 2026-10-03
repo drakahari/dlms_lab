@@ -1,9 +1,20 @@
 [project]
 name = "omarchy-learning-lab"
 version = "0.1.0"
-description = "Original offline network troubleshooting simulations"
+description = "Original offline networking and Linux troubleshooting simulations"
 requires-python = ">=3.11"
 dependencies = ["PySide6>=6.11,<6.12"]
 
 [tool.unittest]
 start-directory = "tests"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["learning_lab*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+learning_lab = ["qml/*.qml", "packs/*.json", "collections/*.json", "collections/packs/*.json"]

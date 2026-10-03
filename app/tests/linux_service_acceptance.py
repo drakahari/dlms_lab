@@ -82,7 +82,7 @@ try:
     check('expected scale',abs(w.devicePixelRatio()-args.expected_dpr)<.01)
     example=Path('examples/linux-web-document-root.lab.json');scenario=load_portable(example.read_bytes())
     check('import Linux data pack',b.importPack(str(example.resolve())))
-    activate('open-'+scenario.key);check('Linux terminal workspace visible',item('linuxTerminalWorkspace') is not None)
+    activate('start-fundamentals-5');check('Linux terminal workspace visible',item('linuxTerminalWorkspace') is not None)
     capture('initial')
     activate('consoleTab')
     for text in ('help','systemctl status lab-web','journalctl -u lab-web','cat /etc/lab-web.conf','ls -l /srv'):command(text)

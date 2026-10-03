@@ -75,11 +75,35 @@ ApplicationWindow {
                         LabButton { objectName: "importPackButton"; text: "Import scenario…"; onClicked: importDialog.open() }
                         LabText { text: "Self-contained .lab.json files · data only"; color: colors.muted; Layout.fillWidth: true }
                     }
+                    LabText { text: "Linux Fundamentals"; objectName: "fundamentalsHeading"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
+                    LabText { text: v.fundamentals.length ? "A suggested path through six short labs. Start anywhere; no completion prerequisites." : "This collection is unavailable. Existing labs remain below."; color: colors.muted; Layout.fillWidth: true }
                     Repeater {
-                        model: v.labs.length
+                        model: v.fundamentals
+                        delegate: Rectangle {
+                            required property var modelData
+                            required property int index
+                            objectName: "fundamentalsCard-"+index
+                            Layout.fillWidth: true; implicitHeight: collectionCard.implicitHeight+24
+                            color: colors.surface; radius: 8
+                            RowLayout {
+                                id: collectionCard; anchors.fill: parent; anchors.margins: 12; spacing: 12
+                                ColumnLayout {
+                                    Layout.fillWidth: true; spacing: 4
+                                    LabText { text: (index+1)+". "+modelData.title; font.bold: true; Layout.fillWidth: true }
+                                    LabText { text: modelData.skill; color: colors.muted; Layout.fillWidth: true }
+                                    LabText { text: modelData.status; visible: text.length>0; Layout.fillWidth: true }
+                                    LabText { text: modelData.problem; visible: text.length>0; color: colors.danger; Layout.fillWidth: true }
+                                }
+                                LabButton { objectName: "start-fundamentals-"+index; text: modelData.action; enabled: modelData.available; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent); onClicked: window.openLab(modelData.labKey,this) }
+                            }
+                        }
+                    }
+                    LabText { text: "Networking and other scenarios"; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
+                    Repeater {
+                        model: v.otherLabs.length
                         delegate: Rectangle {
                             required property int index
-                            property var info: v.labs[index]
+                            property var info: v.otherLabs[index]
                             Layout.fillWidth: true; implicitHeight: card.implicitHeight+28
                             color: colors.surface; radius: 8
                             ColumnLayout {

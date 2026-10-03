@@ -1,6 +1,6 @@
 # Omarchy Learning Lab — native workspace and portable scenarios
 
-Three bundled networking labs, two importable Linux service labs, and beginner file-navigation and permissions labs in a standalone, offline Qt Quick window.
+Three networking labs and a six-lab Linux Fundamentals collection in a standalone, offline Qt Quick window.
 
 ## Launch
 
@@ -17,6 +17,19 @@ Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can for
 
 ## Use
 
+### Linux Fundamentals
+
+The Library offers six short labs in a suggested order, from file navigation to
+recovering a web service. Choose **Start** or **Continue** on any card; there are
+no completion prerequisites and no file-picker import is required. Cards show a
+short skill description and separate Learn/Challenge progress when records are
+reliable. Existing exact imports resume their pinned attempts without duplicates.
+Custom imports and networking labs remain below the collection.
+
+Packs are installed from validated application resources on first Start. Merely
+viewing the Library does not create Linux attempts. Same-ID/version conflicts are
+reported and preserved, not replaced. See [collection behavior and verification](docs/linux-fundamentals.md).
+
 ### Author permissions scenarios / directory permissions
 
 Use the [authoring guide](docs/permissions-authoring.md) and valid
@@ -24,16 +37,16 @@ Use the [authoring guide](docs/permissions-authoring.md) and valid
 Validate a copy with `python3 -B tools/validate_scenario.py path/to/pack.json`, then
 import it from Library in an isolated review profile.
 
-Import `examples/linux-directory-permissions.lab.json` for **Why can’t I enter this
-directory?** It teaches name listing versus traversal, restoring only owner
+Open **Why can’t I enter this directory?** in Linux Fundamentals. Its standalone
+pack is `examples/linux-directory-permissions.lab.json`. It teaches name listing versus traversal, restoring only owner
 execute permission while preserving private read access. This uses an explicit
 contract-3 extension of the existing permissions engine; older packs retain their
 original behavior. See [scope and acceptance](docs/directory-permissions.md).
 
 ### Beginner Linux file permissions
 
-Import `examples/linux-file-permissions.lab.json` in Library and open **Restore
-access to your file**. Inspect your unreadable notes, restore private owner
+Open **Restore access to your file** in Linux Fundamentals
+(`examples/linux-file-permissions.lab.json`). Inspect your unreadable notes, restore private owner
 read/write access, and read the contents to verify the repair. Learn explains
 permission classes and each step; Challenge hides the walkthrough.
 
@@ -45,8 +58,8 @@ See [permissions syntax, results and owner checklist](docs/linux-permissions.md)
 
 ### Beginner Linux file navigation
 
-In Library choose **Import scenario…**, select
-`examples/linux-file-navigation.lab.json`, and open **Find your way around Linux**.
+Open **Find your way around Linux** in Linux Fundamentals
+(`examples/linux-file-navigation.lab.json`).
 This five-minute exercise teaches `pwd`, `ls`, `cd` and `cat`. Learn shows one
 explained step at a time; Challenge keeps the goal and grading rules in **Lab
 details ▾** without a walkthrough. No service or file editor is involved.
@@ -57,13 +70,13 @@ See [navigation rules, architecture, test results and owner checklist](docs/linu
 
 ### Linux service troubleshooting
 
-For a first lesson, import `examples/linux-service-basics.lab.json` and open
-**Start your first service**. Its configuration is healthy: inspect the stopped
+For a first lesson, open **Start your first service** in Linux Fundamentals
+(`examples/linux-service-basics.lab.json`). Its configuration is healthy: inspect the stopped
 service, start it, then verify it is running. Learn explains one command and its
 expected result at a time; Challenge hides that guidance.
 
-In Library choose **Import scenario…** and select
-`examples/linux-web-document-root.lab.json`, then open **Recover a failed web service**.
+Open **Recover a failed web service** in Linux Fundamentals
+(`examples/linux-web-document-root.lab.json`).
 The bounded **Terminal · Simulated Linux** console contains output, a current-directory
 prompt and command entry. Type `help` and press Enter, or use Run. **Command reference**,
 **Virtual file editor** and **Diagnostics** open a separate lower pane; Close returns

@@ -1,0 +1,29 @@
+{
+  "title": "Linux Fundamentals",
+  "items": [
+    {
+      "file": "linux-file-navigation.lab.json",
+      "skill": "Find your location, navigate paths, and read a file."
+    },
+    {
+      "file": "linux-service-basics.lab.json",
+      "skill": "Inspect a stopped service, start it, and verify it is running."
+    },
+    {
+      "file": "linux-file-permissions.lab.json",
+      "skill": "Restore private owner read access to your notes."
+    },
+    {
+      "file": "linux-directory-permissions.lab.json",
+      "skill": "Distinguish listing names from entering a directory."
+    },
+    {
+      "file": "linux-archive-access.lab.json",
+      "skill": "Practice private directory access with a new handover task."
+    },
+    {
+      "file": "linux-web-document-root.lab.json",
+      "skill": "Diagnose a missing document root and recover a web service."
+    }
+  ]
+}

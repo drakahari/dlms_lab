@@ -1,0 +1,119 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-service-basics",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-service",
+    "contract_version": 2,
+    "supported_behavior_versions": [
+      "linux-service-2"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "virtual-file-editor",
+      "service-lifecycle",
+      "service-journal",
+      "service-basics"
+    ]
+  },
+  "metadata": {
+    "title": "Start your first service",
+    "topic": "Linux services · virtual files · permissions",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "The web service is stopped. Its configuration and document root are healthy: there is no configuration fault to fix. Inspect its status, start it, and check its status again. In Learn mode, follow one explained command at a time. Challenge hides the walkthrough and hints.",
+    "constraints": [
+      "Use the simulated terminal. The service configuration is correct and fixed; no file edits are needed.",
+      "Full credit requires an active service with its intended configuration. Inspection and verification are encouraged, but grading does not require a particular command sequence."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "running",
+      "label": "Start the service and verify it is running",
+      "points": 100,
+      "predicate": "service_running_current_config",
+      "params": {}
+    }
+  ],
+  "hints": [
+    "A stopped service is inactive, which is different from a failed startup. Read its status before making a change.",
+    "systemctl start asks a service to start. This lab already has a healthy configuration; do not look for a missing directory.",
+    "Run systemctl status lab-web, then systemctl start lab-web, then systemctl status lab-web again. Expect active after starting."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 2,
+    "cwd": "/srv",
+    "editable_files": [],
+    "service": {
+      "name": "lab-web.service",
+      "config": "/etc/lab-web.conf",
+      "port": 8080,
+      "document_root_base": "/srv"
+    },
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc/lab-web.conf": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "# Healthy configuration: no repair is needed.\nDocumentRoot=/srv/www\nPort=8080\n"
+      },
+      "/srv": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/srv/www": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      }
+    },
+    "initial_service": "inactive",
+    "lesson": {
+      "goal": "Inspect a stopped service, start it, and verify it is running. No configuration fault is present.",
+      "steps": [
+        {
+          "action": "status",
+          "explanation": "systemctl status reports whether the named service is running. This is inspection: it changes nothing.",
+          "expected": "The result says inactive (stopped). The service has not failed; it simply has not been started."
+        },
+        {
+          "action": "start",
+          "explanation": "systemctl start asks the named service to start using its existing configuration. No file edit is needed here.",
+          "expected": "The result says active. The configuration and document root are already valid."
+        },
+        {
+          "action": "status",
+          "explanation": "Check the status again to confirm the effect of your change. Verification is a separate diagnostic step.",
+          "expected": "The result says active, with /srv/www and port 8080 loaded. Then Submit to record the result."
+        }
+      ]
+    }
+  }
+}

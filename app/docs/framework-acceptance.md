@@ -1,5 +1,21 @@
 # Framework acceptance — checkpoints 2 onward
 
+## Linux Fundamentals collection — current
+
+Six existing approved packs are available directly from the Library, with no
+file-picker import required. Terminal workspace and grading are unchanged.
+**183 regression tests pass** (172 prior plus 11 collection tests). All eight
+offscreen UI suites passed at 100/150/200%, including collection Start/Continue,
+draft confirmation, reset/modes and fresh-process restart.
+
+[Collection verification](linux-fundamentals.md) distinguishes source/resource
+and staged-package checks from the actual isolated wheel-build attempt. Fetching
+the declared `setuptools` dependency failed because `pypi.org` could not resolve;
+no wheel was produced or installed, so that verification gap remains open.
+The owner reports that the Library collection works great. This records successful
+functional review, not exhaustive native acceptance. Physical keyboard,
+accessibility, native scaling and mixed-monitor checks remain outstanding.
+
 ## Permissions authoring and directory scenario — current
 
 [Authoring guide](permissions-authoring.md), reusable template and directory

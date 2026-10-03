@@ -7,6 +7,7 @@ from .storage import Store, atomic_write
 from .domain.validation import decode, ValidationError
 from .portable import PackRepository, portable_from_legacy
 from .pinned_storage import PinnedStore
+from .collections import linux_fundamentals
 
 
 class CatalogBridge(QObject):
@@ -17,6 +18,12 @@ class CatalogBridge(QObject):
         self.data_root, self.config_root = Path(data_root), Path(config_root)
         self.repository = PackRepository(self.data_root / 'portable' / 'packs')
         self.portables = {}
+        try:
+            self.collection = linux_fundamentals()
+            collection_warning = ''
+        except (OSError, ValueError) as exc:
+            self.collection = []
+            collection_warning = 'Linux Fundamentals unavailable: ' + str(exc)
         # Gateway's original root is a compatibility exception. IDs have already
         # passed the strict pack validator; packs never supply filesystem paths.
         roots = {p['lab_id']: data_root if p['lab_id'] == 'gateway-dns' else data_root / 'labs' / p['lab_id'] for p in packs}
@@ -26,7 +33,7 @@ class CatalogBridge(QObject):
         self.active = self.labs.get('gateway-dns', next(iter(self.labs.values())))
         self.selection_path = config_root / 'selection.json'
         self.selection_readonly = False
-        self.notice = '\n'.join(pack_warnings)
+        self.notice = '\n'.join(pack_warnings + ([collection_warning] if collection_warning else []))
         self.transfer_message = ''
         self.layout_notice = ''
         self.workspace_layout = {}
@@ -81,6 +88,9 @@ class CatalogBridge(QObject):
                                    'labKey':key,'version':lab.pack['content_version'],
                                    'origin':'Portable pack' if key in self.portables else 'Bundled legacy'})
         result['scenarioVersion'] = self.pack['content_version']
+        result['fundamentals'] = self.collection_rows()
+        curated = {row['labKey'] for row in result['fundamentals']}
+        result['otherLabs'] = [row for row in result['labs'] if row['labKey'] not in curated]
         result['provenance'] = ('Pinned content ' + self.portables[active_key].identity.content_digest + ' · engine ' + self.portables[active_key].pin['engine']['behavior_version']
                                 if active_key in self.portables else 'Legacy attempt: original content digest and engine provenance were not recorded.')
         result['transferMessage'] = self.transfer_message
@@ -91,6 +101,27 @@ class CatalogBridge(QObject):
             result['message'] += ' Another lab has unsaved progress. Retry save before closing.'
         result['message'] += self.notice + self.layout_notice
         return result
+
+    def collection_rows(self):
+        rows = []
+        for entry in self.collection:
+            scenario = entry['scenario']; key = scenario.key
+            conflict = any((s.identity.scenario_id, s.identity.content_version) ==
+                           (scenario.identity.scenario_id, scenario.identity.content_version)
+                           and s.key != key for s in self.portables.values())
+            lab = self.labs.get(key)
+            progress = lab.library_progress() if lab else None
+            prior = (self.data_root/'portable'/'attempts'/key[5:]).exists()
+            if not lab and not prior and not conflict:
+                progress = {'Learn': 'Not started', 'Challenge': 'Not started'}
+            status = ' · '.join(mode + ': ' + state for mode, state in progress.items()) if progress else ''
+            started = prior or (progress and any(v != 'Not started' for v in progress.values()))
+            rows.append({'labKey': key, 'title': scenario.value()['metadata']['title'],
+                         'skill': entry['skill'], 'status': status,
+                         'action': 'Continue' if started else 'Start', 'available': not conflict,
+                         'problem': 'A different pack with this ID/version is installed. It is preserved below; this collection version cannot replace it.' if conflict else '',
+                         'version': scenario.identity.content_version})
+        return rows
 
     def _add_portable(self, scenario, connect=True):
         if scenario.key in self.labs: return
@@ -214,7 +245,16 @@ class CatalogBridge(QObject):
     @Slot(str, bool, result=bool)
     def selectLab(self, lab_id, confirmed=False):
         if lab_id not in self.labs:
-            return False
+            entry = next((e for e in self.collection if e['scenario'].key == lab_id), None)
+            if entry is None or (self.session.attempt['draft'] and not confirmed):
+                return False
+            try:
+                scenario, _ = self.repository.install(entry['scenario'].original_bytes)
+                self._add_portable(scenario)
+            except (OSError, ValueError) as exc:
+                self.transfer_message = 'Collection could not open: ' + str(exc) + ' Existing files are preserved.'
+                self.changed.emit()
+                return False
         if self.active is not self.labs[lab_id]:
             if self.session.attempt['draft'] and not confirmed:
                 return False

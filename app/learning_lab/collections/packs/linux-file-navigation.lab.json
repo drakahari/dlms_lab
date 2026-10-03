@@ -1,0 +1,211 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-file-navigation",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 1,
+    "supported_behavior_versions": [
+      "linux-navigation-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence"
+    ]
+  },
+  "metadata": {
+    "title": "Find your way around Linux",
+    "topic": "Linux files · directories · paths",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Explore a small Linux workspace as learner. Identify your starting directory (/home/learner), list its contents, enter Documents, read Documents/welcome.txt, and finish in /home/learner/Projects. Learn explains one command at a time; Challenge leaves the approach to you.",
+    "constraints": [
+      "Four action objectives use successful simulated activity: pwd at /home/learner, ls of /home/learner, cd into Documents, and cat of Documents/welcome.txt. Actions may happen in any order; equivalent relative and absolute paths count.",
+      "The final-state objective checks your current directory at submission: /home/learner/Projects. Earlier action evidence remains recorded if you move elsewhere. No service needs starting.",
+      "The filesystem is read-only. Commands act immediately; there is no Apply step. Help and diagnostic checks do not complete action objectives.",
+      "Only help, pwd, ls [-l] [PATH], cd [PATH] and cat PATH are supported. Paths are case sensitive. cd without a path returns to /home/learner. No quotes, ~, wildcards, pipelines, substitutions or host commands.",
+      "/ is the virtual root. Going above it is rejected and leaves your directory unchanged (a simulation boundary, unlike a full Linux shell). Permissions are checked along the entire path; /root is private."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "starting-directory",
+      "label": "Action: identify the starting directory with pwd",
+      "points": 15,
+      "predicate": "activity_observed",
+      "params": {
+        "operation": "pwd",
+        "path": "/home/learner"
+      }
+    },
+    {
+      "id": "explore-home",
+      "label": "Action: list the starting directory",
+      "points": 15,
+      "predicate": "activity_observed",
+      "params": {
+        "operation": "ls",
+        "path": "/home/learner"
+      }
+    },
+    {
+      "id": "visit-documents",
+      "label": "Action: enter Documents",
+      "points": 20,
+      "predicate": "activity_observed",
+      "params": {
+        "operation": "cd",
+        "path": "/home/learner/Documents"
+      }
+    },
+    {
+      "id": "read-welcome",
+      "label": "Action: read Documents/welcome.txt",
+      "points": 25,
+      "predicate": "activity_observed",
+      "params": {
+        "operation": "cat",
+        "path": "/home/learner/Documents/welcome.txt"
+      }
+    },
+    {
+      "id": "finish-projects",
+      "label": "Final state: finish in /home/learner/Projects",
+      "points": 25,
+      "predicate": "cwd_equals",
+      "params": {
+        "path": "/home/learner/Projects"
+      }
+    }
+  ],
+  "hints": [
+    "Use the prompt and pwd to orient yourself. Listing a folder shows what you can explore; listing alone does not enter it.",
+    "Relative paths start where you are; absolute paths start at /. A file can be read by either kind of path. .. refers to a parent directory.",
+    "Inspect /home/learner with pwd and ls, visit its Documents folder, read welcome.txt with cat, then end in /home/learner/Projects. Your action evidence survives moving between folders."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 1,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Documents": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Downloads": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/Projects": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/root": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700",
+        "content": ""
+      },
+      "/home/learner/Documents/welcome.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "Welcome to your virtual Linux workspace!\nDocuments holds notes; Downloads holds incoming files.\nProjects is where you will finish this exercise.\nAll files here belong to the simulation.\n"
+      },
+      "/etc/motd": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "Learning Lab: a small simulated filesystem.\n"
+      },
+      "/root/private.txt": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0600",
+        "content": "This virtual file is reserved for the simulated root user.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "lesson": {
+      "goal": "Explore your home folder, visit Documents and read welcome.txt, then finish in Projects. Lab details explains each objective.",
+      "steps": [
+        {
+          "objective": "starting-directory",
+          "path_style": "absolute",
+          "explanation": "pwd means print working directory. It tells you where you are now.",
+          "expected": "/home/learner"
+        },
+        {
+          "objective": "explore-home",
+          "path_style": "relative",
+          "explanation": "ls lists the contents of a directory. Without a path, it lists where you are now.",
+          "expected": "Documents, Downloads and Projects appear as virtual paths."
+        },
+        {
+          "objective": "visit-documents",
+          "path_style": "relative",
+          "explanation": "cd changes directory. A relative path starts from your current directory.",
+          "expected": "The prompt changes to /home/learner/Documents."
+        },
+        {
+          "objective": "read-welcome",
+          "path_style": "relative",
+          "explanation": "cat displays a text file. Read this short note to learn what these folders are for.",
+          "expected": "A welcome note describing Documents, Downloads and Projects."
+        },
+        {
+          "objective": "finish-projects",
+          "path_style": "absolute",
+          "explanation": "A path beginning with / is absolute: it works from any current directory.",
+          "expected": "The prompt ends in /home/learner/Projects. Submit to record your result."
+        }
+      ]
+    }
+  }
+}
