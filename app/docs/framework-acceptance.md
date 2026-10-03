@@ -1,5 +1,22 @@
 # Framework acceptance — checkpoints 2 onward
 
+## Beginner Linux permissions — current
+
+See [permissions architecture and acceptance](linux-permissions.md). **Restore
+access to your file** opts into navigation contract 2 and mutable virtual file
+modes. Existing packs retain their original runtimes and behavior; no QML layout
+changes or personal-data migration were made.
+
+**154 regression tests pass**. Offscreen permissions checks pass at 100/150/200%
+(62 workflow checks and 10 fresh-process checks per scale), along with the five
+existing UI suites. The owner reports on **3 October 2026** that the permissions
+lab **worked well**. This records a successful owner test without specifying the
+complete workflow, input device, display scale or assistive technology used.
+The agent's recorded native Wayland probe was blocked with errno 1. Unverified
+physical-keyboard, accessibility, native-scale, chooser and compositor checks
+remain **outstanding**. Previous positive reviews below apply to the existing
+interface and navigation lesson.
+
 ## Linux navigation extension — current
 
 See [navigation architecture and acceptance](linux-navigation.md). The new

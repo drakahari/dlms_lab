@@ -1,0 +1,154 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-file-permissions",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 2,
+    "supported_behavior_versions": [
+      "linux-permissions-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "mutable-permissions"
+    ]
+  },
+  "metadata": {
+    "title": "Restore access to your file",
+    "topic": "Linux permissions · ownership · least privilege",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "You own /home/learner/notes.txt but cannot read it. Restore private owner read/write access, then read its contents to verify the repair. Parent directories are already accessible. Learn explains inspection and repair; Challenge leaves the approach to you.",
+    "constraints": [
+      "Required final mode: owner read and write; no execute bit and no group or other permissions (0600). Broad permissions fail the least-privilege objective even if reading works.",
+      "Verification is a successful read of notes.txt after the most recent permission change. Initial inspection and a failed read are helpful learning steps, not graded prerequisites.",
+      "Only notes.txt has mutable permissions. Its ownership and content, and every other virtual object, remain fixed. Changes apply immediately; no editor or Apply step is needed.",
+      "Everything is simulated. Only the syntax in Command reference is supported. No real files, commands, users, processes or networks are accessed. Paths are case sensitive; traversal above the virtual / is rejected."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "private-mode",
+      "label": "Final state: private owner read/write access only",
+      "points": 70,
+      "predicate": "mode_equals",
+      "params": {
+        "path": "/home/learner/notes.txt",
+        "mode": "0600"
+      }
+    },
+    {
+      "id": "verified-read",
+      "label": "Verification: read the file after the last permission change",
+      "points": 30,
+      "predicate": "read_verified",
+      "params": {
+        "path": "/home/learner/notes.txt"
+      }
+    }
+  ],
+  "hints": [
+    "Read the permission triplets from left to right: owner, group, other. Being the owner does not bypass a missing owner-read bit.",
+    "The file already allows its owner to write. Restore only what is missing; execute permission and access for other people are unnecessary.",
+    "Use chmod u+r notes.txt to add owner-read, or chmod 600 notes.txt for private owner read/write. Then cat notes.txt. chmod 777 opens access to everyone and fails this lab."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 2,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/root": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700",
+        "content": ""
+      },
+      "/etc/motd": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "Learning Lab: a small simulated filesystem.\n"
+      },
+      "/root/private.txt": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0600",
+        "content": "This virtual file is reserved for the simulated root user.\n"
+      },
+      "/home/learner/notes.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0200",
+        "content": "My learning notes\nRead lets me inspect a file; write lets me change it.\nPrivate notes need access for their owner, not everyone.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "permission_targets": [
+      "/home/learner/notes.txt"
+    ],
+    "lesson": {
+      "goal": "Restore private read/write access to your notes, then read them to verify the repair.",
+      "target": "/home/learner/notes.txt",
+      "steps": [
+        {
+          "action": "inspect",
+          "explanation": "ls -l shows owner, group and mode. After the file-type marker, three triplets describe owner, group and other access. r = read, w = write, x = execute.",
+          "expected": "-w------- after the file marker: learner owns the file but has only write access."
+        },
+        {
+          "action": "denied-read",
+          "explanation": "Try reading your file. The owner permission triplet applies to you; group or other permissions do not override it. Directories need x to be traversed; these parents already allow it.",
+          "expected": "Permission denied (read): the owner-read bit is missing."
+        },
+        {
+          "action": "repair",
+          "explanation": "Add owner-read while keeping owner-write. Numeric 600 also sets exactly rw-------: 6 = read (4) + write (2). 777 adds unnecessary execute and group/other access, so it fails this lab.",
+          "expected": "Mode 0600: only the owner can read/write. No execution or access for group/other."
+        },
+        {
+          "action": "verify",
+          "explanation": "Read the notes to verify the repair. After any permission change, verify again. Grading checks the final mode and this successful read, not an exact command sequence.",
+          "expected": "The notes begin with My learning notes. Submit when ready."
+        }
+      ]
+    }
+  }
+}

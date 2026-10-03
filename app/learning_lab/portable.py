@@ -83,7 +83,10 @@ def load_portable(raw):
         for constraint in constraints: text(constraint,'constraint')
         require(value['assets'] == [], 'Assets, paths, URLs, and archives are not supported by this format version.')
         if engine['id']=='linux-navigation':
-            from .linux_navigation.engine import validate_pack as validate_navigation, initial_state, validate_state
+            if engine['contract_version']==2:
+                from .linux_navigation.permissions import validate_pack as validate_navigation, initial_state, validate_state
+            else:
+                from .linux_navigation.engine import validate_pack as validate_navigation, initial_state, validate_state
             validate_navigation(value)
             pack=engine_pack(value)
             validate_state(pack,initial_state(pack))

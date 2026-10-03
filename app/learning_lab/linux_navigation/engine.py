@@ -102,16 +102,24 @@ def validate_state(pack, state):
 
 
 class NavigationEngine:
+    help_text = HELP
+
     def __init__(self, pack, state=None):
         self.pack = pack
         self.state = deepcopy(state if state is not None else initial_state(pack))
+
+    def validate(self, state):
+        return validate_state(self.pack, state)
+
+    def record(self, state, op, target):
+        state['activity'][op] = sorted(set(state['activity'][op]) | {target})
 
     def command(self, command):
         state = deepcopy(self.state)
         try:
             op, *args = command_words(command)
             fs = VirtualFS(state['filesystem']); cwd = state['cwd']; target = None
-            if op == 'help' and not args: output = HELP
+            if op == 'help' and not args: output = self.help_text
             elif op == 'pwd' and not args: target = cwd; output = cwd
             elif op == 'ls':
                 long = bool(args and args[0] == '-l'); args = args[1:] if long else args
@@ -128,8 +136,8 @@ class NavigationEngine:
             else:
                 raise ValidationError('Unsupported navigation command or options. Type help for pwd, ls, cd and cat. No host command is run.')
             if target is not None:
-                state['activity'][op] = sorted(set(state['activity'][op]) | {target})
-            validate_state(self.pack, state)
+                self.record(state, op, target)
+            self.validate(state)
             return state, output[:16384] + ('\n[simulated output truncated]' if len(output) > 16384 else '')
         except ValidationError as exc:
             return deepcopy(self.state), 'Simulation: ' + str(exc)

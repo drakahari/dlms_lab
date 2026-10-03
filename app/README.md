@@ -1,6 +1,6 @@
 # Omarchy Learning Lab — native workspace and portable scenarios
 
-Three bundled networking labs, two importable Linux service labs, and one importable Linux file-navigation lab in a standalone, offline Qt Quick window.
+Three bundled networking labs, two importable Linux service labs, and beginner file-navigation and permissions labs in a standalone, offline Qt Quick window.
 
 ## Launch
 
@@ -16,6 +16,19 @@ Installed and verified: Python 3.14.7, PySide6 6.11.2, Shiboken6 6.11.2, Qt 6.11
 Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can force a smaller allocation despite Qt's minimum. Use the existing **Super+T** floating toggle or **Super+Alt+F** maximize binding when needed; the app does not install window rules.
 
 ## Use
+
+### Beginner Linux file permissions
+
+Import `examples/linux-file-permissions.lab.json` in Library and open **Restore
+access to your file**. Inspect your unreadable notes, restore private owner
+read/write access, and read the contents to verify the repair. Learn explains
+permission classes and each step; Challenge hides the walkthrough.
+
+This pack explicitly enables simulated `chmod u+r PATH` and `chmod NNN PATH`
+(exactly three octal digits). Only its declared learner-owned notes file is
+mutable. `777` permits reading but fails the private-access requirement. Existing
+navigation and service packs continue to reject `chmod`.
+See [permissions syntax, results and owner checklist](docs/linux-permissions.md).
 
 ### Beginner Linux file navigation
 
