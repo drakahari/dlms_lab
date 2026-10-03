@@ -1,0 +1,229 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "resolver-misdirection",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "networking",
+    "contract_version": 1,
+    "supported_behavior_versions": [
+      "networking-1"
+    ],
+    "required_capabilities": [
+      "ipv4-routing",
+      "dns",
+      "portal-reachability"
+    ]
+  },
+  "metadata": {
+    "title": "Two names, wrong destinations",
+    "topic": "DNS answer correctness · endpoint identity",
+    "difficulty": "Intermediate",
+    "minutes": 12
+  },
+  "mission": {
+    "brief": "CLIENT-7 can ping both service servers and receives DNS replies, but the inventory and orders names lead to the wrong endpoints. Inspect both servers and compare each DNS answer with the endpoint hosted there. Choose a resolver with correct records for both services, Apply, run diagnostics, then submit. Routing and return paths are healthy. This checks DNS and endpoint reachability, not HTTP, TLS, or TCP policy.",
+    "constraints": [
+      "Keep CLIENT-7 at 172.22.8.40/24 and gateway 172.22.8.1; those settings are fixed.",
+      "Only the client DNS setting is editable. Both inventory.lab.test and orders.lab.test must resolve to their corresponding reachable endpoints.",
+      "Do not change server records. Inspect the two existing resolvers and choose the one that has both correct mappings."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "address",
+      "label": "Preserve assigned client address",
+      "points": 20,
+      "predicate": "address_equals",
+      "params": {
+        "device": "CLIENT-7",
+        "value": "172.22.8.40"
+      }
+    },
+    {
+      "id": "prefix",
+      "label": "Preserve the documented /24",
+      "points": 20,
+      "predicate": "prefix_equals",
+      "params": {
+        "device": "CLIENT-7",
+        "value": 24
+      }
+    },
+    {
+      "id": "inventory",
+      "label": "Resolve and reach the inventory endpoint",
+      "points": 30,
+      "predicate": "dns_and_portal",
+      "params": {
+        "source": "CLIENT-7",
+        "hostname": "inventory.lab.test"
+      }
+    },
+    {
+      "id": "orders",
+      "label": "Resolve and reach the orders endpoint",
+      "points": 30,
+      "predicate": "dns_and_portal",
+      "params": {
+        "source": "CLIENT-7",
+        "hostname": "orders.lab.test"
+      }
+    }
+  ],
+  "hints": [
+    "A successful lookup only proves that a resolver answered. Compare the returned address with the server that declares the requested endpoint.",
+    "Inspect INVENTORY and ORDERS. Both answer DNS, but one resolver swaps the two service addresses. The gateway and both server IP paths already work.",
+    "Set CLIENT-7 DNS to 172.22.20.10 and Apply. Its records map inventory.lab.test to 172.22.20.10 and orders.lab.test to 172.22.20.20. Test both endpoints before submitting."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 1,
+    "source_device": "CLIENT-7",
+    "topology": {
+      "segments": [
+        "clients",
+        "services"
+      ],
+      "devices": [
+        {
+          "id": "CLIENT-7",
+          "role": "workstation",
+          "interfaces": [
+            {
+              "id": "eth0",
+              "segment": "clients",
+              "address": "172.22.8.40",
+              "prefix": 24
+            }
+          ],
+          "gateway": "172.22.8.1",
+          "dns": "172.22.20.20",
+          "forwarding": false,
+          "records": {},
+          "endpoints": []
+        },
+        {
+          "id": "EDGE",
+          "role": "router",
+          "interfaces": [
+            {
+              "id": "lan",
+              "segment": "clients",
+              "address": "172.22.8.1",
+              "prefix": 24
+            },
+            {
+              "id": "services",
+              "segment": "services",
+              "address": "172.22.20.1",
+              "prefix": 24
+            }
+          ],
+          "gateway": null,
+          "dns": null,
+          "forwarding": true,
+          "records": {},
+          "endpoints": []
+        },
+        {
+          "id": "INVENTORY",
+          "role": "server",
+          "interfaces": [
+            {
+              "id": "eth0",
+              "segment": "services",
+              "address": "172.22.20.10",
+              "prefix": 24
+            }
+          ],
+          "gateway": "172.22.20.1",
+          "dns": "172.22.20.10",
+          "forwarding": false,
+          "records": {
+            "inventory.lab.test": "172.22.20.10",
+            "orders.lab.test": "172.22.20.20"
+          },
+          "endpoints": [
+            "inventory.lab.test"
+          ]
+        },
+        {
+          "id": "ORDERS",
+          "role": "server",
+          "interfaces": [
+            {
+              "id": "eth0",
+              "segment": "services",
+              "address": "172.22.20.20",
+              "prefix": 24
+            }
+          ],
+          "gateway": "172.22.20.1",
+          "dns": "172.22.20.20",
+          "forwarding": false,
+          "records": {
+            "inventory.lab.test": "172.22.20.20",
+            "orders.lab.test": "172.22.20.10"
+          },
+          "endpoints": [
+            "orders.lab.test"
+          ]
+        }
+      ]
+    },
+    "initial_state": {
+      "CLIENT-7": {
+        "address": "172.22.8.40",
+        "prefix": 24,
+        "gateway": "172.22.8.1",
+        "dns": "172.22.20.20"
+      }
+    },
+    "editable_fields": {
+      "CLIENT-7": [
+        "dns"
+      ]
+    },
+    "diagnostics": [
+      {
+        "id": "inventory-ip",
+        "label": "Inventory IP path",
+        "operation": "reach",
+        "target": "172.22.20.10"
+      },
+      {
+        "id": "orders-ip",
+        "label": "Orders IP path",
+        "operation": "reach",
+        "target": "172.22.20.20"
+      },
+      {
+        "id": "inventory-dns",
+        "label": "Inventory DNS answer",
+        "operation": "resolve",
+        "hostname": "inventory.lab.test"
+      },
+      {
+        "id": "orders-dns",
+        "label": "Orders DNS answer",
+        "operation": "resolve",
+        "hostname": "orders.lab.test"
+      },
+      {
+        "id": "inventory-endpoint",
+        "label": "Inventory name reaches its endpoint",
+        "operation": "portal",
+        "hostname": "inventory.lab.test"
+      },
+      {
+        "id": "orders-endpoint",
+        "label": "Orders name reaches its endpoint",
+        "operation": "portal",
+        "hostname": "orders.lab.test"
+      }
+    ]
+  }
+}

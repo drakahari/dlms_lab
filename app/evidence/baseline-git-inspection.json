@@ -1,0 +1,95 @@
+{
+  "checked_utc": "2026-10-02T23:52:08.571271+00:00",
+  "workspace": "/home/drak/Documents/dlms_lab",
+  "visible_git": {
+    "uid": 1000,
+    "gid": 1000,
+    "mode": "0o555",
+    "entries": [],
+    "symlink": false
+  },
+  "git_environment": {
+    "GIT_DIR": null,
+    "GIT_WORK_TREE": null,
+    "GIT_COMMON_DIR": null,
+    "GIT_CEILING_DIRECTORIES": null,
+    "GIT_DISCOVERY_ACROSS_FILESYSTEM": null
+  },
+  "commands": [
+    {
+      "command": [
+        "git",
+        "-C",
+        "/home/drak/Documents/dlms_lab",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any parent up to mount point /)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/home/drak/Documents/dlms_lab/app",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any parent up to mount point /)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+    },
+    {
+      "command": [
+        "git",
+        "--git-dir=/home/drak/Documents/dlms_lab/.git",
+        "rev-parse",
+        "--is-inside-work-tree"
+      ],
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository: '/home/drak/Documents/dlms_lab/.git'\n"
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/home/drak/Documents/dlms_lab",
+        "remote",
+        "-v"
+      ],
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any parent up to mount point /)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "-T",
+        "/home/drak/Documents/dlms_lab/.git",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "stdout": "TARGET                             SOURCE FSTYPE OPTIONS\n/home/drak/Documents/dlms_lab/.git tmpfs  tmpfs  ro,nosuid,nodev,relatime,mode=555,uid=1000,gid=1000,inode64,huge=advise\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "findmnt",
+        "-T",
+        "/home/drak/Documents/dlms_lab",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "stdout": "TARGET                        SOURCE                                           FSTYPE OPTIONS\n/home/drak/Documents/dlms_lab /dev/mapper/root[/@home/drak/Documents/dlms_lab] btrfs  rw,nosuid,nodev,relatime,compress=zstd:3,ssd,space_cache=v2,subvolid=257,subvol=/@home\n",
+      "stderr": ""
+    }
+  ],
+  "cause": "This session sees an empty read-only tmpfs mount at .git, with no HEAD/objects/refs/config; Git cannot recognize it as repository metadata.",
+  "underlying_host_metadata": "Unverified: obscured by the mount; no bypass attempted.",
+  "existing_remote": "Unverifiable: repository config is not visible and git remote -v fails. This does not establish absence of a remote.",
+  "mutations": "None to Git metadata, ownership, mounts, configuration, remotes or tracked application files."
+}

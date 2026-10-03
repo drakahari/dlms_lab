@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "lab_id": "subnet-boundary",
+  "content_version": "1.0.0",
+  "required_capabilities": [
+    "ipv4-routing",
+    "dns",
+    "portal-reachability"
+  ],
+  "metadata": {
+    "title": "Correct a subnet boundary",
+    "topic": "IPv4 \u00b7 subnet membership \u00b7 default routing",
+    "difficulty": "Foundation",
+    "minutes": 15,
+    "brief": "WS-01 can reach its local peer but cannot reach its gateway or the remote server. Restore the documented 192.168.50.0/24 LAN while preserving WS-01's assigned address, 192.168.50.20. Gateway 192.168.50.1 and DNS 10.20.0.10 are correct and fixed in this lab. PEER-01 is 192.168.50.21/24. Compare local peer, gateway and remote server reachability before changing the prefix. Links, forwarding, DNS service and server return routing are healthy. Full credit requires exactly /24; a wider working subnet is not the documented LAN."
+  },
+  "topology": {
+    "segments": [
+      "workstation-lan",
+      "application-lan"
+    ],
+    "devices": [
+      {
+        "id": "WS-01",
+        "role": "workstation",
+        "interfaces": [
+          {
+            "id": "eth0",
+            "segment": "workstation-lan",
+            "address": "192.168.50.20",
+            "prefix": 28
+          }
+        ],
+        "gateway": "192.168.50.1",
+        "dns": "10.20.0.10",
+        "forwarding": false,
+        "records": {},
+        "endpoints": []
+      },
+      {
+        "id": "RTR-01",
+        "role": "router",
+        "interfaces": [
+          {
+            "id": "lan",
+            "segment": "workstation-lan",
+            "address": "192.168.50.1",
+            "prefix": 24
+          },
+          {
+            "id": "wan",
+            "segment": "application-lan",
+            "address": "10.20.0.1",
+            "prefix": 24
+          }
+        ],
+        "gateway": null,
+        "dns": null,
+        "forwarding": true,
+        "records": {},
+        "endpoints": []
+      },
+      {
+        "id": "APP-01",
+        "role": "server",
+        "interfaces": [
+          {
+            "id": "eth0",
+            "segment": "application-lan",
+            "address": "10.20.0.10",
+            "prefix": 24
+          }
+        ],
+        "gateway": "10.20.0.1",
+        "dns": "10.20.0.10",
+        "forwarding": false,
+        "records": {
+          "portal.lab.test": "10.20.0.10"
+        },
+        "endpoints": [
+          "portal.lab.test"
+        ]
+      },
+      {
+        "id": "PEER-01",
+        "role": "workstation",
+        "interfaces": [
+          {
+            "id": "eth0",
+            "segment": "workstation-lan",
+            "address": "192.168.50.21",
+            "prefix": 24
+          }
+        ],
+        "gateway": "192.168.50.1",
+        "dns": "10.20.0.10",
+        "forwarding": false,
+        "records": {},
+        "endpoints": []
+      }
+    ]
+  },
+  "initial_state": {
+    "WS-01": {
+      "address": "192.168.50.20",
+      "prefix": 28,
+      "gateway": "192.168.50.1",
+      "dns": "10.20.0.10"
+    }
+  },
+  "editable_fields": {
+    "WS-01": [
+      "address",
+      "prefix"
+    ]
+  },
+  "objectives": [
+    {
+      "id": "address",
+      "label": "Preserve the assigned address",
+      "points": 20,
+      "predicate": "address_equals",
+      "params": {
+        "device": "WS-01",
+        "value": "192.168.50.20"
+      }
+    },
+    {
+      "id": "prefix",
+      "label": "Use the documented /24",
+      "points": 30,
+      "predicate": "prefix_equals",
+      "params": {
+        "device": "WS-01",
+        "value": 24
+      }
+    },
+    {
+      "id": "peer",
+      "label": "Retain local peer reachability",
+      "points": 20,
+      "predicate": "reachable",
+      "params": {
+        "source": "WS-01",
+        "target": "192.168.50.21"
+      }
+    },
+    {
+      "id": "gateway",
+      "label": "Reach the assigned gateway",
+      "points": 10,
+      "predicate": "reachable",
+      "params": {
+        "source": "WS-01",
+        "target": "192.168.50.1"
+      }
+    },
+    {
+      "id": "server",
+      "label": "Restore remote server reachability",
+      "points": 20,
+      "predicate": "reachable",
+      "params": {
+        "source": "WS-01",
+        "target": "10.20.0.10"
+      }
+    }
+  ],
+  "hints": [
+    "Compare ping 192.168.50.21, ping 192.168.50.1 and ping 10.20.0.10. Why might a nearby peer work while the gateway does not?",
+    "At /28, WS-01 belongs to 192.168.50.16/28, spanning .16 through .31. Peer .21 is inside; gateway .1 is outside. Check the documented LAN prefix rather than changing the correct gateway.",
+    "Keep address 192.168.50.20, gateway 192.168.50.1 and DNS 10.20.0.10. Set the prefix to /24 (255.255.255.0), Apply, then test peer, gateway and remote server. A wider working prefix will not earn full credit."
+  ]
+}

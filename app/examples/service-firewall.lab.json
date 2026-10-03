@@ -1,0 +1,242 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "service-firewall",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "networking",
+    "contract_version": 1,
+    "supported_behavior_versions": [
+      "networking-1"
+    ],
+    "required_capabilities": [
+      "ipv4-routing",
+      "dns",
+      "portal-reachability",
+      "tcp-connect",
+      "ordered-firewall"
+    ]
+  },
+  "metadata": {
+    "title": "Repair a service firewall",
+    "topic": "TCP · ordered rules · least privilege",
+    "difficulty": "Foundation",
+    "minutes": 20
+  },
+  "mission": {
+    "brief": "WS-01 has correct addressing, routing and DNS. Ping and name resolution work, but RTR-01 blocks TCP 443 to APP-01. Permit only source 192.168.50.20 to destination 10.20.0.10 on TCP 443. Keep TCP 22 blocked and deny every other TCP selector flow. Add a narrow allow rule before the blocking rule, or correct the existing rule and its source scope. Rules use first-match order followed by an explicit default policy. Use connect portal.lab.test 443 and connect portal.lab.test 22 to inspect the decision. Network settings are fixed. This models TCP permission, a declared listening service and return routing; it does not perform TLS or HTTP requests.",
+    "constraints": []
+  },
+  "objectives": [
+    {
+      "id": "dns",
+      "label": "Preserve DNS and endpoint reachability",
+      "points": 15,
+      "predicate": "dns_and_portal",
+      "params": {
+        "source": "WS-01",
+        "hostname": "portal.lab.test"
+      }
+    },
+    {
+      "id": "ping",
+      "label": "Preserve ICMP reachability",
+      "points": 15,
+      "predicate": "reachable",
+      "params": {
+        "source": "WS-01",
+        "target": "10.20.0.10"
+      }
+    },
+    {
+      "id": "https-port",
+      "label": "Permit required TCP 443 flow",
+      "points": 40,
+      "predicate": "tcp_allowed",
+      "params": {
+        "source": "WS-01",
+        "target": "10.20.0.10",
+        "port": 443
+      }
+    },
+    {
+      "id": "ssh-isolation",
+      "label": "Keep restricted TCP 22 blocked",
+      "points": 10,
+      "predicate": "tcp_blocked",
+      "params": {
+        "source": "WS-01",
+        "target": "10.20.0.10",
+        "port": 22
+      }
+    },
+    {
+      "id": "narrow-policy",
+      "label": "Limit effective TCP permission to the required flow",
+      "points": 20,
+      "predicate": "tcp_isolated",
+      "params": {
+        "source": "WS-01",
+        "target": "10.20.0.10",
+        "port": 443
+      }
+    }
+  ],
+  "hints": [
+    "Compare ping, nslookup and connect portal.lab.test 443. Successful DNS and ping do not prove TCP access. Read the rule or default policy named in each connection result.",
+    "RTR-01 evaluates the first matching TCP rule. An allow rule below a matching deny will never be reached. Match the single workstation and server with /32 selectors; leave other ports and sources denied.",
+    "Allow TCP from 192.168.50.20/32 to 10.20.0.10/32 on port 443 before any matching deny, with a deny default. You can correct the existing rule’s action and source, or add and move a narrow rule. Apply, then test 443 and 22. Broad source, destination or port permissions lose isolation credit."
+  ],
+  "assets": [],
+  "domain": {
+    "topology": {
+      "segments": [
+        "workstation-lan",
+        "application-lan"
+      ],
+      "devices": [
+        {
+          "id": "WS-01",
+          "role": "workstation",
+          "interfaces": [
+            {
+              "id": "eth0",
+              "segment": "workstation-lan",
+              "address": "192.168.50.20",
+              "prefix": 24
+            }
+          ],
+          "gateway": "192.168.50.1",
+          "dns": "10.20.0.10",
+          "forwarding": false,
+          "records": {},
+          "endpoints": []
+        },
+        {
+          "id": "RTR-01",
+          "role": "router",
+          "interfaces": [
+            {
+              "id": "lan",
+              "segment": "workstation-lan",
+              "address": "192.168.50.1",
+              "prefix": 24
+            },
+            {
+              "id": "wan",
+              "segment": "application-lan",
+              "address": "10.20.0.1",
+              "prefix": 24
+            }
+          ],
+          "gateway": null,
+          "dns": null,
+          "forwarding": true,
+          "records": {},
+          "endpoints": []
+        },
+        {
+          "id": "APP-01",
+          "role": "server",
+          "interfaces": [
+            {
+              "id": "eth0",
+              "segment": "application-lan",
+              "address": "10.20.0.10",
+              "prefix": 24
+            }
+          ],
+          "gateway": "10.20.0.1",
+          "dns": "10.20.0.10",
+          "forwarding": false,
+          "records": {
+            "portal.lab.test": "10.20.0.10"
+          },
+          "endpoints": [
+            "portal.lab.test"
+          ]
+        }
+      ]
+    },
+    "initial_state": {
+      "WS-01": {
+        "address": "192.168.50.20",
+        "prefix": 24,
+        "gateway": "192.168.50.1",
+        "dns": "10.20.0.10"
+      }
+    },
+    "editable_fields": {
+      "WS-01": []
+    },
+    "schema_version": 1,
+    "source_device": "WS-01",
+    "diagnostics": [
+      {
+        "id": "ping",
+        "label": "Preserve ICMP reachability",
+        "operation": "reach",
+        "target": "10.20.0.10"
+      },
+      {
+        "id": "dns-0",
+        "label": "DNS",
+        "operation": "resolve",
+        "hostname": "portal.lab.test"
+      },
+      {
+        "id": "portal-0",
+        "label": "Portal (DNS/reachability only)",
+        "operation": "portal",
+        "hostname": "portal.lab.test"
+      },
+      {
+        "id": "https-port",
+        "label": "Permit required TCP 443 flow",
+        "operation": "connect",
+        "target": "10.20.0.10",
+        "port": 443,
+        "expected": "connected"
+      },
+      {
+        "id": "ssh-isolation",
+        "label": "Keep restricted TCP 22 blocked",
+        "operation": "connect",
+        "target": "10.20.0.10",
+        "port": 22,
+        "expected": "denied"
+      }
+    ],
+    "firewall": {
+      "device": "RTR-01",
+      "initial_policy": {
+        "default": "deny",
+        "rules": [
+          {
+            "id": "block-portal",
+            "action": "deny",
+            "protocol": "tcp",
+            "source": "any",
+            "destination": "10.20.0.10/32",
+            "port": 443
+          }
+        ]
+      },
+      "editable": [
+        "rules",
+        "default"
+      ]
+    },
+    "tcp_services": [
+      {
+        "device": "APP-01",
+        "ports": [
+          22,
+          443
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+Files changed or added for the service-firewall milestone:
+
+README.md
+docs/native-acceptance.md
+docs/pack-format.md
+docs/recovery.md
+docs/changed-files.txt
+learning_lab/__main__.py
+learning_lab/bridge.py
+learning_lab/catalog.py
+learning_lab/domain/engine.py
+learning_lab/domain/firewall.py
+learning_lab/domain/validation.py
+learning_lab/packs/service-firewall.json
+learning_lab/qml/Main.qml
+learning_lab/qml/FirewallPanel.qml
+learning_lab/session.py
+learning_lab/storage.py
+tests/test_lab.py
+tests/test_firewall.py
+tests/native_acceptance.py
+tests/restart_probe.py
+tests/layout_probe.py
+
+Evidence:
+evidence/firewall-unit-results.txt
+evidence/firewall-native-{100,150,200}.json and corresponding PNGs
+evidence/firewall-layout-{100,150,200}.json and corresponding PNGs

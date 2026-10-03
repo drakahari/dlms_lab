@@ -1,0 +1,172 @@
+{
+  "label": "proof-native-200",
+  "platform": "wayland",
+  "checks": [
+    {
+      "name": "window exposed",
+      "passed": true
+    },
+    {
+      "name": "native Wayland",
+      "passed": true
+    },
+    {
+      "name": "expected display scale",
+      "passed": true
+    },
+    {
+      "name": "rendered library",
+      "passed": true
+    },
+    {
+      "name": "application still matches pre-authoring freeze",
+      "passed": true
+    },
+    {
+      "name": "import gateway-dns.lab.json",
+      "passed": true
+    },
+    {
+      "name": "import resolver-misdirection.lab.json",
+      "passed": true
+    },
+    {
+      "name": "imported card scrolls into view with keyboard",
+      "passed": true
+    },
+    {
+      "name": "rendered imported-library-800",
+      "passed": true
+    },
+    {
+      "name": "keyboard opens data-only scenario",
+      "passed": true
+    },
+    {
+      "name": "baseline routes and DNS succeed but endpoints fail",
+      "passed": true
+    },
+    {
+      "name": "different source and topology",
+      "passed": true
+    },
+    {
+      "name": "rendered misdirection-baseline",
+      "passed": true
+    },
+    {
+      "name": "rendered misdirection-diagnostics",
+      "passed": true
+    },
+    {
+      "name": "DNS draft does not change applied resolver",
+      "passed": true
+    },
+    {
+      "name": "Learn full grade",
+      "passed": true
+    },
+    {
+      "name": "rendered misdirection-learn-review",
+      "passed": true
+    },
+    {
+      "name": "Challenge fresh with no assistance",
+      "passed": true
+    },
+    {
+      "name": "Learn evidence retained",
+      "passed": true
+    },
+    {
+      "name": "Challenge full grade",
+      "passed": true
+    },
+    {
+      "name": "rendered misdirection-challenge-review",
+      "passed": true
+    },
+    {
+      "name": "simulated command uses pack data",
+      "passed": true
+    },
+    {
+      "name": "reset cancel preserves grade",
+      "passed": true
+    },
+    {
+      "name": "reset preserves Challenge evidence",
+      "passed": true
+    },
+    {
+      "name": "export scenario only",
+      "passed": true
+    },
+    {
+      "name": "export exact content bytes",
+      "passed": true
+    },
+    {
+      "name": "duplicate reimport idempotent",
+      "passed": true
+    },
+    {
+      "name": "fresh repository reimport retains identity",
+      "passed": true
+    },
+    {
+      "name": "invalid import fails cleanly",
+      "passed": true
+    },
+    {
+      "name": "legacy record preserved current.json",
+      "passed": true
+    },
+    {
+      "name": "legacy record preserved current.backup.json",
+      "passed": true
+    },
+    {
+      "name": "legacy record preserved labs/service-firewall/current.json",
+      "passed": true
+    },
+    {
+      "name": "legacy record preserved labs/service-firewall/current.backup.json",
+      "passed": true
+    },
+    {
+      "name": "legacy record preserved labs/subnet-boundary/current.json",
+      "passed": true
+    },
+    {
+      "name": "legacy record preserved labs/subnet-boundary/current.backup.json",
+      "passed": true
+    },
+    {
+      "name": "rendered portable-history",
+      "passed": true
+    },
+    {
+      "name": "fresh process resumes original and portable attempts",
+      "passed": true
+    },
+    {
+      "name": "application code unchanged after proof",
+      "passed": true
+    },
+    {
+      "name": "no QML runtime errors",
+      "passed": true
+    }
+  ],
+  "input": "QtTest key events; physical keyboard unverified",
+  "file_picker": "Native file chooser manual acceptance outstanding; transfer API tested separately",
+  "qml_messages": [
+    "Failed to register with host portal QDBusError(\"org.freedesktop.portal.Error.Failed\", \"Could not register app ID: Connection already associated with an application ID\")"
+  ],
+  "dpr": 2.0,
+  "screen": "eDP-1",
+  "graphics_api": "GraphicsApi.OpenGL",
+  "restart": "PASS: fresh process preserved all original and portable attempts, pins, modes, grades, drafts, pending console text and history\n",
+  "result": "PASS"
+}

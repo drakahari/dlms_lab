@@ -1,0 +1,58 @@
+{
+  "result": "PASS",
+  "checked_utc": "2026-10-02T21:42:27.160066+00:00",
+  "recovery_snapshot": "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-1-before-20261002T213111Z",
+  "snapshot_copies_reverified": true,
+  "original_progress_unchanged": {
+    "files": 7,
+    "bytes_modes_mtimes_and_inventory_match": true
+  },
+  "original_config_unchanged": {
+    "files": 2,
+    "bytes_modes_mtimes_and_inventory_match": true
+  },
+  "original_pack_sha256": {
+    "learning_lab/packs/gateway-dns.json": "ad675efd0df13b5fbb1e543300ba1e13025e82126f4c3439d87ecde65c94107d",
+    "learning_lab/packs/subnet-boundary.json": "42f654ddbdf56475b66a0b4abf3260835587708883cf9c9e28a383da77d4b59d",
+    "learning_lab/packs/service-firewall.json": "9b12b90673a9cf4da26afb6857123ae51f71fd29b99f9a4f06b034c52c60d67d"
+  },
+  "protected_engine_session_storage_catalog_qml_and_existing_tests_unchanged": true,
+  "modified_existing_files": [
+    "README.md",
+    "learning_lab/__main__.py"
+  ],
+  "added_files": [
+    "docs/checkpoint-1.md",
+    "docs/scenario-identity.md",
+    "evidence/checkpoint-1-tests.txt",
+    "evidence/checkpoint-1-verification.json",
+    "learning_lab/legacy_scenario.py",
+    "learning_lab/scenario_identity.py",
+    "tests/test_scenario_identity.py"
+  ],
+  "deleted_files": [],
+  "gateway_identity": {
+    "scenario_id": "gateway-dns",
+    "content_version": "1.0.0",
+    "format_id": "omarchy-learning-lab.legacy-network",
+    "format_version": 1,
+    "canonicalization": "oll-json-v1",
+    "content_digest": "sha256:03e96fd1e27f211f5bf6ca88aad83bf34f0f169cbfe0df1106d460143adae12d"
+  },
+  "current_runtime_declaration": {
+    "engine_id": "networking",
+    "contract_version": 1,
+    "behavior_version": "legacy-1"
+  },
+  "legacy_provenance_backfilled": false,
+  "tests": {
+    "total": 79,
+    "existing": 63,
+    "new": 16,
+    "result": "PASS",
+    "log": "checkpoint-1-tests.txt"
+  },
+  "startup": "PASS: offscreen software renderer, isolated data/config/cache; not native visual or physical-keyboard acceptance",
+  "git": "No usable repository visible; no metadata changes",
+  "stop_point": "Checkpoint 1 only"
+}

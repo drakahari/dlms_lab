@@ -1,0 +1,540 @@
+{
+  "kind": "native layout geometry; direct page selection",
+  "checks": [
+    {
+      "name": "native Wayland exposed",
+      "passed": true
+    },
+    {
+      "name": "geometry 1024x768",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "geometry 1180x860",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "geometry 1260x880",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns hint minimum geometry",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns third hint reachable by PageDown",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns hint width fits",
+      "passed": true
+    },
+    {
+      "name": "geometry 1024x768",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "geometry 1180x860",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "geometry 1260x880",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary hint minimum geometry",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary third hint reachable by PageDown",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary hint width fits",
+      "passed": true
+    },
+    {
+      "name": "geometry 1024x768",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1024x768 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "geometry 1180x860",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1180x860 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "geometry 1260x880",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Address inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Address full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Prefix inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Prefix full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Gateway inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Gateway full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Dns inside",
+      "passed": true
+    },
+    {
+      "name": "1260x880 Dns full text",
+      "passed": true
+    },
+    {
+      "name": "firewall geometry 1024x768",
+      "passed": true
+    },
+    {
+      "name": "1024x768 ruleIdInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 ruleIdInput full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 ruleSourceInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 ruleSourceInput full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 ruleDestinationInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 ruleDestinationInput full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 rulePortInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 rulePortInput full text",
+      "passed": true
+    },
+    {
+      "name": "1024x768 ruleActionInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 defaultPolicyInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 inspectAppliedPolicy keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 addRule keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1024x768 removeRule keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "firewall geometry 1180x860",
+      "passed": true
+    },
+    {
+      "name": "1180x860 ruleIdInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 ruleIdInput full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 ruleSourceInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 ruleSourceInput full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 ruleDestinationInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 ruleDestinationInput full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 rulePortInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 rulePortInput full text",
+      "passed": true
+    },
+    {
+      "name": "1180x860 ruleActionInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 defaultPolicyInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 inspectAppliedPolicy keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 addRule keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1180x860 removeRule keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "firewall geometry 1260x880",
+      "passed": true
+    },
+    {
+      "name": "1260x880 ruleIdInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 ruleIdInput full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 ruleSourceInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 ruleSourceInput full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 ruleDestinationInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 ruleDestinationInput full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 rulePortInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 rulePortInput full text",
+      "passed": true
+    },
+    {
+      "name": "1260x880 ruleActionInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 defaultPolicyInput keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 inspectAppliedPolicy keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 addRule keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "1260x880 removeRule keyboard-visible",
+      "passed": true
+    },
+    {
+      "name": "service-firewall hint minimum geometry",
+      "passed": true
+    },
+    {
+      "name": "service-firewall third hint reachable by PageDown",
+      "passed": true
+    },
+    {
+      "name": "service-firewall hint width fits",
+      "passed": true
+    }
+  ],
+  "dpr": 1.0,
+  "screen": "DP-1",
+  "result": "PASS"
+}

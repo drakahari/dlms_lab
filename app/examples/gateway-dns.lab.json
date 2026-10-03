@@ -1,0 +1,190 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "gateway-dns",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "networking",
+    "contract_version": 1,
+    "supported_behavior_versions": [
+      "networking-1"
+    ],
+    "required_capabilities": [
+      "ipv4-routing",
+      "dns",
+      "portal-reachability"
+    ]
+  },
+  "metadata": {
+    "title": "Restore gateway & DNS",
+    "topic": "IPv4 · routing · name resolution",
+    "difficulty": "Foundation",
+    "minutes": 15
+  },
+  "mission": {
+    "brief": "WS-01 cannot reach portal.lab.test. Restore the workstation's path to the application network and its DNS service. Preserve its assigned address 192.168.50.20 and /24 prefix. Inspect the topology, diagnose the two faults, apply a repair, then submit your final state. Links, router forwarding and server return routing are healthy. The portal check models DNS and reachability only; it does not validate TCP, HTTPS or firewall behavior.",
+    "constraints": [
+      "Preserve the assigned address",
+      "Preserve the required /24"
+    ]
+  },
+  "objectives": [
+    {
+      "id": "address",
+      "label": "Preserve the assigned address",
+      "points": 20,
+      "predicate": "address_equals",
+      "params": {
+        "device": "WS-01",
+        "value": "192.168.50.20"
+      }
+    },
+    {
+      "id": "prefix",
+      "label": "Preserve the required /24",
+      "points": 20,
+      "predicate": "prefix_equals",
+      "params": {
+        "device": "WS-01",
+        "value": 24
+      }
+    },
+    {
+      "id": "route",
+      "label": "Reach the remote application server",
+      "points": 30,
+      "predicate": "reachable",
+      "params": {
+        "source": "WS-01",
+        "target": "10.20.0.10"
+      }
+    },
+    {
+      "id": "portal",
+      "label": "Resolve and reach the portal endpoint",
+      "points": 30,
+      "predicate": "dns_and_portal",
+      "params": {
+        "source": "WS-01",
+        "hostname": "portal.lab.test"
+      }
+    }
+  ],
+  "hints": [
+    "Separate IP connectivity from name resolution. Compare a ping to the application server's IP with a lookup of portal.lab.test.",
+    "Inspect RTR-01's workstation-facing interface and APP-01's DNS service. A default gateway must be a reachable neighbor; a DNS server must be reachable through the resulting route.",
+    "Keep 192.168.50.20/24. Set gateway to 192.168.50.1 and DNS to 10.20.0.10, Apply, and test again. Gateway alone repairs IP routing; both changes are needed for the portal check."
+  ],
+  "assets": [],
+  "domain": {
+    "topology": {
+      "segments": [
+        "workstation-lan",
+        "application-lan"
+      ],
+      "devices": [
+        {
+          "id": "WS-01",
+          "role": "workstation",
+          "interfaces": [
+            {
+              "id": "eth0",
+              "segment": "workstation-lan",
+              "address": "192.168.50.20",
+              "prefix": 24
+            }
+          ],
+          "gateway": "192.168.50.254",
+          "dns": "10.20.0.99",
+          "forwarding": false,
+          "records": {},
+          "endpoints": []
+        },
+        {
+          "id": "RTR-01",
+          "role": "router",
+          "interfaces": [
+            {
+              "id": "lan",
+              "segment": "workstation-lan",
+              "address": "192.168.50.1",
+              "prefix": 24
+            },
+            {
+              "id": "wan",
+              "segment": "application-lan",
+              "address": "10.20.0.1",
+              "prefix": 24
+            }
+          ],
+          "gateway": null,
+          "dns": null,
+          "forwarding": true,
+          "records": {},
+          "endpoints": []
+        },
+        {
+          "id": "APP-01",
+          "role": "server",
+          "interfaces": [
+            {
+              "id": "eth0",
+              "segment": "application-lan",
+              "address": "10.20.0.10",
+              "prefix": 24
+            }
+          ],
+          "gateway": "10.20.0.1",
+          "dns": "10.20.0.10",
+          "forwarding": false,
+          "records": {
+            "portal.lab.test": "10.20.0.10"
+          },
+          "endpoints": [
+            "portal.lab.test"
+          ]
+        }
+      ]
+    },
+    "initial_state": {
+      "WS-01": {
+        "address": "192.168.50.20",
+        "prefix": 24,
+        "gateway": "192.168.50.254",
+        "dns": "10.20.0.99"
+      }
+    },
+    "editable_fields": {
+      "WS-01": [
+        "address",
+        "prefix",
+        "gateway",
+        "dns"
+      ]
+    },
+    "schema_version": 1,
+    "source_device": "WS-01",
+    "diagnostics": [
+      {
+        "id": "route",
+        "label": "Reach the remote application server",
+        "operation": "reach",
+        "target": "10.20.0.10"
+      },
+      {
+        "id": "dns-0",
+        "label": "DNS",
+        "operation": "resolve",
+        "hostname": "portal.lab.test"
+      },
+      {
+        "id": "portal-0",
+        "label": "Portal (DNS/reachability only)",
+        "operation": "portal",
+        "hostname": "portal.lab.test"
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "result": "PASS",
+  "snapshots_verified": [
+    "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-1-before-20261002T213111Z",
+    "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-2-before-20261002T214538Z",
+    "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-3-before-20261002T215407889180Z",
+    "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-4-before-20261002T220129459992Z",
+    "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-5-before-20261002T232448562472Z",
+    "/home/drak/.local/state/omarchy-learning-lab/recovery/framework-complete-20261002T233722814659Z"
+  ],
+  "originals": {
+    "progress": {
+      "result": "unchanged",
+      "file_count": 7,
+      "verified": "paths, directory membership, bytes, SHA-256, mode and mtime_ns"
+    },
+    "config": {
+      "result": "unchanged",
+      "file_count": 2,
+      "verified": "paths, directory membership, bytes, SHA-256, mode and mtime_ns"
+    }
+  },
+  "original_pack_sha256": {
+    "gateway-dns.json": "ad675efd0df13b5fbb1e543300ba1e13025e82126f4c3439d87ecde65c94107d",
+    "subnet-boundary.json": "42f654ddbdf56475b66a0b4abf3260835587708883cf9c9e28a383da77d4b59d",
+    "service-firewall.json": "9b12b90673a9cf4da26afb6857123ae51f71fd29b99f9a4f06b034c52c60d67d"
+  },
+  "application_freeze": "31 files unchanged since before proof scenario authoring",
+  "git": "Status unavailable: empty read-only .git mount; metadata not initialized/repaired/replaced",
+  "personal_data_migrated": false,
+  "completed_snapshot": "/home/drak/.local/state/omarchy-learning-lab/recovery/framework-complete-20261002T233722814659Z"
+}

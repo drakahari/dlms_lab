@@ -1,0 +1,245 @@
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Dialogs as FileDialogs
+
+ApplicationWindow {
+    id: window; objectName: "labWindow"
+    required property QtObject controller
+    property var v: controller.view
+    property var colors: v.palette
+    property alias consoleControl: dock.firstControl
+    property bool compact: width < 1000
+    property bool reviewing: false
+    property bool historyAll: false
+    property string activeLab: v.labKey
+    property string pendingMode: ""
+    property string pendingLab: ""
+    property string exportAttemptId: ""
+    property var returnFocus: null
+    property bool discardFailedSave: false
+    onActiveLabChanged: { reviewing=false; Qt.callLater(function(){ workspace.forceActiveFocus() }) }
+    visible: true; width: 1280; height: 900; minimumWidth: 800; minimumHeight: 600
+    title: (v.page===0 ? "Lab library" : v.page===2 ? "Attempt history" : v.metadata.title) + " — Omarchy Learning Lab"
+    color: colors.background; font.family: "sans-serif"; font.pixelSize: 14
+    palette.window: colors.background; palette.base: colors.background; palette.alternateBase: colors.surface
+    palette.windowText: colors.foreground; palette.text: colors.foreground; palette.button: colors.surface
+    palette.buttonText: colors.foreground; palette.highlight: colors.accent; palette.highlightedText: colors.background; palette.mid: colors.muted
+    onActiveChanged: if(active) controller.refreshTheme()
+    onClosing: function(close) { controller.flush(); if(v.canRetry && !discardFailedSave) { close.accepted=false; failedSave.open() } }
+    function navigate(page) { controller.navigate(page); Qt.callLater(function(){ if(page===0) library.forceActiveFocus(); else if(page===1) mission.forceActiveFocus(); else history.forceActiveFocus() }) }
+    function openLab(key, origin) {
+        if(key!==v.labKey && v.dirty) { pendingLab=key;returnFocus=origin;switchDialog.open() }
+        else controller.selectLab(key,false)
+    }
+    function rememberLayout() { controller.saveLayout({mission_width:Math.round(compact ? (v.workspaceLayout.mission_width || 280) : mission.width), mission_height:Math.round(compact ? mission.height : (v.workspaceLayout.mission_height || 96)), dock_height:Math.round(dock.height)}) }
+    function restoreFocus() { if(returnFocus && returnFocus.visible) returnFocus.forceActiveFocus(); else mission.forceActiveFocus() }
+    function restart(mode, origin) { pendingMode=mode;returnFocus=origin;restartDialog.open() }
+    Shortcut { sequence: "Alt+1"; onActivated: window.navigate(0) }
+    Shortcut { sequence: "Alt+2"; onActivated: window.navigate(1) }
+    Shortcut { sequence: "Alt+3"; onActivated: window.navigate(2) }
+    function focusRegion(direction) {
+        var panels=[mission,reviewing ? review : workspace,dock]; var index=-1
+        var item=window.activeFocusItem
+        while(item) { var found=panels.indexOf(item); if(found>=0) {index=found;break} item=item.parent }
+        for(var step=1;step<=panels.length;step++) {
+            var target=panels[(index+direction*step+panels.length*2)%panels.length]
+            if(target.visible) {target.forceActiveFocus(Qt.TabFocusReason);return}
+        }
+    }
+    Shortcut { sequence: "F6"; onActivated: window.focusRegion(1) }
+    Shortcut { sequence: "Shift+F6"; onActivated: window.focusRegion(-1) }
+    ColumnLayout {
+        anchors.fill: parent; anchors.margins: compact ? 12 : 18; spacing: 8
+        RowLayout {
+            Layout.fillWidth: true
+            LabText { text: "OMARCHY LEARNING LAB"; color: colors.accent; font.bold: true; Layout.fillWidth: true }
+            LabButton { objectName: "libraryNav"; text: "Library"; highlighted: v.page===0; onClicked: window.navigate(0) }
+            LabButton { objectName: "labNav"; text: "Current Lab"; highlighted: v.page===1; onClicked: window.navigate(1) }
+            LabButton { objectName: "historyNav"; text: "History"; highlighted: v.page===2; onClicked: window.navigate(2) }
+            CheckBox { objectName: "fallbackTheme"; text: "Built-in colors"; checked: v.fallback; onToggled: controller.fallbackTheme(checked) }
+        }
+        StackLayout {
+            currentIndex: v.page; Layout.fillWidth: true; Layout.fillHeight: true
+            LabScrollView {
+                id: library; objectName: "libraryPage"; clip: true; contentWidth: availableWidth
+                ColumnLayout {
+                    width: library.availableWidth; spacing: 16
+                    LabText { objectName: "pageHeading"; text: "Lab library"; font.pixelSize: 27; font.bold: true; Layout.fillWidth: true }
+                    LabText { text: "Original, offline learning simulations. Choose a scenario to begin or resume."; color: colors.muted; Layout.fillWidth: true }
+                    RowLayout {
+                        LabButton { objectName: "importPackButton"; text: "Import scenario…"; onClicked: importDialog.open() }
+                        LabText { text: "Self-contained .lab.json files · data only"; color: colors.muted; Layout.fillWidth: true }
+                    }
+                    Repeater {
+                        model: v.labs.length
+                        delegate: Rectangle {
+                            required property int index
+                            property var info: v.labs[index]
+                            Layout.fillWidth: true; implicitHeight: card.implicitHeight+28
+                            color: colors.surface; radius: 8
+                            ColumnLayout {
+                                id: card; anchors.fill: parent; anchors.margins: 14; spacing: 7
+                                LabText { text: info.metadata.title; font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
+                                LabText { text: info.origin + " · v" + info.version + " · " + info.metadata.topic + " · " + info.metadata.minutes + " minutes"; color: colors.muted; Layout.fillWidth: true }
+                                RowLayout {
+                                    LabButton { objectName: "open-"+info.labKey; onActiveFocusChanged: if(activeFocus) library.ensureVisible(parent.parent.parent); text: "Open lab"; onClicked: window.openLab(info.labKey,this) }
+                                    LabText { text: info.libraryStatus + " · Best: " + info.libraryBest + " · " + info.historyCount + " prior attempts"; Layout.fillWidth: true }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ColumnLayout {
+                RowLayout {
+                    Layout.fillWidth: true
+                    ColumnLayout {
+                        Layout.fillWidth: true; spacing: 2
+                        LabText { objectName: "labHeading"; text: v.metadata.title; font.pixelSize: compact ? 20 : 24; font.bold: true; Layout.fillWidth: true }
+                        LabText { text: v.mode + " · v" + v.scenarioVersion + " · attempt " + v.attemptId.slice(0,8) + " · applied revision " + v.revision; color: colors.muted; Layout.fillWidth: true; font.pixelSize: 12 }
+                    }
+                    LabButton { objectName: "modeButton"; text: "Change mode…"; enabled: !v.readOnly; onClicked: window.restart(v.mode==="Learn"?"Challenge":"Learn",this) }
+                    LabButton { objectName: "exportPackButton"; text: "Export scenario…"; onClicked: exportDialog.open() }
+                }
+                SplitView {
+                    id: framing; objectName: "workspaceFraming"; Layout.fillWidth: true; Layout.fillHeight: true
+                    orientation: compact ? Qt.Vertical : Qt.Horizontal
+                    onResizingChanged: if(!resizing) window.rememberLayout()
+                    MissionPanel {
+                        id: mission; v: window.v; controller: window.controller
+                        onResizeRequested: function(delta) { if(compact) mission.SplitView.preferredHeight=Math.max(86,Math.min(180,height+delta)); else mission.SplitView.preferredWidth=Math.max(220,Math.min(420,width+delta)); window.rememberLayout() }
+                        SplitView.preferredWidth: v.workspaceLayout.mission_width || 280; SplitView.minimumWidth: compact ? 100 : 220; SplitView.maximumWidth: compact ? Infinity : 420
+                        SplitView.preferredHeight: compact ? (v.workspaceLayout.mission_height || 96) : 135; SplitView.minimumHeight: compact ? 86 : 200; SplitView.maximumHeight: compact ? 240 : Infinity
+                    }
+                    StackLayout {
+                        currentIndex: reviewing ? 1 : 0
+                        SplitView.fillWidth: true; SplitView.fillHeight: true
+                        SplitView.minimumWidth: compact ? 100 : 400; SplitView.minimumHeight: compact ? 286 : 320
+                        SplitView {
+                            id: workSplit; orientation: Qt.Vertical
+                            onResizingChanged: if(!resizing) window.rememberLayout()
+                            NetworkWorkspace {
+                                id: workspace; v: window.v; controller: window.controller; hostWindow: window
+                                SplitView.fillHeight: true; SplitView.minimumHeight: compact ? 160 : 200
+                            }
+                            DiagnosticsDock {
+                                id: dock; v: window.v; controller: window.controller
+                                SplitView.preferredHeight: v.workspaceLayout.dock_height || (compact ? 135 : 220); SplitView.maximumHeight: Math.max(120,workSplit.height-(compact?160:200)); SplitView.minimumHeight: 120
+                                onResizeRequested: function(delta) { dock.SplitView.preferredHeight=Math.max(120,Math.min(workSplit.height-(compact?160:200),height+delta)); window.rememberLayout() }
+                            }
+                        }
+                        LabScrollView {
+                            id: review; objectName: "reviewPanel"; clip: true; contentWidth: availableWidth
+                            ColumnLayout {
+                                width: review.availableWidth; spacing: 14
+                                LabText { objectName: "gradeHeading"; text: v.hasGrade ? "Submission review · " + v.grade.score + "/100" : "No submission for this applied revision"; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
+                                LabText { text: "Submission records the applied final state. Diagnostic runs do not submit an assessment. Hints have no score penalty."; color: colors.muted; Layout.fillWidth: true }
+                                Repeater {
+                                    model: v.hasGrade ? v.grade.objectives : []
+                                    LabText { required property var modelData; text: (modelData.ok?"PASS":"FAIL") + " · " + modelData.earned + "/" + modelData.possible + " · " + modelData.label + "\n" + modelData.evidence; color: modelData.ok?colors.success:colors.danger; Layout.fillWidth: true }
+                                }
+                                LabText { text: v.provenance; color: colors.muted; Layout.fillWidth: true; font.pixelSize: 12 }
+                                LabButton { objectName: "continueWorking"; text: "Continue working"; onClicked: { reviewing=false;workspace.forceActiveFocus() } }
+                            }
+                        }
+                    }
+                }
+                LabText { objectName: "draftWarning"; text: v.dirty ? "UNAPPLIED DRAFTS · diagnostics and Submit use applied state." : "Applied state ready · no pending settings drafts"; color: v.dirty?colors.danger:colors.muted; Layout.fillWidth: true; font.pixelSize: 12 }
+                RowLayout {
+                    Layout.fillWidth: true
+                    LabButton { objectName: "applyButton"; text: "Apply changes"; enabled: !v.readOnly && v.dirty; onClicked: controller.apply() }
+                    LabButton { objectName: "testButton"; text: "Run diagnostics"; enabled: !v.readOnly; onClicked: { controller.test(); reviewing=false } }
+                    LabButton { objectName: "submitButton"; text: "Submit"; highlighted: true; enabled: !v.readOnly; onClicked: { returnFocus=this; if(v.dirty) submitDialog.open(); else {controller.submit();reviewing=true} } }
+                    LabButton { objectName: "reviewButton"; text: "Review"; onClicked: reviewing=true }
+                    Item { Layout.fillWidth: true }
+                    LabButton { objectName: "resetButton"; text: "Reset…"; enabled: !v.readOnly; onClicked: window.restart(v.mode,this) }
+                }
+            }
+            ColumnLayout {
+                LabText { text: "Attempt history"; font.pixelSize: 27; font.bold: true; Layout.fillWidth: true }
+                RowLayout {
+                    CheckBox { text: "All labs · recent page per lab"; checked: historyAll; onToggled: historyAll=checked }
+                    LabText { text: historyAll ? "Select a lab to browse its full history." : "Selected lab: " + v.metadata.title + " · v" + v.scenarioVersion; Layout.fillWidth: true }
+                }
+                LabText { text: "Every prior attempt is retained. Scenario export and personal attempt export are separate."; color: colors.muted; Layout.fillWidth: true }
+                ListView {
+                    id: history; objectName: "historyList"; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 10
+                    model: historyAll ? v.allHistory : v.history
+                    delegate: Rectangle {
+                        required property var modelData
+                        required property int index
+                        width: ListView.view.width; implicitHeight: historyCard.implicitHeight+24; color: colors.surface; radius: 8
+                        ColumnLayout {
+                            id: historyCard; anchors.fill: parent; anchors.margins: 12
+                            LabText { text: (modelData.labTitle || v.metadata.title) + " · " + modelData.mode + " · " + modelData.score + "/100 best · " + modelData.hints + " hints · " + modelData.status; font.bold: true; Layout.fillWidth: true }
+                            LabText { text: modelData.started + " · " + modelData.id.slice(0,8) + " · " + modelData.assessments + " submissions"; color: colors.muted; Layout.fillWidth: true }
+                            RowLayout {
+                                LabButton { onActiveFocusChanged: if(activeFocus) history.positionViewAtIndex(index,ListView.Contain); text: details.visible?"Hide details":"Show details"; onClicked: details.visible=!details.visible }
+                                LabButton { onActiveFocusChanged: if(activeFocus) history.positionViewAtIndex(index,ListView.Contain); text: "Export this attempt…"; visible: !historyAll; onClicked: {exportAttemptId=modelData.id;attemptExport.open()} }
+                                LabButton { onActiveFocusChanged: if(activeFocus) history.positionViewAtIndex(index,ListView.Contain); text: "Open this lab"; visible: historyAll; onClicked: window.openLab(modelData.labKey,this) }
+                            }
+                            LabText { id: details; visible: false; text: modelData.details; Layout.fillWidth: true }
+                        }
+                    }
+                }
+                RowLayout {
+                    visible: !historyAll
+                    LabButton { text: "Previous"; enabled: v.historyPage>0; onClicked: controller.historyPage(-1) }
+                    LabText { text: "Page " + (v.historyPage+1) + " · " + v.historyCount + " retained prior attempts" }
+                    LabButton { text: "Next"; enabled: (v.historyPage+1)*25<v.historyCount; onClicked: controller.historyPage(1) }
+                }
+            }
+        }
+        RowLayout {
+            Layout.fillWidth: true
+            LabText { objectName: "statusText"; text: v.page===1 ? v.message : v.transferMessage || v.catalogNotice || (v.page===0 ? "Choose a scenario to begin or resume." : v.historyWarnings || "History preserves drafts, hints, and submissions."); Layout.fillWidth: true; font.pixelSize: 12; color: colors.muted; maximumLineCount: 3; elide: Text.ElideRight }
+            LabButton { text: "Retry save"; visible: v.canRetry; onClicked: controller.retrySave() }
+        }
+    }
+    FileDialogs.FileDialog { id: importDialog; objectName: "importDialog"; title: "Import a data-only scenario"; nameFilters: ["Learning Lab scenarios (*.lab.json)","JSON files (*.json)"]; onAccepted: controller.importPack(selectedFile.toString()) }
+    FileDialogs.FileDialog { id: exportDialog; title: "Export scenario only"; fileMode: FileDialogs.FileDialog.SaveFile; defaultSuffix: "lab.json"; nameFilters: ["Learning Lab scenarios (*.lab.json)"]; onAccepted: controller.exportScenario(selectedFile.toString()) }
+    FileDialogs.FileDialog { id: attemptExport; title: "Export personal attempt history"; fileMode: FileDialogs.FileDialog.SaveFile; defaultSuffix: "attempt.json"; nameFilters: ["Personal attempt (*.attempt.json)"]; onAccepted: controller.exportAttempt(selectedFile.toString(),exportAttemptId) }
+    Dialog {
+        id: switchDialog; objectName: "switchDialog"; anchors.centerIn: parent; width: Math.min(560,window.width-40); modal: true
+        title: "Keep drafts and switch labs?"
+        contentItem: LabText { text: "The current attempt and pending edits will be saved. Returning resumes the same attempt; nothing is applied or discarded." }
+        footer: DialogButtonBox {
+            LabButton { id: cancelSwitch; objectName: "cancelSwitch"; text: "Cancel"; onClicked: switchDialog.reject() }
+            LabButton { objectName: "confirmSwitch"; text: "Keep drafts and switch"; onClicked: switchDialog.accept() }
+        }
+        onOpened: cancelSwitch.forceActiveFocus()
+        onAccepted: controller.selectLab(pendingLab,true)
+        onClosed: window.restoreFocus()
+    }
+    Dialog {
+        id: restartDialog; objectName: "restartDialog"; anchors.centerIn: parent; width: Math.min(560,window.width-40); modal: true
+        title: pendingMode===v.mode ? "Reset this scenario?" : "Start a fresh " + pendingMode + " attempt?"
+        contentItem: LabText { text: "Archive the current attempt, including drafts, pending commands, hints, and submissions. Start from the initial state. Assisted work will not be relabeled unassisted." }
+        footer: DialogButtonBox {
+            LabButton { id: cancelRestart; objectName: "cancelRestart"; text: "Cancel"; onClicked: restartDialog.reject() }
+            LabButton { objectName: "confirmRestart"; text: "Archive and start fresh"; onClicked: restartDialog.accept() }
+        }
+        onOpened: cancelRestart.forceActiveFocus()
+        onAccepted: { controller.restart(pendingMode); reviewing=false }
+        onClosed: window.restoreFocus()
+    }
+    Dialog {
+        id: submitDialog; objectName: "submitDraftDialog"; anchors.centerIn: parent; width: Math.min(560,window.width-40); modal: true
+        title: "Submit applied state with drafts pending?"
+        contentItem: LabText { text: "Your draft changes will be retained but excluded from this submission. Cancel to review and Apply them first." }
+        footer: DialogButtonBox {
+            LabButton { id: cancelSubmit; objectName: "cancelSubmit"; text: "Cancel"; onClicked: submitDialog.reject() }
+            LabButton { objectName: "confirmSubmit"; text: "Submit applied state"; onClicked: submitDialog.accept() }
+        }
+        onOpened: cancelSubmit.forceActiveFocus()
+        onAccepted: {controller.submit();reviewing=true}
+        onClosed: window.restoreFocus()
+    }
+    Dialog {
+        id: failedSave; anchors.centerIn: parent; width: Math.min(560,window.width-40); modal: true; title: "Progress has not been saved"
+        contentItem: LabText { text: "Changes remain in memory. Cancel and use Retry save after fixing storage access. Discard closes the window without saving those changes." }
+        standardButtons: Dialog.Cancel | Dialog.Discard
+        onDiscarded: {discardFailedSave=true;window.close()}
+    }
+}

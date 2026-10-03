@@ -1,0 +1,74 @@
+{
+  "snapshot_verification": [
+    {
+      "path": "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-1-before-20261002T213111Z",
+      "result": "PASS",
+      "files": {
+        "source": 300,
+        "progress": 7,
+        "config": 2
+      }
+    },
+    {
+      "path": "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-2-before-20261002T214538Z",
+      "result": "PASS",
+      "files": {
+        "source": 307,
+        "progress": 7,
+        "config": 2
+      }
+    },
+    {
+      "path": "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-3-before-20261002T215407889180Z",
+      "result": "PASS",
+      "files": {
+        "source": 310,
+        "progress": 7,
+        "config": 2
+      }
+    },
+    {
+      "path": "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-4-before-20261002T220129459992Z",
+      "result": "PASS",
+      "files": {
+        "source": 314,
+        "progress": 7,
+        "config": 2
+      }
+    },
+    {
+      "path": "/home/drak/.local/state/omarchy-learning-lab/recovery/checkpoint-5-before-20261002T232448562472Z",
+      "result": "PASS",
+      "files": {
+        "source": 389,
+        "progress": 7,
+        "config": 2
+      }
+    },
+    {
+      "path": "/home/drak/.local/state/omarchy-learning-lab/recovery/framework-complete-20261002T233722814659Z",
+      "result": "PASS",
+      "files": {
+        "source": 428,
+        "progress": 7,
+        "config": 2
+      }
+    }
+  ],
+  "real_profile_matches_completed_snapshot": {
+    "progress": false,
+    "config": false
+  },
+  "application_matches_completed_snapshot": true,
+  "additional_baseline_snapshot": {
+    "path": "/home/drak/.local/state/omarchy-learning-lab/recovery/development-baseline-20261002T235012708394Z",
+    "result": "PASS",
+    "files": {
+      "source": 430,
+      "progress": 12,
+      "config": 2
+    },
+    "live_progress_config_match": true
+  },
+  "live_profile_note": "Live files differ from the older completed snapshot. Latest progress/config mtimes were 23:45:35Z/23:43:05Z, before the regression run finished at 23:47:59Z. New baseline preserves the newer profile without restoring or migrating it."
+}

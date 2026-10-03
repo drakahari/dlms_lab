@@ -1,0 +1,781 @@
+{
+  "label": "framework-native-200",
+  "platform": "wayland",
+  "checks": [
+    {
+      "name": "window exposed",
+      "passed": true
+    },
+    {
+      "name": "native Wayland",
+      "passed": true
+    },
+    {
+      "name": "expected display scale",
+      "passed": true
+    },
+    {
+      "name": "rendered library",
+      "passed": true
+    },
+    {
+      "name": "library Enter opens gateway",
+      "passed": true
+    },
+    {
+      "name": "draft separate",
+      "passed": true
+    },
+    {
+      "name": "gateway-only diagnostics",
+      "passed": true
+    },
+    {
+      "name": "gateway full grade",
+      "passed": true
+    },
+    {
+      "name": "three hints retained without score penalty",
+      "passed": true
+    },
+    {
+      "name": "rendered gateway-review",
+      "passed": true
+    },
+    {
+      "name": "Escape returns reset focus",
+      "passed": true
+    },
+    {
+      "name": "Challenge fresh",
+      "passed": true
+    },
+    {
+      "name": "assisted archive preserved",
+      "passed": true
+    },
+    {
+      "name": "subnet peer-only baseline",
+      "passed": true
+    },
+    {
+      "name": "subnet full grade",
+      "passed": true
+    },
+    {
+      "name": "firewall baseline",
+      "passed": true
+    },
+    {
+      "name": "narrow firewall full grade",
+      "passed": true
+    },
+    {
+      "name": "rendered firewall-review",
+      "passed": true
+    },
+    {
+      "name": "broad rule loses credit",
+      "passed": true
+    },
+    {
+      "name": "console decision names rule",
+      "passed": true
+    },
+    {
+      "name": "F6 console to mission",
+      "passed": true
+    },
+    {
+      "name": "F6 mission to workspace",
+      "passed": true
+    },
+    {
+      "name": "F6 workspace to diagnostics",
+      "passed": true
+    },
+    {
+      "name": "Shift F6 returns workspace",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800x600 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 800 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "rendered gateway-dns-800",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024x768 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1024 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180x860 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1180 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280x900 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "gateway-dns 1280 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "rendered gateway-dns-1280",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800x600 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 800 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "rendered subnet-boundary-800",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024x768 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1024 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180x860 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1180 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280x900 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "subnet-boundary 1280 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "rendered subnet-boundary-1280",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800x600 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 800 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "rendered service-firewall-800",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024x768 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1024 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180x860 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1180 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280x900 actual geometry",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 mission accessible",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 command input not overlapped",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 address draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 address applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 prefix draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 prefix applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 gateway draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 gateway applied readable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 dns draft reachable",
+      "passed": true
+    },
+    {
+      "name": "service-firewall 1280 dns applied readable",
+      "passed": true
+    },
+    {
+      "name": "rendered service-firewall-1280",
+      "passed": true
+    },
+    {
+      "name": "firewall 800 defaultPolicyInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 800 ruleSourceInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 800 ruleDestinationInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 800 rulePortInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 800 addRule reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 800 removeRule reachable",
+      "passed": true
+    },
+    {
+      "name": "rendered firewall-editor-800",
+      "passed": true
+    },
+    {
+      "name": "firewall 1024 defaultPolicyInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1024 ruleSourceInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1024 ruleDestinationInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1024 rulePortInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1024 addRule reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1024 removeRule reachable",
+      "passed": true
+    },
+    {
+      "name": "rendered firewall-editor-1024",
+      "passed": true
+    },
+    {
+      "name": "firewall 1280 defaultPolicyInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1280 ruleSourceInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1280 ruleDestinationInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1280 rulePortInput reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1280 addRule reachable",
+      "passed": true
+    },
+    {
+      "name": "firewall 1280 removeRule reachable",
+      "passed": true
+    },
+    {
+      "name": "rendered firewall-editor-1280",
+      "passed": true
+    },
+    {
+      "name": "switch preserves pending console text",
+      "passed": true
+    },
+    {
+      "name": "switch preserves invalid rule draft",
+      "passed": true
+    },
+    {
+      "name": "rendered history",
+      "passed": true
+    },
+    {
+      "name": "History window title scoped",
+      "passed": true
+    },
+    {
+      "name": "Library window title scoped",
+      "passed": true
+    },
+    {
+      "name": "rendered fallback",
+      "passed": true
+    },
+    {
+      "name": "fresh process resumes all labs",
+      "passed": true
+    },
+    {
+      "name": "no QML runtime errors",
+      "passed": true
+    }
+  ],
+  "input": "QtTest key events; physical keyboard unverified",
+  "file_picker": "Native file chooser manual acceptance outstanding; transfer API tested separately",
+  "qml_messages": [
+    "Failed to register with host portal QDBusError(\"org.freedesktop.portal.Error.Failed\", \"Could not register app ID: Connection already associated with an application ID\")",
+    "QQuickItem: Cannot set activeFocusOnTab to false once item is the active focus item."
+  ],
+  "dpr": 2.0,
+  "screen": "eDP-1",
+  "graphics_api": "GraphicsApi.OpenGL",
+  "restart": "PASS: fresh process retained all labs, drafts, assessments, modes, console input, and fallback\n",
+  "result": "PASS"
+}
