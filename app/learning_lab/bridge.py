@@ -221,7 +221,7 @@ class Bridge(QObject):
         def run():
             self.diagnostics = self.session.test()
             self.diagnostic_revision = self.session.attempt['revision']
-        self.action(run, 'Tests finished on applied virtual files and service state.' if self.domain.workspace == 'linux-service' else 'Tests finished on applied state. TCP results name the matching rule or default policy.' if 'firewall' in self.pack else 'Tests finished on applied state. Portal = DNS and reachability only.')
+        self.action(run, getattr(self.domain, 'test_message', None) or ('Tests finished on applied virtual files and service state.' if self.domain.workspace == 'linux-service' else 'Tests finished on applied state. TCP results name the matching rule or default policy.' if 'firewall' in self.pack else 'Tests finished on applied state. Portal = DNS and reachability only.'))
 
     @Slot()
     def hint(self):

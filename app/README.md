@@ -1,6 +1,6 @@
 # Omarchy Learning Lab — native workspace and portable scenarios
 
-Three bundled networking labs and two importable Linux service labs in a standalone, offline Qt Quick window.
+Three bundled networking labs, two importable Linux service labs, and one importable Linux file-navigation lab in a standalone, offline Qt Quick window.
 
 ## Launch
 
@@ -16,6 +16,18 @@ Installed and verified: Python 3.14.7, PySide6 6.11.2, Shiboken6 6.11.2, Qt 6.11
 Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can force a smaller allocation despite Qt's minimum. Use the existing **Super+T** floating toggle or **Super+Alt+F** maximize binding when needed; the app does not install window rules.
 
 ## Use
+
+### Beginner Linux file navigation
+
+In Library choose **Import scenario…**, select
+`examples/linux-file-navigation.lab.json`, and open **Find your way around Linux**.
+This five-minute exercise teaches `pwd`, `ls`, `cd` and `cat`. Learn shows one
+explained step at a time; Challenge keeps the goal and grading rules in **Lab
+details ▾** without a walkthrough. No service or file editor is involved.
+
+Four objectives retain successful simulated activity; the last checks the current
+directory when you submit. Equivalent paths and different command orders count.
+See [navigation rules, architecture, test results and owner checklist](docs/linux-navigation.md).
 
 ### Linux service troubleshooting
 

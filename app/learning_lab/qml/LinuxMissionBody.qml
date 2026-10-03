@@ -34,7 +34,7 @@ ColumnLayout {
         LabText { objectName: "guideCommand"; text: v.guide.command || ""; font.family: "monospace"; color: v.palette.accent; Layout.fillWidth: true }
         LabText { objectName: "guideExplanation"; text: v.guide.explanation || ""; Layout.fillWidth: true }
         LabText { objectName: "guideExpected"; text: "Expect: " + (v.guide.expected || ""); color: v.palette.muted; Layout.fillWidth: true }
-        LabText { objectName: "guideVerified"; visible: v.guide.verified === true; text: "Running status verified. Submit when ready."; color: v.palette.success; Layout.fillWidth: true }
+        LabText { objectName: "guideVerified"; visible: v.guide.verified === true; text: v.guide.completionMessage || "Running status verified. Submit when ready."; color: v.palette.success; Layout.fillWidth: true }
     }
     RowLayout {
         Layout.fillWidth: true

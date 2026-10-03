@@ -1,5 +1,21 @@
 # Framework acceptance — checkpoints 2 onward
 
+## Linux navigation extension — current
+
+See [navigation architecture and acceptance](linux-navigation.md). The new
+**Find your way around Linux** pack uses a separate trusted navigation engine,
+the unchanged existing virtual filesystem/parser, and the approved Linux layout.
+It has action evidence and a final-directory objective without service mechanics.
+
+Fresh regression result: **140 tests passed**. New offscreen Qt runs pass **89
+checks plus 10 fresh-process checks per scale** at 100/150/200%; all four existing
+UI suites also pass at those scales. Native Wayland access is still blocked with
+errno 1 (`Operation not permitted`) in the recorded probe. The owner now reports
+that the navigation lab **looks good**. This is a positive visual review of the
+new lesson; no monitor, scale or input-device coverage was specified. Unverified
+native scaling/workflows, physical-keyboard input, native choosers and accessibility
+remain **outstanding**. Prior visual approval below applies to the existing layout.
+
 ## Owner visual approval — 2 October 2026
 
 The owner explicitly approved the **current visual layout** and authorized the

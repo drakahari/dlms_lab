@@ -19,8 +19,8 @@ MAX_PACKS = 256
 
 def engine_pack(value):
     domain = value['domain']
-    if value['engine']['id'] == 'linux-service':
-        return {'engine_id':'linux-service','lab_id':value['identity']['id'],'content_version':value['identity']['content_version'],
+    if value['engine']['id'] in ('linux-service', 'linux-navigation'):
+        return {'engine_id':value['engine']['id'],'lab_id':value['identity']['id'],'content_version':value['identity']['content_version'],
                 'metadata':{**value['metadata'],'brief':value['mission']['brief']},'objectives':value['objectives'],
                 'hints':value['hints'],'required_capabilities':value['engine']['required_capabilities'],'domain':domain}
     result = {'schema_version': 2 if 'firewall' in domain else 1,
@@ -82,6 +82,12 @@ def load_portable(raw):
         require(isinstance(constraints,list) and len(constraints)<=32, 'Too many constraints.')
         for constraint in constraints: text(constraint,'constraint')
         require(value['assets'] == [], 'Assets, paths, URLs, and archives are not supported by this format version.')
+        if engine['id']=='linux-navigation':
+            from .linux_navigation.engine import validate_pack as validate_navigation, initial_state, validate_state
+            validate_navigation(value)
+            pack=engine_pack(value)
+            validate_state(pack,initial_state(pack))
+            return PortableScenario(ScenarioIdentity(value['identity']['id'],value['identity']['content_version'],FORMAT,1,CANONICALIZATION,digest),raw)
         if engine['id']=='linux-service':
             from .linux_service.engine import validate_pack as validate_service, initial_state, validate_state
             validate_service(value)

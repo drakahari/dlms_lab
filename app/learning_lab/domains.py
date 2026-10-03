@@ -2,9 +2,11 @@
 from .networking import NetworkingDomain, NETWORKING_RUNTIME
 from .linux_service.adapter import LinuxServiceDomain, RUNTIME as LINUX_RUNTIME, INTRO_RUNTIME
 from .domain.validation import require
+from .linux_navigation.adapter import NavigationDomain, RUNTIME as NAVIGATION_RUNTIME
 
 TRUSTED_ENGINES={
     'networking':(NETWORKING_RUNTIME,NetworkingDomain),
+    'linux-navigation':(NAVIGATION_RUNTIME,NavigationDomain),
     'linux-service':(LINUX_RUNTIME,LinuxServiceDomain),
 }
 

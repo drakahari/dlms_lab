@@ -53,5 +53,5 @@ class NetworkingAdapterTests(unittest.TestCase):
         self.assertEqual([r['id'] for r in rows], ['name','route'])
         self.assertTrue(all(r['ok'] for r in rows))
         self.assertEqual(domain.presentation(FIXED,'CLIENT-7')['constraints'], ['Preserve the address'])
-        self.assertEqual(set(TRUSTED_ENGINES), {'networking','linux-service'})
+        self.assertEqual(set(TRUSTED_ENGINES), {'networking','linux-service','linux-navigation'})
         self.assertIs(TRUSTED_ENGINES['networking'][1],NetworkingDomain)
