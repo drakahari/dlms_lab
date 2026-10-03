@@ -8,8 +8,12 @@ ApplicationWindow {
     required property QtObject controller
     property var v: controller.view
     property var colors: v.palette
-    property alias consoleControl: dock.firstControl
+    property bool linux: v.workspaceKind === "linux-service"
+    property var linuxWork: linuxLoader.item
+    property var consoleControl: linux && linuxWork ? linuxWork.consoleControl : dock.firstControl
     property bool compact: width < 1000
+    property int workspaceMinimumHeight: compact ? (v.workspaceKind === "linux-service" ? 140 : 160) : 200
+    property bool linuxDetailsOpen: false
     property bool reviewing: false
     property bool historyAll: false
     property string activeLab: v.labKey
@@ -18,7 +22,7 @@ ApplicationWindow {
     property string exportAttemptId: ""
     property var returnFocus: null
     property bool discardFailedSave: false
-    onActiveLabChanged: { reviewing=false; Qt.callLater(function(){ workspace.forceActiveFocus() }) }
+    onActiveLabChanged: { reviewing=false; Qt.callLater(function(){ if(linux) linuxWork.focusTerminal(); else workspace.forceActiveFocus() }) }
     visible: true; width: 1280; height: 900; minimumWidth: 800; minimumHeight: 600
     title: (v.page===0 ? "Lab library" : v.page===2 ? "Attempt history" : v.metadata.title) + " — Omarchy Learning Lab"
     color: colors.background; font.family: "sans-serif"; font.pixelSize: 14
@@ -32,14 +36,14 @@ ApplicationWindow {
         if(key!==v.labKey && v.dirty) { pendingLab=key;returnFocus=origin;switchDialog.open() }
         else controller.selectLab(key,false)
     }
-    function rememberLayout() { controller.saveLayout({mission_width:Math.round(compact ? (v.workspaceLayout.mission_width || 280) : mission.width), mission_height:Math.round(compact ? mission.height : (v.workspaceLayout.mission_height || 96)), dock_height:Math.round(dock.height)}) }
+    function rememberLayout() { var sizes=Object.assign({},v.workspaceLayout); sizes.mission_width=Math.round(compact ? (v.workspaceLayout.mission_width || 280) : mission.width); sizes.mission_height=Math.round(compact ? mission.height : (v.workspaceLayout.mission_height || 96)); if(!linux) sizes.dock_height=Math.round(dock.height); controller.saveLayout(sizes) }
     function restoreFocus() { if(returnFocus && returnFocus.visible) returnFocus.forceActiveFocus(); else mission.forceActiveFocus() }
     function restart(mode, origin) { pendingMode=mode;returnFocus=origin;restartDialog.open() }
     Shortcut { sequence: "Alt+1"; onActivated: window.navigate(0) }
     Shortcut { sequence: "Alt+2"; onActivated: window.navigate(1) }
     Shortcut { sequence: "Alt+3"; onActivated: window.navigate(2) }
     function focusRegion(direction) {
-        var panels=[mission,reviewing ? review : workspace,dock]; var index=-1
+        var panels=linux ? [mission,reviewing ? review : linuxWork.toolsRegion,linuxWork.terminalRegion] : [mission,reviewing ? review : workspace,dock]; var index=-1
         var item=window.activeFocusItem
         while(item) { var found=panels.indexOf(item); if(found>=0) {index=found;break} item=item.parent }
         for(var step=1;step<=panels.length;step++) {
@@ -97,10 +101,10 @@ ApplicationWindow {
                     ColumnLayout {
                         Layout.fillWidth: true; spacing: 2
                         LabText { objectName: "labHeading"; text: v.metadata.title; font.pixelSize: compact ? 20 : 24; font.bold: true; Layout.fillWidth: true }
-                        LabText { text: v.mode + " · v" + v.scenarioVersion + " · attempt " + v.attemptId.slice(0,8) + " · applied revision " + v.revision; color: colors.muted; Layout.fillWidth: true; font.pixelSize: 12 }
+                        LabText { objectName: "simulationIndicator"; text: (linux ? "Simulated environment · " : "") + v.mode + " · v" + v.scenarioVersion + " · attempt " + v.attemptId.slice(0,8) + " · applied revision " + v.revision; color: colors.muted; Layout.fillWidth: true; font.pixelSize: 12 }
                     }
                     LabButton { objectName: "modeButton"; text: "Change mode…"; enabled: !v.readOnly; onClicked: window.restart(v.mode==="Learn"?"Challenge":"Learn",this) }
-                    LabButton { objectName: "exportPackButton"; text: "Export scenario…"; onClicked: exportDialog.open() }
+                    LabButton { objectName: "exportPackButton"; text: "Export scenario…"; KeyNavigation.tab: window.linux ? mission.linuxFirstControl : null; onClicked: exportDialog.open() }
                 }
                 SplitView {
                     id: framing; objectName: "workspaceFraming"; Layout.fillWidth: true; Layout.fillHeight: true
@@ -108,26 +112,37 @@ ApplicationWindow {
                     onResizingChanged: if(!resizing) window.rememberLayout()
                     MissionPanel {
                         id: mission; v: window.v; controller: window.controller
+                        detailsOpen: window.linuxDetailsOpen
+                        onDetailsToggled: { window.linuxDetailsOpen=!window.linuxDetailsOpen; if(!window.linuxDetailsOpen) Qt.callLater(mission.focusDetails) }
                         onResizeRequested: function(delta) { if(compact) mission.SplitView.preferredHeight=Math.max(86,Math.min(180,height+delta)); else mission.SplitView.preferredWidth=Math.max(220,Math.min(420,width+delta)); window.rememberLayout() }
-                        SplitView.preferredWidth: v.workspaceLayout.mission_width || 280; SplitView.minimumWidth: compact ? 100 : 220; SplitView.maximumWidth: compact ? Infinity : 420
-                        SplitView.preferredHeight: compact ? (v.workspaceLayout.mission_height || 96) : 135; SplitView.minimumHeight: compact ? 86 : 200; SplitView.maximumHeight: compact ? 240 : Infinity
+                        SplitView.preferredWidth: linux && linuxDetailsOpen ? Math.max(320,v.workspaceLayout.mission_width || 360) : (v.workspaceLayout.mission_width || 280); SplitView.minimumWidth: compact ? 100 : (linux ? (linuxDetailsOpen ? 320 : 260) : 220); SplitView.maximumWidth: compact ? Infinity : 420
+                        SplitView.preferredHeight: compact ? (v.workspaceLayout.mission_height || (linux ? 160 : 96)) : 135; SplitView.minimumHeight: compact ? (linux && linuxDetailsOpen ? 128 : 86) : 200; SplitView.maximumHeight: compact ? 240 : Infinity
                     }
                     StackLayout {
-                        currentIndex: reviewing ? 1 : 0
+                        currentIndex: reviewing ? 2 : (linux ? 1 : 0)
                         SplitView.fillWidth: true; SplitView.fillHeight: true
-                        SplitView.minimumWidth: compact ? 100 : 400; SplitView.minimumHeight: compact ? 286 : 320
+                        SplitView.minimumWidth: compact ? 100 : 400; SplitView.minimumHeight: compact ? (linux ? (linuxWork && linuxWork.toolsOpen ? (linuxDetailsOpen ? 258 : 304) : 180) : 286) : 320
                         SplitView {
                             id: workSplit; orientation: Qt.Vertical
                             onResizingChanged: if(!resizing) window.rememberLayout()
-                            NetworkWorkspace {
-                                id: workspace; v: window.v; controller: window.controller; hostWindow: window
-                                SplitView.fillHeight: true; SplitView.minimumHeight: compact ? 160 : 200
+                            FocusScope {
+                                id: workspace; objectName: "domainWorkspace"
+                                SplitView.fillHeight: true; SplitView.minimumHeight: workspaceMinimumHeight
+                                Loader {
+                                    anchors.fill: parent; focus: true; active: !window.linux
+                                    sourceComponent: networkWorkspace
+                                }
+                                Component { id: networkWorkspace; NetworkWorkspace { v: window.v; controller: window.controller; hostWindow: window; focus: true } }
                             }
                             DiagnosticsDock {
                                 id: dock; v: window.v; controller: window.controller
-                                SplitView.preferredHeight: v.workspaceLayout.dock_height || (compact ? 135 : 220); SplitView.maximumHeight: Math.max(120,workSplit.height-(compact?160:200)); SplitView.minimumHeight: 120
-                                onResizeRequested: function(delta) { dock.SplitView.preferredHeight=Math.max(120,Math.min(workSplit.height-(compact?160:200),height+delta)); window.rememberLayout() }
+                                SplitView.preferredHeight: v.workspaceLayout.dock_height || (compact ? 135 : 220); SplitView.maximumHeight: Math.max(120,workSplit.height-workspaceMinimumHeight); SplitView.minimumHeight: 120
+                                onResizeRequested: function(delta) { dock.SplitView.preferredHeight=Math.max(120,Math.min(workSplit.height-workspaceMinimumHeight,height+delta)); window.rememberLayout() }
                             }
+                        }
+                        Loader {
+                            id: linuxLoader; active: window.linux
+                            sourceComponent: Component { LinuxTerminalWorkspace { v: window.v; controller: window.controller; compactReference: window.compact && window.linuxDetailsOpen } }
                         }
                         LabScrollView {
                             id: review; objectName: "reviewPanel"; clip: true; contentWidth: availableWidth
@@ -140,7 +155,7 @@ ApplicationWindow {
                                     LabText { required property var modelData; text: (modelData.ok?"PASS":"FAIL") + " · " + modelData.earned + "/" + modelData.possible + " · " + modelData.label + "\n" + modelData.evidence; color: modelData.ok?colors.success:colors.danger; Layout.fillWidth: true }
                                 }
                                 LabText { text: v.provenance; color: colors.muted; Layout.fillWidth: true; font.pixelSize: 12 }
-                                LabButton { objectName: "continueWorking"; text: "Continue working"; onClicked: { reviewing=false;workspace.forceActiveFocus() } }
+                                LabButton { objectName: "continueWorking"; text: "Continue working"; onClicked: { reviewing=false;if(linux) linuxWork.focusTerminal(); else workspace.forceActiveFocus() } }
                             }
                         }
                     }
@@ -148,7 +163,7 @@ ApplicationWindow {
                 LabText { objectName: "draftWarning"; text: v.dirty ? "UNAPPLIED DRAFTS · diagnostics and Submit use applied state." : "Applied state ready · no pending settings drafts"; color: v.dirty?colors.danger:colors.muted; Layout.fillWidth: true; font.pixelSize: 12 }
                 RowLayout {
                     Layout.fillWidth: true
-                    LabButton { objectName: "applyButton"; text: "Apply changes"; enabled: !v.readOnly && v.dirty; onClicked: controller.apply() }
+                    LabButton { objectName: "applyButton"; text: "Apply changes"; visible: !window.linux || v.canEditVirtualFile; enabled: !v.readOnly && v.dirty; onClicked: controller.apply() }
                     LabButton { objectName: "testButton"; text: "Run diagnostics"; enabled: !v.readOnly; onClicked: { controller.test(); reviewing=false } }
                     LabButton { objectName: "submitButton"; text: "Submit"; highlighted: true; enabled: !v.readOnly; onClicked: { returnFocus=this; if(v.dirty) submitDialog.open(); else {controller.submit();reviewing=true} } }
                     LabButton { objectName: "reviewButton"; text: "Review"; onClicked: reviewing=true }

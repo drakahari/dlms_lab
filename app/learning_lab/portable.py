@@ -6,7 +6,8 @@ import re
 
 from .domain.engine import load_pack
 from .domain.validation import ValidationError, decode, keys, require, text
-from .networking import NETWORKING_RUNTIME, TRUSTED_ENGINES
+from .networking import NETWORKING_RUNTIME
+from .domains import TRUSTED_ENGINES, resolve_engine
 from .scenario_identity import ScenarioIdentity, CANONICALIZATION, content_digest, canonical_content
 from .storage import atomic_write
 
@@ -18,6 +19,10 @@ MAX_PACKS = 256
 
 def engine_pack(value):
     domain = value['domain']
+    if value['engine']['id'] == 'linux-service':
+        return {'engine_id':'linux-service','lab_id':value['identity']['id'],'content_version':value['identity']['content_version'],
+                'metadata':{**value['metadata'],'brief':value['mission']['brief']},'objectives':value['objectives'],
+                'hints':value['hints'],'required_capabilities':value['engine']['required_capabilities'],'domain':domain}
     result = {'schema_version': 2 if 'firewall' in domain else 1,
               'lab_id': value['identity']['id'], 'content_version': value['identity']['content_version'],
               'required_capabilities': value['engine']['required_capabilities'],
@@ -39,7 +44,7 @@ class PortableScenario:
 
     @property
     def pin(self):
-        return {'scenario': asdict(self.identity), 'engine': asdict(NETWORKING_RUNTIME)}
+        return {'scenario': asdict(self.identity), 'engine': asdict(resolve_engine(self.value()['engine'])[0])}
 
     def value(self): return decode(self.original_bytes)
 
@@ -47,7 +52,7 @@ class PortableScenario:
 
     def domain(self):
         value = self.value()
-        return TRUSTED_ENGINES['networking'][1](self.legacy_pack(), value['domain']['diagnostics'], value['mission']['constraints'])
+        return resolve_engine(value['engine'])[1](self.legacy_pack(), value['domain'].get('diagnostics'), value['mission']['constraints'])
 
 
 def load_portable(raw):
@@ -63,7 +68,7 @@ def load_portable(raw):
         engine = value['engine']
         keys(engine, {'id','contract_version','supported_behavior_versions','required_capabilities'}, 'engine requirements')
         require(engine['id'] in TRUSTED_ENGINES, 'Required engine is not installed. Packs cannot install code.')
-        runtime, _ = TRUSTED_ENGINES[engine['id']]
+        runtime, _ = resolve_engine(engine)
         require(type(engine['contract_version']) is int and engine['contract_version'] == runtime.contract_version,
                 'Unsupported engine contract version.')
         versions = engine['supported_behavior_versions']
@@ -77,6 +82,12 @@ def load_portable(raw):
         require(isinstance(constraints,list) and len(constraints)<=32, 'Too many constraints.')
         for constraint in constraints: text(constraint,'constraint')
         require(value['assets'] == [], 'Assets, paths, URLs, and archives are not supported by this format version.')
+        if engine['id']=='linux-service':
+            from .linux_service.engine import validate_pack as validate_service, initial_state, validate_state
+            validate_service(value)
+            pack=engine_pack(value)
+            validate_state(pack,initial_state(pack))
+            return PortableScenario(ScenarioIdentity(value['identity']['id'],value['identity']['content_version'],FORMAT,1,CANONICALIZATION,digest),raw)
         domain = value['domain']
         require(isinstance(domain,dict), 'Invalid networking domain.')
         keys(domain, {'schema_version','source_device','topology','initial_state','editable_fields','diagnostics'} |

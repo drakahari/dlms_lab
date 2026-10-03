@@ -5,7 +5,8 @@ import unittest
 from PySide6.QtCore import QCoreApplication
 from learning_lab.catalog import CatalogBridge
 from learning_lab.domain.engine import load_pack
-from learning_lab.networking import NetworkingDomain, TRUSTED_ENGINES
+from learning_lab.networking import NetworkingDomain
+from learning_lab.domains import TRUSTED_ENGINES
 from learning_lab.session import Session
 from test_lab import RAW, FIXED
 
@@ -52,4 +53,5 @@ class NetworkingAdapterTests(unittest.TestCase):
         self.assertEqual([r['id'] for r in rows], ['name','route'])
         self.assertTrue(all(r['ok'] for r in rows))
         self.assertEqual(domain.presentation(FIXED,'CLIENT-7')['constraints'], ['Preserve the address'])
-        self.assertEqual(set(TRUSTED_ENGINES), {'networking'})
+        self.assertEqual(set(TRUSTED_ENGINES), {'networking','linux-service'})
+        self.assertIs(TRUSTED_ENGINES['networking'][1],NetworkingDomain)

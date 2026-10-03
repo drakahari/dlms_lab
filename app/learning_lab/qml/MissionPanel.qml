@@ -8,10 +8,23 @@ LabScrollView {
     required property var v
     required property QtObject controller
     signal resizeRequested(int delta)
+    signal detailsToggled()
+    property bool detailsOpen: false
+    function focusDetails() { if(linuxMission.item) linuxMission.item.focusDetails() }
+    property var linuxFirstControl: detailsOpen ? reference.firstControl : (linuxMission.item ? linuxMission.item.firstControl : null)
     clip: true
     contentWidth: availableWidth
     ColumnLayout {
-        width: panel.availableWidth; spacing: 12
+        width: panel.availableWidth; spacing: 0
+        Loader {
+            id: linuxMission
+            Layout.fillWidth: true; Layout.margins: 8; active: v.workspaceKind === "linux-service"; visible: active && !panel.detailsOpen
+            sourceComponent: Component {
+                LinuxMissionBody { v: panel.v; controller: panel.controller; scrollPanel: panel; onDetailsRequested: panel.detailsToggled(); onResizeRequested: function(delta) {panel.resizeRequested(delta)} }
+            }
+        }
+    ColumnLayout {
+        Layout.fillWidth: true; visible: v.workspaceKind !== "linux-service"; spacing: 12
         RowLayout {
             Layout.fillWidth: true
             LabText { text: "MISSION · scroll for details"; color: v.palette.accent; font.bold: true; Layout.fillWidth: true }
@@ -38,6 +51,13 @@ LabScrollView {
             onClicked: { controller.hint(); Qt.callLater(function(){panel.contentItem.contentY=Math.max(0,panel.contentItem.contentHeight-panel.availableHeight)}) }
             onActiveFocusChanged: if(activeFocus) panel.contentItem.contentY=Math.max(0,panel.contentItem.contentHeight-panel.availableHeight)
         }
-        LabText { text: "Simulation only. Portal checks model DNS and reachability; TCP permission uses connect. No real commands or traffic."; color: v.palette.muted; Layout.fillWidth: true }
+        LabText { text: v.simulationNotice; color: v.palette.muted; Layout.fillWidth: true }
+    }
+    }
+    LinuxReferencePanel {
+        id: reference; parent: panel; anchors.fill: parent
+        visible: panel.v.workspaceKind === "linux-service" && panel.detailsOpen
+        v: panel.v
+        onCloseRequested: panel.detailsToggled()
     }
 }

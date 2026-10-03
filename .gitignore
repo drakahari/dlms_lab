@@ -55,6 +55,7 @@ writer.lock
 preferences.json
 selection.json
 workspace-layout.json
+linux-workspace-layout.json
 *.attempt.json
 attempts/
 **/portable/packs/

@@ -16,6 +16,31 @@ class NetworkingDomain:
             o['label'] for o in pack['objectives'] if o['predicate'] in ('address_equals', 'prefix_equals')]
         self.diagnostics = diagnostics if diagnostics is not None else self._legacy_diagnostics()
 
+    def session(self, attempt=None, mode='Learn'):
+        from .session import Session, new_attempt
+        return Session(self.pack, attempt or new_attempt(self.pack,mode), self)
+
+    @staticmethod
+    def policy_text(value):
+        lines = [f"Applied TCP policy · first match · default {value['default']}"]
+        lines += [f"{i+1}. [{r['id']}] {r['action']} tcp {r['source']} → {r['destination']} port {r['port']}" for i,r in enumerate(value['rules'])]
+        return '\n'.join(lines)
+
+    def view_state(self, session, selected, rule_index):
+        a=session.attempt
+        source = session.engine.source
+        firewall = 'firewall' in self.pack
+        policy_draft = session.policy_draft() if firewall else {'default':'deny','rules':[]}
+        rules = policy_draft['rules']
+        selected_rule = rules[rule_index] if 0 <= rule_index < len(rules) else {'id':'','action':'deny','protocol':'tcp','source':'','destination':'','port':''}
+        firewall_view = {'hasFirewall':firewall, 'firewallDevice':self.pack['firewall']['device'] if firewall else '', 'ruleIndex':rule_index, 'draftDefault':policy_draft['default'],
+                         'ruleCount':len(rules), 'ruleInputs':selected_rule,
+                         'ruleChoices':[f"{i+1}. {r['id']} · {r['action']} tcp {r['source']} → {r['destination']}:{r['port']}" for i,r in enumerate(rules)],
+                         'appliedPolicy':self.policy_text(a['applied']['firewall']) if firewall else '',
+                         'firewallDirty':'firewall' in a['draft']}
+        links = ['%s: %s' % (segment, ' ↔ '.join(d['id'] for d in self.pack['topology']['devices'] if any(i['segment'] == segment for i in d['interfaces']))) for segment in self.pack['topology']['segments']]
+        return {**firewall_view, 'editable':self.pack['editable_fields'][source], 'devices':[d['id'] for d in self.pack['topology']['devices']], 'deviceLinks':'\n'.join(links), 'inputs':{k:str(v) for k,v in {**a['applied'],**a['draft']}.items() if k!='firewall'}}
+
     def engine(self, applied):
         return Engine(self.pack, applied)
 
@@ -64,6 +89,7 @@ class NetworkingDomain:
         nodes = [{'id': d['id'], 'role': d['role'], 'addresses': '\n'.join(f"{i['address']}/{i['prefix']}" for i in d['interfaces']),
                   'segments': [i['segment'] for i in d['interfaces']]} for d in engine.devices]
         return {'sourceDevice': self.source, 'workspaceKind': self.workspace,
+                'simulationNotice': 'Simulation only. Portal checks model DNS and reachability; TCP permission uses connect. No real commands or traffic.',
                 'workspaceTools': ['topology', 'settings', 'console'] + (['firewall'] if 'firewall' in self.pack else []),
                 'deviceDetails': '\n'.join(details), 'topologyNodes': nodes,
                 'topologySegments': list(self.pack['topology']['segments']),
@@ -73,4 +99,3 @@ class NetworkingDomain:
 
 # Only application-shipped implementations can appear here. Pack text is never
 # an import path, Python class name, or QML component URL.
-TRUSTED_ENGINES = {'networking': (NETWORKING_RUNTIME, NetworkingDomain)}

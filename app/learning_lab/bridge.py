@@ -3,7 +3,7 @@ from copy import deepcopy
 import json
 from PySide6.QtCore import QObject, Property, Signal, Slot, QTimer
 from .domain.validation import ValidationError
-from .session import Session, new_attempt
+from .networking import NetworkingDomain
 from .storage import atomic_write
 from .theme import read_theme
 from .workspace_state import load_workspace, save_workspace
@@ -14,12 +14,12 @@ class Bridge(QObject):
     def __init__(self, pack, store, config_path, parent=None, domain=None):
         super().__init__(parent)
         self.pack, self.store, self.config_path = pack, store, config_path
-        self.session = Session(pack, store.load(), domain)
-        self.domain = self.session.domain
+        self.domain = domain or NetworkingDomain(pack)
+        self.session = self.domain.session(store.load())
         self.diagnostics = []
         self.diagnostic_revision = -1
         self.command_draft = ""
-        self.message = store.notice or f"Ready. Inspect the topology, then diagnose {self.domain.source}."
+        self.message = store.notice or f"Ready. Inspect the workspace, then diagnose {self.domain.source}."
         try:
             workspace = load_workspace(store,self.session.attempt['id'])
             self.command_draft = workspace['command']
@@ -79,24 +79,11 @@ class Bridge(QObject):
             scores.append(self.saved_best)
         completed = self.saved_complete or any(r['complete'] for r in a['assessments'].values())
         started = count or a['revision'] or a['hints'] or a['draft'] or a['console'] or a['assessments']
-        required_prefix = next((o['params']['value'] for o in self.pack['objectives'] if o['predicate'] == 'prefix_equals'), a['applied']['prefix'])
-        source = self.session.engine.source
-        firewall = 'firewall' in self.pack
-        policy_draft = self.session.policy_draft() if firewall else {'default':'deny','rules':[]}
-        rules = policy_draft['rules']
-        selected_rule = rules[self.rule_index] if 0 <= self.rule_index < len(rules) else {'id':'','action':'deny','protocol':'tcp','source':'','destination':'','port':''}
-        firewall_view = {'hasFirewall':firewall, 'firewallDevice':self.pack['firewall']['device'] if firewall else '', 'ruleIndex':self.rule_index, 'draftDefault':policy_draft['default'],
-                         'ruleCount':len(rules), 'ruleInputs':selected_rule,
-                         'ruleChoices':[f"{i+1}. {r['id']} · {r['action']} tcp {r['source']} → {r['destination']}:{r['port']}" for i,r in enumerate(rules)],
-                         'appliedPolicy':self.policy_text(a['applied']['firewall']) if firewall else '',
-                         'firewallDirty':'firewall' in a['draft']}
-        links = ['%s: %s' % (segment, ' ↔ '.join(d['id'] for d in self.pack['topology']['devices'] if any(i['segment'] == segment for i in d['interfaces']))) for segment in self.pack['topology']['segments']]
-        return {**presentation, **firewall_view, 'metadata': self.pack['metadata'], 'labId': self.pack['lab_id'],
-                'editable': self.pack['editable_fields'][source],
-                'devices': [d['id'] for d in self.pack['topology']['devices']], 'deviceLinks': '\n'.join(links),
+        domain_view = self.domain.view_state(self.session, self.selected, self.rule_index)
+        return {**presentation, **domain_view, 'metadata': self.pack['metadata'], 'labId': self.pack['lab_id'],
                 'objectives': self.pack['objectives'], 'rubricSummary': ' · '.join(o['label'] + ' ' + str(o['points']) for o in self.pack['objectives']),
                 'attemptId': a['id'], 'mode': a['mode'], 'revision': a['revision'],
-                'applied': deepcopy(a['applied']), 'inputs': {k: str(v) for k, v in {**a['applied'], **a['draft']}.items() if k != 'firewall'},
+                'applied': deepcopy(a['applied']),
                 'dirty': bool(a['draft']), 'hints': self.pack['hints'][:a['hints']] if a['mode'] == 'Learn' else [],
                 'hintCount': a['hints'], 'hintTotal': len(self.pack['hints']), 'diagnostics': self.diagnostics, 'diagnosticRevision': self.diagnostic_revision, 'commandDraft': self.command_draft, 'console': '\n'.join(a['console']), 'grade': grade or {}, 'hasGrade': grade is not None,
                 'message': self.message, 'readOnly': self.store.read_only, 'canRetry': self.save_failed, 'page': self.page, 'selected': self.selected,
@@ -223,7 +210,7 @@ class Bridge(QObject):
 
     @Slot()
     def apply(self):
-        self.action(self.session.apply, 'Settings applied atomically. Tests and grading use this applied state.')
+        self.action(self.session.apply, 'Virtual file applied atomically. Use systemctl restart to load it; syntax faults remain diagnosable.' if self.domain.workspace == 'linux-service' else 'Settings applied atomically. Tests and grading use this applied state.')
 
     @Slot(str)
     def execute(self, command):
@@ -234,7 +221,7 @@ class Bridge(QObject):
         def run():
             self.diagnostics = self.session.test()
             self.diagnostic_revision = self.session.attempt['revision']
-        self.action(run, 'Tests finished on applied state. TCP results name the matching rule or default policy.' if 'firewall' in self.pack else 'Tests finished on applied state. Portal = DNS and reachability only.')
+        self.action(run, 'Tests finished on applied virtual files and service state.' if self.domain.workspace == 'linux-service' else 'Tests finished on applied state. TCP results name the matching rule or default policy.' if 'firewall' in self.pack else 'Tests finished on applied state. Portal = DNS and reachability only.')
 
     @Slot()
     def hint(self):
@@ -252,9 +239,9 @@ class Bridge(QObject):
             self.timer.stop()
             save_workspace(self.store,self.session.attempt['id'],self.workspace_state())
             self.store.archive(self.session.archived('reset' if mode == self.session.attempt['mode'] else 'mode-change'))
-            candidate = new_attempt(self.pack, mode)
-            self.store.save(candidate)
-            self.session = Session(self.pack, candidate, self.domain)
+            candidate = self.domain.session(mode=mode)
+            self.store.save(candidate.attempt)
+            self.session = candidate
             self.diagnostics = []
             self.diagnostic_revision = -1
             self.command_draft = ""
@@ -277,7 +264,7 @@ class Bridge(QObject):
 
     @Slot(str)
     def selectDevice(self, device):
-        if device in self.session.engine.by_id:
+        if device in getattr(self.session.engine, 'by_id', {}):
             self.selected = device
             self.changed.emit()
 

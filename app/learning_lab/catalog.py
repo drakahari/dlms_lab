@@ -28,6 +28,7 @@ class CatalogBridge(QObject):
         self.selection_readonly = False
         self.notice = '\n'.join(pack_warnings)
         self.transfer_message = ''
+        self.layout_notice = ''
         self.workspace_layout = {}
         self.layout_path = self.config_root/'workspace-layout.json'
         self.layout_readonly = False
@@ -41,6 +42,19 @@ class CatalogBridge(QObject):
         except (OSError,ValueError):
             self.layout_readonly=True
             self.notice+=' Unsupported layout preferences preserved; layout changes are temporary.'
+        self.linux_layout = {}
+        self.linux_layout_path = self.config_root/'linux-workspace-layout.json'
+        self.linux_layout_readonly = False
+        try:
+            if self.linux_layout_path.exists():
+                saved=decode(self.linux_layout_path.read_bytes(),4096)
+                if not isinstance(saved,dict) or set(saved)!={'schema_version','sizes'} or type(saved['schema_version']) is not int or saved['schema_version']!=1:
+                    raise ValueError('Unsupported Linux layout file')
+                self._validate_layout(saved['sizes'])
+                self.linux_layout=saved['sizes']
+        except (OSError,ValueError):
+            self.linux_layout_readonly=True
+            self.notice+=' Unsupported Linux layout preferences preserved; Linux layout changes are temporary.'
         try:
             if self.selection_path.exists():
                 selection = decode(self.selection_path.read_bytes(), 4096)
@@ -67,15 +81,15 @@ class CatalogBridge(QObject):
                                    'labKey':key,'version':lab.pack['content_version'],
                                    'origin':'Portable pack' if key in self.portables else 'Bundled legacy'})
         result['scenarioVersion'] = self.pack['content_version']
-        result['provenance'] = ('Pinned content ' + self.portables[active_key].identity.content_digest + ' · engine networking-1'
+        result['provenance'] = ('Pinned content ' + self.portables[active_key].identity.content_digest + ' · engine ' + self.portables[active_key].pin['engine']['behavior_version']
                                 if active_key in self.portables else 'Legacy attempt: original content digest and engine provenance were not recorded.')
         result['transferMessage'] = self.transfer_message
         result['catalogNotice'] = self.notice
-        result['workspaceLayout'] = dict(self.workspace_layout)
+        result['workspaceLayout'] = dict(self.linux_layout if self.active.domain.workspace=='linux-service' else self.workspace_layout)
         result['canRetry'] = any(lab.save_failed for lab in self.labs.values())
         if any(lab.save_failed for lab in self.labs.values() if lab is not self.active):
             result['message'] += ' Another lab has unsaved progress. Retry save before closing.'
-        result['message'] += self.notice
+        result['message'] += self.notice + self.layout_notice
         return result
 
     def _add_portable(self, scenario, connect=True):
@@ -102,14 +116,25 @@ class CatalogBridge(QObject):
     @Slot('QVariantMap')
     def saveLayout(self, sizes):
         try:
+            # QML JavaScript numbers arrive as doubles even after Math.round().
+            # Normalize the UI boundary only; disk validation stays strict.
+            if isinstance(sizes,dict):
+                sizes={k:int(v) if type(v) is float and v.is_integer() and 60<=v<=1800 else v for k,v in sizes.items()}
             self._validate_layout(sizes)
-            if not self.layout_readonly:
+            linux=self.active.domain.workspace=='linux-service'
+            readonly=self.linux_layout_readonly if linux else self.layout_readonly
+            path=self.linux_layout_path if linux else self.layout_path
+            # Keep a valid user's choice in memory even if disk persistence fails.
+            if linux:self.linux_layout=dict(sizes)
+            else:self.workspace_layout=dict(sizes)
+            if not readonly:
                 self.config_root.mkdir(parents=True,exist_ok=True)
-                atomic_write(self.layout_path,json.dumps({'schema_version':1,'sizes':sizes}).encode())
-            self.workspace_layout=dict(sizes)
+                atomic_write(path,json.dumps({'schema_version':1,'sizes':sizes}).encode())
+            self.layout_notice=''
             self.changed.emit()
         except (OSError,ValueError) as exc:
             self.transfer_message='Layout could not be saved: '+str(exc)
+            self.layout_notice=' '+self.transfer_message+' Current sizing is temporary.'
             self.changed.emit()
 
     @Slot(str, result=bool)

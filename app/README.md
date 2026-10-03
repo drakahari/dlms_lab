@@ -1,6 +1,6 @@
 # Omarchy Learning Lab — native workspace and portable scenarios
 
-Three original, offline troubleshooting labs in a standalone Qt Quick window: gateway/DNS, subnet boundary and service firewall.
+Three bundled networking labs and two importable Linux service labs in a standalone, offline Qt Quick window.
 
 ## Launch
 
@@ -16,6 +16,37 @@ Installed and verified: Python 3.14.7, PySide6 6.11.2, Shiboken6 6.11.2, Qt 6.11
 Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can force a smaller allocation despite Qt's minimum. Use the existing **Super+T** floating toggle or **Super+Alt+F** maximize binding when needed; the app does not install window rules.
 
 ## Use
+
+### Linux service troubleshooting
+
+For a first lesson, import `examples/linux-service-basics.lab.json` and open
+**Start your first service**. Its configuration is healthy: inspect the stopped
+service, start it, then verify it is running. Learn explains one command and its
+expected result at a time; Challenge hides that guidance.
+
+In Library choose **Import scenario…** and select
+`examples/linux-web-document-root.lab.json`, then open **Recover a failed web service**.
+The bounded **Terminal · Simulated Linux** console contains output, a current-directory
+prompt and command entry. Type `help` and press Enter, or use Run. **Command reference**,
+**Virtual file editor** and **Diagnostics** open a separate lower pane; Close returns
+its space and focus to the terminal. Drag the divider, or focus it and use Up/Down. The selected height survives output updates, lab switching
+and reopening; small windows temporarily clamp it and restore it when space allows.
+Linux sizing preferences are separate from networking preferences. Nothing typed into the terminal runs on
+the host. The original networking labs and their history remain separate.
+
+Start with `help`, `systemctl status lab-web`, `journalctl -u lab-web`,
+`cat /etc/lab-web.conf`, and `ls -l /srv`. Repair the missing virtual directory or
+change the document root using the editor and **Apply changes**. Start/restart
+loads applied configuration. Grade reflects the resulting state, including
+permissions and declared constraints; no particular command sequence is required.
+
+See [Linux commands, model, tests and outstanding acceptance](docs/linux-service.md).
+The sidebar shows the goal, progress, current Learn step and Hint. **Lab details ▾**
+opens a non-modal, independently scrolling reference in that area. It stays open
+while typing and editing, and resizes beside the workspace or above it in compact
+windows. The virtual editor has padded draft/applied groups; Applied is collapsible.
+See [current reference/editor changes and owner checks](docs/linux-reference.md), and
+[the original divider fix and beginner results](docs/linux-usability.md).
 
 ### Gateway and DNS
 
@@ -47,7 +78,7 @@ The three original labs retain three Learn hints without a score penalty; portab
 
 Keyboard: F6/Shift+F6 moves between mission, workspace and diagnostics regions; Tab/Shift+Tab moves within them; Enter activates controls; Alt+1/2/3 opens Library/Lab/History. In Console, Enter runs a command and Up/Down browses history. Focus a scroll panel and use PageUp/PageDown or Up/Down. Escape cancels the reset/mode dialog; focus returns to its origin.
 
-Supported console syntax:
+Supported **networking** console syntax:
 
 ```text
 help
@@ -110,7 +141,10 @@ Use **Import scenario…** in Library to install a local data-only JSON pack. Th
 
 The workspace preserves pending settings, firewall edits and console input. Diagnostics report their applied revision; submission review is separate. Split handles and +/− buttons resize panes, with ↺ restoring defaults. Narrow windows use a topology tool tab.
 
-See [architecture, format, limits, pinning and rollback](docs/framework.md). Cross-domain extensibility remains unproven.
+See [architecture, format, limits, pinning and rollback](docs/framework.md).
+The Linux service lab exercises a second trusted domain; this is a bounded
+two-domain implementation, not evidence that arbitrary future domains need no
+framework changes. Its current visual tests are offscreen, not native acceptance.
 
 ## Checkpoint 1: scenario identity (historical)
 

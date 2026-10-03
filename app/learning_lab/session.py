@@ -12,13 +12,13 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def new_attempt(pack, mode="Learn"):
+def new_attempt(pack, mode="Learn", *, initial=None):
     if mode not in ("Learn", "Challenge"):
         raise ValidationError("Unknown mode.")
     return {
         "id": str(uuid4()), "lab_id": pack["lab_id"], "content_version": pack["content_version"],
         "mode": mode, "started": now(), "updated": now(), "ended": None, "end_reason": None,
-        "applied": initial_applied(pack), "draft": {}, "revision": 0,
+        "applied": deepcopy(initial) if initial is not None else initial_applied(pack), "draft": {}, "revision": 0,
         "hints": 0, "console": [], "commands": [], "assessments": {},
     }
 

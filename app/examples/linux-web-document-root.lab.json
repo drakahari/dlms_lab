@@ -1,0 +1,142 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-web-document-root",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-service",
+    "contract_version": 1,
+    "supported_behavior_versions": [
+      "linux-service-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "virtual-file-editor",
+      "service-lifecycle",
+      "service-journal"
+    ]
+  },
+  "metadata": {
+    "title": "Recover a failed web service",
+    "topic": "Linux services · virtual files · permissions",
+    "difficulty": "Foundation",
+    "minutes": 15
+  },
+  "mission": {
+    "brief": "The simulated lab-web.service fails on startup. Inspect its status and journal, read /etc/lab-web.conf, and investigate the configured document root. Repair the filesystem or configuration, then start or restart the service. The terminal and file editor operate entirely on virtual state. No real Linux service, file, process, socket, HTTP request or network is used.",
+    "constraints": [
+      "Keep Port=8080. The document root must be /srv or a directory beneath it that www-data can read and search.",
+      "Only /etc/lab-web.conf is editable. mkdir creates learner-owned directories with mode 0755; other permissions and ownership are fixed. Service control is permitted explicitly by the simulation.",
+      "A newly created accessible directory is sufficient; an index file is not required. You may instead configure an existing accessible directory. Start/restart must load the final applied configuration."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "config",
+      "label": "Use valid configuration and declared port/root constraints",
+      "points": 30,
+      "predicate": "configuration_valid",
+      "params": {}
+    },
+    {
+      "id": "root",
+      "label": "Make the document root accessible to the service user",
+      "points": 30,
+      "predicate": "document_root_accessible",
+      "params": {}
+    },
+    {
+      "id": "service",
+      "label": "Run the service with the final applied configuration",
+      "points": 40,
+      "predicate": "service_running_current_config",
+      "params": {}
+    }
+  ],
+  "hints": [
+    "Read systemctl status lab-web and journalctl -u lab-web. The failure message names the resource the service cannot open; repeated restarts alone cannot create that resource.",
+    "Read /etc/lab-web.conf, then compare DocumentRoot with ls -l /srv. Distinguish an absent directory from a permissions failure: www-data needs search permission on every parent and read/search permission on the document root.",
+    "Either run mkdir /srv/site, or use the Virtual file editor to set DocumentRoot=/srv/www and Apply. Keep Port=8080, then run systemctl restart lab-web. Check status and diagnostics before submitting."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 1,
+    "cwd": "/srv",
+    "editable_files": [
+      "/etc/lab-web.conf"
+    ],
+    "service": {
+      "name": "lab-web.service",
+      "config": "/etc/lab-web.conf",
+      "port": 8080,
+      "document_root_base": "/srv"
+    },
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc/lab-web.conf": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "# Configuration for the simulated web service\nDocumentRoot=/srv/site\nPort=8080\n"
+      },
+      "/srv": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/srv/www": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/srv/www/readme.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "An existing accessible virtual document root.\n"
+      },
+      "/srv/private": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0700",
+        "content": ""
+      },
+      "/srv/private/readme.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644",
+        "content": "The learner can read this virtual file, but www-data cannot traverse its parent.\n"
+      },
+      "/root": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700",
+        "content": ""
+      }
+    }
+  }
+}

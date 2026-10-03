@@ -1,6 +1,6 @@
 # Bundled lab pack schemas 1 and 2
 
-The bundled packs are `learning_lab/packs/gateway-dns.json` and `subnet-boundary.json` (schema 1), plus `service-firewall.json` (schema 2). All are JSON data, loaded before the UI is created. There is no import or download feature.
+The bundled packs are `learning_lab/packs/gateway-dns.json` and `subnet-boundary.json` (schema 1), plus `service-firewall.json` (schema 2). All are JSON data, loaded before the UI is created. This page describes their unchanged legacy networking contract. Local imports use the separate [portable envelope](framework.md); the [Linux domain contract](linux-service.md) is separate. Downloads are not supported.
 
 | Field | Contract |
 | --- | --- |

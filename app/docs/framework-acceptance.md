@@ -1,5 +1,76 @@
 # Framework acceptance — checkpoints 2 onward
 
+## Owner visual approval — 2 October 2026
+
+The owner explicitly approved the **current visual layout** and authorized the
+local Linux simulation/usability commit in this session. This records owner
+visual approval only; it does not establish which monitor, scale, input device
+or assistive technology was used.
+
+Physical-keyboard end-to-end acceptance, accessibility/screen-reader behavior,
+native file choosers and dialogs, compositor/mixed-monitor interactions, and
+unverified native scaling and pointer workflows remain outstanding. Current Linux
+QtTest evidence is offscreen; historical native networking evidence does not
+validate these Linux changes.
+
+The commit-readiness rerun passes **126 regression tests** and all four UI suites
+at 100/150/200% offscreen scaling: **85 reference/editor**, **153 console/beginner**,
+**71 Linux lifecycle**, and **190 networking** checks per scale. Mutating tests use
+isolated temporary profiles. Generated logs/screenshots remain excluded local
+artifacts under `app/evidence/linux-commit-*`; the test scripts and useful reports
+are included in source control. Local evidence links in the Linux reports are
+reproducible artifacts and may be absent from a fresh checkout.
+
+## Non-modal Linux reference revision — current
+
+See [the current reference/editor report](linux-reference.md) for combined-pane,
+focus, scrolling, draft preservation and scaling checks. The current visual layout
+has owner approval as recorded above. Unverified native and physical-input checks
+remain outstanding; automated evidence is offscreen only.
+
+## Linux visual clarity revision — historical
+
+See [the current report](linux-clarity.md) for the bounded console, supporting tools,
+Lab details, focused UI checks and recovery verification. Current acceptance is
+**offscreen only**; native visual and physical-keyboard checks remain outstanding.
+
+## Linux usability follow-up — historical
+
+The terminal-first Linux view and separate beginner scenario are covered by
+[the usability report](linux-usability.md). The full suite now passes **126 tests**.
+Current UI evidence remains **offscreen only**. The new usability runs cover real
+QtTest pointer dragging with output updates, release/refresh/resize retention,
+cross-lab and fresh-process sizing, disclosures, and the beginner walkthrough.
+Historical native results below do not validate these changes. Physical input,
+native visual/scale checks and file-picker acceptance remain outstanding.
+
+## Initial Linux-service extension — historical
+
+The application now includes a separate trusted Linux service domain and an
+importable missing-document-root scenario. See [its model, commands, results and
+hands-on checklist](linux-service.md). The fresh full suite passes **118 tests**.
+Linux Qt UI runs pass **71 checks each at 100/150/200% offscreen scale**, including
+both fixes, editor focus/size limits, drafts, modes, grading, switching, reset and
+fresh-process resume. Original networking UI regressions pass **190 checks each**
+at those three offscreen scales. These are software-rendered offscreen tests.
+
+**Current native acceptance is outstanding.** This execution environment cannot
+connect to `/run/user/1000/wayland-1`: `Operation not permitted` (errno 1).
+Wayland initialization failed; no current native screenshots were obtained.
+Physical keyboard, native file pickers, compositor scaling/movement and subjective
+visual/accessibility review remain owner checks. Historical native evidence below
+does not establish acceptance of the changed application.
+
+All eight recovery snapshots reverified. Original personal progress/configuration
+match the fresh pre-change snapshot. Networking engine and original pack bytes
+still match the historical freeze. The full-application frozen-code assertion was
+replaced with that preservation check because a new trusted domain changes the
+application; the historical manifest itself was not rewritten. The registry test
+now expects the two explicitly shipped engines. Other existing regressions remain.
+
+Current reports and screenshots are linked in [Linux service results](linux-service.md#delivery-results).
+They are generated local artifacts ignored by the existing `.gitignore`.
+
 ## Target and test isolation
 
 Target: `omarchy`, Framework Laptop 13 Pro, Omarchy 4.0.4-1,
@@ -60,10 +131,11 @@ on disk is **not** evidence of physical-keyboard or native-picker acceptance.
   These use the final frozen code, including Library/History focus scrolling.
 - Separate offscreen evidence: [workspace](../evidence/framework-offscreen.json)
   and [portable proof](../evidence/proof-offscreen.json). These are not native acceptance.
-- [Application freeze](../evidence/proof-code-freeze.json): hashes of every file
+- [Historical application freeze](../evidence/proof-code-freeze.json): hashes of every file
   under `learning_lab/` except bytecode caches, captured **before** authoring
-  `examples/resolver-misdirection.lab.json`. Tests verify the same complete file
-  inventory/hashes afterward, not just a selected engine file.
+  `examples/resolver-misdirection.lab.json`. At that checkpoint, tests verified
+  the same complete file inventory/hashes afterward. The Linux extension's
+  preservation regression is scoped as described above.
 
 The new scenario uses CLIENT-7, EDGE, INVENTORY and ORDERS on different networks.
 Both server IPs and DNS replies work initially; DNS answers swap the endpoints.

@@ -1,15 +1,17 @@
-# Native framework and portable networking proof
+# Native framework and portable scenario domains
 
 ## Boundaries
 
 ```text
 Main.qml — Library / Current Lab / History and attempt dialogs
-  MissionPanel + trusted NetworkWorkspace + DiagnosticsDock
+  MissionPanel + trusted domain workspace + DiagnosticsDock
   CatalogBridge — selection, transfer, layout and one root writer lock
     Bridge — Qt presentation / debounce / workspace sidecars
       Session — attempt lifecycle, drafts, Apply, hints, submissions
         NetworkingDomain — capabilities, diagnostics, workspace presentation
           domain/Engine — IPv4, routing, DNS, endpoint and TCP/firewall rules
+        LinuxServiceDomain / LinuxSession — virtual editor and stateful commands
+          linux_service/ServiceEngine + VirtualFS — dictionary-only simulation
     Store — unchanged legacy records and paths
     PinnedStore — portable record envelope with exact content/runtime pin
     PackRepository — validated, immutable local scenario copies
@@ -18,25 +20,34 @@ Main.qml — Library / Current Lab / History and attempt dialogs
 `scenario_identity.py` defines generic identity and canonicalization. `portable.py`
 validates the envelope and maps networking data through the existing engine
 validator. `networking.py` is an application-shipped adapter, registered in a
-static trusted registry. Packs cannot name Python modules or QML URLs.
+static trusted registry in `domains.py`. Packs cannot name Python modules or QML URLs.
 `workspace_state.py` persists pending command text and structured diagnostic
 results separately from attempt records. Theme input remains read-only.
 
 ### Scope of the proof
 
-Networking is the only implemented domain. There is one editable workstation,
+The original networking proof has one editable workstation,
 optional router TCP policy, connected IPv4 routes and one default gateway; no
 static route editor, real shell, real sockets, or operating-system commands.
-Settings and firewall editing still live in the networking session/bridge, and
-the current shell mounts the trusted networking workspace. A second domain must
-validate those boundaries and supply appropriate tools. This proof does not
-establish general cross-domain extensibility.
+Settings and firewall editing remain in the networking session/bridge. The
+[Linux service extension](linux-service.md) supplies its own trusted engine,
+session actions and workspace. The shell now obtains sessions and presentation
+fields from each domain and selects one of two statically declared QML components.
+Shared attempt/history/mode/transfer behavior works for both domains. The Linux
+session reuses lifecycle methods from `Session`; a full domain-neutral session
+API and arbitrary future domains remain future work, not established by this proof.
 
 The three legacy packs and legacy serialization remain intact. The explicit
 bundled catalog and gateway's original storage root are compatibility exceptions.
 Console source names, topology, diagnostics, DNS names, endpoints, constraints,
 editable fields and firewall router labels now come from validated content.
 Exactly three hints is a legacy-format rule; portable networking accepts 0–32.
+
+The [Linux usability extension](linux-usability.md) registers a second explicit
+Linux contract/behavior pair for healthy stopped-service lessons. Original Linux
+packs retain contract 1 / `linux-service-1`; beginner packs opt into contract 2 /
+`linux-service-2`. Runtime resolution is a static application allowlist, not pack
+code. Existing attempt pins are neither upgraded nor rewritten.
 
 ## Workspace
 
@@ -113,7 +124,8 @@ pack, avoiding a self-reference. Exact [canonical rules](scenario-identity.md)
 are unchanged: object-key/formatting differences are ignored; arrays and string
 contents are preserved. A digest identifies content; it does not authenticate it.
 
-Portable attempts use schema 3 envelopes containing the exact scenario identity
+Portable networking attempts retain schema 3 envelopes. New Linux attempts use
+schema 4 with domain-delegated state validation. Both contain the exact scenario identity
 (digest and canonicalization included), engine ID/contract/behavior, and attempt.
 The installed content is kept under its digest and that attempt store is keyed
 by the same digest. New content versions coexist; they cannot replace a resumed
@@ -135,10 +147,12 @@ plugin loader or automatic update mechanism. ZIP/gzip, BOM, invalid UTF-8,
 duplicate JSON keys, floats, unsupported schemas/capabilities/engines, unknown
 fields and inconsistent topology/objectives are rejected before installation.
 Paths, URLs and executable fields cannot occur as resources: `assets` must be
-empty, and no pack field controls a filesystem path. All content is plain text.
+empty, and no pack field controls a host filesystem path. Linux virtual paths
+are dictionary keys only; see its separate domain contract. All content is plain text.
 Unknown imported files remain untouched.
 
-Limits: 256 KiB raw and canonical content, depth 32, signed 64-bit integers,
+Shared limits: 256 KiB raw and canonical content, depth 32, signed 64-bit integers,
+32 hints, 32 constraints, and 256 installed JSON files. Networking limits:
 32 devices, 64 segments, 8 interfaces/device, 64 DNS records/device,
 32 endpoints/device, 32 objectives, 32 hints, 32 diagnostics, 32 constraints,
 16 firewall rules, 32 TCP service declarations/ports, and 256 installed JSON
