@@ -1,0 +1,189 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-directory-permissions",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 3,
+    "supported_behavior_versions": [
+      "linux-permissions-2"
+    ],
+    "required_capabilities": [
+      "activity-evidence",
+      "directory-name-listing",
+      "directory-permissions",
+      "file-navigation",
+      "mutable-permissions",
+      "traversal-evidence",
+      "virtual-filesystem"
+    ]
+  },
+  "metadata": {
+    "title": "Why can’t I enter this directory?",
+    "topic": "Linux directories · read versus search permissions",
+    "difficulty": "Beginner",
+    "minutes": 6
+  },
+  "mission": {
+    "brief": "You own the Research folder. You can list its names but cannot enter it or read the note inside. Keep private owner name-listing access and restore only the traversal access needed to enter Research and read welcome.txt. The ancestors are accessible and the note already has owner-read permission.",
+    "constraints": [
+      "Required final mode of /home/learner/Research: owner read and execute (0500), no write and no group/other access. Preserve the existing name-listing permission. 0700 and 0777 grant unnecessary access and fail the mode objective.",
+      "Verification: successfully enter Research and read Research/welcome.txt after the most recent actual permission change. Order and equivalent supported paths are flexible. No initial failed command is required for credit.",
+      "Only the Research directory has editable mode bits. Ancestors, note permissions, ownership and file contents are fixed. Changes take effect immediately.",
+      "Directory read permission allows name listing; execute allows search/traversal and access to known children. This simulation supports names-only ls with read permission. ls -l needs read plus execute for child metadata and reports a clear error rather than partial metadata rows. Inspect Research itself with a long listing of its accessible parent.",
+      "This is a bounded virtual environment. No real shell, file, process, network or chmod is used. No recursive changes, links, ACLs or full Linux command emulation. Help documents the exact syntax."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "private-directory",
+      "label": "Final mode: retain private listing and add traversal only",
+      "points": 70,
+      "predicate": "mode_equals",
+      "params": {
+        "path": "/home/learner/Research",
+        "mode": "0500"
+      }
+    },
+    {
+      "id": "entered-directory",
+      "label": "Verification: enter Research after the last mode change",
+      "points": 15,
+      "predicate": "traversal_verified",
+      "params": {
+        "path": "/home/learner/Research"
+      }
+    },
+    {
+      "id": "read-note",
+      "label": "Verification: read welcome.txt after the last mode change",
+      "points": 15,
+      "predicate": "read_verified",
+      "params": {
+        "path": "/home/learner/Research/welcome.txt"
+      }
+    }
+  ],
+  "hints": [
+    "A directory’s read and execute bits do different jobs. Listing a name does not guarantee you can enter the directory or open that child.",
+    "The directory already has owner-read permission. Its missing owner-execute bit blocks traversal; the note’s own read permission is already correct.",
+    "Add only owner-execute with chmod u+x Research, or set mode 500. Then enter Research and read welcome.txt. 777 and 700 give write or other access that this goal does not need."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/etc": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/root": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0700",
+        "content": ""
+      },
+      "/etc/motd": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0644",
+        "content": "Learning Lab: a small simulated filesystem.\n"
+      },
+      "/root/private.txt": {
+        "kind": "file",
+        "owner": "root",
+        "group": "root",
+        "mode": "0600",
+        "content": "This virtual file is reserved for the simulated root user.\n"
+      },
+      "/home/learner/Research": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0400",
+        "content": ""
+      },
+      "/home/learner/Research/welcome.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0600",
+        "content": "Welcome to Research.\nDirectory read permission lets you list names.\nDirectory execute permission lets you enter and access known children.\nThe file also needs its own read permission.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "permission_targets": [
+      "/home/learner/Research"
+    ],
+    "lesson": {
+      "goal": "Keep Research private: list its names, restore traversal, enter it and read the welcome note.",
+      "steps": [
+        {
+          "action": "inspect",
+          "path": "/home/learner/Research",
+          "explanation": "Inspect the parent’s long listing. For the Research directory, owner r permits listing names. The missing owner x blocks traversal. Group and other have no access.",
+          "expected": "Research appears with dr--------, owned by learner."
+        },
+        {
+          "action": "list",
+          "path": "/home/learner/Research",
+          "explanation": "Plain ls lists names using directory read permission. Seeing a name does not mean you can enter the folder or open that file.",
+          "expected": "welcome.txt is listed, even though Research still lacks execute permission."
+        },
+        {
+          "action": "try-enter",
+          "path": "/home/learner/Research",
+          "explanation": "Try entering Research. Directory x means search/traversal, not running the directory as a program. Read alone is not enough.",
+          "expected": "Permission denied. Your current directory does not change."
+        },
+        {
+          "action": "repair",
+          "path": "/home/learner/Research",
+          "explanation": "Add only owner x; keep owner r. Numeric 500 also means owner read (4) plus execute (1). Write is unnecessary, and 777 exposes the folder to other people.",
+          "expected": "Mode 0500. Owner can list and traverse; nobody gets write or group/other access."
+        },
+        {
+          "action": "enter",
+          "path": "/home/learner/Research",
+          "explanation": "Enter the repaired directory to verify traversal. This records evidence without prescribing how you reached the parent.",
+          "expected": "The prompt changes to /home/learner/Research."
+        },
+        {
+          "action": "read",
+          "path": "/home/learner/Research/welcome.txt",
+          "explanation": "Now read the note. Reaching a file requires search permission along its directory path and read permission on the file itself.",
+          "expected": "The note begins Welcome to Research. Submit when ready."
+        }
+      ]
+    }
+  }
+}

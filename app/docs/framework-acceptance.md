@@ -1,5 +1,20 @@
 # Framework acceptance — checkpoints 2 onward
 
+## Permissions authoring and directory scenario — current
+
+[Authoring guide](permissions-authoring.md), reusable template and directory
+scenario are delivered with an opt-in contract-3 extension of the existing
+permissions engine. This required application changes; it is not evidence that
+the prior contract supported directory labs through data alone. QML is unchanged.
+See [scope, tests and owner checklist](directory-permissions.md).
+
+**172 regression tests pass**, including both directory scenarios and all prior
+regressions. The owner reports reviewing the new directory lab and says it looks
+good. This is owner-reported visual approval, not a claim that every native check
+passed. Native physical keyboard, accessibility, choosers and display-scale checks
+remain outstanding. See the [commit review](permissions-contract-review.md#local-commit-review)
+for the current automated checks.
+
 ## Beginner Linux permissions — current
 
 See [permissions architecture and acceptance](linux-permissions.md). **Restore

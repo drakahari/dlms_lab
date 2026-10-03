@@ -153,7 +153,7 @@ class PermissionsTests(unittest.TestCase):
         tree=ast.parse((ROOT/'learning_lab/linux_navigation/permissions.py').read_text())
         for n in ast.walk(tree):
             if isinstance(n,ast.Import):self.assertTrue(all(a.name=='re' for a in n.names))
-            if isinstance(n,ast.ImportFrom):self.assertIn(n.module,('copy','domain.validation','linux_service.vfs','linux_service.engine','engine'))
+            if isinstance(n,ast.ImportFrom):self.assertIn(n.module,('copy','domain.validation','linux_service.vfs','linux_service.engine','engine','permissions_lesson'))
             if isinstance(n,ast.Call) and isinstance(n.func,ast.Name):self.assertNotIn(n.func.id,('open','eval','exec','__import__','compile'))
 
 

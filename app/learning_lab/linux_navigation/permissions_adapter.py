@@ -2,9 +2,10 @@
 from ..scenario_identity import EngineVersion
 from ..session import Session, new_attempt
 from .adapter import NavigationDomain, NavigationSession
-from .permissions import PermissionsEngine, initial_state, validate_state, guide, HELP
+from .permissions import PermissionsEngine, initial_state, validate_state, guide, HELP, DIRECTORY_HELP, extended
 
 RUNTIME=EngineVersion('linux-navigation',2,'linux-permissions-1')
+DIRECTORY_RUNTIME=EngineVersion('linux-navigation',3,'linux-permissions-2')
 
 
 class PermissionsSession(NavigationSession):
@@ -20,8 +21,8 @@ class PermissionsDomain(NavigationDomain):
     def validate_state(self,state):return validate_state(self.pack,state)
 
     def presentation(self,applied,selected):
-        return {**super().presentation(applied,selected),'terminalHelp':HELP,
-                'simulationNotice':'Simulated Linux. Only declared virtual file modes may change; file content is fixed. No host commands or network access.'}
+        return {**super().presentation(applied,selected),'terminalHelp':DIRECTORY_HELP if extended(self.pack) else HELP,
+                'simulationNotice':'Simulated Linux. Only declared virtual '+('file/directory' if extended(self.pack) else 'file')+' modes may change; file content is fixed. No host commands or network access.'}
 
     def view_state(self,session,selected,rule_index):
         # The navigation view is intentionally not called: its predicates differ.

@@ -17,6 +17,19 @@ Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can for
 
 ## Use
 
+### Author permissions scenarios / directory permissions
+
+Use the [authoring guide](docs/permissions-authoring.md) and valid
+[`templates/linux-permissions.lab.json`](templates/linux-permissions.lab.json).
+Validate a copy with `python3 -B tools/validate_scenario.py path/to/pack.json`, then
+import it from Library in an isolated review profile.
+
+Import `examples/linux-directory-permissions.lab.json` for **Why can’t I enter this
+directory?** It teaches name listing versus traversal, restoring only owner
+execute permission while preserving private read access. This uses an explicit
+contract-3 extension of the existing permissions engine; older packs retain their
+original behavior. See [scope and acceptance](docs/directory-permissions.md).
+
 ### Beginner Linux file permissions
 
 Import `examples/linux-file-permissions.lab.json` in Library and open **Restore
