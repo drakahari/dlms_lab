@@ -79,10 +79,13 @@ dependencies or create an offline dependency bundle.
 
 ### Debian guest release
 
-The 199-line existing package/version list is useful provenance but lacks binary-to-
-source mappings, complete copyright texts, source archives, Debian patches and
-per-package redistribution decisions. It describes the local preview, not a new
-release candidate. No image was mounted or modified in this licensing pass.
+The original 199-line package/version list alone was insufficient. The subsequent
+[preparation review](distribution-readiness.md) now records exact binary-to-source
+mappings, all binary copyright notices and 189 collected source versions including
+Debian patches and incorporated sources. The [machine inventory](distribution-inventory.json)
+records those findings and remaining uncertainty. It describes the local preview,
+not a new release candidate or completed per-file redistribution review. No image
+was mounted, rebuilt or modified in either pass.
 
 For a later fresh image, collect each installed package's binary and source names,
 versions, architecture, repository/component, license files and exact source hashes.
@@ -111,3 +114,14 @@ credentials, shell history or personal sessions.
 
 Production signing keys and release allowlists remain empty. Adding MIT does not
 clear the complete VM bundle for publication or authorize a release/upload.
+
+## Consolidated preparation evidence
+
+See [distribution readiness](distribution-readiness.md) for the exact local
+collection, verification boundaries, estimated sizes, hosting limits, source
+retention and signing decisions. See [fresh image preparation](vm-preview/release-image.md)
+for the proposed recipe and outstanding acceptance checklist. The sdist includes
+these documents and the machine inventory; the installer copies them into its
+isolated build source. No runtime engine, image trust, profile or installation
+behavior is changed. Collected third-party binaries, public keys and sources stay
+outside Git and outside the application wheel/sdist.

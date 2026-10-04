@@ -1,4 +1,6 @@
 include docs/distribution-licensing.md
+include docs/distribution-readiness.md docs/distribution-inventory.json
+include docs/vm-preview/release-image.md
 prune tests
 prune evidence
 prune build

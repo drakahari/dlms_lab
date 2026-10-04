@@ -162,7 +162,9 @@ def build_wheel(source, destination, workspace, log, wheelhouse=None):
     source = Path(source).resolve(); destination.mkdir(parents=True, exist_ok=True)
     copied = workspace/'source'; copied.mkdir()
     for name in ('pyproject.toml', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
-                 'MANIFEST.in', 'docs/distribution-licensing.md'):
+                 'MANIFEST.in', 'docs/distribution-licensing.md',
+                 'docs/distribution-readiness.md', 'docs/distribution-inventory.json',
+                 'docs/vm-preview/release-image.md'):
         (copied/name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source/name, copied/name)
     shutil.copytree(source/'learning_lab', copied/'learning_lab', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))

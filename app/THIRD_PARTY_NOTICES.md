@@ -33,7 +33,7 @@ redistribution inventory and needs its own notices and source-compliance review.
 | setuptools and pip | Build/installation tools, installed separately | Not vendored in the app wheel. Their own terms apply if a build-tool/offline dependency bundle is distributed. |
 | QEMU and firmware | Optional host tools, not installed automatically or packaged here | QEMU is GPLv2 as a whole, with component exceptions and separately licensed firmware. Review exact packages and matching source if redistributed. |
 | GnuPG gpgv | Optional offline signature verifier; host executable | Not bundled. Preserve its applicable GPL/component notices and source obligations if redistributed. |
-| Debian guest packages, kernel, bootloader and documentation | Separate optional guest image, with many independent copyright holders/licenses | The local package/version inventory is `docs/vm-preview/packages.tsv` (199 entries). It is NOT a complete licensing or corresponding-source inventory. Guest notices are retained under `/usr/share/doc/*/copyright` and `/usr/share/common-licenses` according to the existing image recipe; a fresh release image still requires a package-by-package audit. |
+| Debian guest packages, kernel, bootloader and documentation | Separate optional guest image, with many independent copyright holders/licenses | The local package/version list has 199 entries. The 2026-10-04 preparation audit collected all exact binary notices and a 189-source-package closure, including Built-Using/Static-Built-Using. See `docs/distribution-inventory.json`. Per-file licensing review and a fresh public candidate remain outstanding. |
 | Omarchy theme inputs and host fonts | Read from the user's existing system | Not copied into the application artifacts by this build. Their terms are not changed. |
 
 Runtime imports use QtCore, QtGui, QtQml, QtQuickControls2 and the QtQuick Controls,
@@ -74,3 +74,36 @@ MIT for Learning Lab does not clear the complete VM bundle for publication.
 
 Inventory reviewed 2026-10-04 against repository baseline 126acab16db65730c86b4975af289efcb5fdcc6b.
 No guest image was mounted, rebuilt or changed for this inventory.
+
+## Distribution-preparation evidence added 2026-10-04
+
+The [readiness report](docs/distribution-readiness.md) and machine-readable
+`docs/distribution-inventory.json` extend this inventory against baseline
+8b53f8dd96d058997b9418feeb38a44234909cf8. Exact binary/source artifacts and selected
+notices are retained in a private directory outside Git, not embedded in this
+application wheel. Collection is not complete legal clearance or a release approval.
+
+The full PySide6 6.11.2 candidate wheel set totals 256,016,078 bytes. Matching
+Qt/PySide source archives and 3,012 selected notice/attribution documents were
+collected; 173 Qt/lib entries were hashed. Source declarations are not an
+exhaustive binary-to-component map. Nine attribution documents fail strict JSON
+parsing; original documents remain unchanged for review. The actual Addons wheel
+contains Qt Charts and Qt Data Visualization, with GPLv3 open-source terms.
+Unused redistributed binaries still have their own obligations.
+
+Extra bundled libraries identified in an existing isolated verified-wheel
+environment include ICU 73.2 (Unicode and component terms) and FFmpeg 7.1.5
+(LGPL 2.1-or-later reported by the binary). Their exact sources/notices were
+collected. FFmpeg's published source signature verified; ICU's SHA-512 matches,
+but its available signing key has an expired-key warning. Qt vendor patches,
+build options, complete bundled component notices and source obligations remain
+open. General Qt documentation lists a different FFmpeg version; it cannot replace
+the actual binary inventory. See the report for hashes and precise verification.
+
+For Debian, all 199 binary notices and 189 exact source versions are collected,
+with binary/index/source hash checks and signed archive metadata verification.
+This includes Linux source behind signed-kernel packaging and statically
+incorporated Rust sources. Twelve notices use legacy free-form text and need
+manual terms review. No Debian image, owner proof disk or personal history was
+copied, mounted, booted or cleared for publication. Host Python/QEMU/gpgv remain
+separate user-obtained prerequisites; their binaries are not redistributed here.
