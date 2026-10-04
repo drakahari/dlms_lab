@@ -52,10 +52,12 @@ class RegistryTests(unittest.TestCase):
  def test_security_controller_and_image_unchanged(self):
   # policy.py has the reviewed display-only revision; test_vm_display verifies
   # exact legacy/new argv and isolation. Lifecycle method hashes remain frozen.
+  # files.py: approved independent descriptor enumeration; dedicated mutation,
+  # identity, exact-membership and home-filesystem tests cover this narrow change.
   import ast
   root=registry.ROOT
   expected={'policy.py':'0fc31036904c975950ed5902a910cfe2a3a02a8aa60e421aa460cdcbcc104031',
-            'files.py':'8e8ab7789daf65be7d5374b4548c452b1faebc813673ca8da390201e88112594',
+            'files.py':'548868ac623bb1a4796884a140c959fa2b2d5bbb539f3fa16d642c93b5f361c0',
             'process.py':'b01bcf16fa10daa001f75c04e6054fcda610eb59db8c3737506e12bc2f9ba4c6',
             'runner.py':'dfc173564c073c0ac0d80c6a717a0b7a203d53194c466122a391ba932a2b5c48',
             'image.json':'1499ad6e7f5cced795f5f0ff97348fbaa321a60aba3c8a810f074a846410a417'}

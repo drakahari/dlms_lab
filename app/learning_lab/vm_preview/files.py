@@ -19,7 +19,9 @@ def component(name):
     return name
 
 class Directory:
-    def __init__(self, fd): self.fd=fd
+    def __init__(self, fd):
+        self.fd=fd
+        s=os.fstat(fd);self._identity=(s.st_dev,s.st_ino)
     @classmethod
     def absolute(cls,path,create=False):
         path=os.fspath(path)
@@ -94,7 +96,28 @@ class Directory:
         except BaseException:
             # Retain staged evidence. It is never interpreted as an active record.
             raise
-    def names(self):return os.listdir(self.fd)
+    def names(self):
+        # dup/listdir(fd) shares the old open-file description, including its
+        # directory cursor and filesystem enumeration state. Reopen only this
+        # verified directory, never its pathname, for an independent snapshot.
+        def state(fd):
+            s=os.fstat(fd)
+            require(stat.S_ISDIR(s.st_mode) and (s.st_dev,s.st_ino)==self._identity
+                    and s.st_uid==os.getuid() and s.st_mode&0o077==0,
+                    'Directory identity or ownership/mode changed')
+            return (s.st_dev,s.st_ino,s.st_mode,s.st_uid,s.st_gid,s.st_nlink,
+                    s.st_size,s.st_mtime_ns,s.st_ctime_ns)
+        require(self.fd is not None,'Directory is closed')
+        before=state(self.fd)
+        fd=os.open('.',os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW,dir_fd=self.fd)
+        try:
+            require(state(fd)==before,'Directory changed before enumeration')
+            names=os.listdir(fd)
+            require(state(fd)==before and state(self.fd)==before,
+                    'Directory changed during enumeration')
+            require(len(names)==len(set(names)),'Duplicate directory members')
+            return names
+        finally:os.close(fd)
 
 def sha256(fd):
     os.lseek(fd,0,os.SEEK_SET)
