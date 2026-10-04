@@ -170,7 +170,9 @@ simulation profile backups. No backup migration or disk export is introduced.
 ## Later work, separately authorized
 
 Prepare one fresh release candidate and complete licensing/source inventory;
-choose project licensing, signer/custody and independent fingerprint distribution.
+Learning Lab original code is now MIT licensed; this does not license Debian or
+other third-party contents. See [distribution licensing](../distribution-licensing.md).
+Choose signer/custody and independent fingerprint distribution.
 Run all eight lessons plus an installed-app lifecycle on another test installation.
 Only then add guided online acquisition using this importer and decide hosting/
 publication. The present recipe is repeatable, not demonstrated byte-identical.

@@ -3,13 +3,15 @@ name = "omarchy-learning-lab"
 version = "0.1.0"
 description = "Original offline networking and Linux troubleshooting simulations"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 dependencies = ["PySide6>=6.11,<6.12"]
 
 [tool.unittest]
 start-directory = "tests"
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]

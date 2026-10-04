@@ -26,6 +26,14 @@ runtime dependencies are accepted. Internet access to the Python package index i
 needed unless a complete trusted local wheelhouse is supplied. No downloaded
 installer scripts, dependency mirrors or network-restriction bypasses are used.
 
+## Licensing and redistributed installations
+
+Learning Lab original code is MIT licensed. Builds include the unchanged license
+and the third-party inventory in wheel metadata and source distributions. The
+installer copies these files into its isolated build workspace. PySide/Qt and
+other dependencies retain their own terms; a copied venv or offline wheelhouse
+needs a separate notice/source review. See [distribution licensing](distribution-licensing.md).
+
 ## Stable paths
 
 Defaults for `/home/drak`:

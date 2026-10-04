@@ -24,6 +24,11 @@ def phase(root, resume, require_icon):
     dist = distribution('omarchy-learning-lab')
     if not dist.read_text('WHEEL') or '"editable": true' in (dist.read_text('direct_url.json') or ''):
         raise RuntimeError('Expected a wheel installation, not an editable source tree.')
+    assert dist.metadata['License-Expression'] == 'MIT'
+    assert set(dist.metadata.get_all('License-File', [])) == {'LICENSE', 'THIRD_PARTY_NOTICES.md'}
+    for name in ('LICENSE', 'THIRD_PARTY_NOTICES.md'):
+        found = [f for f in dist.files if str(f).endswith('.dist-info/licenses/'+name)]
+        assert len(found) == 1 and dist.locate_file(found[0]).is_file()
     assert (package/'qml/Main.qml').is_file()
     assert (package/'qml/VmPreview.qml').is_file()
     from learning_lab.vm_preview.policy import lesson, image_spec

@@ -161,7 +161,10 @@ def index_args(wheelhouse):
 def build_wheel(source, destination, workspace, log, wheelhouse=None):
     source = Path(source).resolve(); destination.mkdir(parents=True, exist_ok=True)
     copied = workspace/'source'; copied.mkdir()
-    for name in ('pyproject.toml', 'README.md'):shutil.copyfile(source/name, copied/name)
+    for name in ('pyproject.toml', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md',
+                 'MANIFEST.in', 'docs/distribution-licensing.md'):
+        (copied/name).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source/name, copied/name)
     shutil.copytree(source/'learning_lab', copied/'learning_lab', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
     build_env = workspace/'build-env'
     run([sys.executable, '-I', '-m', 'venv', build_env], workspace, log)

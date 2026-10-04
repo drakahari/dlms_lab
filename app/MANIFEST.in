@@ -1,3 +1,4 @@
+include docs/distribution-licensing.md
 prune tests
 prune evidence
 prune build

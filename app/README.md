@@ -2,6 +2,16 @@
 
 Three networking labs and a six-lab Linux Fundamentals collection in a standalone, offline Qt Quick window.
 
+## License
+
+Learning Lab's original code is licensed under the [MIT License](LICENSE),
+copyright (c) 2026 Mike Buchanan. The canonical license is also at the repository
+root. Third-party code, assets, dependencies and Debian guest contents retain
+their own terms; they are not relicensed by this grant. See the packaged
+[third-party inventory](THIRD_PARTY_NOTICES.md) and
+[distribution obligations and artifact checks](docs/distribution-licensing.md).
+The complete optional VM bundle is **not cleared for publication** by adding MIT.
+
 ## Launch
 
 For an isolated user-local venv and application-menu entry, see the reviewed
