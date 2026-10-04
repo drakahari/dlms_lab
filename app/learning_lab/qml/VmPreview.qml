@@ -39,6 +39,7 @@ Dialog {
         LabText { text: info.lesson.title; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
         LabText { text: info.lesson.goal; Layout.fillWidth: true }
         LabText { objectName: "vmBoundary"; text: "Use the separate GTK console for real guest commands. No networking, host folders or clipboard; not protection against hostile malware."; Layout.fillWidth: true }
+        LabText { objectName: "vmDisplayGuidance"; text: "Console view: keep View → Zoom To Fit enabled beside the Lab. For manual zoom, use a sufficiently large floating window; undersized tiles can distort the console and menu targets. Reopening returns to fit. The manual zoom percentage is not saved."; Layout.fillWidth: true }
         LabText { objectName: "vmBackupWarning"; text: "VM sessions and disks are NOT included in profile backups or exports. Resume keeps files, not RAM or shell jobs."; Layout.fillWidth: true; font.bold: true }
         LabText { text: "Status: "+info.state+(info.other_profile_running ? " · another profile has the running VM" : "")+(info.busy ? " · operation in progress…" : ""); Layout.fillWidth: true; Accessible.role: Accessible.StaticText }
         LabText { text: info.error || info.message || info.notice; visible: text.length>0; Layout.fillWidth: true; color: info.error ? "#ff9a9a" : palette.text }

@@ -36,6 +36,9 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
  try:
   check('exposed',QTest.qWaitForWindowExposed(w,5000));check('DPR',abs(w.devicePixelRatio()-a.scale)<.01);check('platform',app.platformName()==('wayland' if a.native else 'offscreen'));check('lazy optional startup',not (root/'vm').exists())
   press('vmPreviewButton');wait();item('vmLessonChoice').forceActiveFocus(Qt.TabFocusReason)
+  display_text=item('vmDisplayGuidance').property('text')
+  for phrase in ('Zoom To Fit enabled beside the Lab','floating window','Reopening returns to fit','percentage is not saved'):
+   check('display guidance '+phrase,phrase in display_text)
   for key in (Qt.Key_Space,Qt.Key_Home,Qt.Key_Return):QTest.keyClick(w,key)
   QTest.qWait(100);wait();check('keyboard ComboBox selection',vm.view['selected_lesson_id']==ids[0])
   for id in ids:
@@ -46,6 +49,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
     m.reset('Challenge',True);vm.refresh();wait();check(id+' Challenge associated',vm.view['session']['mode']=='Challenge')
     try:item('vmCommand');raise AssertionError('Challenge leaked guidance')
     except AssertionError as exc:assert str(exc)=='vmCommand'
+    check(id+' Challenge keeps display guidance',item('vmDisplayGuidance').property('text')==display_text)
     m.progress('complete')
   legacy=vm.sessions.manager(LEGACY_ID)
   with patch.object(legacy,'admission'),patch.object(legacy,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):legacy.reset(confirmed=True);legacy.progress('complete')
@@ -60,6 +64,9 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
    for name in ('vmStart','vmStop','vmReset','vmClose'):
     x=item(name);pos=x.mapToScene(QPointF(0,0));check(name+' contained '+str(size),pos.x()>=0 and pos.y()>=0 and pos.x()+x.width()<=w.width() and pos.y()+x.height()<=w.height())
    check('selection width '+str(size),item('vmLessonChoice').width()>250);w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}.png'))
+   guide=item('vmDisplayGuidance');pos=guide.mapToScene(QPointF(0,0))
+   check('display guidance width '+str(size),pos.x()>=0 and pos.x()+guide.width()<=w.width() and guide.width()>250)
+   check('display guidance wraps '+str(size),guide.property('lineCount')>1)
   select(ids[0]);m=vm.manager
   with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
    press('vmReset');QTest.keyClick(w,Qt.Key_Escape);QTest.qWait(100);check('Reset cancel preserves completion',vm.view['session']['completion'] is not None)

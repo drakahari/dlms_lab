@@ -50,9 +50,11 @@ class RegistryTests(unittest.TestCase):
   self.malformed(lambda name,v:v.update(steps=v['steps']*32) if name=='lesson.json' else None)
   self.malformed(lambda name,v:v.update(goal='x'*4097) if name=='lesson.json' else None)
  def test_security_controller_and_image_unchanged(self):
+  # policy.py has the reviewed display-only revision; test_vm_display verifies
+  # exact legacy/new argv and isolation. Lifecycle method hashes remain frozen.
   import ast
   root=registry.ROOT
-  expected={'policy.py':'9d47ef391075be0b0fb197d8417f89f8e0ec620f80a72ff3fb11e145960ac393',
+  expected={'policy.py':'0fc31036904c975950ed5902a910cfe2a3a02a8aa60e421aa460cdcbcc104031',
             'files.py':'8e8ab7789daf65be7d5374b4548c452b1faebc813673ca8da390201e88112594',
             'process.py':'b01bcf16fa10daa001f75c04e6054fcda610eb59db8c3737506e12bc2f9ba4c6',
             'runner.py':'dfc173564c073c0ac0d80c6a717a0b7a203d53194c466122a391ba932a2b5c48',

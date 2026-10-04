@@ -11,6 +11,11 @@ VIRTUAL_BYTES=16*1024**3
 FILE_CEILING=18*1024**3
 RESERVE=4*1024**3
 BACKEND='offline-qemu-preview-1'
+# Display-only policy revision. Keep the legacy exact argv recognizable so a
+# console started by the previous app remains safely controllable after reopen.
+GTK_LEGACY='gtk,gl=off,clipboard=off,grab-on-hover=off'
+GTK_READABLE=GTK_LEGACY+',zoom-to-fit=on,keep-aspect-ratio=on'
+VGA_READABLE='VGA,xres=800,yres=600'
 
 def image_spec():return json.loads(Path(__file__).with_name('image.json').read_text())
 def lesson():return json.loads(Path(__file__).with_name('lesson.json').read_text())
@@ -44,8 +49,8 @@ def launch_arguments(base_fd,disk_fd,gate_fd,run_id,socket_path,*,display='gtk')
     require(display in ('gtk','none'),'Unsupported console')
     args=[QEMU,'-name','Learning Lab — Real Linux preview','-uuid',run_id,
           '-machine','q35,accel=kvm','-cpu','host','-smp','2','-m','2048',
-          '-nodefaults','-no-user-config','-device','VGA','-nic','none',
-          '-display','gtk,gl=off,clipboard=off,grab-on-hover=off' if display=='gtk' else 'none',
+          '-nodefaults','-no-user-config','-device',VGA_READABLE if display=='gtk' else 'VGA','-nic','none',
+          '-display',GTK_READABLE if display=='gtk' else 'none',
           '-monitor','none','-serial','none','-qmp',f'unix:{socket_path},server=on,wait=off']
     for fd,index in ((base_fd,1),(disk_fd,2),(gate_fd,3)):args+=['-add-fd',f'fd={fd},set={index}']
     nodes=[{'driver':'file','node-name':'base-file','filename':'/dev/fdset/1','read-only':True},
@@ -72,6 +77,13 @@ def verify_arguments(args,run_id,socket_path):
         require(set(descriptors)=={1,2,3} and len(set(descriptors.values()))==3,'Missing or aliased descriptor policy')
         display='none' if args[args.index('-display')+1]=='none' else 'gtk'
         expected=launch_arguments(descriptors[1],descriptors[2],descriptors[3],run_id,socket_path,display=display)
-        require(args==expected,'Process launch arguments differ from trusted policy')
+        legacy=expected.copy()
+        if display=='gtk':
+            legacy[legacy.index('-device')+1]='VGA'
+            legacy[legacy.index('-display')+1]=GTK_LEGACY
+        # Exactly two GTK forms, never arbitrary display/device options or a
+        # mixture. The headless graph is unchanged. All isolation flags, private
+        # QMP and descriptor bindings remain part of the exact comparison.
+        require(args==expected or args==legacy,'Process launch arguments differ from trusted policy')
     except (IndexError,TypeError) as exc:
         raise ValueError('Malformed process launch arguments') from exc

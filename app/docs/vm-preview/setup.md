@@ -97,3 +97,13 @@ session records are excluded from simulation profile backups/exports; moving a
 profile does not move its VM. Recovery generations must be managed manually while
 stopped; no deletion is performed by this preview. Keep at least 22 GiB free before
 starting; this check and monitoring do not reserve space or cap aggregate usage.
+
+## Native console display
+
+New graphical launches use a readable 800×600 VGA mode with aspect-preserving
+Zoom To Fit. Manual Zoom In/Out disables fit and is not persisted across QEMU
+processes. Keep View → Zoom To Fit enabled beside the Lab. For manual zoom, use
+a sufficiently large floating window; undersized tiles can distort the console
+and menu targets. Reopening returns to fit; the manual percentage is not saved.
+See [display behavior and native verification](display.md).
+No global scaling, guest image, privileges or isolation settings are changed.
