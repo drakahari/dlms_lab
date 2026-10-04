@@ -57,7 +57,7 @@ try:
         check('shared progress retained',b.view['collections'][0]['rows'][2]['status']==b.view['collections'][1]['rows'][1]['status'])
         check('pending command retained',b.view['commandDraft']=='help')
     else:
-        check('three collections',len(b.view['collections'])==3)
+        check('four collections',len(b.view['collections'])==4)
         check('no portable profile writes before start',not b.repository.root.exists())
         for size in ((800,600),(1024,768),(1280,900)):
             w.resize(*size);QTest.qWait(120)

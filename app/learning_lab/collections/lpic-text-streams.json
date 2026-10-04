@@ -1,0 +1,37 @@
+{
+  "title": "LPIC-1 Foundations: Text, Filters & Reports",
+  "items": [
+    {
+      "file": "linux-log-slices.lab.json",
+      "skill": "Sample a log with head and tail; distinguish records from LF counts."
+    },
+    {
+      "file": "linux-text-events.lab.json",
+      "skill": "Select records using fixed strings without claiming regex coverage."
+    },
+    {
+      "file": "linux-text-counts.lab.json",
+      "skill": "Distinguish LF counts, ASCII word counts and UTF-8 byte counts."
+    },
+    {
+      "file": "linux-text-deduplicate.lab.json",
+      "skill": "Understand adjacent duplicate removal and bytewise sorting."
+    },
+    {
+      "file": "linux-text-fields.lab.json",
+      "skill": "Project one field and distinguish missing fields from undelimited records."
+    },
+    {
+      "file": "linux-text-pipeline.lab.json",
+      "skill": "Combine selection, projection, sorting and adjacent deduplication."
+    },
+    {
+      "file": "linux-text-report.lab.json",
+      "skill": "Distinguish replacement from append and verify final reports."
+    },
+    {
+      "file": "linux-text-handover.lab.json",
+      "skill": "Assess accurate filtering, counting, report content and final verification."
+    }
+  ]
+}

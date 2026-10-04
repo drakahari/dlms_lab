@@ -23,6 +23,14 @@
       "sequence": "Recommended: locations, workspace, copy, move/rename, discover, then final assessment. Start any lab; nothing is locked.",
       "prerequisites": "Complete Files & Permissions or be comfortable with pwd, ls, cd, cat and directory access.",
       "coverage": "LPIC-1 objectives v5.0: introductory 104.7 location practice and partial 103.3 file-management/discovery coverage. No wildcards, recursive operations, archives, links or full shell semantics. Original content; no LPI affiliation."
+    },
+    {
+      "id": "lpic-text-streams",
+      "file": "lpic-text-streams.json",
+      "purpose": "Inspect text, select and count records, combine bounded filters and verify saved reports.",
+      "sequence": "Recommended: samples, literal selection, counts, duplicates, fields, pipelines, redirection, then final assessment. Start any lab; nothing is locked.",
+      "prerequisites": "Organize and Find Files, or familiarity with virtual paths, cat and directory access.",
+      "coverage": "LPIC-1 objectives v5.0: partial 103.2 text-filter and 103.4 stdout-pipeline/redirection coverage; fixed-string preparation for 103.7, without regex coverage. No full Bash, stdin/stderr redirects, xargs, tee or full LPIC-1 preparation. Original content; no LPI affiliation."
     }
   ]
 }

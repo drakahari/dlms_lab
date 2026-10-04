@@ -1,0 +1,120 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-text-deduplicate",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Sort before removing duplicates",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Display adjacent-duplicate removal for names.txt while retaining its original order. Then use a pipeline to display sorted unique names with counts. A separated beta must not disappear in the first result.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "adjacent",
+      "label": "Inspection: adjacent duplicates removed",
+      "points": 40,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "uniq",
+        "source": "/home/learner/names.txt",
+        "output": "beta\nalpha\nbeta\n"
+      }
+    },
+    {
+      "id": "sorted",
+      "label": "Inspection: sorted counts via pipeline",
+      "points": 60,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "pipeline",
+        "source": "/home/learner/names.txt",
+        "output": "      1 alpha\n      3 beta\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare adjacent duplicates with duplicates separated by another name.",
+    "sort keeps duplicates; uniq removes adjacent duplicates. Compose them to count all equal names.",
+    "uniq names.txt; then sort names.txt | uniq -c."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/names.txt": {
+        "kind": "file",
+        "content": "beta\nbeta\nalpha\nbeta\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [],
+    "lesson": {
+      "goal": "Display adjacent-duplicate removal for names.txt while retaining its original order. Then use a pipeline to display sorted unique names with counts. A separated beta must not disappear in the first result.",
+      "steps": [
+        {
+          "objective": "adjacent",
+          "command": "uniq names.txt",
+          "explanation": "uniq combines neighboring equal records. It does not search the entire file for duplicates.",
+          "expected": "beta, alpha, beta."
+        },
+        {
+          "objective": "sorted",
+          "command": "sort names.txt | uniq -c",
+          "explanation": "Sorting groups equal records; the pipe passes text into uniq. -c displays occurrence counts.",
+          "expected": "1 alpha and 3 beta; GNU-style count padding."
+        }
+      ]
+    }
+  }
+}

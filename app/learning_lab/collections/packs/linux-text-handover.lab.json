@@ -1,0 +1,187 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-text-handover",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Deliver a filtered report",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Create failed-sites.txt with sorted unique failed site names from checks.txt: beta then zeta. Create count.txt with their count (2 and LF), preserve checks.txt, display the successful four-stage selection result, and read both final reports after every write. Choose an equivalent supported approach.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "sites",
+      "label": "Final report: sorted unique failed sites",
+      "points": 25,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/failed-sites.txt",
+        "content": "beta\nzeta\n"
+      }
+    },
+    {
+      "id": "count",
+      "label": "Final report: failed-site count",
+      "points": 15,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/count.txt",
+        "content": "2\n"
+      }
+    },
+    {
+      "id": "original",
+      "label": "Final state: checks.txt unchanged",
+      "points": 10,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/home/learner/checks.txt"
+      }
+    },
+    {
+      "id": "selection",
+      "label": "Inspection: display selected names via pipeline",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "pipeline",
+        "source": "/home/learner/checks.txt",
+        "output": "beta\nzeta\n"
+      }
+    },
+    {
+      "id": "read-sites",
+      "label": "Inspection: read final sites",
+      "points": 15,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/failed-sites.txt",
+        "output": "beta\nzeta\n"
+      }
+    },
+    {
+      "id": "read-count",
+      "label": "Inspection: read final count",
+      "points": 15,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/count.txt",
+        "output": "2\n"
+      }
+    }
+  ],
+  "hints": [
+    "Separate changing reports from verifying them. Preserve the source, and check both content and count.",
+    "Count the deduplicated report, not every failed record. Avoid filename labels in the saved count by using pipeline stdin.",
+    "Build failed-sites.txt, then cat failed-sites.txt | wc -l > count.txt. Repeat the successful selection pipeline without redirection and read both reports."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/checks.txt": {
+        "kind": "file",
+        "content": "alpha|ok\nbeta|fail\nzeta|fail\nbeta|fail\ngamma|ok\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/failed-sites.txt",
+      "/home/learner/count.txt"
+    ],
+    "lesson": {
+      "goal": "Create and verify a sorted failed-site report and its count; preserve the source.",
+      "steps": [
+        {
+          "objective": "sites",
+          "command": "grep -F \"|fail\" checks.txt | cut -d \"|\" -f 1 | sort | uniq > failed-sites.txt",
+          "explanation": "Create the final unique-name report. Projection and sorting happen before deduplication.",
+          "expected": "failed-sites.txt contains beta then zeta."
+        },
+        {
+          "objective": "count",
+          "command": "cat failed-sites.txt | wc -l > count.txt",
+          "explanation": "Pipeline stdin avoids a filename label in wc output. Count the unique report records, not raw failed events.",
+          "expected": "count.txt contains 2 and LF."
+        },
+        {
+          "objective": "original",
+          "command": "cat checks.txt",
+          "explanation": "The pinned source must remain unchanged; this is a final-state rule rather than a required transcript.",
+          "expected": "Original checks."
+        },
+        {
+          "objective": "selection",
+          "command": "grep -F \"|fail\" checks.txt | cut -d \"|\" -f 1 | sort | uniq",
+          "explanation": "Demonstrate the final selection result visibly after writes. Internal or redirected output alone is not inspection evidence.",
+          "expected": "beta then zeta."
+        },
+        {
+          "objective": "read-sites",
+          "command": "cat failed-sites.txt",
+          "explanation": "Read the final report after all mutations.",
+          "expected": "beta then zeta."
+        },
+        {
+          "objective": "read-count",
+          "command": "cat count.txt",
+          "explanation": "Verify the saved count, not just a plausible number in an earlier transcript.",
+          "expected": "2."
+        }
+      ]
+    }
+  }
+}

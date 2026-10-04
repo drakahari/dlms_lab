@@ -6,6 +6,8 @@ from .linux_navigation.adapter import NavigationDomain, RUNTIME as NAVIGATION_RU
 from .linux_navigation.permissions_adapter import PermissionsDomain, RUNTIME as PERMISSIONS_RUNTIME, DIRECTORY_RUNTIME
 from .linux_navigation.file_management_adapter import FileManagementDomain, RUNTIME as FILE_MANAGEMENT_RUNTIME
 
+from .linux_text.adapter import TextDomain, RUNTIME as TEXT_RUNTIME
+
 TRUSTED_ENGINES={
     'networking':(NETWORKING_RUNTIME,NetworkingDomain),
     'linux-navigation':(NAVIGATION_RUNTIME,NavigationDomain),
@@ -24,4 +26,6 @@ def resolve_engine(requirements):
         return DIRECTORY_RUNTIME,PermissionsDomain
     if requirements['id']=='linux-navigation' and type(requirements['contract_version']) is int and requirements['contract_version']==4:
         return FILE_MANAGEMENT_RUNTIME,FileManagementDomain
+    if requirements['id']=='linux-navigation' and type(requirements['contract_version']) is int and requirements['contract_version']==5:
+        return TEXT_RUNTIME,TextDomain
     return TRUSTED_ENGINES[requirements['id']]

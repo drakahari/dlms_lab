@@ -1,3 +1,38 @@
+## Text, Filters & Reports — 3 October 2026
+
+Implemented against `f9bbb91e65f0701ee7021093d9946d5aa53201ba` after its
+non-force push; live origin/main matched and local status was clean before edits.
+The verified source-only recovery snapshot contains all 223 baseline tracked files.
+See [unit guide/report](lpic-unit-3.md) and [explicit grammar](text-stream-contract.md).
+
+Engine checkpoint: 315 tests passed before content work. Final: **328 regressions**
+(302 baseline, 15 engine and 11 unit/lifecycle cases); **44 static GNU reference
+fixtures** match stdout, status, error presence and output-file side effects.
+Redirection retains truncation/creation on read failure; no fictional rollback.
+Tests cover UTF-8/C semantics, newline-free records, quoting, missing fields,
+adjacent/separated duplicates, hostile input, partial resource writes, permissions,
+inspection evidence, reset/modes, exports, pins, restart and backup/restore.
+Actual baseline-created contract-1/2/3/4 progress reopened byte-unchanged; the
+baseline backup reader rejects unavailable contract 5 before activating a destination.
+
+All **24 existing UI suite/scale runs** passed at 100/150/200%. New unit:
+**250 rendered checks plus 8 fresh-process restart checks per scale**, across
+800×600, 1024×768 and 1280×900 logical windows, rerun after instruction/feedback
+review. Screenshots were inspected offscreen; no QML errors. Native Wayland socket
+connection remains denied (`PermissionError`, errno 1). Native physical keyboard,
+accessibility, dialogs and exhaustive scaling remain outstanding; no owner approval
+is claimed for Unit 3. The owner assessment approval below applies only to Unit 2.
+
+Actual final isolated wheel build/install and pip check passed. The standalone
+smoke ran using `python -I` from /tmp without checkout/examples on the import path:
+four collections, 22 unique packs, all eight new labs in both modes and exact
+fresh-process resume. All 93 wheel application resources equal the final source.
+All 66 protected old pack/engine/UI/storage/build files remain byte-identical.
+No migration, backup-format change, old contract change or real-profile access.
+Installed app is untouched; the reviewed feature is authorized for a local commit
+only. Known baseline four-Property shutdown warning retained without suppression. Generated evidence,
+environments, recovery copies and profile fixtures remain excluded from Git.
+
 ## Organize and Find Files — 3 October 2026
 
 New six-lab unit implemented against `c46ad12f36d554ab79d8f45b0077ef0c638d43cb`

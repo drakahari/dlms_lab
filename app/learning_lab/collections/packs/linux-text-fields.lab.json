@@ -1,0 +1,120 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-text-fields",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Extract a delimited field",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Display field 2 and field 3 of people.txt using its literal | delimiter. Preserve plain undelimited records; show an empty line for a missing selected field on a delimited record.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "team",
+      "label": "Inspection: second field",
+      "points": 50,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cut",
+        "source": "/home/learner/people.txt",
+        "output": "ops\nsupport\nplain\n\n"
+      }
+    },
+    {
+      "id": "room",
+      "label": "Inspection: third field",
+      "points": 50,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cut",
+        "source": "/home/learner/people.txt",
+        "output": "3\n\nplain\n7\n"
+      }
+    }
+  ],
+  "hints": [
+    "A delimiter is data when quoted; an unquoted | connects commands.",
+    "cut passes an undelimited line unchanged here. A missing field on a delimited line yields an empty result line.",
+    "Use cut -d \"|\" -f 2 and cut -d \"|\" -f 3 on people.txt."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/people.txt": {
+        "kind": "file",
+        "content": "Asha|ops|3\nBo|support\nplain\nCam||7",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [],
+    "lesson": {
+      "goal": "Display field 2 and field 3 of people.txt using its literal | delimiter. Preserve plain undelimited records; show an empty line for a missing selected field on a delimited record.",
+      "steps": [
+        {
+          "objective": "team",
+          "command": "cut -d \"|\" -f 2 people.txt",
+          "explanation": "Quote the delimiter so it is a literal argument, not a pipeline. Fields start at 1. Cam has an empty second field.",
+          "expected": "ops, support, plain, then an empty line."
+        },
+        {
+          "objective": "room",
+          "command": "cut -d '|' -f 3 people.txt",
+          "explanation": "Bo has no third field: an empty line. Without the delimiter, plain passes unchanged under the default behavior.",
+          "expected": "3, an empty line, plain, 7."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-text-events",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Select literal events",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Display the ERROR records from events.log, then display the record containing the literal text a.b. Matching aXb is incorrect. Use fixed-string searching; this is preparation for text search, not regex coverage.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "errors",
+      "label": "Inspection: ERROR records",
+      "points": 50,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "grep",
+        "source": "/home/learner/events.log",
+        "output": "ERROR disk\nERROR retry\n"
+      }
+    },
+    {
+      "id": "literal",
+      "label": "Inspection: literal a.b record",
+      "points": 50,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "grep",
+        "source": "/home/learner/events.log",
+        "output": "INFO a.b\n"
+      }
+    }
+  ],
+  "hints": [
+    "Choose text present in the records, not their filenames.",
+    "-F is fixed-string search; no matches yields empty stdout and status 1, without a read error.",
+    "grep -F ERROR events.log and grep -F \"a.b\" events.log."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/events.log": {
+        "kind": "file",
+        "content": "INFO opened\nERROR disk\nINFO a.b\nERROR retry\nINFO aXb\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [],
+    "lesson": {
+      "goal": "Display the ERROR records from events.log, then display the record containing the literal text a.b. Matching aXb is incorrect. Use fixed-string searching; this is preparation for text search, not regex coverage.",
+      "steps": [
+        {
+          "objective": "errors",
+          "command": "grep -F ERROR events.log",
+          "explanation": "-F searches literal text. Only matching records are displayed; a match yields status 0.",
+          "expected": "ERROR disk and ERROR retry."
+        },
+        {
+          "objective": "literal",
+          "command": "grep -F \"a.b\" events.log",
+          "explanation": "The dot is ordinary text under -F. Quotes group a literal word; this simulator has no regex engine.",
+          "expected": "Only INFO a.b, not INFO aXb."
+        }
+      ]
+    }
+  }
+}

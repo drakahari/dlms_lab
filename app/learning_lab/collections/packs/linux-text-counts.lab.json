@@ -1,0 +1,137 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-text-counts",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Count lines, words and bytes",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Display the LF count, word count and UTF-8 byte count for note.txt with the appropriate wc option. The final record lacks LF. Non-ASCII characters occupy multiple bytes. Show all three counts.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "lines",
+      "label": "Inspection: LF count",
+      "points": 30,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "wc -l",
+        "source": "/home/learner/note.txt",
+        "output": "2\n"
+      }
+    },
+    {
+      "id": "words",
+      "label": "Inspection: ASCII word count",
+      "points": 30,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "wc -w",
+        "source": "/home/learner/note.txt",
+        "output": "5\n"
+      }
+    },
+    {
+      "id": "bytes",
+      "label": "Inspection: UTF-8 byte count",
+      "points": 40,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "wc -c",
+        "source": "/home/learner/note.txt",
+        "output": "23\n"
+      }
+    }
+  ],
+  "hints": [
+    "Different counting questions need different options; a visually plausible number is insufficient.",
+    "The last record has no newline; accented and CJK text uses multiple bytes.",
+    "Use wc -l, wc -w and wc -c on note.txt."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/note.txt": {
+        "kind": "file",
+        "content": "café tea\n猫 naps\nlast",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [],
+    "lesson": {
+      "goal": "Display the LF count, word count and UTF-8 byte count for note.txt with the appropriate wc option. The final record lacks LF. Non-ASCII characters occupy multiple bytes. Show all three counts.",
+      "steps": [
+        {
+          "objective": "lines",
+          "command": "wc -l note.txt",
+          "explanation": "-l counts LF characters, not every displayed record. The unterminated last record adds no LF.",
+          "expected": "2 LF characters."
+        },
+        {
+          "objective": "words",
+          "command": "wc -w note.txt",
+          "explanation": "-w counts groups separated by ASCII whitespace in this C-locale subset.",
+          "expected": "5 words."
+        },
+        {
+          "objective": "bytes",
+          "command": "wc -c note.txt",
+          "explanation": "-c counts encoded bytes, not Unicode characters. café and 猫 demonstrate the distinction.",
+          "expected": "23 UTF-8 bytes."
+        }
+      ]
+    }
+  }
+}

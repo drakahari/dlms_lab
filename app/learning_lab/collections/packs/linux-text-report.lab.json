@@ -1,0 +1,176 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-text-report",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Replace and append deliberately",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Replace stale content in overwrite.txt with part1.txt. Extend append.txt with part2.txt once. Finish with overwrite.txt containing alpha and append.txt containing alpha then beta. Read both final reports after all writes.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "replace",
+      "label": "Final report: overwrite.txt is alpha only",
+      "points": 30,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/overwrite.txt",
+        "content": "alpha\n"
+      }
+    },
+    {
+      "id": "append",
+      "label": "Final report: append.txt is alpha then beta",
+      "points": 30,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/append.txt",
+        "content": "alpha\nbeta\n"
+      }
+    },
+    {
+      "id": "read1",
+      "label": "Inspection: read final replacement",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/overwrite.txt",
+        "output": "alpha\n"
+      }
+    },
+    {
+      "id": "read2",
+      "label": "Inspection: read final appended report",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/append.txt",
+        "output": "alpha\nbeta\n"
+      }
+    }
+  ],
+  "hints": [
+    "One destination needs replacement, the other needs one append.",
+    "> is destructive to previous output even if the command later fails. >> can accidentally duplicate records.",
+    "cat part1.txt > overwrite.txt; cat part2.txt >> append.txt; then read both outputs. Enter each separately; semicolons unsupported."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/part1.txt": {
+        "kind": "file",
+        "content": "alpha\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      },
+      "/home/learner/part2.txt": {
+        "kind": "file",
+        "content": "beta\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      },
+      "/home/learner/overwrite.txt": {
+        "kind": "file",
+        "content": "stale\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      },
+      "/home/learner/append.txt": {
+        "kind": "file",
+        "content": "alpha\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/overwrite.txt",
+      "/home/learner/append.txt"
+    ],
+    "lesson": {
+      "goal": "Replace stale content in overwrite.txt with part1.txt. Extend append.txt with part2.txt once. Finish with overwrite.txt containing alpha and append.txt containing alpha then beta. Read both final reports after all writes.",
+      "steps": [
+        {
+          "objective": "replace",
+          "command": "cat part1.txt > overwrite.txt",
+          "explanation": "> opens and truncates the output before reading input. A bad source still erases old content; verify paths first.",
+          "expected": "overwrite.txt contains only alpha."
+        },
+        {
+          "objective": "append",
+          "command": "cat part2.txt >> append.txt",
+          "explanation": ">> retains existing text and adds stdout. Repeating it would add a second beta and fail the exact final-state goal.",
+          "expected": "append.txt contains alpha then beta."
+        },
+        {
+          "objective": "read1",
+          "command": "cat overwrite.txt",
+          "explanation": "Inspect after all writes: writes clear previous stream verification.",
+          "expected": "alpha."
+        },
+        {
+          "objective": "read2",
+          "command": "cat append.txt",
+          "explanation": "Verify contents rather than assuming an earlier redirect succeeded.",
+          "expected": "alpha then beta."
+        }
+      ]
+    }
+  }
+}

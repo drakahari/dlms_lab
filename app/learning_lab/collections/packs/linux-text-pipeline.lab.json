@@ -1,0 +1,103 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-text-pipeline",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Build a useful pipeline",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Display the sorted unique site names whose status is ok in checks.txt, using a pipeline. Include alpha and gamma exactly once; omit beta. Equivalent supported pipeline approaches are accepted.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "pipeline",
+      "label": "Inspection: unique successful sites",
+      "points": 100,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "pipeline",
+        "source": "/home/learner/checks.txt",
+        "output": "alpha\ngamma\n"
+      }
+    }
+  ],
+  "hints": [
+    "Work out the expected result before composing the commands.",
+    "Four stages suffice. Check intermediate outputs separately if the final output is wrong.",
+    "grep -F \"|ok\" checks.txt | cut -d \"|\" -f 1 | sort | uniq."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/checks.txt": {
+        "kind": "file",
+        "content": "gamma|ok\nalpha|ok\nbeta|fail\nalpha|ok\n",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [],
+    "lesson": {
+      "goal": "Display the sorted unique site names whose status is ok in checks.txt, using a pipeline. Include alpha and gamma exactly once; omit beta. Equivalent supported pipeline approaches are accepted.",
+      "steps": [
+        {
+          "objective": "pipeline",
+          "command": "grep -F \"|ok\" checks.txt | cut -d \"|\" -f 1 | sort | uniq",
+          "explanation": "Each stage consumes the previous stdout. Select records, project sites, group equal names, then deduplicate.",
+          "expected": "alpha and gamma, once each."
+        }
+      ]
+    }
+  }
+}

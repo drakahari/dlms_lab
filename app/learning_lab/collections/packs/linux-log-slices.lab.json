@@ -1,0 +1,120 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-log-slices",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Inspect the beginning and end",
+    "topic": "Text, Filters & Reports",
+    "difficulty": "Beginner",
+    "minutes": 5
+  },
+  "mission": {
+    "brief": "Inspect the first two and last two records of events.log using the appropriate sampling tools. Show both results; reading the whole log alone does not establish these inspection skills.",
+    "constraints": [
+      "Only simulated UTF-8 text. No host shell, files, processes or network.",
+      "Use Command reference for the exact supported subset; no regex, globbing, variables, escapes or unsupported options. Quotes group literal words.",
+      "Locale is C: bytewise sorting and ASCII word separators. wc -c counts UTF-8 bytes; wc -l counts LF characters.",
+      "Inspection goals require the named tool and exact displayed result from the relevant source; equivalent supported paths and approaches count.",
+      "Only declared report destinations may be written. > truncates before input is read; errors do not undo writes. >> appends.",
+      "Any actual write clears earlier verification. Finish changes before inspecting the final outputs. Final report grading does not require one exact transcript."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "start",
+      "label": "Inspection: first two records",
+      "points": 50,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "head",
+        "source": "/home/learner/events.log",
+        "output": "boot\nready\n"
+      }
+    },
+    {
+      "id": "end",
+      "label": "Inspection: last two records",
+      "points": 50,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "tail",
+        "source": "/home/learner/events.log",
+        "output": "warning\nshutdown"
+      }
+    }
+  ],
+  "hints": [
+    "Inspect opposite ends rather than printing everything.",
+    "head selects the beginning; tail selects the end. Each accepts -n with a decimal count.",
+    "head -n 2 events.log, then tail -n 2 events.log."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home": {
+        "kind": "directory",
+        "content": "",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755"
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "content": "",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755"
+      },
+      "/home/learner/events.log": {
+        "kind": "file",
+        "content": "boot\nready\nrequest\nwarning\nshutdown",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0644"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [],
+    "lesson": {
+      "goal": "Inspect the first two and last two records of events.log using the appropriate sampling tools. Show both results; reading the whole log alone does not establish these inspection skills.",
+      "steps": [
+        {
+          "objective": "start",
+          "command": "head -n 2 events.log",
+          "explanation": "head shows the beginning without requiring a full transcript. -n selects a record count.",
+          "expected": "boot then ready."
+        },
+        {
+          "objective": "end",
+          "command": "tail -n 2 events.log",
+          "explanation": "tail samples the end. The final record here has no LF; it is still a record.",
+          "expected": "warning then shutdown (unterminated final record)."
+        }
+      ]
+    }
+  }
+}
