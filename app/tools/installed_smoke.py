@@ -30,6 +30,36 @@ def phase(root, resume, require_icon):
     assert lesson()['id']=='real-linux-background-job'
     assert image_spec()['format']=='raw'
     assert (package/'vm_preview/runner.py').is_file()
+    from learning_lab.vm_preview.registry import catalog as vm_catalog, load_lesson, LEGACY_ID
+    from learning_lab.vm_preview.sessions import Sessions
+    import uuid
+    vm_unit=vm_catalog(); assert len(vm_unit['entries'])==8
+    assert vm_unit['entries'][2]['id']==LEGACY_ID
+    vm_sessions=Sessions(root/'vm-metadata-fixture','c'*64,root/'vm-gate-fixture')
+    for index,entry in enumerate(vm_unit['entries']):
+        content=load_lesson(entry['id']); assert content['steps'] and content['challenge'] and content['review']
+        assert 'explanation' in content['steps'][0] and entry['cleanup'] and entry['troubleshooting']
+        manager=vm_sessions.manager(entry['id'])
+        if not resume:
+            # Metadata-only installed-resource/resume fixture. This is not a guest
+            # boot and never supplies this deliberately invalid disk to QEMU.
+            from learning_lab.vm_preview.manager import now
+            session={'schema_version':1,'session':str(uuid.uuid4()),'generation':str(uuid.uuid4()),
+                     'mode':'Learn' if index%2==0 else 'Challenge','pin':manager.pin,'started':now(),
+                     'step':0,'hints':0,'completion':None}
+            with manager.access() as (_,gate,profile):
+                with profile.child('generations',create=True) as generations, generations.child(session['generation'],create=True,exclusive=True) as generation:
+                    generation.write('origin.json',session);generation.write('lifecycle.json',{'state':'stopped','at':now()})
+                    fd=generation.open('disk.qcow2',write=True,new=True)
+                    os.write(fd,b'Installed metadata fixture ONLY; never launch');os.close(fd)
+                profile.write('current.json',session)
+            manager.progress('complete')
+        record=manager.status()['session'];assert record['pin']==manager.pin
+        assert record['mode']==('Learn' if index%2==0 else 'Challenge')
+        assert record['completion']['kind']=='self-reviewed' and 'score' not in record
+    if not resume:vm_sessions.select(vm_unit['entries'][0]['id'])
+    assert vm_sessions.selected()==vm_unit['entries'][0]['id']
+
     assert (package/'qml/AuthoringDialog.qml').is_file()
     from learning_lab.authoring import resource
     from learning_lab.portable import load_portable
@@ -121,7 +151,7 @@ def phase(root, resume, require_icon):
                 'attempts': {k: lab.session.attempt for k, lab in bridge.labs.items()}}))
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
                 'package': str(package), 'platform': app.platformName(),
-                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
+                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'vm_lessons':8, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
         window.close(); app.processEvents(); lock.unlock()
 

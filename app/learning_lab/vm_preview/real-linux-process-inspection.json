@@ -1,0 +1,55 @@
+{
+  "id": "real-linux-process-inspection",
+  "content_version": "1.0.0",
+  "title": "Identify your processes",
+  "goal": "Find an owned process and explain its identity, parent and state.",
+  "challenge": "Create a bounded owned process. Identify its PID, parent, owner and state; show a filtered and sorted process view. Explain why sleeping is not failure. Finish the practice process. Any equivalent Linux approach is acceptable.",
+  "steps": [
+    {
+      "command": "sleep 600 &",
+      "explanation": "Start a ten-minute practice process. & returns the prompt.",
+      "expected": "Bash reports a job number and PID; record both. Do not assume either number."
+    },
+    {
+      "command": "p=$!",
+      "explanation": "Immediately save the PID of the last background command.",
+      "expected": "No output. $p now identifies the sleep you just started."
+    },
+    {
+      "command": "ps -o pid,ppid,user,stat,args -p \"$p\"",
+      "explanation": "Inspect this specific process. PPID identifies its parent.",
+      "expected": "Your owned sleep appears, normally with S (sleeping). PID values vary."
+    },
+    {
+      "command": "ps -u learner -o pid,ppid,ni,stat,args --sort=-pid",
+      "explanation": "Filter by effective user and sort descending by PID. This is a snapshot.",
+      "expected": "Owned processes appear in descending PID order; ps can include itself."
+    },
+    {
+      "command": "ps -o pid,ppid,stat,args -p \"$$\"",
+      "explanation": "$$ is this Bash process. Compare it with sleep's PPID.",
+      "expected": "The parent relation explains how Bash launched sleep; processes and shell jobs are different views."
+    },
+    {
+      "command": "kill \"$p\"; wait \"$p\"; echo $?",
+      "explanation": "Send TERM, then reap this shell's child.",
+      "expected": "For TERM-terminated sleep, Bash normally reports 143."
+    },
+    {
+      "command": "ps -o pid,stat,args -p \"$p\"",
+      "explanation": "Check that the practice process is gone.",
+      "expected": "Normally only the header remains; ps returns nonzero when no matching process exists."
+    }
+  ],
+  "hints": [
+    "Save $! immediately after starting your own background process.",
+    "ps -p selects a PID; ps -u selects an effective user.",
+    "S means waiting/sleeping, while T means stopped. A changing snapshot is normal."
+  ],
+  "review": [
+    "I matched a PID, owner and parent to my practice process.",
+    "I explained its state and a filtered, sorted view.",
+    "I terminated and reaped my practice process."
+  ],
+  "coverage": "Real guest practice; completion is self-reviewed, with no guest assessment or verification score. Partial LPIC-1 103.5 coverage."
+}

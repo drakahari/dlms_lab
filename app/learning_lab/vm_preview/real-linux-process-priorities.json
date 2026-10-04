@@ -1,0 +1,66 @@
+{
+  "id": "real-linux-process-priorities",
+  "content_version": "1.0.0",
+  "title": "Adjust process priorities safely",
+  "goal": "Observe actual niceness and the limits of an unprivileged learner.",
+  "challenge": "Compare default and positively niced owned processes, lower an existing process's priority, and demonstrate an attempted priority increase is denied. Verify actual NI after denial, including a nice command that still runs its program. Clean up; no speed benchmark or privileged success is required.",
+  "steps": [
+    {
+      "command": "sleep 600 & normal=$!",
+      "explanation": "Start a default-priority task.",
+      "expected": "The actual PID is saved; its NI is normally 0."
+    },
+    {
+      "command": "nice -n 12 sleep 600 & low=$!",
+      "explanation": "Positive niceness means lower scheduling priority under CPU contention.",
+      "expected": "A second process starts with NI 12 from this shell's default 0."
+    },
+    {
+      "command": "ps -o pid,user,ni,stat,args -p \"$normal,$low\"",
+      "explanation": "Inspect the two actual processes.",
+      "expected": "NI normally shows 0 and 12. Sleeping tasks do not demonstrate a speed difference."
+    },
+    {
+      "command": "renice -n 15 -p \"$low\"",
+      "explanation": "On this util-linux tool, -n sets an absolute nice value for an existing PID.",
+      "expected": "The owned task changes from NI 12 to 15, further lowering its scheduling priority."
+    },
+    {
+      "command": "renice -n 0 -p \"$low\"",
+      "explanation": "Try to increase its priority again. learner has no capability or resource allowance for this.",
+      "expected": "Permission denied. Being the owner does not permit raising priority in this guest."
+    },
+    {
+      "command": "ps -o pid,ni,stat,args -p \"$low\"",
+      "explanation": "Check state after the denied change rather than assuming rollback/success.",
+      "expected": "NI is still 15."
+    },
+    {
+      "command": "nice -n -1 sleep 600 & denied=$!",
+      "explanation": "Try to start above the shell's priority. GNU nice warns on denial but still starts this program at the existing nice value.",
+      "expected": "A permission warning appears; a real owned sleep still starts. Do not rely on the wrapper warning or exit status alone."
+    },
+    {
+      "command": "ps -o pid,user,ni,stat,args -p \"$denied\"",
+      "explanation": "Verify the command really ran and inspect its actual priority.",
+      "expected": "NI is normally 0, not -1."
+    },
+    {
+      "command": "kill \"$normal\" \"$low\" \"$denied\"; wait",
+      "explanation": "After checking identities, terminate and reap the three practice children.",
+      "expected": "No practice sleeps remain. Higher priority does not mean a guaranteed CPU share."
+    }
+  ],
+  "hints": [
+    "More positive NI means less scheduling preference; a smaller number means more.",
+    "Unprivileged priority lowering works here; raising it again is denied.",
+    "Inspect ps NI after errors: GNU nice can still execute the requested program."
+  ],
+  "review": [
+    "I observed default and explicitly lowered priority.",
+    "I changed an existing owned process and verified NI after a denied increase.",
+    "I confirmed a denied nice adjustment still launched its command.",
+    "I explained the privilege and performance limits and cleaned up."
+  ],
+  "coverage": "Real guest practice; completion is self-reviewed, with no guest assessment or verification score. Partial LPIC-1 103.6 coverage."
+}

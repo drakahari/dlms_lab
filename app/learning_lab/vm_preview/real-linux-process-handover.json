@@ -1,0 +1,76 @@
+{
+  "id": "real-linux-process-handover",
+  "content_version": "1.0.0",
+  "title": "Process handover practice",
+  "goal": "Combine inspection, state changes, priority and logout survival in a readable handover.",
+  "challenge": "Create bounded owned practice tasks, identify their actual PIDs and niceness, pause/continue one and terminate it narrowly. Keep a positively niced task alive across controlled logout, save a guest-local handover with your observations, then verify and clean up. Explain what disk Resume does not preserve. Equivalent commands and order are acceptable.",
+  "steps": [
+    {
+      "command": "mkdir -p ~/handover-lab",
+      "explanation": "Keep this exercise's notes and PID records in the guest.",
+      "expected": "The directory is guest-local, not included in profile backups."
+    },
+    {
+      "command": "sleep 600 & p=$!",
+      "explanation": "Create the temporary task you will manage and finish.",
+      "expected": "A bounded owned task starts; record its actual PID."
+    },
+    {
+      "command": "nohup nice -n 10 sleep 900 > ~/handover-lab/task.log 2>&1 < /dev/null &",
+      "explanation": "Launch the intended survivor with lower scheduling priority and explicit streams.",
+      "expected": "One bounded protected task starts. This does not preserve it across reboot."
+    },
+    {
+      "command": "echo $! > ~/handover-lab/task.pid",
+      "explanation": "Immediately save the survivor's PID.",
+      "expected": "Its identity can be re-inspected after logout."
+    },
+    {
+      "command": "ps -o pid,user,ppid,ni,stat,args -p \"$p,$(cat ~/handover-lab/task.pid)\"",
+      "explanation": "Match each task with its role.",
+      "expected": "The ordinary task normally has NI 0, and the protected task NI 10."
+    },
+    {
+      "command": "kill -STOP \"$p\"; ps -o pid,stat,args -p \"$p\"",
+      "explanation": "Suspend only the temporary task. A snapshot can race the signal; repeat ps if needed.",
+      "expected": "The task becomes T; it is not terminated."
+    },
+    {
+      "command": "kill -CONT \"$p\"; kill \"$p\"; wait \"$p\"",
+      "explanation": "Continue, then terminate and reap only that task.",
+      "expected": "The survivor is unaffected; ps can confirm the first task is gone."
+    },
+    {
+      "command": "ps -o pid,user,ppid,ni,stat,args -p \"$(cat ~/handover-lab/task.pid)\" > ~/handover-lab/report.txt",
+      "explanation": "Save a snapshot as part of your handover, then add your own explanation with a guest editor or printf.",
+      "expected": "The guest-local report records the survivor; it is your evidence, not app-verified assessment."
+    },
+    {
+      "command": "shopt -s huponexit; exit",
+      "explanation": "Use the same shell-local controlled logout experiment.",
+      "expected": "tty1 autologins a new learner shell. The protected task remains; the new job table is empty."
+    },
+    {
+      "command": "ps -o pid,user,ni,stat,args -p \"$(cat ~/handover-lab/task.pid)\"; cat ~/handover-lab/report.txt",
+      "explanation": "Check current identity and NI, and compare with your saved observation.",
+      "expected": "The survivor is still an owned sleep with NI 10; its parent may have changed."
+    },
+    {
+      "command": "kill \"$(cat ~/handover-lab/task.pid)\"",
+      "explanation": "After verifying identity, finish the survivor.",
+      "expected": "It ends; a final ps should have no matching row. Keep the note until Reset if you want to review it."
+    }
+  ],
+  "hints": [
+    "Describe actual observations, including any changing PIDs or process states.",
+    "A saved report does not prove a process is still alive; inspect again before signaling.",
+    "Cleanup is part of the handover. Disk Resume retains files, never running processes or shell jobs."
+  ],
+  "review": [
+    "I identified the tasks, states and actual nice values.",
+    "My targeted signals left the intended survivor unaffected.",
+    "I verified the survivor after controlled logout and wrote a meaningful handover.",
+    "I cleaned up and explained self-review, backup exclusions and disk Resume."
+  ],
+  "coverage": "Real guest practice; completion is self-reviewed, with no guest assessment or verification score. Partial LPIC-1 103.5, 103.6 coverage."
+}

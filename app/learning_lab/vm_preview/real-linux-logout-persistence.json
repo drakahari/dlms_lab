@@ -1,0 +1,96 @@
+{
+  "id": "real-linux-logout-persistence",
+  "content_version": "1.0.0",
+  "title": "Keep work running after logout",
+  "goal": "Distinguish hangup resistance, logout survival and a new shell's empty job table.",
+  "challenge": "Demonstrate protected versus ordinary owned tasks under controlled hangup conditions, then verify a protected task survives console logout. Save and re-check process identities, explain the new job table, and clean up. Reboot and disk Resume must not be claimed to preserve jobs. Equivalent demonstrations are welcome.",
+  "steps": [
+    {
+      "command": "mkdir -p ~/jobs-lab",
+      "explanation": "Create guest-local files for PID records and output. No host folder is shared.",
+      "expected": "The directory exists inside this disposable guest."
+    },
+    {
+      "command": "shopt -s huponexit; shopt -p huponexit",
+      "explanation": "Enable Bash hangup-on-exit only in this interactive login shell. This image normally has it off; ordinary background jobs can survive default logout too.",
+      "expected": "The output says shopt -s huponexit. Do not edit any shell startup or system policy file."
+    },
+    {
+      "command": "nohup sleep 900 > ~/jobs-lab/nohup.log 2>&1 < /dev/null &",
+      "explanation": "nohup makes the command ignore HUP. & backgrounds it; all three standard streams are explicitly handled.",
+      "expected": "A bounded sleep starts. The log may be empty because sleep prints nothing."
+    },
+    {
+      "command": "echo $! > ~/jobs-lab/nohup.pid",
+      "explanation": "Immediately record this protected process's PID for the next login.",
+      "expected": "The file contains its actual PID; this is evidence to inspect, not a permanent identity guarantee."
+    },
+    {
+      "command": "sleep 900 &",
+      "explanation": "Start an ordinary comparison task.",
+      "expected": "A second owned sleep runs."
+    },
+    {
+      "command": "echo $! > ~/jobs-lab/ordinary.pid",
+      "explanation": "Record the ordinary task separately.",
+      "expected": "Its actual PID is saved."
+    },
+    {
+      "command": "sleep 900 &",
+      "explanation": "Start a third comparison task.",
+      "expected": "The current job is this newest task."
+    },
+    {
+      "command": "echo $! > ~/jobs-lab/disowned.pid; disown -h %+",
+      "explanation": "Record it and tell Bash not to send HUP to this job. disown -h does not itself make a new terminal/session.",
+      "expected": "The job remains listed, but is excluded from Bash's hangup-on-exit signaling."
+    },
+    {
+      "command": "jobs -l",
+      "explanation": "Inspect all three before logout and record their arguments.",
+      "expected": "They are running. Use actual identities, not a fixed job number."
+    },
+    {
+      "command": "exit",
+      "explanation": "Log out of the guest shell, not close QEMU. tty1 returns to console-only learner autologin.",
+      "expected": "A new login prompt/session appears automatically; the VM stays running."
+    },
+    {
+      "command": "shopt -p huponexit; jobs -l",
+      "explanation": "Inspect the new shell. The previous setting was shell-local.",
+      "expected": "huponexit is off again and this shell's job table is empty, even when processes survived."
+    },
+    {
+      "command": "ps -o pid,user,ppid,stat,args -p \"$(cat ~/jobs-lab/nohup.pid)\"",
+      "explanation": "Read the saved PID and verify the process's owner and arguments again.",
+      "expected": "The nohup-protected sleep remains. A parent change after logout is normal."
+    },
+    {
+      "command": "ps -o pid,user,stat,args -p \"$(cat ~/jobs-lab/ordinary.pid)\"",
+      "explanation": "Compare the ordinary task under the explicitly enabled huponexit experiment.",
+      "expected": "Normally only the header remains: that ordinary job received HUP and ended."
+    },
+    {
+      "command": "ps -o pid,user,stat,args -p \"$(cat ~/jobs-lab/disowned.pid)\"",
+      "explanation": "Check Bash's disown -h alternative.",
+      "expected": "That task also remains in this pinned image. This is not a universal guarantee against session-manager cleanup."
+    },
+    {
+      "command": "kill \"$(cat ~/jobs-lab/nohup.pid)\" \"$(cat ~/jobs-lab/disowned.pid)\"",
+      "explanation": "After verifying both identities, finish the remaining practice tasks.",
+      "expected": "The tasks terminate. They are no longer children of the new shell, so wait cannot reap them here."
+    }
+  ],
+  "hints": [
+    "nohup does not background a task; & is separate. Redirect input/output and save the PID before logout.",
+    "Default logout here can leave ordinary jobs alive. The temporary huponexit setting creates a controlled comparison.",
+    "After logout use ps, not jobs, to find survivors. Resume disk and reboot start a new kernel and cannot preserve processes."
+  ],
+  "review": [
+    "I distinguished default logout behavior from controlled HUP behavior.",
+    "I verified a protected process after logout using saved identity evidence.",
+    "I explained nohup versus disown, shell-local jobs and shell-local huponexit.",
+    "I cleaned up and do not claim survival across reboot or disk Resume."
+  ],
+  "coverage": "Real guest practice; completion is self-reviewed, with no guest assessment or verification score. Partial LPIC-1 103.5 coverage."
+}

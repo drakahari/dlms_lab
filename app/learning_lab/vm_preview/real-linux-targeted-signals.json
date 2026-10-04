@@ -1,0 +1,60 @@
+{
+  "id": "real-linux-targeted-signals",
+  "content_version": "1.0.0",
+  "title": "Signal the intended process",
+  "goal": "Select precisely and send a signal without affecting the companion task.",
+  "challenge": "Create two distinguishable bounded owned processes. Preview a narrowly scoped selection, terminate just the intended one, and prove the other remains. Compare TERM and KILL on expendable practice processes, then clean up. No exact transcript is required.",
+  "steps": [
+    {
+      "command": "sleep 600 & first=$!",
+      "explanation": "Create the first practice task and immediately save its PID.",
+      "expected": "An owned sleep runs; its PID is stored in $first."
+    },
+    {
+      "command": "sleep 601 & second=$!",
+      "explanation": "Create a distinguishable companion.",
+      "expected": "The second PID differs. Keep this process running during the first termination."
+    },
+    {
+      "command": "pgrep -a -u learner -P \"$$\" -f \"^sleep 600$\"",
+      "explanation": "Preview by effective user, this shell's parent relation and an anchored full command-line pattern.",
+      "expected": "The intended sleep appears. If multiple matches appear, inspect them and use the verified individual PID."
+    },
+    {
+      "command": "pkill -TERM -u learner -P \"$$\" -f \"^sleep 600$\"",
+      "explanation": "Apply the same narrow selection. TERM requests termination and can be handled by a program.",
+      "expected": "The intended task terminates. Broad commands such as pkill sleep could affect unrelated tasks."
+    },
+    {
+      "command": "wait \"$first\"; echo $?",
+      "explanation": "Reap the intended child.",
+      "expected": "TERM-terminated sleep normally yields 143."
+    },
+    {
+      "command": "ps -o pid,user,stat,args -p \"$second\"",
+      "explanation": "Check the companion before signaling anything else.",
+      "expected": "The owned sleep 601 is still present."
+    },
+    {
+      "command": "kill -KILL \"$second\"; wait \"$second\"; echo $?",
+      "explanation": "Contrast KILL on this expendable process only. Normally prefer TERM first.",
+      "expected": "Bash normally reports 137. KILL cannot be caught and does not let a program perform cleanup."
+    },
+    {
+      "command": "jobs -l",
+      "explanation": "Confirm no practice job remains.",
+      "expected": "The two jobs have ended. Do not signal system processes."
+    }
+  ],
+  "hints": [
+    "Preview before pkill; -f matches full command lines and is broader without anchors and filters.",
+    "-u learner restricts ownership and -P \"$$\" restricts parentage to this Bash process.",
+    "TERM is the ordinary first request; KILL is a last resort, not a better cleanup command."
+  ],
+  "review": [
+    "I previewed and selected the intended owned process narrowly.",
+    "The companion survived the first termination.",
+    "I explained TERM versus KILL and reaped both children."
+  ],
+  "coverage": "Real guest practice; completion is self-reviewed, with no guest assessment or verification score. Partial LPIC-1 103.5 coverage."
+}

@@ -92,31 +92,17 @@ objective mastery. Reinforcement assessments add practice, not objective coverag
 | 104.5 permissions | Unit 1: ordinary owner file modes and directory read/search; partial coverage. | chown/chgrp, richer chmod syntax, special bits, configurable umask and multi-user practice. ACLs also remain outside the simulator; no extra objective claim. |
 | 104.7 locations / FHS | Unit 2: inspect representative /etc, /var/log and home files; introductory preparation. | Full FHS, standard-location reasoning and locating tools/files; verbal understanding is not graded here. |
 
-103.5 processes, 103.6 priorities and 103.8 vi editing remain unimplemented.
-Existing service labs are introductory service-diagnosis practice, not full 101.3
-boot-target/shutdown coverage. Existing networking labs are conceptual preparation,
-not demonstrated coverage of real Linux networking administration. Hardware/boot,
-installation/package management, filesystem administration/links, Bash scripting,
-desktops, accounts/scheduling, system services, networking and security still need
-separate study and real-Linux practice. No full LPIC-1 or Exam 102 coverage claimed.
-
-**Recommended next batch (proposal only): Processes, Jobs & Priorities**, using a
-disposable VM with an interactive Bash terminal. Prerequisite: these file/text
-units. Seven labs: identify a practice process (ps/pgrep); monitor/filter its state
-(ps/top); suspend and resume a job (jobs/bg/fg); terminate an owned practice process
-with TERM; keep a practice job alive after logout (nohup); launch and renice an
-owned job at lower priority; independent diagnosis/cleanup assessment. This adds
-selected 103.5/103.6 skills. It does not establish all process tooling or priorities.
-
-The current engines cannot model TTY job control, live processes, signals,
-scheduling or logout. A real VM is the better fit for accurate practice. No new
-engine, host-command connection, VM provisioning or profile migration is proposed
-as part of this commit. The smallest next deliverable would be reviewed manual VM
-lab recipes and evidence criteria, scoped to newly created owned practice jobs;
-application integration would require a separately approved design. Acceptance
-would check real process/job states, signal outcomes, priority values, cleanup and
-repeatability, rather than fixed PID values or command transcripts. No next-unit
-implementation has started.
+The optional real-VM [Processes, Jobs & Priorities unit](vm-preview/processes-unit.md)
+adds self-reviewed practice for partial 103.5/103.6 coverage: inspection/selection,
+monitoring, job control, owned-process signals, controlled logout persistence,
+default/lowered priorities and unprivileged denial. It is not automatically assessed.
+Multiplexers, killall and successful privileged priority increases remain gaps;
+103.8 vi editing remains unimplemented. Simulation profile backups exclude VM data.
+Existing service and network labs remain introductory/conceptual preparation, not
+full administration or boot-target coverage. Hardware/boot, package management,
+filesystem administration/links, Bash scripting, accounts/scheduling, services,
+networking and security still require separate study and real-Linux practice.
+No full LPIC-1 or Exam 102 coverage is claimed.
 
 ## Launch and optional disposable check
 

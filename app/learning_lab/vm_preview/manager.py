@@ -22,12 +22,16 @@ def uuid_text(value):
     require(isinstance(value,str) and str(uuid.UUID(value))==value,'Invalid VM identity');return value
 
 class Manager:
-    def __init__(self,home,profile_key,gate_root=None,*,spec=None):
+    def __init__(self,home,profile_key,gate_root=None,*,spec=None,lesson_id=None):
         self.home=Path(home).absolute();self.profile=profile_key
         self.binding=hashlib.sha256(str(self.home).encode()).hexdigest()
         require(len(profile_key)==64 and all(c in '0123456789abcdef' for c in profile_key),'Invalid profile binding')
         self.gate_root=Path(gate_root or f'/run/user/{os.getuid()}/oll-vm-preview')
-        self.spec=spec or image_spec();self.lesson=lesson()
+        self.spec=spec or image_spec()
+        if lesson_id is None:self.lesson=lesson()
+        else:
+            from .registry import load_lesson
+            self.lesson=load_lesson(lesson_id)
         self.pin={'backend':BACKEND,'image':self.spec,'lesson_sha256':hashlib.sha256(json.dumps(self.lesson,sort_keys=True,separators=(',',':')).encode()).hexdigest()}
     @contextmanager
     def access(self):

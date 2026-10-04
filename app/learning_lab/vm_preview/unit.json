@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "id": "lpic-processes-jobs-priorities",
+  "title": "LPIC-1 Foundations: Processes, Jobs & Priorities",
+  "purpose": "Eight real-Linux lessons using the optional offline VM. Recommended sequence, no unlocks. Completion records your self-review; there is no verification score.",
+  "prerequisites": "Basic command entry, paths and reading output. Use the separate GTK guest console. Start each lesson in its own session; finish its owned practice processes before leaving it.",
+  "coverage": "Partial LPIC-1 v5.0 objectives 103.5 (process inspection, jobs, signals, logout persistence) and 103.6 (default/lowered priority and privilege boundaries). Not full LPIC preparation: screen/tmux/killall are absent, successful privileged priority increases are excluded, and no guest assessment is performed.",
+  "entries": [
+    {
+      "id": "real-linux-process-inspection",
+      "resource": "real-linux-process-inspection.json",
+      "description": "PID, parent, owner, state and filtered process snapshots.",
+      "objectives": [
+        "103.5"
+      ],
+      "troubleshooting": [
+        "If the process expired, start a fresh bounded sleep and immediately save its new PID.",
+        "Before signaling a saved PID, inspect owner and arguments again; PIDs can be reused."
+      ],
+      "cleanup": [
+        "Use ps to confirm the actual practice PID, then kill it and wait if it is still a child of this shell."
+      ]
+    },
+    {
+      "id": "real-linux-foreground-jobs",
+      "resource": "real-linux-foreground-jobs.json",
+      "description": "Terminal signals, job states, bg and fg.",
+      "objectives": [
+        "103.5"
+      ],
+      "troubleshooting": [
+        "q is for top, not sleep; use Ctrl-C for a foreground sleep.",
+        "If bg or fg reports no such job, inspect jobs -l; the sleep may have expired or you may be in a different shell."
+      ],
+      "cleanup": [
+        "Interrupt the foreground sleep with Ctrl-C. For an owned leftover background job, inspect jobs -l, terminate its actual identifier and wait."
+      ]
+    },
+    {
+      "id": "real-linux-background-job",
+      "resource": "lesson.json",
+      "description": "Accepted practice: inspect, pause, resume, terminate and reap a background job.",
+      "objectives": [
+        "103.5"
+      ],
+      "troubleshooting": [
+        "The accepted exercise uses a five-minute sleep. If it expires, start a fresh job and update the PID/job identifier.",
+        "Use the actual job identifier from jobs -l, never assume %1 when other jobs exist."
+      ],
+      "cleanup": [
+        "Verify the actual owned practice job, send TERM and wait. ps should no longer list it."
+      ]
+    },
+    {
+      "id": "real-linux-targeted-signals",
+      "resource": "real-linux-targeted-signals.json",
+      "description": "pgrep/pkill selection, TERM versus KILL and ownership.",
+      "objectives": [
+        "103.5"
+      ],
+      "troubleshooting": [
+        "A no-match pgrep/pkill returns nonzero; check the command arguments and whether the task expired.",
+        "Job notifications can appear at the next prompt. Inspect ps rather than relying solely on notification timing."
+      ],
+      "cleanup": [
+        "Inspect the actual $first and $second PIDs before signaling. Terminate only leftover owned practice tasks and wait."
+      ]
+    },
+    {
+      "id": "real-linux-live-monitoring",
+      "resource": "real-linux-live-monitoring.json",
+      "description": "top, watch, sorted snapshots, uptime and free.",
+      "objectives": [
+        "103.5"
+      ],
+      "troubleshooting": [
+        "If control keys do nothing, click the guest console, not the app guidance panel.",
+        "Do not expect a deterministic top ordering or a busy VM; values vary with timing."
+      ],
+      "cleanup": [
+        "Exit top with q and watch with Ctrl-C. Inspect the saved owned sleep PID, then terminate and wait."
+      ]
+    },
+    {
+      "id": "real-linux-logout-persistence",
+      "resource": "real-linux-logout-persistence.json",
+      "description": "nohup, disown -h, controlled huponexit and logout verification.",
+      "objectives": [
+        "103.5"
+      ],
+      "troubleshooting": [
+        "If the timer expires during reading, repeat with new bounded tasks and fresh PID records. Inspect owner and arguments before killing anything.",
+        "If exit warns about stopped jobs, resume/finish your stopped practice jobs first. Do not confuse closing GTK with logging out.",
+        "Protected processes can still end through other signals, reboot or session policy; nohup is not a supervisor or multiplexer."
+      ],
+      "cleanup": [
+        "Re-inspect saved PIDs with ps. Terminate only remaining matching owned practice sleeps. Do not use broad pkill or delete evidence as a substitute for cleanup."
+      ]
+    },
+    {
+      "id": "real-linux-process-priorities",
+      "resource": "real-linux-process-priorities.json",
+      "description": "Default nice value, nice, renice and denied priority increases.",
+      "objectives": [
+        "103.6"
+      ],
+      "troubleshooting": [
+        "Use the actual PIDs and verify the programs still exist; No such process can simply mean the timer expired.",
+        "Do not assume NI equals top PR: PR is a scheduler presentation, and sleeping tasks may show no CPU difference.",
+        "Do not retry through sudo; this image intentionally has no privileged learner access."
+      ],
+      "cleanup": [
+        "Inspect the three saved PIDs, terminate only those owned practice sleeps and wait for children."
+      ]
+    },
+    {
+      "id": "real-linux-process-handover",
+      "resource": "real-linux-process-handover.json",
+      "description": "Combined practice and a guest-local handover, without new objective claims.",
+      "objectives": [
+        "103.5",
+        "103.6"
+      ],
+      "troubleshooting": [
+        "If a task expires, document that honestly and repeat with fresh bounded tasks; do not invent observations.",
+        "Files survive a clean Stop/Resume disk; processes and shell variables do not. Re-read PID records and inspect identity, never blindly kill stale numbers."
+      ],
+      "cleanup": [
+        "Re-inspect any remaining practice task. Terminate only matching owned tasks; do not treat deleting the report or stopping QEMU as normal process cleanup."
+      ]
+    }
+  ]
+}

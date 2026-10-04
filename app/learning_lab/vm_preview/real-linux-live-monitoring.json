@@ -1,0 +1,60 @@
+{
+  "id": "real-linux-live-monitoring",
+  "content_version": "1.0.0",
+  "title": "Read a live process view",
+  "goal": "Interpret a live process view without inventing a performance problem.",
+  "challenge": "Locate owned processes in a live view, identify CPU/memory and niceness columns, explain load and available memory, and exit the tools cleanly. Zero CPU usage is a valid observation; no performance threshold is required.",
+  "steps": [
+    {
+      "command": "sleep 600 & p=$!",
+      "explanation": "Create an identifiable sleeping task. No CPU stress is needed.",
+      "expected": "The task normally uses little or no CPU."
+    },
+    {
+      "command": "top -u learner",
+      "explanation": "Observe processes belonging to learner.",
+      "expected": "The display updates; NI is niceness and %CPU is sampled CPU activity, not a guaranteed value."
+    },
+    {
+      "command": "Press q in the GTK guest console",
+      "explanation": "Exit top normally.",
+      "expected": "The shell prompt returns."
+    },
+    {
+      "command": "ps -u learner -o pid,pcpu,pmem,ni,stat,comm --sort=-pcpu",
+      "explanation": "Compare a sorted snapshot with a live view.",
+      "expected": "ps %CPU uses a process-lifetime average; it need not match top's interval-based values."
+    },
+    {
+      "command": "watch -n 2 'ps -u learner -o pid,ni,stat,comm'",
+      "explanation": "Repeat the snapshot every two seconds.",
+      "expected": "The header and output refresh. This does not change any process."
+    },
+    {
+      "command": "Press Ctrl-C in the GTK guest console",
+      "explanation": "Exit watch.",
+      "expected": "The prompt returns."
+    },
+    {
+      "command": "uptime; free -h",
+      "explanation": "Read load averages and memory availability.",
+      "expected": "uptime shows 1/5/15-minute load averages. free shows available memory; cached memory is not automatically a fault."
+    },
+    {
+      "command": "kill \"$p\"; wait \"$p\"",
+      "explanation": "Clean up only the owned task you started.",
+      "expected": "The sleeping task ends."
+    }
+  ],
+  "hints": [
+    "Use q to exit top; use Ctrl-C to exit watch.",
+    "A sleeping process is usually S and can have 0% CPU.",
+    "Load includes runnable tasks and tasks in uninterruptible wait; it is not a CPU percentage."
+  ],
+  "review": [
+    "I located my process in a live view and understood the important columns.",
+    "I distinguished a snapshot, CPU activity, load and memory availability.",
+    "I exited the tools and cleaned up."
+  ],
+  "coverage": "Real guest practice; completion is self-reviewed, with no guest assessment or verification score. Partial LPIC-1 103.5 coverage."
+}

@@ -1,0 +1,55 @@
+{
+  "id": "real-linux-foreground-jobs",
+  "content_version": "1.0.0",
+  "title": "Move between foreground and background",
+  "goal": "Control a job without confusing suspension with termination.",
+  "challenge": "Run a bounded foreground job, suspend it, continue it in the background, return it to the foreground and interrupt it. Explain prompt availability, job identity and stopped versus running state. Use the actual job identifier.",
+  "steps": [
+    {
+      "command": "sleep 600",
+      "explanation": "Start a foreground job. The shell waits for it.",
+      "expected": "The prompt is unavailable while sleep runs; this is not a frozen VM."
+    },
+    {
+      "command": "Press Ctrl-Z in the GTK guest console",
+      "explanation": "The terminal sends TSTP to the foreground process group.",
+      "expected": "Bash regains the prompt and reports a stopped job."
+    },
+    {
+      "command": "jobs -l",
+      "explanation": "Inspect this shell's jobs and their PIDs.",
+      "expected": "The actual sleep job is Stopped. Record its job number."
+    },
+    {
+      "command": "bg %+",
+      "explanation": "Continue the current job in the background. %+ means the current job, not a fixed job number.",
+      "expected": "jobs -l reports Running and the prompt stays available."
+    },
+    {
+      "command": "fg %+",
+      "explanation": "Bring that current job back to the foreground.",
+      "expected": "The prompt is unavailable again until the process exits or is interrupted."
+    },
+    {
+      "command": "Press Ctrl-C in the GTK guest console",
+      "explanation": "The terminal sends INT to the foreground process group.",
+      "expected": "Sleep ends and the prompt returns."
+    },
+    {
+      "command": "echo $?; jobs -l",
+      "explanation": "Inspect the previous foreground exit status before running other commands.",
+      "expected": "Bash normally reports 130 for this interrupted sleep; no practice job remains."
+    }
+  ],
+  "hints": [
+    "The guest console must have focus for Ctrl-Z and Ctrl-C.",
+    "Stopped does not mean terminated; bg continues a stopped job.",
+    "If you created more jobs, use the job number shown by jobs instead of relying on %+."
+  ],
+  "review": [
+    "I observed foreground prompt blocking and suspension.",
+    "I used bg and fg for the same job.",
+    "I interrupted it and confirmed cleanup."
+  ],
+  "coverage": "Real guest practice; completion is self-reviewed, with no guest assessment or verification score. Partial LPIC-1 103.5 coverage."
+}
