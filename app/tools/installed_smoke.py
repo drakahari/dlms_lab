@@ -25,6 +25,11 @@ def phase(root, resume, require_icon):
     if not dist.read_text('WHEEL') or '"editable": true' in (dist.read_text('direct_url.json') or ''):
         raise RuntimeError('Expected a wheel installation, not an editable source tree.')
     assert (package/'qml/Main.qml').is_file()
+    assert (package/'qml/VmPreview.qml').is_file()
+    from learning_lab.vm_preview.policy import lesson, image_spec
+    assert lesson()['id']=='real-linux-background-job'
+    assert image_spec()['format']=='raw'
+    assert (package/'vm_preview/runner.py').is_file()
     assert (package/'qml/AuthoringDialog.qml').is_file()
     from learning_lab.authoring import resource
     from learning_lab.portable import load_portable
@@ -40,7 +45,11 @@ def phase(root, resume, require_icon):
         'linux-private-note', 'linux-search-only-directory', 'linux-archive-access']
     entries = list({e['scenario'].key:e for c in collections for e in c['entries']}.values())
     assert len(entries) == 22
-    app, engine, bridge, lock = build_application(root/'data', root/'config')
+    from unittest.mock import patch
+    with patch('learning_lab.vm_preview.bridge.os.access', return_value=False), patch('subprocess.Popen', side_effect=AssertionError('Core startup launched a process')):
+        app, engine, bridge, lock = build_application(root/'data', root/'config', root/'vm')
+        assert not bridge.vm_preview.view['prerequisites']
+        assert not (root/'vm').exists()
     window = engine.rootObjects()[0]
     try:
         assert QTest.qWaitForWindowExposed(window, 5000)

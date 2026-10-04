@@ -42,7 +42,7 @@ class ProfileLocks:
         for lock in self.locks: lock.unlock()
 
 
-def build_application(data_root=None, config_root=None):
+def build_application(data_root=None, config_root=None, vm_home=None):
     from .catalog import CatalogBridge
     app = QGuiApplication.instance() or QGuiApplication(sys.argv)
     app.setApplicationName('omarchy-learning-lab')
@@ -60,7 +60,9 @@ def build_application(data_root=None, config_root=None):
     # Runtime identity is deliberately outside pack dictionaries and records.
     bridge.gateway_scenario = gateway
     engine = QQmlApplicationEngine()
-    engine.setInitialProperties({'controller': bridge})
+    from .vm_preview.bridge import VmBridge
+    bridge.vm_preview = VmBridge(data_root, config_root, vm_home, bridge)
+    engine.setInitialProperties({'controller': bridge, 'vmController': bridge.vm_preview})
     engine.load(QUrl.fromLocalFile(str(Path(__file__).parent / 'qml/Main.qml')))
     if not engine.rootObjects():
         raise RuntimeError('Could not load the native QML window.')
@@ -71,9 +73,10 @@ def main():
     parser = argparse.ArgumentParser(description='Offline native learning lab')
     parser.add_argument('--data-dir', type=Path, help='Isolated data directory for acceptance tests')
     parser.add_argument('--config-dir', type=Path, help='Isolated preferences directory for acceptance tests')
+    parser.add_argument('--vm-home', type=Path, help='Separate optional VM storage (excluded from profile backups)')
     args = parser.parse_args()
     try:
-        app, engine, bridge, lock = build_application(args.data_dir, args.config_dir)
+        app, engine, bridge, lock = build_application(args.data_dir, args.config_dir, args.vm_home)
     except (OSError, ValueError, RuntimeError) as exc:
         print(f'Learning Lab: {exc}', file=sys.stderr)
         return 1

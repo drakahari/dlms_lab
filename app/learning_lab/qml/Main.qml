@@ -6,6 +6,7 @@ import QtQuick.Dialogs as FileDialogs
 ApplicationWindow {
     id: window; objectName: "labWindow"
     required property QtObject controller
+    required property QtObject vmController
     property var v: controller.view
     property var colors: v.palette
     property bool linux: v.workspaceKind === "linux-service"
@@ -30,6 +31,7 @@ ApplicationWindow {
     property string exportAttemptId: ""
     property var returnFocus: null
     property bool discardFailedSave: false
+    property bool leaveVmConfirmed: false
     onActiveLabChanged: { reviewing=false; Qt.callLater(function(){ if(v.page===1) { if(linux) linuxWork.focusTerminal(); else workspace.forceActiveFocus() } }) }
     visible: true; width: 1280; height: 900; minimumWidth: 800; minimumHeight: 600
     title: (v.page===0 ? "Lab library" : v.page===2 ? "Attempt history" : v.metadata.title) + " — Omarchy Learning Lab"
@@ -38,7 +40,13 @@ ApplicationWindow {
     palette.windowText: colors.foreground; palette.text: colors.foreground; palette.button: colors.surface
     palette.buttonText: colors.foreground; palette.highlight: colors.accent; palette.highlightedText: colors.background; palette.mid: colors.muted
     onActiveChanged: if(active) controller.refreshTheme()
-    onClosing: function(close) { controller.flush(); if(v.canRetry && !discardFailedSave) { close.accepted=false; failedSave.open() } }
+    onClosing: function(close) { if(vmController.view.busy) { close.accepted=false; vmPanel.open(); return } if(vmPanel.running && !leaveVmConfirmed) { close.accepted=false; leaveVmDialog.open(); return } controller.flush(); if(v.canRetry && !discardFailedSave) { close.accepted=false; failedSave.open() } }
+    Dialog {
+        id: leaveVmDialog; title: "Leave the guest running?"; modal: true; anchors.centerIn: parent; width: Math.min(window.width-40,520); height: 260; standardButtons: Dialog.Ok | Dialog.Cancel
+        contentItem: LabText { text: "Closing Learning Lab leaves the separate guest running and stops storage monitoring. Reopen this same profile for controls. Choose Cancel and use Stop in the VM panel for a clean shutdown." }
+        onAccepted: { window.leaveVmConfirmed=true; window.close() }
+    }
+    VmPreview { id: vmPanel; parent: Overlay.overlay; backend: vmController }
     function navigate(page) { if(!controller.navigate(page)) return; Qt.callLater(function(){ if(page===0) library.forceActiveFocus(); else if(page===1) mission.forceActiveFocus(); else history.forceActiveFocus() }) }
     function openLab(key, origin, page) {
         pendingPage=page===undefined ? 1 : page
@@ -112,7 +120,12 @@ ApplicationWindow {
                         LabButton { objectName: "backupProfileButton"; text: "Backup profile…"; onClicked: { returnFocus=this; backupProfileDialog.open() } }
                         LabButton { objectName: "restoreProfileButton"; text: "Restore profile…"; onClicked: { returnFocus=this; restoreArchiveDialog.open() } }
                     }
-                    LabText { text: "Restorable personal backup, separate from scenario/history exports. Backup briefly pauses actions to save consistently."; color: colors.muted; Layout.fillWidth: true }
+                    LabText { text: "Restorable personal backup, separate from scenario/history exports. Backup briefly pauses actions to save consistently. Optional VM sessions and disks are excluded."; color: colors.muted; Layout.fillWidth: true }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    LabButton { objectName: "vmPreviewButton"; text: "Real Linux VM preview…"; onClicked: { vmPanel.returnFocus=this; vmPanel.open() } onActiveFocusChanged: if(activeFocus) library.ensureVisible(this) }
+                    LabText { text: "Optional · Manage a background job · separate guest window · self-review only"; color: colors.muted; Layout.fillWidth: true }
                 }
                 LabText { visible: !window.showHidden; text: "Shared labs use the same progress in every collection. Hiding or restoring a lab applies everywhere it appears. Use Show hidden / removed to find inactive entries."; color: colors.muted; Layout.fillWidth: true }
                 LabText { visible: !window.showHidden && !v.collections.length; text: "Built-in collections are unavailable. Existing labs remain below."; Layout.fillWidth: true }

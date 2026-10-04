@@ -1,0 +1,51 @@
+{
+  "id": "real-linux-background-job",
+  "content_version": "1.0.0",
+  "title": "Manage a background job",
+  "goal": "Run, inspect, pause, resume and finish a background process in real Linux.",
+  "challenge": "Create a long-running background process. Identify its PID and state, stop it temporarily, resume it, then terminate and reap it. Explain which shell job and process views you used. No particular transcript is required.",
+  "steps": [
+    {
+      "command": "sleep 300 &",
+      "explanation": "The ampersand starts sleep in the background, leaving the prompt available.",
+      "expected": "Bash prints a job number and process ID. This is a real guest process."
+    },
+    {
+      "command": "jobs -l",
+      "explanation": "List jobs owned by this interactive shell and note sleep's PID.",
+      "expected": "The job is Running. Job numbers are local to this shell."
+    },
+    {
+      "command": "ps -o pid,ppid,stat,comm -p PID",
+      "explanation": "Replace PID with the number from jobs. ps inspects the operating system process.",
+      "expected": "The command is sleep; S normally means sleeping. This view differs from the shell's job list."
+    },
+    {
+      "command": "kill -STOP %1",
+      "explanation": "In a fresh shell where sleep is job 1, STOP suspends it. Use the actual job number if different.",
+      "expected": "jobs -l reports Stopped; ps shows T. Press Enter if Bash has not yet printed its job notification."
+    },
+    {
+      "command": "bg %1",
+      "explanation": "Continue that stopped job in the background. Use its actual job number.",
+      "expected": "jobs -l reports Running again."
+    },
+    {
+      "command": "job_pid=$(jobs -p %1); kill \"$job_pid\"; wait \"$job_pid\"; echo $?",
+      "explanation": "Save the actual job PID before terminating it, then wait for its exit. Use your job number instead of %1 if different. These are real Bash commands inside the guest only.",
+      "expected": "A TERM-terminated sleep normally returns 143. jobs should have no remaining job; ps for the saved PID should have no row. If sleep already expired, start a fresh practice job."
+    }
+  ],
+  "hints": [
+    "jobs describes this shell's jobs; ps describes operating-system processes.",
+    "Record the PID before changing the job. STOP pauses; CONT or bg resumes.",
+    "For a fresh job 1: kill -STOP %1, bg %1, then kill %1 and wait. Verify with jobs and ps."
+  ],
+  "review": [
+    "I identified the same process in jobs and ps.",
+    "I observed stopped and running states.",
+    "I terminated the process and checked it was gone.",
+    "I understand Resume retains files but does not restore shell jobs or RAM."
+  ],
+  "coverage": "Introductory real-Linux job/process practice. Self-review only; this preview does not inspect or verify your guest commands."
+}

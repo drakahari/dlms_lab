@@ -1,0 +1,12 @@
+{
+  "image_id": "debian13-jobs-local-v1",
+  "sha256": "a9bd127cc641ecf877896d86eea74e7e528d584158f0b12374c136cd3ea46d3d",
+  "bytes": 17179869184,
+  "format": "raw",
+  "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+  "packages_sha256": "b7fa4bd31fe10f95c7d3b6ea81de07d3099ba039813804260a618ca125a2367d",
+  "version": 1,
+  "prepared": true,
+  "trust": "Local reviewed build only; not a signed public release",
+  "recipe_version": 1
+}

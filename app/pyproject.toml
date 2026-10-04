@@ -17,4 +17,4 @@ include = ["learning_lab*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-learning_lab = ["qml/*.qml", "packs/*.json", "collections/*.json", "collections/packs/*.json", "icons/*.svg", "authoring_resources/*.json", "authoring_resources/*.txt"]
+learning_lab = ["qml/*.qml", "vm_preview/*.json", "packs/*.json", "collections/*.json", "collections/packs/*.json", "icons/*.svg", "authoring_resources/*.json", "authoring_resources/*.txt"]
