@@ -1,7 +1,7 @@
 """Trusted lesson selection around the unchanged VM lifecycle/security controller."""
 from pathlib import Path
 from .files import Directory, Refused, require
-from .manager import Manager
+from .catalog_manager import CatalogManager as Manager
 from .registry import LEGACY_ID, catalog, entry, session_binding
 
 class Sessions:

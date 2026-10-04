@@ -61,7 +61,17 @@ class RegistryTests(unittest.TestCase):
             'image.json':'1499ad6e7f5cced795f5f0ff97348fbaa321a60aba3c8a810f074a846410a417'}
   for name,digest in expected.items():self.assertEqual(hashlib.sha256((root/name).read_bytes()).hexdigest(),digest)
   tree=ast.parse((root/'manager.py').read_text());cls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='Manager')
-  methods='\n'.join(ast.dump(n,include_attributes=False) for n in cls.body if isinstance(n,ast.FunctionDef) and n.name!='__init__')
+  # Approved catalog hooks only; the remaining lifecycle/security AST must still
+  # match the accepted controller. Stop, QMP and process operations are untouched.
+  hooks=[]
+  class StripCatalogHooks(ast.NodeTransformer):
+   def visit_Expr(self,node):
+    if isinstance(node.value,ast.Call) and isinstance(node.value.func,ast.Attribute) and node.value.func.attr=='_authorize':
+     hooks.append(ast.unparse(node));return None
+    return self.generic_visit(node)
+  cls=StripCatalogHooks().visit(cls)
+  self.assertEqual(hooks,["self._authorize('new', None)","self._authorize('reset', old)","self._authorize('resume' if s else 'new', s)"])
+  methods='\n'.join(ast.dump(n,include_attributes=False) for n in cls.body if isinstance(n,ast.FunctionDef) and n.name not in ('__init__','_authorize'))
   self.assertEqual(hashlib.sha256(methods.encode()).hexdigest(),'8be8f31148f2cfd0020a86cdd19b3c40645093f48345342f05062715fc69e9bf')
  def test_help_and_coverage_honest(self):
   text=json.dumps(catalog())+' '.join(json.dumps(load_lesson(e['id'])) for e in catalog()['entries'])
@@ -165,4 +175,6 @@ class SelectionTests(unittest.TestCase):
    self.assertIs(self.sessions.running_manager(self.ids[0]),m)
  def test_updated_pin_refused_without_migration(self):
   m,s=self.prepared(self.ids[0]);path=self.root/'vm/profiles'/m.profile/'current.json';before=path.read_bytes()
-  m.pin={**m.pin,'lesson_sha256':'0'*64};self.assertEqual(self.sessions.view(self.ids[0])['state'],'session-unavailable');self.assertEqual(path.read_bytes(),before)
+  # A revision absent from the trusted catalog must not be silently substituted.
+  m.catalog.lessons.pop((m.lesson_id,m.pin['lesson_sha256']))
+  self.assertEqual(self.sessions.view(self.ids[0])['state'],'session-unavailable');self.assertEqual(path.read_bytes(),before)

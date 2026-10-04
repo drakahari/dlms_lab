@@ -33,6 +33,10 @@ class Manager:
             from .registry import load_lesson
             self.lesson=load_lesson(lesson_id)
         self.pin={'backend':BACKEND,'image':self.spec,'lesson_sha256':hashlib.sha256(json.dumps(self.lesson,sort_keys=True,separators=(',',':')).encode()).hexdigest()}
+    def _authorize(self,operation,session):
+        # Catalog adapter checks availability inside the existing operation lock.
+        # Legacy direct construction retains the approved local-only behavior.
+        pass
     @contextmanager
     def access(self):
         require(os.getuid()!=0,'Run the VM preview as an ordinary user, never root')
@@ -136,6 +140,7 @@ class Manager:
         with self.generation(profile,generation) as gen:
             gen.write('lifecycle.json',{'state':state,'at':now()},replace=True)
     def prepare(self,root,profile,mode):
+        self._authorize('new',None)
         self.admission(root);base=self.image(root);os.close(base)
         ident=str(uuid.uuid4())
         with profile.child('generations',create=True) as generations,generations.child(ident,create=True,exclusive=True) as gen:
@@ -155,6 +160,7 @@ class Manager:
             fd=self.gate(gate)
             try:
                 self.reconcile(gate,stopped_verified=True);old=self.current(profile)
+                self._authorize('reset',old)
                 if old:
                     profile.write('retained-'+uuid.uuid4().hex+'.json',old)
                 return self.prepare(root,profile,mode)
@@ -165,6 +171,7 @@ class Manager:
             gatefd=self.gate(gate);base=disk=None
             try:
                 r=self.reconcile(gate,stopped_verified=True);s=self.current(profile)
+                self._authorize('resume' if s else 'new',s)
                 if s is None:s=self.prepare(root,profile,mode)
                 require(not (r and r['state']=='unclean' and r['store']==self.binding and r['profile']==self.profile and r['generation']==s['generation']),'Unclean runtime record conflicts with this disk; Resume refused')
                 require(s['mode']==mode,'Changing mode requires a confirmed reset into a new session')

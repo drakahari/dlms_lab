@@ -1,0 +1,5 @@
+prune tests
+prune evidence
+prune build
+prune dist
+global-exclude __pycache__ *.py[cod] *.raw *.qcow2 *.llvmimage

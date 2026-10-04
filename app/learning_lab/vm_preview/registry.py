@@ -30,6 +30,19 @@ def _texts(value, label, minimum=1, maximum=16):
     require(isinstance(value, list) and minimum <= len(value) <= maximum, 'Invalid '+label+' count')
     for text in value: _text(text, label)
 
+def validate_lesson(content,lesson_id):
+    require(set(content) == {'id', 'content_version', 'title', 'goal', 'challenge', 'steps', 'hints', 'review', 'coverage'},
+            'Unsupported lesson fields; no executable actions permitted')
+    require(content['id'] == lesson_id, 'Bundled lesson identity differs')
+    require(isinstance(content['content_version'],str) and re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', content['content_version']),
+            'Invalid lesson content version')
+    for key in ('title', 'goal', 'challenge', 'coverage'): _text(content[key], key)
+    require(isinstance(content['steps'], list) and 1 <= len(content['steps']) <= 32, 'Invalid step count')
+    for step in content['steps']:
+        require(set(step) == {'command', 'explanation', 'expected'}, 'Unsupported step fields')
+        for key in step: _text(step[key], key)
+    _texts(content['hints'], 'hints', 0); _texts(content['review'], 'review')
+
 @lru_cache(maxsize=1)
 def _bundle():
     value = _read('unit.json')
@@ -49,17 +62,7 @@ def _bundle():
         _texts(entry['objectives'], 'objectives'); _texts(entry['troubleshooting'], 'troubleshooting')
         _texts(entry['cleanup'], 'cleanup')
         content = _read(entry['resource'])
-        require(set(content) == {'id', 'content_version', 'title', 'goal', 'challenge', 'steps', 'hints', 'review', 'coverage'},
-                'Unsupported lesson fields; no executable actions permitted')
-        require(content['id'] == entry['id'], 'Bundled lesson identity differs')
-        require(isinstance(content['content_version'],str) and re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', content['content_version']),
-                'Invalid lesson content version')
-        for key in ('title', 'goal', 'challenge', 'coverage'): _text(content[key], key)
-        require(isinstance(content['steps'], list) and 1 <= len(content['steps']) <= 32, 'Invalid step count')
-        for step in content['steps']:
-            require(set(step) == {'command', 'explanation', 'expected'}, 'Unsupported step fields')
-            for key in step: _text(step[key], key)
-        _texts(content['hints'], 'hints', 0); _texts(content['review'], 'review')
+        validate_lesson(content,entry['id'])
         lessons[entry['id']] = content
     require(LEGACY_ID in seen, 'Accepted lesson missing from unit')
     return value, lessons

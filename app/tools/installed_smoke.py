@@ -30,6 +30,16 @@ def phase(root, resume, require_icon):
     assert lesson()['id']=='real-linux-background-job'
     assert image_spec()['format']=='raw'
     assert (package/'vm_preview/runner.py').is_file()
+    from learning_lab.vm_preview.image_catalog import production_catalog
+    images=production_catalog()
+    assert len(images.images)==1 and len(images.lessons)==8
+    assert not images.keys and not images.releases
+    for lesson_id,revision in images.lessons:
+        images.resolve({'backend':'offline-qemu-preview-1','image':image_spec(),'lesson_sha256':revision},lesson_id)
+    assert not any('fixture' in str(p) or p.suffix in ('.raw','.qcow2','.gpg','.llvmimage') for p in (package/'vm_preview').rglob('*'))
+    result=subprocess.run([sys.executable,'-I','-B','-m','learning_lab.vm_preview.image_bundle','--help'],capture_output=True,text=True)
+    assert result.returncode==0 and 'validate' in result.stdout and 'import' in result.stdout
+
     from learning_lab.vm_preview.registry import catalog as vm_catalog, load_lesson, LEGACY_ID
     from learning_lab.vm_preview.sessions import Sessions
     import uuid

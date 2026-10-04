@@ -33,7 +33,7 @@ class VmBridge(QObject):
         return {**self._state,'busy':self._busy,'error':self._error,'notice':self._notice,
                 'selected_lesson_id':self._selected,'unit':catalog(),'support':entry(self._selected),
                 'choices':[{'id':e['id'],'title':load_lesson(e['id'])['title']} for e in catalog()['entries']],
-                'lesson':self.manager.lesson,'image':image_spec(),'prerequisites':available,'home':str(self.manager.home)}
+                'lesson':self.manager.lesson,'image':self.manager.spec,'prerequisites':available,'home':str(self.manager.home)}
     def _work(self,action,lesson_id=None,*,refresh=False,target=None):
         chosen=target or lesson_id or self._selected
         try:entry(chosen)

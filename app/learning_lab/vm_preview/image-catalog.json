@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "images": [
+    {
+      "descriptor": {
+        "image_id": "debian13-jobs-local-v1",
+        "sha256": "a9bd127cc641ecf877896d86eea74e7e528d584158f0b12374c136cd3ea46d3d",
+        "bytes": 17179869184,
+        "format": "raw",
+        "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+        "packages_sha256": "b7fa4bd31fe10f95c7d3b6ea81de07d3099ba039813804260a618ca125a2367d",
+        "version": 1,
+        "prepared": true,
+        "trust": "Local reviewed build only; not a signed public release",
+        "recipe_version": 1
+      },
+      "state": "active",
+      "legacy": true,
+      "lessons": [
+        {
+          "id": "real-linux-process-inspection",
+          "sha256": "74d4890547d9b0fe8781c8381a2054e07584f5897ea7ae6812f351a602bf981b"
+        },
+        {
+          "id": "real-linux-foreground-jobs",
+          "sha256": "4b557cebe81d0139bc4f7a20358e19b111e633eef0e9a1a32ef3dffc57392995"
+        },
+        {
+          "id": "real-linux-background-job",
+          "sha256": "cc71a87e9cc21224b84803a4175dffdfd83da793700402e20ffe3515eeb59180"
+        },
+        {
+          "id": "real-linux-targeted-signals",
+          "sha256": "74313980280ec7d3c051eebb4f990b52beb985c0d49c900879c17ef94c3878bc"
+        },
+        {
+          "id": "real-linux-live-monitoring",
+          "sha256": "09418373ac0317e45a6a7e54bf4b5e277b1964cec29b69b3321bd0986cb87270"
+        },
+        {
+          "id": "real-linux-logout-persistence",
+          "sha256": "f61fe25369e916aa928397dde2f670d83f9f55c5f8b7c945a383c7356f076ae1"
+        },
+        {
+          "id": "real-linux-process-priorities",
+          "sha256": "41e60137f469672450ebc59b91003b63864821edd002f608e9c1e032efbc8f7c"
+        },
+        {
+          "id": "real-linux-process-handover",
+          "sha256": "1cb7c3424c060c1657e61d695d4bbf14a9e529df4e48bd3d92a614e477f8a7b7"
+        }
+      ]
+    }
+  ],
+  "lessons": [
+    {
+      "id": "real-linux-process-inspection",
+      "sha256": "74d4890547d9b0fe8781c8381a2054e07584f5897ea7ae6812f351a602bf981b",
+      "resource": "real-linux-process-inspection.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-foreground-jobs",
+      "sha256": "4b557cebe81d0139bc4f7a20358e19b111e633eef0e9a1a32ef3dffc57392995",
+      "resource": "real-linux-foreground-jobs.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-background-job",
+      "sha256": "cc71a87e9cc21224b84803a4175dffdfd83da793700402e20ffe3515eeb59180",
+      "resource": "lesson.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-targeted-signals",
+      "sha256": "74313980280ec7d3c051eebb4f990b52beb985c0d49c900879c17ef94c3878bc",
+      "resource": "real-linux-targeted-signals.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-live-monitoring",
+      "sha256": "09418373ac0317e45a6a7e54bf4b5e277b1964cec29b69b3321bd0986cb87270",
+      "resource": "real-linux-live-monitoring.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-logout-persistence",
+      "sha256": "f61fe25369e916aa928397dde2f670d83f9f55c5f8b7c945a383c7356f076ae1",
+      "resource": "real-linux-logout-persistence.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-process-priorities",
+      "sha256": "41e60137f469672450ebc59b91003b63864821edd002f608e9c1e032efbc8f7c",
+      "resource": "real-linux-process-priorities.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-process-handover",
+      "sha256": "1cb7c3424c060c1657e61d695d4bbf14a9e529df4e48bd3d92a614e477f8a7b7",
+      "resource": "real-linux-process-handover.json",
+      "state": "active"
+    }
+  ],
+  "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+  "default_lessons": {
+    "real-linux-process-inspection": "74d4890547d9b0fe8781c8381a2054e07584f5897ea7ae6812f351a602bf981b",
+    "real-linux-foreground-jobs": "4b557cebe81d0139bc4f7a20358e19b111e633eef0e9a1a32ef3dffc57392995",
+    "real-linux-background-job": "cc71a87e9cc21224b84803a4175dffdfd83da793700402e20ffe3515eeb59180",
+    "real-linux-targeted-signals": "74313980280ec7d3c051eebb4f990b52beb985c0d49c900879c17ef94c3878bc",
+    "real-linux-live-monitoring": "09418373ac0317e45a6a7e54bf4b5e277b1964cec29b69b3321bd0986cb87270",
+    "real-linux-logout-persistence": "f61fe25369e916aa928397dde2f670d83f9f55c5f8b7c945a383c7356f076ae1",
+    "real-linux-process-priorities": "41e60137f469672450ebc59b91003b63864821edd002f608e9c1e032efbc8f7c",
+    "real-linux-process-handover": "1cb7c3424c060c1657e61d695d4bbf14a9e529df4e48bd3d92a614e477f8a7b7"
+  },
+  "releases": [],
+  "keys": []
+}
