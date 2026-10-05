@@ -1,0 +1,258 @@
+{
+  "schema_version": 1,
+  "id": "linux-administration-services-logs-recovery",
+  "title": "Linux Administration: Services, Logs & Safe Recovery",
+  "purpose": "Eight offline guest-administration lessons. Learn a controlled change, service lifecycle and startup, ownership, local logs, rotation and incident recovery. Sequence is guidance; completion is self-reviewed and unscored.",
+  "prerequisites": "Paths, file copying, basic permissions, text filters, nano and process inspection. Lesson 1 teaches quoting, exit status, && and privileged redirection. No preceding scripting batch is required. This separate image grants learner full guest-root sudo; the older images remain unprivileged.",
+  "coverage": "Partial LPIC-2 v4.5 202.1 systemd administration; LPIC-1 v5.0 108.2 local logging, 104.5 ownership/access, 107.1 limited-account inspection, 101.3 controlled reboot and introductory shell reinforcement. No full objectives, SysV boot, rescue/GRUB, network logging, general account lifecycle or verified assessment.",
+  "entries": [
+    {
+      "id": "real-linux-admin-change",
+      "resource": "real-linux-admin-change.json",
+      "description": "Inspect guest privileges and make one reversible configuration edit.",
+      "objectives": [
+        "LPIC-1 103.1/103.4 introductory shell reinforcement; preparation for 105.2"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "Keep original.conf as evidence; optional cleanup removes only change.conf.before after successful restoration."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "Identity/sudo policy, failure status, configuration diff and final comparison."
+      ],
+      "questions": [
+        "Why can a pipeline with sudo tee write a root-owned file while sudo printf > file can still fail?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    },
+    {
+      "id": "real-linux-admin-lifecycle",
+      "resource": "real-linux-admin-lifecycle.json",
+      "description": "Distinguish service state, its process and its recent journal events.",
+      "objectives": [
+        "LPIC-2 202.1 systemd service management"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "sudo systemctl stop ll-lifecycle.service; repeat safely."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "State, actual PID/user and dated invocation events."
+      ],
+      "questions": [
+        "Does disabled mean a service cannot be started manually?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    },
+    {
+      "id": "real-linux-admin-boot",
+      "resource": "real-linux-admin-boot.json",
+      "description": "Verify startup policy with a controlled guest reboot.",
+      "objectives": [
+        "LPIC-2 202.1; LPIC-1 101.3 controlled reboot (partial)"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "sudo systemctl disable --now ll-boot.service; repeat safely."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "Before/after boot IDs, enabled state and current-boot start evidence."
+      ],
+      "questions": [
+        "Why is enable output insufficient to prove a successful boot-time invocation?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    },
+    {
+      "id": "real-linux-admin-override",
+      "resource": "real-linux-admin-override.json",
+      "description": "Locate the effective systemd configuration and repair one invalid executable path.",
+      "objectives": [
+        "LPIC-2 202.1 systemd customization"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "Stop ll-override.service. To roll back the exercise, copy override-dropin.before to the exact broken.conf path, daemon-reload, and leave the unit stopped; the original fault returns. Reset is the clean-base alternative."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "Original error, effective unit, small diff and new successful journal event."
+      ],
+      "questions": [
+        "How do validation, daemon-reload and restart differ?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    },
+    {
+      "id": "real-linux-admin-access",
+      "resource": "real-linux-admin-access.json",
+      "description": "Repair ownership/group access without broadening permissions or running the service as root.",
+      "objectives": [
+        "LPIC-1 104.5 ownership/group access; 107.1 limited-account inspection; LPIC-2 202.1 service context"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "Stop ll-access.service. To restore the original fault, sudo cp -p access.conf.before over the exact access.conf path while stopped. Retain evidence."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "Account lock/shell, file mode/owner/group, denied unrelated read and successful service event."
+      ],
+      "questions": [
+        "Why does a successful sudo cat fail to establish least-privilege service access?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    },
+    {
+      "id": "real-linux-admin-logs",
+      "resource": "real-linux-admin-logs.json",
+      "description": "Correlate a journal event with a correctly scoped local rsyslog rule.",
+      "objectives": [
+        "LPIC-1 108.2 local rsyslog and journal (partial)"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "To roll back, restore logging.before to the exact rule path, validate, then restart rsyslog. Keep the small evidence log; never vacuum or remove unrelated logs."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "Before/after selector, validation output, correlated events and log permissions."
+      ],
+      "questions": [
+        "Does .notice mean only notice? Why can a journal event exist without appearing in a particular rsyslog file?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    },
+    {
+      "id": "real-linux-admin-rotation",
+      "resource": "real-linux-admin-rotation.json",
+      "description": "Validate a rotation rule and retain protected records with bounded history.",
+      "objectives": [
+        "LPIC-1 108.2 logrotate (partial)"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "Retain the small .1 log and state as evidence. Restore rotation.before only while no rotation is running to recreate the config fault; do not rotate with the faulty rule. Reset retains the whole prior disk."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "Preview error, corrected diff, retained record and new file mode."
+      ],
+      "questions": [
+        "Why should debug failure block application? How does bounded rotation differ from an archival backup?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    },
+    {
+      "id": "real-linux-admin-incident",
+      "resource": "real-linux-admin-incident.json",
+      "description": "Combine service configuration, access and startup evidence into a recoverable repair.",
+      "objectives": [
+        "LPIC-2 202.1 and LPIC-1 104.5/108.2 reinforcement"
+      ],
+      "troubleshooting": [
+        "Read the exact unit and guest path before sudo. A failure is evidence; preserve output before changing anything.",
+        "The lab service ends after 120 seconds. An inactive/timeout state after that bound is expected; inspect timestamps before diagnosing a new fault.",
+        "If the console or guest breaks, use the app Stop control. Resume requires a clean disk; confirmed Reset retains the old generation."
+      ],
+      "cleanup": [
+        "sudo systemctl disable --now ll-incident.service. To recreate the original missing-file fault, first preserve the repaired file under a distinct guest backup name, then remove only /etc/learning-lab/incident.conf. Never delete the retained original."
+      ],
+      "materials": [
+        "Guest-only administration: learner has passwordless full root through sudo. Root can override every guest-side teaching limit. No host commands, NIC, shares or clipboard.",
+        "Each lesson has a separate disk session and dormant fixture. Begin with a fresh session for the stated initial fault; Resume retains your changes. All paths below are inside the guest."
+      ],
+      "observations": [
+        "Original journal error, exact config ownership/mode, successful invocation, enabled state and handover."
+      ],
+      "questions": [
+        "Which evidence proves current recovery? Which further check would prove startup after reboot?"
+      ],
+      "limitations": [
+        "Do not change login/PAM, sudoers, bootloader, essential mounts, networking or unrelated units. Scope repairs to ll-* units and /etc/learning-lab or /var/log/learning-lab.",
+        "Lab workers run as locked non-login ll-service, at most 120 seconds, 64 MiB memory, 8 tasks, 20% of one CPU and 1 MiB per-file limit. They emit only a few lines. Root can remove these limits; they are not a boundary against guest administrators.",
+        "Guest files and self-review records are excluded from profile backups/exports. Resume boots disk files, not RAM/jobs. No public image release or automatic assessment is implied."
+      ]
+    }
+  ]
+}

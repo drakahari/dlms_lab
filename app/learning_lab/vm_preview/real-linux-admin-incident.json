@@ -1,0 +1,50 @@
+{
+  "id": "real-linux-admin-incident",
+  "content_version": "1.0.0",
+  "title": "Recover an incident and write a handover",
+  "goal": "Combine service configuration, access and startup evidence into a recoverable repair.",
+  "challenge": "Recover ll-incident.service without world-readable configuration or a root worker. Its configuration is missing and startup is disabled. An original data file is retained in /usr/local/share/learning-lab/admin-originals/incident.conf. Preserve evidence, restore correct access, verify behavior and startup policy, then write a short handover with rollback steps.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/admin-incident.XXXXXX\") && cd \"$work\" && pwd; systemctl status ll-incident.service --no-pager; systemctl is-enabled ll-incident.service",
+      "explanation": "Use a fresh private evidence directory. Stop if setup fails. Gather current symptoms before a repair.",
+      "expected": "Inactive/disabled; evidence directory is inside the guest home."
+    },
+    {
+      "command": "sudo systemctl start ll-incident.service; sudo journalctl -u ll-incident.service -n 10 --no-pager; ls -l /etc/learning-lab/incident.conf",
+      "explanation": "Correlate the failure with the absent file, rather than running the worker as root.",
+      "expected": "Missing configuration and LAB_CONFIG_UNREADABLE."
+    },
+    {
+      "command": "sudo install -o root -g ll-service -m 0640 /usr/local/share/learning-lab/admin-originals/incident.conf /etc/learning-lab/incident.conf; sudo runuser -u ll-service -- cat /etc/learning-lab/incident.conf",
+      "explanation": "Install an exact retained data file with explicit ownership and access. Equivalent supported guest commands are valid if they preserve content and least privilege.",
+      "expected": "root:ll-service 0640 and a permitted service-account read."
+    },
+    {
+      "command": "sudo systemctl enable --now ll-incident.service; sleep 1; systemctl is-enabled ll-incident.service; sudo journalctl -u ll-incident.service -n 8 --no-pager",
+      "explanation": "Establish startup policy and a new successful invocation. Enable output alone does not prove future boot success; retain that limitation.",
+      "expected": "enabled and a fresh LAB_READY from the unprivileged worker."
+    },
+    {
+      "command": "nano handover.txt",
+      "explanation": "Write symptoms, causal evidence, exact changes, verification, remaining uncertainty and rollback. Include the original missing-file/disabled state; no placeholder report counts as completed work.",
+      "expected": "Your own short report; no app score or automatic inspection."
+    },
+    {
+      "command": "cat handover.txt; sudo systemctl disable --now ll-incident.service",
+      "explanation": "Review the report and leave the worker stopped/dormant. Keep the repaired config and evidence.",
+      "expected": "A supported conclusion; no live lab worker remains."
+    }
+  ],
+  "hints": [
+    "A missing file and disabled startup are distinct facts. Repair and verify each.",
+    "Use explicit owner/group/mode when restoring the retained configuration.",
+    "Describe what was observed, what was changed and what a future boot still needs to verify."
+  ],
+  "review": [
+    "My report records actual symptoms, minimal repair and verification.",
+    "The service stayed unprivileged, access stayed narrow, and I left it stopped.",
+    "I documented rollback and the limit of enabled-state evidence."
+  ],
+  "coverage": "Partial LPIC-2 202.1 and LPIC-1 104.5/108.2 reinforcement. Guest-only administration; completion records self-review, not verified assessment. No score."
+}

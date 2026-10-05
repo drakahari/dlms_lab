@@ -1,0 +1,54 @@
+{
+  "id": "real-linux-admin-change",
+  "content_version": "1.0.0",
+  "title": "Make a controlled administrative change",
+  "goal": "Inspect guest privileges and make one reversible configuration edit.",
+  "challenge": "Inspect identity and sudo rights. Demonstrate a protected-file refusal, keep a metadata-preserving backup, change only the message in /etc/learning-lab/change.conf, compare and validate the result, then restore it. Explain quoting, exit status and redirection ownership.",
+  "steps": [
+    {
+      "command": "id; sudo -n -l; pwd",
+      "explanation": "This image deliberately grants root through sudo. Confirm you are learner before editing; sudo affects this guest only.",
+      "expected": "learner is non-root; sudo lists ALL as root. No password is needed."
+    },
+    {
+      "command": "work=$(mktemp -d \"$HOME/admin-change.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Prerequisite: quote the variable as one path. Each && runs the next command only if the preceding operation succeeds. Stop if workspace creation or cd fails.",
+      "expected": "A new private guest workspace; retain the printed path."
+    },
+    {
+      "command": "printf \"message=trial\\n\" > /etc/learning-lab/change.conf; printf \"previous status=%s\\n\" \"$?\"",
+      "explanation": "The current shell performs > before running printf. The protected-file failure has a nonzero status. Read $? immediately. Adding sudo before printf would not elevate this redirection.",
+      "expected": "Permission denied; the original file is unchanged."
+    },
+    {
+      "command": "sudo cp -p /etc/learning-lab/change.conf \"$work/original.conf\"; sudo cp -p /etc/learning-lab/change.conf /etc/learning-lab/change.conf.before",
+      "explanation": "cp -p preserves owner/mode/timestamps; use these exact lab paths. Keep one backup in the workspace and one beside the fixture.",
+      "expected": "Both copies match the original."
+    },
+    {
+      "command": "printf \"message=reviewed\\n\" | sudo tee /etc/learning-lab/change.conf; diff -u \"$work/original.conf\" /etc/learning-lab/change.conf",
+      "explanation": "tee runs with sudo and performs the protected write. diff status 1 means differences; it is not a read failure.",
+      "expected": "Only the message line differs."
+    },
+    {
+      "command": "grep -Fx \"message=reviewed\" /etc/learning-lab/change.conf && printf \"validated\\n\"",
+      "explanation": "This tiny fixture has one exact data line. This check is not a general configuration parser or Bash-script validation.",
+      "expected": "The expected line and validated appear."
+    },
+    {
+      "command": "sudo cp -p /etc/learning-lab/change.conf.before /etc/learning-lab/change.conf; cmp \"$work/original.conf\" /etc/learning-lab/change.conf; printf \"compare status=%s\\n\" \"$?\"",
+      "explanation": "Restore the known original and verify exact contents; retain your backup. Never overwrite unrelated configuration.",
+      "expected": "Compare status 0; restored owner and mode remain root/0644."
+    }
+  ],
+  "hints": [
+    "The shell opens redirection targets before sudo starts its command.",
+    "Use quoted variables and check a failure immediately; a later successful command replaces $?.",
+    "Keep a backup, compare one intended change, validate it, then prove rollback."
+  ],
+  "review": [
+    "I explained the guest privilege boundary and redirection refusal.",
+    "I retained the original and demonstrated a verified rollback."
+  ],
+  "coverage": "Partial LPIC-1 103.1/103.4 introductory shell reinforcement; preparation for 105.2. Guest-only administration; completion records self-review, not verified assessment. No score."
+}

@@ -82,6 +82,56 @@
           "sha256": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725"
         }
       ]
+    },
+    {
+      "descriptor": {
+        "image_id": "debian13-admin-local-v1",
+        "sha256": "f956d5c98848296f6887235c742ee4cc44ed5981acd0d2efd0a593b16d8a578f",
+        "bytes": 17179869184,
+        "format": "raw",
+        "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+        "packages_sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+        "version": 1,
+        "prepared": true,
+        "trust": "Local reviewed administrator build only; not a signed public release",
+        "recipe_version": 1
+      },
+      "state": "active",
+      "legacy": true,
+      "lessons": [
+        {
+          "id": "real-linux-admin-change",
+          "sha256": "f7b4228809a43220ee875b0d059ad9e32e67b4d823fb6667aa888174533069f3"
+        },
+        {
+          "id": "real-linux-admin-lifecycle",
+          "sha256": "d5ca1b27b11a3235ce0160fa5738fa6d0cd78b8e028a1a8b404edfeb123ae119"
+        },
+        {
+          "id": "real-linux-admin-boot",
+          "sha256": "cfd14e98a513c9b12d12f09e56cccf2ae8914dd73202ff9f9c669b63d2b17e79"
+        },
+        {
+          "id": "real-linux-admin-override",
+          "sha256": "55b21745c3d73e064ba60a28ec530964ae2428a91070ce2f0d74fc4e38a393ec"
+        },
+        {
+          "id": "real-linux-admin-access",
+          "sha256": "f2aa15f68d37ab0c0185acdf4b1614a4c66cfd80038610bbcec7290b87605b31"
+        },
+        {
+          "id": "real-linux-admin-logs",
+          "sha256": "b4dca7d5785a61986cf257b3cb3355650fa0349ab998380d6f0dcbd19e07319d"
+        },
+        {
+          "id": "real-linux-admin-rotation",
+          "sha256": "ff4caf253c9960dd3f59861cf29f2945bfd8f1f58f5dac686d128d7f4d0f1803"
+        },
+        {
+          "id": "real-linux-admin-incident",
+          "sha256": "b53d6c2fbb43113f66902ba6fb4f9d0e8b7d5d22e939803006768bb52ad80b4c"
+        }
+      ]
     }
   ],
   "lessons": [
@@ -180,6 +230,54 @@
       "sha256": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725",
       "resource": "real-linux-capacity-recommendation.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-admin-change",
+      "sha256": "f7b4228809a43220ee875b0d059ad9e32e67b4d823fb6667aa888174533069f3",
+      "resource": "real-linux-admin-change.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-admin-lifecycle",
+      "sha256": "d5ca1b27b11a3235ce0160fa5738fa6d0cd78b8e028a1a8b404edfeb123ae119",
+      "resource": "real-linux-admin-lifecycle.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-admin-boot",
+      "sha256": "cfd14e98a513c9b12d12f09e56cccf2ae8914dd73202ff9f9c669b63d2b17e79",
+      "resource": "real-linux-admin-boot.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-admin-override",
+      "sha256": "55b21745c3d73e064ba60a28ec530964ae2428a91070ce2f0d74fc4e38a393ec",
+      "resource": "real-linux-admin-override.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-admin-access",
+      "sha256": "f2aa15f68d37ab0c0185acdf4b1614a4c66cfd80038610bbcec7290b87605b31",
+      "resource": "real-linux-admin-access.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-admin-logs",
+      "sha256": "b4dca7d5785a61986cf257b3cb3355650fa0349ab998380d6f0dcbd19e07319d",
+      "resource": "real-linux-admin-logs.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-admin-rotation",
+      "sha256": "ff4caf253c9960dd3f59861cf29f2945bfd8f1f58f5dac686d128d7f4d0f1803",
+      "resource": "real-linux-admin-rotation.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-admin-incident",
+      "sha256": "b53d6c2fbb43113f66902ba6fb4f9d0e8b7d5d22e939803006768bb52ad80b4c",
+      "resource": "real-linux-admin-incident.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -199,8 +297,42 @@
     "real-linux-capacity-space-inodes": "3fefcc5a3beb27e8c87655c1f598d07fb99ee8717eebf9578e615d38265382af",
     "real-linux-capacity-trends": "f26bfa186714f92a788b6db5ed76f10bf97fcee127d038c7bbcf282a7c296fd5",
     "real-linux-capacity-forecast": "ebe23159673894619117b44c54e8f1d188add51a3c59c704c235fa86fbb2b8e0",
-    "real-linux-capacity-recommendation": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725"
+    "real-linux-capacity-recommendation": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725",
+    "real-linux-admin-change": "f7b4228809a43220ee875b0d059ad9e32e67b4d823fb6667aa888174533069f3",
+    "real-linux-admin-lifecycle": "d5ca1b27b11a3235ce0160fa5738fa6d0cd78b8e028a1a8b404edfeb123ae119",
+    "real-linux-admin-boot": "cfd14e98a513c9b12d12f09e56cccf2ae8914dd73202ff9f9c669b63d2b17e79",
+    "real-linux-admin-override": "55b21745c3d73e064ba60a28ec530964ae2428a91070ce2f0d74fc4e38a393ec",
+    "real-linux-admin-access": "f2aa15f68d37ab0c0185acdf4b1614a4c66cfd80038610bbcec7290b87605b31",
+    "real-linux-admin-logs": "b4dca7d5785a61986cf257b3cb3355650fa0349ab998380d6f0dcbd19e07319d",
+    "real-linux-admin-rotation": "ff4caf253c9960dd3f59861cf29f2945bfd8f1f58f5dac686d128d7f4d0f1803",
+    "real-linux-admin-incident": "b53d6c2fbb43113f66902ba6fb4f9d0e8b7d5d22e939803006768bb52ad80b4c"
   },
   "releases": [],
-  "keys": []
+  "keys": [],
+  "default_images": {
+    "real-linux-process-inspection": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-foreground-jobs": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-background-job": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-targeted-signals": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-live-monitoring": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-logout-persistence": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-process-priorities": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-process-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-baseline": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-cpu": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-memory": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-io": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-space-inodes": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-trends": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-forecast": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-capacity-recommendation": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-admin-change": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-admin-lifecycle": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-admin-boot": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-admin-override": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-admin-access": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-admin-logs": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-admin-rotation": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-admin-incident": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
+  }
 }

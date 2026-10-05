@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-admin-boot",
+  "content_version": "1.0.0",
+  "title": "Separate running from enabled at boot",
+  "goal": "Verify startup policy with a controlled guest reboot.",
+  "challenge": "Enable ll-boot.service for multi-user startup, reboot only the guest, and verify a start from the new boot. Finish with the unit stopped and disabled. Explain how the current boot differs from disk Resume and RAM restoration.",
+  "steps": [
+    {
+      "command": "systemctl get-default; systemctl is-enabled ll-boot.service; sudo systemctl start ll-boot.service",
+      "explanation": "Read the target and demonstrate a manually started but disabled unit. Do not change the default target.",
+      "expected": "Normal target remains unchanged; unit starts despite disabled policy."
+    },
+    {
+      "command": "sudo systemctl enable ll-boot.service; systemctl is-enabled ll-boot.service; cat /proc/sys/kernel/random/boot_id",
+      "explanation": "Record the boot ID and enable link. Enable alone is not proof of a successful future start.",
+      "expected": "enabled; retain this boot ID."
+    },
+    {
+      "command": "sudo systemctl reboot",
+      "explanation": "Reboot only inside the native guest console. Wait for automatic learner login. No shell variables/jobs survive.",
+      "expected": "A fresh guest boot with the same disk files."
+    },
+    {
+      "command": "cat /proc/sys/kernel/random/boot_id; sudo cat /var/lib/ll-boot/last-start; sudo journalctl -b -u ll-boot.service -n 12 --no-pager",
+      "explanation": "Match last-start to the new boot ID and inspect current-boot events. The worker may have reached its runtime limit by now.",
+      "expected": "New boot ID; LAB_READY from this boot establishes startup, even if it later expired."
+    },
+    {
+      "command": "sudo systemctl disable --now ll-boot.service; systemctl is-enabled ll-boot.service; systemctl is-active ll-boot.service",
+      "explanation": "Restore dormant startup policy. Do not disable unrelated guest services.",
+      "expected": "disabled and inactive."
+    }
+  ],
+  "hints": [
+    "Start affects now; enable changes startup links.",
+    "Use journalctl -b and the marker boot ID, not a stale status screenshot.",
+    "Reboot and disk Resume preserve files but not old processes or shell variables."
+  ],
+  "review": [
+    "I matched successful startup to a new boot.",
+    "I restored disabled/inactive policy."
+  ],
+  "coverage": "Partial LPIC-2 202.1; LPIC-1 101.3 controlled reboot (partial). Guest-only administration; completion records self-review, not verified assessment. No score."
+}

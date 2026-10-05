@@ -2,7 +2,7 @@
 import argparse,hashlib,json,os,re,socket,subprocess,sys,tempfile,time
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--vm-home',type=Path,required=True)
-p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline'), default='real-linux-background-job')
+p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change'), default='real-linux-background-job')
 p.add_argument('--installed',action='store_true',help='Use the isolated wheel package, never insert the checkout')
 p.add_argument('--smoke-phase',choices=('start','resume'))
 p.add_argument('--profile',type=Path,help='Same disposable /tmp profile for separate-process installed phases')
@@ -14,7 +14,7 @@ if a.smoke_phase:
 from PySide6.QtCore import Qt,QPointF,qInstallMessageHandler
 from PySide6.QtTest import QTest
 from learning_lab.__main__ import build_application
-from learning_lab.vm_preview.registry import catalog,LEGACY_ID,entries,units,session_binding
+from learning_lab.vm_preview.registry import catalog,LEGACY_ID,entries,units,session_binding,unit_for_lesson
 from learning_lab.vm_preview.process import same_process
 from learning_lab.vm_preview.sessions import Sessions
 from learning_lab.vm_preview.files import Refused
@@ -58,7 +58,7 @@ def installed_smoke():
  import learning_lab
  package=Path(learning_lab.__file__).resolve().parent
  check('isolated installed package',package.is_relative_to(Path(sys.prefix)) and 'site-packages' in package.parts)
- check('both installed units and sixteen lessons',len(units())==2 and len(entries())==16)
+ check('three installed units and twenty-four lessons',len(units())==3 and len(entries())==24)
  check('original unit still eight',len(catalog()['entries'])==8)
  check('accepted lesson bytes',hashlib.sha256((package/'vm_preview/lesson.json').read_bytes()).hexdigest()=='246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da')
  check('native exposed',app.platformName()=='wayland' and QTest.qWaitForWindowExposed(w,5000))
@@ -66,7 +66,7 @@ def installed_smoke():
  binding=hashlib.sha256((str((out/'data').absolute())+'\0'+str((out/'config').absolute())).encode()).hexdigest()
  check('exact session binding',m.profile==session_binding(binding,a.lesson))
  if a.lesson==LEGACY_ID:check('accepted canonical pin',m.pin['lesson_sha256']=='cc71a87e9cc21224b84803a4175dffdfd83da793700402e20ffe3515eeb59180')
- else:check('capacity baseline selected',vm.view['unit']['id']=='lpic-resource-diagnosis-capacity' and m.lesson['id']==a.lesson)
+ else:check('selected lesson and unit match',vm.view['unit']['id']==unit_for_lesson(a.lesson)['id'] and m.lesson['id']==a.lesson)
  expected=out/'expected-session.json'
  if a.smoke_phase=='start':check('fresh fixture',not expected.exists() and vm.view['session'] is None)
  else:
@@ -112,6 +112,8 @@ def installed_smoke():
   if a.smoke_phase=='start':commands=[': > ~/fixture-failures','work=$(mktemp -d "$HOME/capacity-installed.XXXXXX"); cd "$work"','{ date -Is; nproc; uptime; free -m; df -Pk .; df -Pi .; } > baseline.txt','grep -q Mem baseline.txt || echo BASELINE_FAIL >> ~/fixture-failures','printf "%s\\n" "$work" > ~/installed-capacity-workspace','printf "wheel-smoke-marker\\n" > ~/installed-wheel-smoke.txt']
   else:commands+=['work=$(cat ~/installed-capacity-workspace); cd "$work"; grep -q Mem baseline.txt || echo BASELINE_RESUME_FAIL >> ~/fixture-failures']
  for c in commands:line(c)
+ if a.lesson=='real-linux-admin-change':
+  line('sudo -n id -u | grep -qx 0 || echo ADMIN_FAIL >> ~/fixture-failures')
  key('ctrl-q');line('clear');line('if [ -s ~/fixture-failures ]; then echo FAILED; cat ~/fixture-failures; else echo PASSED; fi')
  screenshot=out/(a.smoke_phase+'-guest.png');qmp('screendump',{'filename':str(screenshot),'format':'png'})
  text=subprocess.run(['/usr/bin/tesseract',str(screenshot),'stdout','--psm','6'],capture_output=True,text=True,check=True).stdout

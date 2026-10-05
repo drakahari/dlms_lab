@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-admin-logs",
+  "content_version": "1.0.0",
+  "title": "Follow an event through local logs",
+  "goal": "Correlate a journal event with a correctly scoped local rsyslog rule.",
+  "challenge": "Send a bounded local5.notice event, find it in the journal, diagnose why the dedicated events.log rule misses it, validate and repair the rule, then prove a new event reaches both local destinations. Keep networking and forwarding disabled.",
+  "steps": [
+    {
+      "command": "logger -t ll-admin -p local5.notice \"LAB_EVENT before\"; sudo journalctl -t ll-admin -n 5 --no-pager; sudo cat /etc/rsyslog.d/40-learning-lab.conf",
+      "explanation": "logger uses the guest local Unix logging socket. Compare facility local5 with the existing selector.",
+      "expected": "The journal contains the event; the rule incorrectly selects local6."
+    },
+    {
+      "command": "sudo cp -p /etc/rsyslog.d/40-learning-lab.conf /etc/learning-lab/logging.before; sudo nano /etc/rsyslog.d/40-learning-lab.conf",
+      "explanation": "Change only local6.notice to local5.notice. Traditional .notice selects notice and more severe priorities; it is not exact-priority equality.",
+      "expected": "A local file action; no hostnames, @ forwarding or TCP/UDP input."
+    },
+    {
+      "command": "sudo rsyslogd -N1 && sudo systemctl restart rsyslog.service",
+      "explanation": "Syntax validation must succeed before restart. This changes only the fresh guest logging service.",
+      "expected": "Configuration validation succeeds."
+    },
+    {
+      "command": "logger -t ll-admin -p local5.notice \"LAB_EVENT after\"; sleep 1; sudo journalctl -t ll-admin -p notice -n 5 --no-pager; sudo cat /var/log/learning-lab/events.log",
+      "explanation": "Correlate the new message, tag and time. journalctl -p notice also includes more severe messages unless given an explicit range.",
+      "expected": "LAB_EVENT after appears in both local destinations."
+    },
+    {
+      "command": "sudo ls -l /var/log/learning-lab/events.log; sudo wc -c /var/log/learning-lab/events.log",
+      "explanation": "Keep the few-line evidence file; do not generate a logging flood.",
+      "expected": "A small root-owned protected log, normally root:adm 0640."
+    }
+  ],
+  "hints": [
+    "The journal and rsyslog can both receive an event but apply different storage/filter policies.",
+    "Match the facility before changing the file path.",
+    "Test with a new marker after validation/restart; an old file can contain stale evidence."
+  ],
+  "review": [
+    "I explained facility, severity and local action.",
+    "I validated the rule and correlated a new event without network logging."
+  ],
+  "coverage": "Partial LPIC-1 108.2 local rsyslog and journal (partial). Guest-only administration; completion records self-review, not verified assessment. No score."
+}

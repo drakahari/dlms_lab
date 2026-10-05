@@ -107,3 +107,18 @@ incorporated Rust sources. Twelve notices use legacy free-form text and need
 manual terms review. No Debian image, owner proof disk or personal history was
 copied, mounted, booted or cleared for publication. Host Python/QEMU/gpgv remain
 separate user-obtained prerequisites; their binaries are not redistributed here.
+
+## Separate administrator development image
+
+The Services, Logs & Safe Recovery unit adds a fresh, local-only Debian image;
+its contents are not covered by Learning Lab's MIT license or included in the
+application wheel. It has 204 exact binary packages and a 194-source-package
+closure, including incorporated sources. The five added binaries are sudo,
+rsyslog, libestr0, libfastjson4 and liblognorm5. Exact versions are in
+[`admin-packages.tsv`](docs/vm-preview/admin-packages.tsv); signed-input hashes,
+source URLs and notice/inventory hashes are in
+[`admin-image-provenance.json`](docs/vm-preview/admin-image-provenance.json).
+Matching binaries, notices and source archives are retained outside Git.
+This does not replace the earlier image inventory or establish public release
+clearance. Per-file licensing review, production signing/distribution decisions,
+the unfinished Qt review and the ICU signing-key warning remain outstanding.

@@ -1,0 +1,259 @@
+{
+  "status": "local development build only; not production image admission or redistribution clearance",
+  "image": {
+    "image_id": "debian13-admin-local-v1",
+    "sha256": "f956d5c98848296f6887235c742ee4cc44ed5981acd0d2efd0a593b16d8a578f",
+    "bytes": 17179869184,
+    "format": "raw",
+    "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+    "packages_sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b"
+  },
+  "iso": {
+    "url": "https://cdimage.debian.org/debian-cd/13.7.0/amd64/iso-dvd/debian-13.7.0-amd64-DVD-1.iso",
+    "sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+    "signed_checksum_signer": "DF9B9C49EAA9298432589D76DA87E80D6294BE9B"
+  },
+  "installed_package_manifest": {
+    "resource": "admin-packages.tsv",
+    "sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+    "binary_count": 204,
+    "source_count_including_built_using": 194
+  },
+  "retained_full_inventory": {
+    "guest-package-inventory.json": {
+      "sha256": "3dfd82a642a23170936ece303afaae40c64b18629febd96a6f449a242e952502",
+      "bytes": 212532
+    },
+    "source-inventory.json": {
+      "sha256": "9cfea4dc39308d238577909a5c39df0fadbdbfce0e4b3b67b335acbde59bc592",
+      "bytes": 264421
+    },
+    "input-verification.json": {
+      "sha256": "2baf862ef33187c51a7b403158558d00e4ba18001fd06e71a5396f85dba7edcb",
+      "bytes": 651
+    }
+  },
+  "source_metadata": {
+    "debian-InRelease": {
+      "sha256": "0584fba32e13e0ab8285fb16c27adea1ec03a73669c18702821094fd6ca86675",
+      "bytes": 140421
+    },
+    "security-InRelease": {
+      "sha256": "a5bc5449ff218c85ebc4fca64eb81682fb0e8ed84a8191c28e76644c4023b2b7",
+      "bytes": 43405
+    },
+    "debian-Sources.xz": {
+      "sha256": "6002f81f463a2d976d84b34170367cc16da2d60bd0ba9ab9d868d6e1c1a935d9",
+      "bytes": 10540436
+    },
+    "security-Sources.xz": {
+      "sha256": "422e1bf6854209d8d6ab8527fe4b4ca032035f66ce1d6d3eb874f89000b9439b",
+      "bytes": 239472
+    },
+    "debian-release-keyring.gpg": {
+      "sha256": "cea293fd74d83b8f55ed5d31d3ec7fe0267828791d64115b1ee60c577b20ba82",
+      "bytes": 35776
+    }
+  },
+  "source_metadata_signers": [
+    "04B54C3CDCA79751B16BC6B5225629DF75B188BD",
+    "05AB90340C0C5E797F44A8C8254CF3B5AEC0A8F0",
+    "41587F7DB8C774BCCF131416762F67A0B2C39DE4",
+    "5E04A1E3223A19A20706E20F9904613D4CCE68C6",
+    "B8B80B5B623EAB6AD8775C45B7C5D7D6350947F8"
+  ],
+  "recipe_payload_sha256": {
+    "preseed.cfg": "c3d9d8e711231d5c27225636af7a7a414c40239ce6cd83a984dba7bcaf7e16b9",
+    "finish-image.sh": "19502329f8fb8ffcba8ea97633d4e62095e2e77b5639d600dc13f682087a2398"
+  },
+  "new_offline_packages": [
+    {
+      "binary": "libestr0:amd64",
+      "version": "0.1.11-2",
+      "source": "libestr",
+      "source_version": "0.1.11-2",
+      "binary_sha256": "efd7769772d7300429aa22ace8f697667e030da04d62029d892439692cfa4b9f",
+      "binary_bytes": 9048,
+      "member": "pool/main/libe/libestr/libestr0_0.1.11-2_amd64.deb",
+      "depends": "libc6 (>= 2.14)",
+      "pre_depends": "",
+      "notice_sha256": "235fda4124a26fe727b1a19c4e9cef2e2bb1222183e77c3e1a3741732461f0b8",
+      "license_review": "Exact package copyright retained; per-file licenses remain authoritative. Public distribution review is deferred."
+    },
+    {
+      "binary": "libfastjson4:amd64",
+      "version": "1.2304.0-2",
+      "source": "libfastjson",
+      "source_version": "1.2304.0-2",
+      "binary_sha256": "ce5ce8672287493effde70831a2ed00c244979e15d62a58c23dde772b1fc9072",
+      "binary_bytes": 28944,
+      "member": "pool/main/libf/libfastjson/libfastjson4_1.2304.0-2_amd64.deb",
+      "depends": "libc6 (>= 2.38)",
+      "pre_depends": "",
+      "notice_sha256": "47a23247987e122cf942a91e65259c5a5836e81cf70c311e2f4bcd9ee7695b3a",
+      "license_review": "Exact package copyright retained; per-file licenses remain authoritative. Public distribution review is deferred."
+    },
+    {
+      "binary": "liblognorm5:amd64",
+      "version": "2.0.6-5",
+      "source": "liblognorm",
+      "source_version": "2.0.6-5",
+      "binary_sha256": "1f046adbb85776d56fc4a18e577f99fcb6262415239fa90ced59114352085389",
+      "binary_bytes": 66492,
+      "member": "pool/main/libl/liblognorm/liblognorm5_2.0.6-5_amd64.deb",
+      "depends": "libc6 (>= 2.38), libestr0 (>= 0.1.0), libfastjson4 (>= 0.99.3)",
+      "pre_depends": "",
+      "notice_sha256": "ea8e96a717c4000a54d0980b8f16828c75222f33a09487c19a0eb5ed673eeab2",
+      "license_review": "Exact package copyright retained; per-file licenses remain authoritative. Public distribution review is deferred."
+    },
+    {
+      "binary": "rsyslog",
+      "version": "8.2504.0-1+deb13u2",
+      "source": "rsyslog",
+      "source_version": "8.2504.0-1+deb13u2",
+      "binary_sha256": "dd1cde1606196187d98e9e4500210e2f523192cef7aab2f0a0164700ea7fe445",
+      "binary_bytes": 758396,
+      "member": "pool/main/r/rsyslog/rsyslog_8.2504.0-1+deb13u2_amd64.deb",
+      "depends": "libc6 (>= 2.38), libestr0 (>= 0.1.9), libfastjson4 (>= 0.99.8), liblognorm5 (>= 2.0.3), libsystemd0 (>= 246), libuuid1 (>= 2.16), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)",
+      "pre_depends": "",
+      "notice_sha256": "73eea0d41d1b20a0a9428bbc0a3127c65abdd46db4b700fb8e8b0e884f6cffdd",
+      "license_review": "Exact package copyright retained; per-file licenses remain authoritative. Public distribution review is deferred."
+    },
+    {
+      "binary": "sudo",
+      "version": "1.9.16p2-3+deb13u2",
+      "source": "sudo",
+      "source_version": "1.9.16p2-3+deb13u2",
+      "binary_sha256": "4f926f8f0704575158a90135713977f98f7d50d185969d9a8a405cdce5e3e50c",
+      "binary_bytes": 2086456,
+      "member": "pool/main/s/sudo/sudo_1.9.16p2-3+deb13u2_amd64.deb",
+      "depends": "libapparmor1 (>= 2.7.0~beta1+bzr1772), libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.0), zlib1g (>= 1:1.2.0.2), libpam-modules",
+      "pre_depends": "init-system-helpers (>= 1.54~)",
+      "notice_sha256": "3e65ecb9dea7290d1ad3602b6bafd0383a54f99b2624ff2b4961154185b683dc",
+      "license_review": "Exact package copyright retained; per-file licenses remain authoritative. Public distribution review is deferred."
+    }
+  ],
+  "new_package_sources": [
+    {
+      "source": "libestr",
+      "version": "0.1.11-2",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "sha256": "adb8c25c285a544b37023c8724f5ec9cc6daa8793fc890348a696e38d6c9eba0",
+          "bytes": 1942,
+          "url": "https://deb.debian.org/debian/pool/main/libe/libestr/libestr_0.1.11-2.dsc"
+        },
+        {
+          "sha256": "46632b2785ff4a231dcf241eeb0dcb5fc0c7d4da8ee49cf5687722cdbe8b2024",
+          "bytes": 355544,
+          "url": "https://deb.debian.org/debian/pool/main/libe/libestr/libestr_0.1.11.orig.tar.gz"
+        },
+        {
+          "sha256": "4a46352507ce07054d6fbd8d6668754bbcbabe78a8dcd1ac769dd9ff92846da2",
+          "bytes": 3772,
+          "url": "https://deb.debian.org/debian/pool/main/libe/libestr/libestr_0.1.11-2.debian.tar.xz"
+        }
+      ]
+    },
+    {
+      "source": "libfastjson",
+      "version": "1.2304.0-2",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "sha256": "73ab15cf326dc344f0e09fe69046a41fa5dc8701e8ee17da6b1f113e7045bc77",
+          "bytes": 1954,
+          "url": "https://deb.debian.org/debian/pool/main/libf/libfastjson/libfastjson_1.2304.0-2.dsc"
+        },
+        {
+          "sha256": "ef30d1e57a18ec770f90056aaac77300270c6203bbe476f4181cc83a2d5dc80c",
+          "bytes": 436726,
+          "url": "https://deb.debian.org/debian/pool/main/libf/libfastjson/libfastjson_1.2304.0.orig.tar.gz"
+        },
+        {
+          "sha256": "f719a7909f7a44b4a9a649475f1e9a984a28c6d12287f35aa2d8d6017ae08eb3",
+          "bytes": 3616,
+          "url": "https://deb.debian.org/debian/pool/main/libf/libfastjson/libfastjson_1.2304.0-2.debian.tar.xz"
+        }
+      ]
+    },
+    {
+      "source": "liblognorm",
+      "version": "2.0.6-5",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "sha256": "471c394968f344e8fdeee8ae6ddd88bed3b13b6191d0d63532c664663e9e8ca1",
+          "bytes": 2190,
+          "url": "https://deb.debian.org/debian/pool/main/libl/liblognorm/liblognorm_2.0.6-5.dsc"
+        },
+        {
+          "sha256": "cff057e85c22038992f9ed12eb8d4e63c45adf53a5a51faaa3279f605809f6f2",
+          "bytes": 666712,
+          "url": "https://deb.debian.org/debian/pool/main/libl/liblognorm/liblognorm_2.0.6.orig.tar.gz"
+        },
+        {
+          "sha256": "5f7bf4334126e23dd07386628e970075162d38f4940cc0aa3a0f09f6eeacc66b",
+          "bytes": 19096,
+          "url": "https://deb.debian.org/debian/pool/main/libl/liblognorm/liblognorm_2.0.6-5.debian.tar.xz"
+        }
+      ]
+    },
+    {
+      "source": "rsyslog",
+      "version": "8.2504.0-1+deb13u2",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "sha256": "8afcb5ca46e18a77e3151d66abba1313df4a9202cbc67e467344ce9c4ffe698b",
+          "bytes": 3452,
+          "url": "https://deb.debian.org/debian/pool/main/r/rsyslog/rsyslog_8.2504.0-1+deb13u2.dsc"
+        },
+        {
+          "sha256": "5092a20ed40987c74cc604ebfcd6c749e47eb9fc34adc1c2637e6553e7f047ab",
+          "bytes": 3468108,
+          "url": "https://deb.debian.org/debian/pool/main/r/rsyslog/rsyslog_8.2504.0.orig.tar.gz"
+        },
+        {
+          "sha256": "2ffeac2e399343e9de0c0148a015a335545fff37e02d66be0d17a60bd279f995",
+          "bytes": 35252,
+          "url": "https://deb.debian.org/debian/pool/main/r/rsyslog/rsyslog_8.2504.0-1+deb13u2.debian.tar.xz"
+        }
+      ]
+    },
+    {
+      "source": "sudo",
+      "version": "1.9.16p2-3+deb13u2",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "sha256": "43ba6f6bad19d018e277d6a5a6cdc5245f16d58082f997fc29897081a632bfce",
+          "bytes": 2740,
+          "url": "https://deb.debian.org/debian/pool/main/s/sudo/sudo_1.9.16p2-3+deb13u2.dsc"
+        },
+        {
+          "sha256": "976aa56d3e3b2a75593307864288addb748c9c136e25d95a9cc699aafa77239c",
+          "bytes": 5398419,
+          "url": "https://deb.debian.org/debian/pool/main/s/sudo/sudo_1.9.16p2.orig.tar.gz"
+        },
+        {
+          "sha256": "52f2a33420ffe6cc2e150f056e51fccf9f3abb6e82c094c7b7b89401ffb62c01",
+          "bytes": 833,
+          "url": "https://deb.debian.org/debian/pool/main/s/sudo/sudo_1.9.16p2.orig.tar.gz.asc"
+        },
+        {
+          "sha256": "4479f56745559b879a5ef1a29d3bd41d6b44644888212169eea8c3a363a9b99c",
+          "bytes": 69124,
+          "url": "https://deb.debian.org/debian/pool/main/s/sudo/sudo_1.9.16p2-3+deb13u2.debian.tar.xz"
+        }
+      ]
+    }
+  ],
+  "verification": "Exact ISO signed checksum; Packages hashes authenticated by ISO; exact binary hashes/notices and source hashes checked against signed Debian source metadata. No downloaded source/build script executed. dpkg/apt checks are recorded in native acceptance.",
+  "limitations": [
+    "Not byte-for-byte reproducible: installation UUIDs/timestamps vary.",
+    "Source and notice retention is evidence, not blanket legal clearance. Qt review and ICU signing-key warning remain open.",
+    "No production signing keys, approved releases, online update or public image distribution."
+  ]
+}

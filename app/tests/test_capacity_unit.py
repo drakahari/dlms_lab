@@ -8,7 +8,7 @@ from learning_lab.vm_preview.registry import units, entries, catalog, load_lesso
 from learning_lab.vm_preview.image_catalog import production_catalog, digest
 from learning_lab.vm_preview.sessions import Sessions
 from capacity_guest_fixtures import COMMANDS
-PROTECTED = {'unit.json': '6de3c33587271f923ae230a99d9fbec013a005fb818fde07533ab3fe781b7ad1', 'lesson.json': '246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da', 'image.json': '1499ad6e7f5cced795f5f0ff97348fbaa321a60aba3c8a810f074a846410a417', 'manager.py': 'f54fef7cf249a103f48f72f79964bd47e36253d2da69e2ba84ad225f5af062e4', 'policy.py': '0fc31036904c975950ed5902a910cfe2a3a02a8aa60e421aa460cdcbcc104031', 'process.py': 'b01bcf16fa10daa001f75c04e6054fcda610eb59db8c3737506e12bc2f9ba4c6', 'runner.py': 'dfc173564c073c0ac0d80c6a717a0b7a203d53194c466122a391ba932a2b5c48', 'files.py': '548868ac623bb1a4796884a140c959fa2b2d5bbb539f3fa16d642c93b5f361c0', 'catalog_manager.py': '8de739b4dfaebffb74aa5671a5be878b2fb9365984e208d20dd65ba536cd1aa2', 'image_catalog.py': '49abc42d9de49422d3f2f966a12c98b2a5f35f7abe6129b12a33cdd444ef68e9', 'bundle_archive.py': 'e474cbbc8ba9a3638b8fc9baee92faeb64f5566bc3ac399ee03718c2d5e629cd', 'bundle_signature.py': '48c73f464e1a8c9259bf2f81042f089e13c10d0b346bfd5f586b0af3bf210068', 'image_bundle.py': '7699e9544080028448a7742d212c267a93a82e4f82d239885e5876869067a470', 'real-linux-process-inspection.json': 'b954c498e5b3cb415d5e04091c7886c08cb632e3dc960e785362020d91e9feed', 'real-linux-foreground-jobs.json': 'd5b4794811e15969a8d0b81a82581648d72fcc0389e5fe2add0783f6b0217ee2', 'real-linux-targeted-signals.json': '3be3c2d2f4fab885c7ca1d8eafe6833b2bc7c6fac58912dbde5a7de31c8cd2aa', 'real-linux-live-monitoring.json': '24b4d79d57e31835559bde8a8212b6135df3311a17c48d7b616a2c1414ed40c2', 'real-linux-logout-persistence.json': '7f5a32defd10c1a645b832df6359f53951e4ce8ca9ab23ca6b653f0559555d0d', 'real-linux-process-priorities.json': 'f81821b9d040be954a406f8c168e064a8d258504c9f13af9c4eb4bfd66f57fed', 'real-linux-process-handover.json': 'eab59839bc70e8c4acb05e184d5d11531f94b3fc524ee234eb61d3f36f29f32c'}
+PROTECTED = {'unit.json': '6de3c33587271f923ae230a99d9fbec013a005fb818fde07533ab3fe781b7ad1', 'lesson.json': '246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da', 'image.json': '1499ad6e7f5cced795f5f0ff97348fbaa321a60aba3c8a810f074a846410a417', 'manager.py': 'f54fef7cf249a103f48f72f79964bd47e36253d2da69e2ba84ad225f5af062e4', 'policy.py': '0fc31036904c975950ed5902a910cfe2a3a02a8aa60e421aa460cdcbcc104031', 'process.py': 'b01bcf16fa10daa001f75c04e6054fcda610eb59db8c3737506e12bc2f9ba4c6', 'runner.py': 'dfc173564c073c0ac0d80c6a717a0b7a203d53194c466122a391ba932a2b5c48', 'files.py': '548868ac623bb1a4796884a140c959fa2b2d5bbb539f3fa16d642c93b5f361c0', 'catalog_manager.py': '8de739b4dfaebffb74aa5671a5be878b2fb9365984e208d20dd65ba536cd1aa2', 'image_catalog.py': '5b4c3030afe52c4bbe4c7e59181922cdf69f81d89cf5f549e5ae2dcf3775f481', 'bundle_archive.py': 'e474cbbc8ba9a3638b8fc9baee92faeb64f5566bc3ac399ee03718c2d5e629cd', 'bundle_signature.py': '48c73f464e1a8c9259bf2f81042f089e13c10d0b346bfd5f586b0af3bf210068', 'image_bundle.py': '7699e9544080028448a7742d212c267a93a82e4f82d239885e5876869067a470', 'real-linux-process-inspection.json': 'b954c498e5b3cb415d5e04091c7886c08cb632e3dc960e785362020d91e9feed', 'real-linux-foreground-jobs.json': 'd5b4794811e15969a8d0b81a82581648d72fcc0389e5fe2add0783f6b0217ee2', 'real-linux-targeted-signals.json': '3be3c2d2f4fab885c7ca1d8eafe6833b2bc7c6fac58912dbde5a7de31c8cd2aa', 'real-linux-live-monitoring.json': '24b4d79d57e31835559bde8a8212b6135df3311a17c48d7b616a2c1414ed40c2', 'real-linux-logout-persistence.json': '7f5a32defd10c1a645b832df6359f53951e4ce8ca9ab23ca6b653f0559555d0d', 'real-linux-process-priorities.json': 'f81821b9d040be954a406f8c168e064a8d258504c9f13af9c4eb4bfd66f57fed', 'real-linux-process-handover.json': 'eab59839bc70e8c4acb05e184d5d11531f94b3fc524ee234eb61d3f36f29f32c'}
 UNIT = 'lpic-resource-diagnosis-capacity'
 
 class CapacityRegistryTests(unittest.TestCase):
@@ -23,10 +23,10 @@ class CapacityRegistryTests(unittest.TestCase):
  def test_exact_legacy_bytes_and_controller_unchanged(self):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
  def test_order_bounds_and_global_identity(self):
-  self.assertEqual([u['id'] for u in units()],[registry.LEGACY_UNIT,UNIT])
-  self.assertEqual([len(u['entries']) for u in units()],[8,8])
-  self.assertEqual(len(entries()),16);self.assertEqual(len({e['id'] for e in entries()}),16)
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(4,16,16))
+  self.assertEqual([u['id'] for u in units()[:2]],[registry.LEGACY_UNIT,UNIT])
+  self.assertEqual([len(u['entries']) for u in units()[:2]],[8,8])
+  self.assertEqual(len(entries()),24);self.assertEqual(len({e['id'] for e in entries()}),24)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(4,16,24))
   self.assertEqual(list(COMMANDS),[e['id'] for e in catalog(UNIT)['entries']])
  def test_unit_count_version_duplicates_and_paths_rejected(self):
   self.malformed(lambda n,v:v.update(schema_version=2) if n=='units.json' else None)
@@ -36,7 +36,7 @@ class CapacityRegistryTests(unittest.TestCase):
   self.malformed(lambda n,v:v['units'][1].update(resource=['bad']) if n=='units.json' else None)
  def test_cross_unit_duplicate_and_total_limit_fail_before_lesson_reads(self):
   self.malformed(lambda n,v:v['entries'][0].update(id=LEGACY_ID) if n=='resource-unit.json' else None)
-  self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='resource-unit.json' else None)
+  self.malformed(lambda n,v:v['entries'].extend(copy.deepcopy(v['entries'])+copy.deepcopy(v['entries'][:1])) if n=='resource-unit.json' else None)
   self.malformed(lambda n,v:v['entries'].extend(v['entries']*2) if n=='resource-unit.json' else None)
  def test_support_fields_cannot_execute_or_exceed_bounds(self):
   self.malformed(lambda n,v:v['entries'][0].update(script='id') if n=='resource-unit.json' else None)
@@ -50,16 +50,17 @@ class CapacityRegistryTests(unittest.TestCase):
     with self.assertRaises(ValueError):registry._read(bad)
  def test_all_new_pairs_exact_and_production_trust_empty(self):
   c=production_catalog();self.assertEqual(c.keys,{});self.assertEqual(c.releases,{})
-  self.assertEqual(len(c.lessons),16);self.assertEqual(len(c.images),1)
+  self.assertEqual(len(c.lessons),24);self.assertEqual(len(c.images),2)
   for e in entries():
    spec,l=c.defaults(e['id']);self.assertEqual(l,load_lesson(e['id']))
    self.assertEqual(digest(l),c._data['default_lessons'][e['id']])
-   self.assertEqual(spec,json.loads((registry.ROOT/'image.json').read_text()))
+   self.assertEqual(spec,json.loads((registry.ROOT/('admin-image.json' if e['id'].startswith('real-linux-admin-') else 'image.json')).read_text()))
  def test_original_catalog_projection_exact(self):
   # Remove only the authorized new lesson entries. Every remaining descriptor,
   # availability state, compatibility pair, default, key and release is exact.
   c=json.loads((registry.ROOT/'image-catalog.json').read_text())
-  new={e['id'] for e in catalog(UNIT)['entries']}
+  new={e['id'] for e in entries() if e['id'].startswith(('real-linux-capacity-','real-linux-admin-'))}
+  c.pop('default_images',None);c['images']=c['images'][:1]
   c['lessons']=[x for x in c['lessons'] if x['id'] not in new]
   for image in c['images']:image['lessons']=[x for x in image['lessons'] if x['id'] not in new]
   for name in ('default_lessons',):

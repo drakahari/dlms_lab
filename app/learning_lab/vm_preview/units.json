@@ -8,6 +8,10 @@
     {
       "id": "lpic-resource-diagnosis-capacity",
       "resource": "resource-unit.json"
+    },
+    {
+      "id": "linux-administration-services-logs-recovery",
+      "resource": "admin-unit.json"
     }
   ]
 }

@@ -42,7 +42,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
   for key in (Qt.Key_Space,Qt.Key_Home,Qt.Key_Return):QTest.keyClick(w,key)
   QTest.qWait(100);wait();check('keyboard ComboBox selection',vm.view['selected_lesson_id']==ids[0])
   item('vmUnitChoice').forceActiveFocus(Qt.TabFocusReason)
-  for key in (Qt.Key_Space,Qt.Key_End,Qt.Key_Return):QTest.keyClick(w,key)
+  for key in (Qt.Key_Space,Qt.Key_Home,Qt.Key_Down,Qt.Key_Return):QTest.keyClick(w,key)
   QTest.qWait(100);wait();check('keyboard unit selection',vm.view['selected_lesson_id']==ids[8])
   for id in ids:
    select(id);m=vm.manager
@@ -53,7 +53,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
     press('vmNext');wait();vm.progress('hint');wait();vm.progress('complete');wait();check(id+' self-review only',vm.view['session']['completion']['kind']=='self-reviewed' and 'score' not in vm.view['session'])
     m.reset('Challenge',True);vm.refresh();wait();check(id+' Challenge associated',vm.view['session']['mode']=='Challenge')
     if id in ids[8:]:
-     check(id+' Challenge setup available',item('vmPracticeMaterial').property('text').startswith('Guest-local setup'))
+     check(id+' Challenge setup available',item('vmPracticeMaterial').property('text').startswith(('Guest-local setup','Guest-only administration')))
      check(id+' interpretation remains available',item('vmInterpretationHeading').property('text')=='Interpretation questions')
     try:item('vmCommand');raise AssertionError('Challenge leaked guidance')
     except AssertionError as exc:assert str(exc)=='vmCommand'
@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
    press('vmReturnRunning');wait();check('return selects running lesson',vm.view['selected_lesson_id']==ids[0]);check('running Stop still enabled',item('vmStop').isEnabled());select(LEGACY_ID)
   vm.refresh();wait();check('legacy untouched by selection',legacy.status()['session']==before)
   for size in ((800,600),(1280,900)):
-   select(ids[8+6])
+   select(ids[-2])
    w.resize(*size);QTest.qWait(100);sizes.append({'requested':list(size),'actual':[w.width(),w.height()]})
    for name in ('vmStart','vmStop','vmReset','vmClose'):
     x=item(name);pos=x.mapToScene(QPointF(0,0));check(name+' contained '+str(size),pos.x()>=0 and pos.y()>=0 and pos.x()+x.width()<=w.width() and pos.y()+x.height()<=w.height())

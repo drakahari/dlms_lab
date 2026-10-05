@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-admin-lifecycle",
+  "content_version": "1.0.0",
+  "title": "Manage a local service",
+  "goal": "Distinguish service state, its process and its recent journal events.",
+  "challenge": "Inspect the stopped ll-lifecycle.service, start it, identify the real service user/PID, restart it, then stop it cleanly. Explain active state versus enabled-at-boot state.",
+  "steps": [
+    {
+      "command": "systemctl status ll-lifecycle.service --no-pager; systemctl is-enabled ll-lifecycle.service",
+      "explanation": "A status command may return nonzero for a stopped service; that is an observation.",
+      "expected": "The prepared service is inactive and disabled."
+    },
+    {
+      "command": "sudo systemctl start ll-lifecycle.service; systemctl show ll-lifecycle.service -p ActiveState -p MainPID -p User -p MemoryMax -p TasksMax",
+      "explanation": "Start the bounded service and inspect its current actual PID; no fixed PID is assumed.",
+      "expected": "ActiveState=active, a nonzero MainPID and User=ll-service."
+    },
+    {
+      "command": "pid=$(systemctl show ll-lifecycle.service -p MainPID --value); ps -o pid,user,stat,args -p \"$pid\"",
+      "explanation": "Only inspect the currently reported PID. If the 120-second limit already expired, inspect the journal and restart the lab unit.",
+      "expected": "An ll-service process; not a root worker."
+    },
+    {
+      "command": "sudo systemctl restart ll-lifecycle.service; sudo journalctl -u ll-lifecycle.service -n 12 --no-pager",
+      "explanation": "Restart replaces the invocation. Read timestamped LAB_READY and stop/start events.",
+      "expected": "A new invocation/PID is possible; no exact number is required."
+    },
+    {
+      "command": "sudo systemctl stop ll-lifecycle.service; systemctl is-active ll-lifecycle.service",
+      "explanation": "Stop targets the entire named unit, avoiding broad process termination.",
+      "expected": "inactive; nonzero is-active status is expected."
+    }
+  ],
+  "hints": [
+    "Use systemctl show for the current MainPID; never copy a PID from a lesson.",
+    "status, enabled state and journal answer different questions.",
+    "The timer bounds unattended practice; inspect its expiry instead of hiding it."
+  ],
+  "review": [
+    "I matched the process to its unprivileged service user.",
+    "I observed start/restart/stop and explained disabled versus inactive."
+  ],
+  "coverage": "Partial LPIC-2 202.1 systemd service management. Guest-only administration; completion records self-review, not verified assessment. No score."
+}

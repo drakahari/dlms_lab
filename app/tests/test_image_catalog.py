@@ -30,12 +30,12 @@ class CatalogTests(unittest.TestCase):
   self.data['lessons'].append({'id':LEGACY_ID,'sha256':digest(lesson),'resource':'fixture-revision.json','state':'active'})
   self.data['default_lessons'][LEGACY_ID]=digest(lesson)
   image=copy.deepcopy(image_spec());image.update(image_id='new-fixture-image',sha256='b'*64,version=2)
-  self.data['images'].append({'descriptor':image,'state':'active','legacy':False,'lessons':[{'id':l['id'],'sha256':l['sha256']} for l in self.data['lessons']]});self.data['default_image']=digest(image)
+  self.data['images'].append({'descriptor':image,'state':'active','legacy':False,'lessons':[{'id':l['id'],'sha256':l['sha256']} for l in self.data['lessons']]});self.data['default_image']=digest(image);self.data.pop('default_images',None)
  def test_legacy_catalog_exact_and_active(self):
   cat=production_catalog();old=Manager(self.root/'unused','a'*64);m=self.manager(cat)
   self.assertEqual(old.pin,m.pin);self.assertEqual(m.profile,'a'*64);self.assertFalse(self.root.joinpath('unused').exists())
   cat.allow(m.pin,LEGACY_ID,'new');cat.allow(m.pin,LEGACY_ID,'reset');cat.allow(m.pin,LEGACY_ID,'resume')
-  self.assertEqual(len(cat.lessons),16);self.assertEqual(len(cat.images),1);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
+  self.assertEqual(len(cat.lessons),24);self.assertEqual(len(cat.images),2);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
  def test_catalog_edit_reopen_preserves_exact_learn_challenge_bytes(self):
   for mode,profile in (('Learn','a'*64),('Challenge','b'*64)):
    old=self.manager(profile=profile);self.record(old,mode)
@@ -116,6 +116,8 @@ class CatalogTests(unittest.TestCase):
  def test_image_lesson_pair_must_be_explicit(self):
   m=self.manager();saved=self.record(m);before=self.inventory()
   image=self.data['images'][0];image['lessons']=[p for p in image['lessons'] if p['id']!=LEGACY_ID]
+  with self.assertRaisesRegex(Refused,'pair'):self.catalog()
+  self.data.pop('default_images')  # Legacy catalog still refuses at pin resolution.
   cat=self.catalog()
   with self.assertRaisesRegex(Refused,'combination'):cat.resolve(saved['pin'],LEGACY_ID)
   self.assertEqual(self.inventory(),before)
@@ -141,3 +143,51 @@ class CatalogTests(unittest.TestCase):
    if missing:m.catalog.images.clear()
    with self.assertRaisesRegex(Refused,'trusted QEMU'):m.stop()
   self.assertEqual(os.getpid(),forged['process']['pid'])
+
+ def test_every_explicit_route_availability_and_preserved_records(self):
+  # All 24 routes, both image and lesson availability; no image/disk mock can
+  # hide an accidental boot. Authorization must reject before process creation.
+  for id in self.data['default_lessons']:
+   m=self.manager(id=id);saved=self.record(m);before=self.inventory()
+   for field in ('image','lesson'):
+    for state in ('resume-only','withdrawn'):
+     cat=self.catalog()
+     if field=='image':cat.images[digest(saved['pin']['image'])]['state']=state
+     else:cat.lessons[(id,saved['pin']['lesson_sha256'])][0]['state']=state
+     m=self.manager(cat,id=id)
+     self.assertEqual(m.status()['session'],saved)
+     with patch('subprocess.Popen',side_effect=AssertionError('unauthorized spawn')):
+      with self.assertRaisesRegex(Refused,state):m.reset(confirmed=True)
+      fresh=self.manager(cat,id=id,profile='b'*64)
+      with self.assertRaisesRegex(Refused,state):fresh.start()
+      if state=='withdrawn':
+       with self.assertRaisesRegex(Refused,'withdrawn'):m.start()
+      else:m._authorize('resume',saved)
+     self.assertEqual(m.pin,saved['pin'])
+   # Access may create empty lock directories; saved evidence must not change.
+   after=self.inventory()
+   for path,raw in before.items():self.assertEqual(after[path],raw)
+
+ def test_every_route_missing_mismatched_or_unavailable_pin_refuses_boot(self):
+  for id in self.data['default_lessons']:
+   m=self.manager(id=id);saved=self.record(m);before=self.inventory()
+   for fault in ('missing-image','missing-lesson','mismatched-descriptor','mismatched-resource'):
+    m=self.manager(id=id);cat=m.catalog
+    if fault=='missing-image':cat.images.pop(digest(saved['pin']['image']))
+    elif fault=='missing-lesson':cat.lessons.pop((id,saved['pin']['lesson_sha256']))
+    elif fault=='mismatched-descriptor':cat.images[digest(saved['pin']['image'])]['descriptor']['version']+=1
+    else:cat._read=lambda name:canonical({'id':id,'title':'substituted'})
+    with patch('subprocess.Popen',side_effect=AssertionError('invalid pin spawned')):
+     for action in (m.start,lambda:m.reset(confirmed=True)):
+      with self.assertRaises(ValueError):action()
+    self.assertEqual(m.pin,saved['pin'])
+   self.assertEqual(before,self.inventory())
+
+ def test_old_route_missing_base_never_uses_installed_admin_base(self):
+  # Real descriptor-contained file lookup, not a mocked image() implementation.
+  m=self.manager();admin=self.catalog().defaults('real-linux-admin-change')[0]
+  with m.access() as (root,g,p):
+   with root.child('images',create=True) as images,images.child(admin['sha256'],create=True) as image:
+    fd=image.open('base.raw',True,True);os.write(fd,b'ADMIN MUST NOT BE USED');os.close(fd)
+   with self.assertRaisesRegex(Refused,'pinned local image is not registered'):m.image(root)
+  self.assertEqual(m.spec,image_spec())

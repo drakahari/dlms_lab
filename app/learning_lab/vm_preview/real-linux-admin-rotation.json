@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-admin-rotation",
+  "content_version": "1.0.0",
+  "title": "Rotate a lab log safely",
+  "goal": "Validate a rotation rule and retain protected records with bounded history.",
+  "challenge": "Repair the invalid create mode in the dedicated lab rotation rule. Preview before applying it with an isolated state file; rotate a small fixture, prove the original records were retained and the new file has root:adm 0640 permissions. Do not invoke the global rotation configuration.",
+  "steps": [
+    {
+      "command": "printf \"LAB_ROTATE retained record\\n\" | sudo tee /var/log/learning-lab/rotation.log; sudo chmod 0640 /var/log/learning-lab/rotation.log; sudo chown root:adm /var/log/learning-lab/rotation.log",
+      "explanation": "Create one small guest log. This is no filesystem exhaustion or throughput exercise.",
+      "expected": "One retained record in the protected file."
+    },
+    {
+      "command": "sudo logrotate --debug --state /var/lib/learning-lab/rotation.state /etc/learning-lab/rotation.conf",
+      "explanation": "Debug reports the invalid 0999 octal mode without rotating data or updating state.",
+      "expected": "A configuration error; original log remains intact."
+    },
+    {
+      "command": "sudo cp -p /etc/learning-lab/rotation.conf /etc/learning-lab/rotation.before; sudo nano /etc/learning-lab/rotation.conf",
+      "explanation": "Change create 0999 root adm to create 0640 root adm. Keep rotate 2, the exact log path and all other rules.",
+      "expected": "Only the invalid creation mode changes."
+    },
+    {
+      "command": "sudo logrotate --debug --state /var/lib/learning-lab/rotation.state /etc/learning-lab/rotation.conf && sudo logrotate --force --state /var/lib/learning-lab/rotation.state /etc/learning-lab/rotation.conf",
+      "explanation": "Apply only after successful preview. Force permits this tiny fixture to rotate below its 1k threshold; normal size behavior remains distinct.",
+      "expected": "One rotated file and a new empty active file."
+    },
+    {
+      "command": "sudo cat /var/log/learning-lab/rotation.log.1; sudo ls -l /var/log/learning-lab/rotation.log*; sudo wc -c /var/log/learning-lab/rotation.log",
+      "explanation": "Inspect retained records and new ownership/mode. Do not repeat forced rotation merely to produce output; bounded history can eventually discard the oldest archive.",
+      "expected": "Original record remains in .1; active file is empty and root:adm 0640."
+    }
+  ],
+  "hints": [
+    "0999 is not an octal permission mode.",
+    "--debug previews; --force applies even when this small log has not reached 1k.",
+    "Use the dedicated state/config files so unrelated rotation jobs are untouched."
+  ],
+  "review": [
+    "I demonstrated a failing preview without data change.",
+    "I retained the old record and verified the new file permissions."
+  ],
+  "coverage": "Partial LPIC-1 108.2 logrotate (partial). Guest-only administration; completion records self-review, not verified assessment. No score."
+}

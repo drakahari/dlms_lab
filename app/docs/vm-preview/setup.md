@@ -1,5 +1,9 @@
 # Local image preparation and preview launch
 
+The separate [Services, Logs & Safe Recovery unit](admin-unit.md) uses its own
+administrator image and explicit lesson/image mappings. The original image and
+unprivileged recipe below remain unchanged.
+
 The simulator installation is unchanged. QEMU remains an optional, separately
 approved host prerequisite; the app does not install packages or change groups,
 services, networking, authentication or desktop settings. This recipe is for a
@@ -86,7 +90,9 @@ QT_QPA_PLATFORMTHEME='' python3 -B -m learning_lab \
 Library → **Real Linux VM preview…** → choose a collection and lesson → choose Learn → **Start**.
 The [Processes, Jobs & Priorities](processes-unit.md) and
 [Resource Diagnosis & Capacity Evidence](resource-unit.md) units share the same
-optional image and controller; each lesson retains its own pinned session. Type commands
+optional unprivileged image. The separate [Services, Logs & Safe Recovery](admin-unit.md)
+unit requires its exact administrator image; it is never substituted for an old lesson.
+All use the unchanged controller; each lesson retains its own pinned session. Type commands
 in the separate native GTK console. The app's guidance is not a command runner.
 Use **Stop** for clean guest shutdown, then **Resume disk** for the same files.
 Reset is enabled only while stopped and requires confirmation; choose the new mode

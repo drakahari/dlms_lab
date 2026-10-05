@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-admin-override",
+  "content_version": "1.0.0",
+  "title": "Repair a broken service override",
+  "goal": "Locate the effective systemd configuration and repair one invalid executable path.",
+  "challenge": "Find why ll-override.service fails, preserve the faulty drop-in, repair only its executable path, validate and reload the unit, and verify a new successful invocation. Retain a safe rollback path.",
+  "steps": [
+    {
+      "command": "sudo systemctl start ll-override.service; systemctl status ll-override.service --no-pager; sudo journalctl -u ll-override.service -n 10 --no-pager",
+      "explanation": "Failure is deliberate; identify the executable error before changing settings.",
+      "expected": "The configured missing-worker cannot be executed."
+    },
+    {
+      "command": "systemctl cat ll-override.service; sudo systemd-analyze verify ll-override.service",
+      "explanation": "Read the base plus drop-in. A validation error differs from daemon-reload or restart.",
+      "expected": "The drop-in overrides ExecStart with a missing executable."
+    },
+    {
+      "command": "sudo cp -p /etc/systemd/system/ll-override.service.d/broken.conf /etc/learning-lab/override-dropin.before; sudo nano /etc/systemd/system/ll-override.service.d/broken.conf",
+      "explanation": "Change missing-worker to admin-worker; keep the empty ExecStart= reset line and the override argument. Edit no resource limits.",
+      "expected": "The corrected path matches the trusted base worker."
+    },
+    {
+      "command": "sudo systemd-analyze verify ll-override.service && sudo systemctl daemon-reload && sudo systemctl restart ll-override.service",
+      "explanation": "Proceed only after validation succeeds. Reload refreshes unit definitions; restart runs the new command.",
+      "expected": "A successful bounded invocation."
+    },
+    {
+      "command": "systemctl is-active ll-override.service; sudo journalctl -u ll-override.service -n 8 --no-pager; sudo systemctl stop ll-override.service",
+      "explanation": "Check new LAB_READY events rather than treating disappearance of one error as success.",
+      "expected": "active before Stop; then cleanly stopped."
+    }
+  ],
+  "hints": [
+    "systemctl cat includes drop-ins; editing only a base unit may not change the effective command.",
+    "Keep the empty ExecStart= line before its replacement value.",
+    "daemon-reload does not itself restart the service."
+  ],
+  "review": [
+    "I preserved the faulty config and identified the effective override.",
+    "I validated, reloaded and demonstrated successful service behavior."
+  ],
+  "coverage": "Partial LPIC-2 202.1 systemd customization. Guest-only administration; completion records self-review, not verified assessment. No score."
+}

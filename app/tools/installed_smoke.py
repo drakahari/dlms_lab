@@ -37,10 +37,10 @@ def phase(root, resume, require_icon):
     assert (package/'vm_preview/runner.py').is_file()
     from learning_lab.vm_preview.image_catalog import production_catalog
     images=production_catalog()
-    assert len(images.images)==1 and len(images.lessons)==16
+    assert len(images.images)==2 and len(images.lessons)==24
     assert not images.keys and not images.releases
     for lesson_id,revision in images.lessons:
-        images.resolve({'backend':'offline-qemu-preview-1','image':image_spec(),'lesson_sha256':revision},lesson_id)
+        images.resolve({'backend':'offline-qemu-preview-1','image':images.defaults(lesson_id)[0],'lesson_sha256':revision},lesson_id)
     assert not any('fixture' in str(p) or p.suffix in ('.raw','.qcow2','.gpg','.llvmimage') for p in (package/'vm_preview').rglob('*'))
     result=subprocess.run([sys.executable,'-I','-B','-m','learning_lab.vm_preview.image_bundle','--help'],capture_output=True,text=True)
     assert result.returncode==0 and 'validate' in result.stdout and 'import' in result.stdout
@@ -49,7 +49,7 @@ def phase(root, resume, require_icon):
     from learning_lab.vm_preview.sessions import Sessions
     import uuid
     vm_unit=vm_catalog(); assert len(vm_unit['entries'])==8
-    assert len(vm_units())==2 and len(vm_entries())==16
+    assert len(vm_units())==3 and len(vm_entries())==24
     assert vm_unit['entries'][2]['id']==LEGACY_ID
     vm_sessions=Sessions(root/'vm-metadata-fixture','c'*64,root/'vm-gate-fixture')
     for index,entry in enumerate(vm_entries()):
@@ -167,7 +167,7 @@ def phase(root, resume, require_icon):
                 'attempts': {k: lab.session.attempt for k, lab in bridge.labs.items()}}))
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
                 'package': str(package), 'platform': app.platformName(),
-                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'vm_lessons':16, 'vm_units':2, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
+                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'vm_lessons':24, 'vm_units':3, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
         window.close(); app.processEvents(); lock.unlock()
 

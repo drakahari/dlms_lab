@@ -1,0 +1,12 @@
+{
+  "image_id": "debian13-admin-local-v1",
+  "sha256": "f956d5c98848296f6887235c742ee4cc44ed5981acd0d2efd0a593b16d8a578f",
+  "bytes": 17179869184,
+  "format": "raw",
+  "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+  "packages_sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+  "version": 1,
+  "prepared": true,
+  "trust": "Local reviewed administrator build only; not a signed public release",
+  "recipe_version": 1
+}

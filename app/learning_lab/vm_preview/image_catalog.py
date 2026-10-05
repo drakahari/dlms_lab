@@ -56,7 +56,8 @@ class Catalog:
     def __init__(self, data, read_resource=resource):
         self._data = copy.deepcopy(data)
         self._read = read_resource
-        require(set(data) == {'schema_version','images','lessons','default_image','default_lessons','releases','keys'} and
+        fields={'schema_version','images','lessons','default_image','default_lessons','releases','keys'}
+        require(set(data) in (fields,fields|{'default_images'}) and
                 type(data['schema_version']) is int and data['schema_version'] == 1, 'Unsupported image catalog')
         self.images = {}; self.lessons = {}; self.releases = {}; self.keys = {}
         for field in ('images','lessons','releases','keys'):
@@ -85,6 +86,20 @@ class Catalog:
         require(data['default_image'] in self.images,'Missing default image')
         require(isinstance(data['default_lessons'],dict) and data['default_lessons'] and
                 all((k,v) in self.lessons for k,v in data['default_lessons'].items()),'Missing default lesson')
+        # Old trusted catalogs retain their one-image behavior. An explicit map
+        # must cover EVERY default; missing entries never fall back to a different
+        # image (especially one with guest-root privileges). Saved pins bypass
+        # defaults and still resolve exact retained descriptors and lesson bytes.
+        self.default_images=copy.deepcopy(data.get('default_images'))
+        if 'default_images' in data:
+            require(isinstance(self.default_images,dict) and
+                    set(self.default_images)==set(data['default_lessons']) and
+                    len(self.default_images)<=64,'Incomplete per-lesson image defaults')
+            for lesson_id,image_id in self.default_images.items():
+                require(isinstance(image_id,str) and image_id in self.images,
+                        'Unavailable per-lesson image descriptor')
+                require({'id':lesson_id,'sha256':data['default_lessons'][lesson_id]} in self.images[image_id]['lessons'],
+                        'Default image/lesson pair unsupported')
         for item in data['keys']:
             require(set(item)=={'fingerprint','resource'} and re.fullmatch(r'[0-9A-F]{40}',item['fingerprint']), 'Invalid signer')
             require(item['fingerprint'] not in self.keys,'Duplicate signer')
@@ -100,7 +115,9 @@ class Catalog:
 
     def defaults(self, lesson_id):
         require(lesson_id in self._data['default_lessons'],'Unavailable lesson default')
-        image=self.images[self._data['default_image']]
+        image_id=self.default_images[lesson_id] if self.default_images is not None else self._data['default_image']
+        require(image_id in self.images,'Unavailable exact default image; no substitute selected')
+        image=self.images[image_id]
         spec=image['descriptor']
         require({'id':lesson_id,'sha256':self._data['default_lessons'][lesson_id]} in image['lessons'],'Default image/lesson pair unsupported')
         lesson=self._lesson((lesson_id,self._data['default_lessons'][lesson_id]))[1]
