@@ -178,6 +178,38 @@
         {
           "id": "real-linux-admin-incident",
           "sha256": "b53d6c2fbb43113f66902ba6fb4f9d0e8b7d5d22e939803006768bb52ad80b4c"
+        },
+        {
+          "id": "real-linux-users-inspect",
+          "sha256": "99f31e2dcd21d56a8075fea26d75de2e1ac821d3615a296062e5748a69ae4a22"
+        },
+        {
+          "id": "real-linux-users-create",
+          "sha256": "d8e55672c92dc7bad779e93a0d52e93f5781e877371b0d07b1ff3deb542e48f7"
+        },
+        {
+          "id": "real-linux-users-membership",
+          "sha256": "1819f6d6a468ce3efe26d3704ec0db369442eb1d2f9ce1c9f4b554bc837ad487"
+        },
+        {
+          "id": "real-linux-users-ownership",
+          "sha256": "d27e7289e81b977d49892542d20605a96e648e3c104b954324a20a60f484db1d"
+        },
+        {
+          "id": "real-linux-users-shared",
+          "sha256": "ce4ccd145f5f1f027d8ce5616fb3b409d4042abb6e5a85e465df0e9b031e8a84"
+        },
+        {
+          "id": "real-linux-users-umask",
+          "sha256": "554866c585c53e3ba2574f8b9e441003f21da83f330771311bee7716cd8341fc"
+        },
+        {
+          "id": "real-linux-users-restrictions",
+          "sha256": "8f1cadfa7b5be11e4281c4f3b599fdc6e08fab477b43b9fcd1c0ef4e5771adda"
+        },
+        {
+          "id": "real-linux-users-repair",
+          "sha256": "0e5db569fe8136f0b9af0f06fa1ac98ff8106737c5c715e9d7ef68263fa3c8dd"
         }
       ]
     }
@@ -398,6 +430,54 @@
       "sha256": "819feb713abaf260748bc47c6e342a7ebea3572694b6b85dcd572731a869ef9a",
       "resource": "real-linux-bash-handover.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-users-inspect",
+      "sha256": "99f31e2dcd21d56a8075fea26d75de2e1ac821d3615a296062e5748a69ae4a22",
+      "resource": "real-linux-users-inspect.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-users-create",
+      "sha256": "d8e55672c92dc7bad779e93a0d52e93f5781e877371b0d07b1ff3deb542e48f7",
+      "resource": "real-linux-users-create.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-users-membership",
+      "sha256": "1819f6d6a468ce3efe26d3704ec0db369442eb1d2f9ce1c9f4b554bc837ad487",
+      "resource": "real-linux-users-membership.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-users-ownership",
+      "sha256": "d27e7289e81b977d49892542d20605a96e648e3c104b954324a20a60f484db1d",
+      "resource": "real-linux-users-ownership.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-users-shared",
+      "sha256": "ce4ccd145f5f1f027d8ce5616fb3b409d4042abb6e5a85e465df0e9b031e8a84",
+      "resource": "real-linux-users-shared.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-users-umask",
+      "sha256": "554866c585c53e3ba2574f8b9e441003f21da83f330771311bee7716cd8341fc",
+      "resource": "real-linux-users-umask.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-users-restrictions",
+      "sha256": "8f1cadfa7b5be11e4281c4f3b599fdc6e08fab477b43b9fcd1c0ef4e5771adda",
+      "resource": "real-linux-users-restrictions.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-users-repair",
+      "sha256": "0e5db569fe8136f0b9af0f06fa1ac98ff8106737c5c715e9d7ef68263fa3c8dd",
+      "resource": "real-linux-users-repair.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -437,7 +517,15 @@
     "real-linux-bash-script": "5b412853d52593974d1318e6f12774e4d194b82b8cc8fe02c52d0ff1dccf4da9",
     "real-linux-bash-guards": "760cdf2e296c862a3123a34ee795998c03d04e7123c90bd3aa0e44b9c0fe6642",
     "real-linux-bash-records": "6beff5fc92138b0282feeaf16c8d46a0fb75d5381389298f3dbe618b244b4361",
-    "real-linux-bash-handover": "819feb713abaf260748bc47c6e342a7ebea3572694b6b85dcd572731a869ef9a"
+    "real-linux-bash-handover": "819feb713abaf260748bc47c6e342a7ebea3572694b6b85dcd572731a869ef9a",
+    "real-linux-users-inspect": "99f31e2dcd21d56a8075fea26d75de2e1ac821d3615a296062e5748a69ae4a22",
+    "real-linux-users-create": "d8e55672c92dc7bad779e93a0d52e93f5781e877371b0d07b1ff3deb542e48f7",
+    "real-linux-users-membership": "1819f6d6a468ce3efe26d3704ec0db369442eb1d2f9ce1c9f4b554bc837ad487",
+    "real-linux-users-ownership": "d27e7289e81b977d49892542d20605a96e648e3c104b954324a20a60f484db1d",
+    "real-linux-users-shared": "ce4ccd145f5f1f027d8ce5616fb3b409d4042abb6e5a85e465df0e9b031e8a84",
+    "real-linux-users-umask": "554866c585c53e3ba2574f8b9e441003f21da83f330771311bee7716cd8341fc",
+    "real-linux-users-restrictions": "8f1cadfa7b5be11e4281c4f3b599fdc6e08fab477b43b9fcd1c0ef4e5771adda",
+    "real-linux-users-repair": "0e5db569fe8136f0b9af0f06fa1ac98ff8106737c5c715e9d7ef68263fa3c8dd"
   },
   "releases": [],
   "keys": [],
@@ -477,6 +565,14 @@
     "real-linux-bash-script": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
     "real-linux-bash-guards": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
     "real-linux-bash-records": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
-    "real-linux-bash-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548"
+    "real-linux-bash-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-users-inspect": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-users-create": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-users-membership": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-users-ownership": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-users-shared": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-users-umask": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-users-restrictions": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-users-repair": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
   }
 }

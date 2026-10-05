@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-users-membership",
+  "content_version": "1.0.0",
+  "title": "Refresh group membership safely",
+  "goal": "Add one supplementary group while retaining another; compare old and fresh process credentials.",
+  "challenge": "Create locked ll-u3 and two disposable groups ll-u3keep/ll-u3team. Preserve keep when adding team. Demonstrate the old process retains old groups and a fresh process receives new groups. Use only bounded, tracked practice processes.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u3 && ! getent group ll-u3 && test ! -e /home/ll-u3 && sudo useradd -m -U -s /bin/bash ll-u3",
+      "explanation": "Fail closed if this disposable name or home exists. -m creates a home from /etc/skel; -U creates a primary group; no password is set.",
+      "expected": "Fresh account ll-u3, same-named primary group, home and Bash shell. A nonzero status/collision means stop setup."
+    },
+    {
+      "command": "! getent group ll-u3keep && ! getent group ll-u3team && sudo groupadd ll-u3keep && sudo groupadd ll-u3team && sudo usermod -aG ll-u3keep ll-u3",
+      "explanation": "Guard collisions. -aG appends; -G without -a replaces the supplementary list.",
+      "expected": "ll-u3 has its primary group and keep supplementary group."
+    },
+    {
+      "command": "sudo runuser -u ll-u3 -- bash -c 'id -Gn > \"$HOME/old.before\"; sleep 30; id -Gn > \"$HOME/old.after\"' & holder=$!",
+      "explanation": "Start one old-credentials process, bounded to 30 seconds. holder is the launcher PID; do not guess a PID or signal other users.",
+      "expected": "Old process captures its groups; it will exit by itself."
+    },
+    {
+      "command": "sudo cat /home/ll-u3/old.before",
+      "explanation": "Wait until this exists before changing membership. If missing, retry this inspection, not setup.",
+      "expected": "keep present, team absent; ready evidence from the old process."
+    },
+    {
+      "command": "sudo usermod -aG ll-u3team ll-u3; id ll-u3; sudo runuser -u ll-u3 -- id",
+      "explanation": "Database and newly initialized credentials see the addition. Existing processes are unchanged.",
+      "expected": "Fresh process has keep and team; primary group unchanged."
+    },
+    {
+      "command": "wait \"$holder\"; sudo cat /home/ll-u3/old.after",
+      "explanation": "Wait for the exact launcher to finish; the old process group list remains old. A new login/session is needed for existing interactive users.",
+      "expected": "Old after still lacks team. Logout/login refreshes credentials; reboot is unnecessary."
+    }
+  ],
+  "hints": [
+    "Do not use usermod -G team alone: it would remove keep.",
+    "id USER reads current database membership; id inside the old process shows cached credentials.",
+    "Wait for old.before before the edit and old.after after the bounded job ends."
+  ],
+  "review": [
+    "Retain old.before/old.after and a fresh id; keep remains present and team appears only in the fresh process.",
+    "All practice processes have finished before account/group cleanup."
+  ],
+  "coverage": "LPIC-1 107.1 supplementary membership changes. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}

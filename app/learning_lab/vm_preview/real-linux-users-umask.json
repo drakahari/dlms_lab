@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-users-umask",
+  "content_version": "1.0.0",
+  "title": "Compare creation masks",
+  "goal": "Predict and verify ordinary file and directory permissions under three process-local masks.",
+  "challenge": "Create ll-u6 and compare new ordinary files/directories with masks 0022, 0027 and 0077 in its home. Explain why masks remove bits rather than grant execute permission; existing objects and the learner shell must stay unchanged.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u6 && ! getent group ll-u6 && test ! -e /home/ll-u6 && sudo useradd -m -U -s /bin/bash ll-u6",
+      "explanation": "Fail closed if this disposable name or home exists. -m creates a home from /etc/skel; -U creates a primary group; no password is set.",
+      "expected": "Fresh account ll-u6, same-named primary group, home and Bash shell. A nonzero status/collision means stop setup."
+    },
+    {
+      "command": "umask; sudo runuser -u ll-u6 -- bash -c 'umask 0022; touch \"$HOME/f22\"; mkdir \"$HOME/d22\"; umask 0027; touch \"$HOME/f27\"; mkdir \"$HOME/d27\"; umask 0077; touch \"$HOME/f77\"; mkdir \"$HOME/d77\"'",
+      "explanation": "Each change occurs only in the child Bash. New files normally request 0666; directories 0777.",
+      "expected": "Files 644/640/600, directories 755/750/700."
+    },
+    {
+      "command": "sudo stat -c '%n %a' /home/ll-u6/f22 /home/ll-u6/f27 /home/ll-u6/f77 /home/ll-u6/d22 /home/ll-u6/d27 /home/ll-u6/d77; umask",
+      "explanation": "Result is requested bits AND the inverse mask, not decimal subtraction. The parent shell mask is unchanged.",
+      "expected": "All six predicted results; ordinary files lack execute."
+    },
+    {
+      "command": "sudo runuser -u ll-u6 -- bash -c 'umask 0000; touch \"$HOME/f77\"; stat -c %a \"$HOME/f77\"'",
+      "explanation": "Changing umask then touching an existing file does not change its mode.",
+      "expected": "f77 still 600; chmod would be needed for existing permissions."
+    }
+  ],
+  "hints": [
+    "Write separate predictions for ordinary files and directories.",
+    "umask filters requested permissions; it cannot add execute to a 0666 request.",
+    "Keep experiments in a child shell to avoid changing later learner commands."
+  ],
+  "review": [
+    "Six predicted/observed modes match; original f77 remains 600; parent umask unchanged.",
+    "No default ACL is set in this fixture; ACLs can change real creation behavior elsewhere."
+  ],
+  "coverage": "LPIC-1 104.5 file creation mask. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}

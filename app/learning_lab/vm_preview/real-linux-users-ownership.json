@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-users-ownership",
+  "content_version": "1.0.0",
+  "title": "Diagnose ownership and group access",
+  "goal": "Repair narrow group read access and prove it under the intended identity.",
+  "challenge": "Create ll-u4 plus ll-u4team and the supplied root-owned 0600 note in /srv/ll-u4. Make only root and team members able to read it, while nobody remains denied. Do not change owner to the learner or grant world access.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u4 && ! getent group ll-u4 && test ! -e /home/ll-u4 && sudo useradd -m -U -s /bin/bash ll-u4",
+      "explanation": "Fail closed if this disposable name or home exists. -m creates a home from /etc/skel; -U creates a primary group; no password is set.",
+      "expected": "Fresh account ll-u4, same-named primary group, home and Bash shell. A nonzero status/collision means stop setup."
+    },
+    {
+      "command": "! getent group ll-u4team && test ! -e /srv/ll-u4 && sudo groupadd ll-u4team && sudo usermod -aG ll-u4team ll-u4 && sudo install -d -m 0755 /srv/ll-u4",
+      "explanation": "Accessible parents allow testing file access separately from traversal.",
+      "expected": "Disposable group membership and root-owned guest fixture directory."
+    },
+    {
+      "command": "printf 'handover\\n' | sudo tee /srv/ll-u4/note.txt; sudo chmod 0600 /srv/ll-u4/note.txt; sudo stat -c '%U:%G %a' /srv/ll-u4/note.txt; sudo runuser -u ll-u4 -- cat /srv/ll-u4/note.txt",
+      "explanation": "A root-only file is initially denied to the new user. A failure is expected evidence.",
+      "expected": "root:root 600; ll-u4 Permission denied."
+    },
+    {
+      "command": "sudo chgrp ll-u4team /srv/ll-u4/note.txt; sudo chmod 0640 /srv/ll-u4/note.txt",
+      "explanation": "Group ownership selects eligible readers; group read grants only read. Neither membership nor mode alone repairs both faults.",
+      "expected": "root:ll-u4team 640."
+    },
+    {
+      "command": "sudo runuser -u ll-u4 -- cat /srv/ll-u4/note.txt; sudo runuser -u nobody -- cat /srv/ll-u4/note.txt",
+      "explanation": "Use two actual process identities. Root reading successfully is not access evidence for either user.",
+      "expected": "ll-u4 reads handover; nobody denied. ll-u4 cannot append."
+    }
+  ],
+  "hints": [
+    "Inspect every path component before changing the file.",
+    "0600 still denies group members; 0644 would leak to unrelated users.",
+    "Pair the intended group owner with group-read and test access as that user."
+  ],
+  "review": [
+    "Retain original denial, final root:ll-u4team 640, successful ll-u4 read and denied outsider/read-write.",
+    "No world access or unnecessary execute bits."
+  ],
+  "coverage": "LPIC-1 104.5 ownership/group permissions; 107.1 reinforcement. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}

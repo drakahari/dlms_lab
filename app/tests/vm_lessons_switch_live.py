@@ -2,7 +2,7 @@
 import argparse,hashlib,json,os,re,socket,subprocess,sys,tempfile,time,uuid
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--vm-home',type=Path,required=True)
-p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change','real-linux-bash-script'), default='real-linux-background-job')
+p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change','real-linux-bash-script','real-linux-users-ownership'), default='real-linux-background-job')
 p.add_argument('--installed',action='store_true',help='Use the isolated wheel package, never insert the checkout')
 p.add_argument('--smoke-phase',choices=('start','resume','reset'))
 p.add_argument('--profile',type=Path,help='Same disposable temporary profile for installed phases; TMPDIR is supported')
@@ -82,7 +82,7 @@ def installed_smoke():
  import learning_lab
  package=Path(learning_lab.__file__).resolve().parent
  check('isolated installed package',package.is_relative_to(Path(sys.prefix)) and 'site-packages' in package.parts)
- check('four installed units and thirty-six lessons',len(units())==4 and len(entries())==36)
+ check('five installed units and forty-four lessons',len(units())==5 and len(entries())==44)
  check('original unit still eight',len(catalog()['entries'])==8)
  check('accepted lesson bytes',hashlib.sha256((package/'vm_preview/lesson.json').read_bytes()).hexdigest()=='246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da')
  check('native exposed',app.platformName()=='wayland' and QTest.qWaitForWindowExposed(w,5000))
@@ -169,7 +169,10 @@ def installed_smoke():
  if a.lesson=='real-linux-bash-script':
   if a.smoke_phase=='start':commands=[': > ~/fixture-failures', 'work=$(mktemp -d "$HOME/bash-installed.XXXXXX") && cd "$work"', 'printf \'%s\\n\' \'#!/bin/bash\' \'if [ "$#" -ne 1 ]; then printf "usage: check-note FILE\\n" >&2; exit 2; fi\' \'printf "target=<%s>\\n" "$1"\' > check.sh', 'bash -n check.sh && chmod u+x check.sh', "timeout -k 2s 5s ./check.sh 'red note.txt' > target.txt; grep -qx 'target=<red note.txt>' target.txt || echo SCRIPT_FAIL >> ~/fixture-failures", 'timeout -k 2s 5s ./check.sh > bad-out.txt 2> bad-error.txt; rc=$?; test "$rc" -eq 2 && test ! -s bad-out.txt && grep -q usage bad-error.txt || echo USAGE_FAIL >> ~/fixture-failures', 'printf "%s\\n" "$work" > ~/installed-bash-workspace', 'printf "wheel-smoke-marker\\n" > ~/installed-wheel-smoke.txt']
   else:commands=[': > ~/fixture-failures', 'work=$(cat ~/installed-bash-workspace); cd "$work"; grep -qx "target=<red note.txt>" target.txt || echo BASH_RESUME_FAIL >> ~/fixture-failures', 'test "$(cat ~/installed-wheel-smoke.txt)" = wheel-smoke-marker || echo DISK_FAIL >> ~/fixture-failures']
- if a.smoke_phase=='reset':commands=[': > ~/fixture-failures','test ! -e ~/installed-wheel-smoke.txt && test ! -e ~/installed-bash-workspace || echo RESET_FAIL >> ~/fixture-failures']
+ if a.lesson=='real-linux-users-ownership':
+  if a.smoke_phase=='start':commands=[': > ~/fixture-failures', 'sudo useradd -m -U -s /bin/bash ll-wheel', 'sudo runuser -u ll-wheel -- bash -c \'printf "wheel-smoke-marker\\n" > "$HOME/note.txt"\'', 'sudo runuser -u ll-wheel -- cat /home/ll-wheel/note.txt | grep -qx wheel-smoke-marker || echo IDENTITY_FAIL >> ~/fixture-failures']
+  else:commands=[': > ~/fixture-failures', 'getent passwd ll-wheel && sudo runuser -u ll-wheel -- cat /home/ll-wheel/note.txt | grep -qx wheel-smoke-marker || echo SAME_DISK_FAIL >> ~/fixture-failures']
+ if a.smoke_phase=='reset':commands=[': > ~/fixture-failures','test ! -e ~/installed-wheel-smoke.txt && test ! -e ~/installed-bash-workspace && ! getent passwd ll-wheel || echo RESET_FAIL >> ~/fixture-failures']
  for c in commands:line(c)
  if a.lesson=='real-linux-admin-change':
   line('sudo -n id -u | grep -qx 0 || echo ADMIN_FAIL >> ~/fixture-failures')

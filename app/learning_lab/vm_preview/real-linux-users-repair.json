@@ -1,0 +1,54 @@
+{
+  "id": "real-linux-users-repair",
+  "content_version": "1.0.0",
+  "title": "Repair access and leave a safe handover",
+  "goal": "Combine narrow membership, inherited ownership, modes and cleanup into an evidenced access repair.",
+  "challenge": "Use the supplied faulty ll-u8 fixture. Allow ll-u8 to read and append the handover and create a team-owned new note; retain ll-u8keep membership, deny nobody, keep notes non-executable and other=0. Record original fault, smallest repair and identity-based evidence; clean up only this fixture.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u8 && ! getent group ll-u8 && test ! -e /home/ll-u8 && sudo useradd -m -U -s /bin/bash ll-u8",
+      "explanation": "Fail closed if this disposable name or home exists. -m creates a home from /etc/skel; -U creates a primary group; no password is set.",
+      "expected": "Fresh account ll-u8, same-named primary group, home and Bash shell. A nonzero status/collision means stop setup."
+    },
+    {
+      "command": "! getent group ll-u8keep && ! getent group ll-u8team && test ! -e /srv/ll-u8 && sudo groupadd ll-u8keep && sudo groupadd ll-u8team && sudo usermod -aG ll-u8keep ll-u8 && sudo install -d -o root -g root -m 0700 /srv/ll-u8",
+      "explanation": "Supply an independent Challenge fault; setup is not the solution. Account has unrelated keep membership.",
+      "expected": "Root-only directory and no team membership for ll-u8."
+    },
+    {
+      "command": "printf 'handover\\n' | sudo tee /srv/ll-u8/note.txt; sudo chmod 0600 /srv/ll-u8/note.txt; sudo runuser -u ll-u8 -- cat /srv/ll-u8/note.txt",
+      "explanation": "Capture the failure before editing. For Challenge, an initial mistake is not a completion requirement.",
+      "expected": "Permission denied; original root:root 700 directory / 600 file."
+    },
+    {
+      "command": "sudo usermod -aG ll-u8team ll-u8; sudo chgrp ll-u8team /srv/ll-u8 /srv/ll-u8/note.txt; sudo chmod 2770 /srv/ll-u8; sudo chmod 0660 /srv/ll-u8/note.txt",
+      "explanation": "Repair membership, directory traversal/create, inherited group and existing file write separately. No world permission or owner change required.",
+      "expected": "ll-u8keep retained; root:team 2770 and root:team 660."
+    },
+    {
+      "command": "sudo runuser -u ll-u8 -- bash -c 'umask 0007; cat /srv/ll-u8/note.txt; printf \"checked\\n\" >> /srv/ll-u8/note.txt; printf \"new\\n\" > /srv/ll-u8/new.txt'",
+      "explanation": "A fresh process uses new groups. Read, append and new-file creation must all work.",
+      "expected": "handover read; checked append; team-owned non-executable new note."
+    },
+    {
+      "command": "id ll-u8; sudo stat -c '%U:%G %a' /srv/ll-u8 /srv/ll-u8/note.txt /srv/ll-u8/new.txt; sudo runuser -u nobody -- cat /srv/ll-u8/note.txt",
+      "explanation": "Inspect bits and test outsider access separately; do not declare success because root can read.",
+      "expected": "keep and team remain; correct group/modes; nobody denied."
+    },
+    {
+      "command": "printf '%s\\n' 'FAULT: root-only paths and missing membership' 'REPAIR: append membership, group ownership, bounded modes' 'EVIDENCE: read, append, inherited new file, outsider denial' 'LIMIT: self-review, no authentication test' 'CLEANUP: exact ll-u8 fixtures only' > \"$HOME/ll-u8-handover.txt\"",
+      "explanation": "Retain a small evidence-based report before cleanup. Replace example evidence with your own observed results.",
+      "expected": "Handover is learner-owned outside the disposable account home."
+    }
+  ],
+  "hints": [
+    "A mode-only repair does not give the user missing team membership.",
+    "Use -aG so keep is preserved; repair parent traversal before diagnosing the child.",
+    "Verify read, append, inherited new-file group and outsider denial as separate claims."
+  ],
+  "review": [
+    "Retain original/final evidence and a short handover with actual identity-based observations; equivalent narrow repairs are acceptable.",
+    "After cleanup, account/groups and exact /srv/ll-u8 fixtures absent; learner and its sudo rights remain unchanged."
+  ],
+  "coverage": "LPIC-1 107.1/104.5 reinforcement and integration. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}

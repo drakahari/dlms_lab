@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "id": "linux-users-groups-access",
+  "title": "Linux Administration: Users, Groups & Access",
+  "purpose": "Eight connected offline guest exercises: account metadata, lifecycle, group refresh, ownership, setgid, umask, account restrictions and an access-repair handover. Sequence is guidance, not a forced unlock.",
+  "prerequisites": "Bash quoting, paths and mode bits; approved administrator image prepared separately. Read sudo commands before typing; no credentials, learner-account edits or host administration.",
+  "coverage": "LPIC-1 objectives v5.0: partial 107.1 and 104.5; integration reinforces earlier file skills. LPIC-2 v4.5 210.2 remains a gap: no PAM/SSSD configuration or remote authentication. Self-reviewed completion, no verification score.",
+  "entries": [
+    {
+      "id": "real-linux-users-inspect",
+      "resource": "real-linux-users-inspect.json",
+      "description": "Separate account database information from a running process's identity.",
+      "objectives": [
+        "LPIC-1 107.1 account/group database inspection (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "First inspect: pgrep -u ll-u1 -a. If any processes remain, stop only your exact tracked practice process before cleanup. Then sudo userdel -r ll-u1. This removes this disposable home/mail only; never run it on learner. ",
+        "Confirm ! getent passwd ll-u1; ! getent group ll-u1; test ! -e /home/ll-u1. A private group is normally removed when unused; inspect unexpected leftovers rather than deleting another account's group."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account."
+      ],
+      "observations": [
+        "Retain ll-u1 account metadata and the two id outputs; explain primary versus supplementary group.",
+        "Show ll-u1 locked status without displaying shadow entries or setting credentials."
+      ],
+      "questions": [
+        "Why might the member field in /etc/group be empty while id still shows that group?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    },
+    {
+      "id": "real-linux-users-create",
+      "resource": "real-linux-users-create.json",
+      "description": "Create and verify a locked local account with a usable home and Bash shell.",
+      "objectives": [
+        "LPIC-1 107.1 local account creation/removal (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "First inspect: pgrep -u ll-u2 -a. If any processes remain, stop only your exact tracked practice process before cleanup. Then sudo userdel -r ll-u2. This removes this disposable home/mail only; never run it on learner. ",
+        "Confirm ! getent passwd ll-u2; ! getent group ll-u2; test ! -e /home/ll-u2. A private group is normally removed when unused; inspect unexpected leftovers rather than deleting another account's group."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account."
+      ],
+      "observations": [
+        "Retain home/shell/locked-status evidence and successful file creation/read under ll-u2.",
+        "Explain why this proves home access, not password authentication."
+      ],
+      "questions": [
+        "Which evidence distinguishes a home field from an actually usable home directory?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    },
+    {
+      "id": "real-linux-users-membership",
+      "resource": "real-linux-users-membership.json",
+      "description": "Add one supplementary group while retaining another; compare old and fresh process credentials.",
+      "objectives": [
+        "LPIC-1 107.1 supplementary membership changes (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "First inspect: pgrep -u ll-u3 -a. If any processes remain, stop only your exact tracked practice process before cleanup. Then sudo userdel -r ll-u3. This removes this disposable home/mail only; never run it on learner. After the account is gone, sudo groupdel ll-u3keep; sudo groupdel ll-u3team.",
+        "Confirm ! getent passwd ll-u3; ! getent group ll-u3; test ! -e /home/ll-u3. A private group is normally removed when unused; inspect unexpected leftovers rather than deleting another account's group."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account.",
+        "Challenge fixture setup (starting conditions only; stop on collisions):\n! getent passwd ll-u3 && ! getent group ll-u3 && test ! -e /home/ll-u3 && sudo useradd -m -U -s /bin/bash ll-u3\n! getent group ll-u3keep && ! getent group ll-u3team && sudo groupadd ll-u3keep && sudo groupadd ll-u3team && sudo usermod -aG ll-u3keep ll-u3"
+      ],
+      "observations": [
+        "Retain old.before/old.after and a fresh id; keep remains present and team appears only in the fresh process.",
+        "All practice processes have finished before account/group cleanup."
+      ],
+      "questions": [
+        "Why can a database edit be correct while an existing shell still gets Permission denied?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    },
+    {
+      "id": "real-linux-users-ownership",
+      "resource": "real-linux-users-ownership.json",
+      "description": "Repair narrow group read access and prove it under the intended identity.",
+      "objectives": [
+        "LPIC-1 104.5 ownership/group permissions; 107.1 reinforcement (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "First inspect: pgrep -u ll-u4 -a. If any processes remain, stop only your exact tracked practice process before cleanup. Then sudo userdel -r ll-u4. This removes this disposable home/mail only; never run it on learner. sudo rm -- /srv/ll-u4/note.txt; sudo rmdir /srv/ll-u4; sudo groupdel ll-u4team.",
+        "Confirm ! getent passwd ll-u4; ! getent group ll-u4; test ! -e /home/ll-u4. A private group is normally removed when unused; inspect unexpected leftovers rather than deleting another account's group."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account.",
+        "Challenge fixture setup (starting conditions only; stop on collisions):\n! getent passwd ll-u4 && ! getent group ll-u4 && test ! -e /home/ll-u4 && sudo useradd -m -U -s /bin/bash ll-u4\n! getent group ll-u4team && test ! -e /srv/ll-u4 && sudo groupadd ll-u4team && sudo usermod -aG ll-u4team ll-u4 && sudo install -d -m 0755 /srv/ll-u4\nprintf 'handover\\n' | sudo tee /srv/ll-u4/note.txt; sudo chmod 0600 /srv/ll-u4/note.txt; sudo stat -c '%U:%G %a' /srv/ll-u4/note.txt; sudo runuser -u ll-u4 -- cat /srv/ll-u4/note.txt"
+      ],
+      "observations": [
+        "Retain original denial, final root:ll-u4team 640, successful ll-u4 read and denied outsider/read-write.",
+        "No world access or unnecessary execute bits."
+      ],
+      "questions": [
+        "Which identity wins the owner/group/other selection when a user is both owner and group member?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    },
+    {
+      "id": "real-linux-users-shared",
+      "resource": "real-linux-users-shared.json",
+      "description": "Combine group access and setgid inheritance without exposing files to outsiders.",
+      "objectives": [
+        "LPIC-1 104.5 setgid directories, group ownership; 107.1 reinforcement (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "Check pgrep -u ll-u5a -a and pgrep -u ll-u5b -a. When no practice processes remain: sudo userdel -r ll-u5a; sudo userdel -r ll-u5b.",
+        "sudo rm -- /srv/ll-u5/note.txt; sudo rmdir /srv/ll-u5/sub /srv/ll-u5; sudo groupdel ll-u5team. Remove exact known fixtures only."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account.",
+        "Challenge fixture setup (starting conditions only; stop on collisions):\n! getent passwd ll-u5a && ! getent passwd ll-u5b && ! getent group ll-u5a && ! getent group ll-u5b && ! getent group ll-u5team && test ! -e /home/ll-u5a && test ! -e /home/ll-u5b && test ! -e /srv/ll-u5 && sudo groupadd ll-u5team && sudo useradd -m -U -s /bin/bash -G ll-u5team ll-u5a && sudo useradd -m -U -s /bin/bash -G ll-u5team ll-u5b"
+      ],
+      "observations": [
+        "Actual ll-u5b append/read of ll-u5a file, inherited team group, 660/2770 children, outsider denied.",
+        "Explain shared-directory deletion rights; sticky-bit policy is not configured here."
+      ],
+      "questions": [
+        "Why does setgid plus umask 0077 inherit a useful group but still prevent collaboration?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    },
+    {
+      "id": "real-linux-users-umask",
+      "resource": "real-linux-users-umask.json",
+      "description": "Predict and verify ordinary file and directory permissions under three process-local masks.",
+      "objectives": [
+        "LPIC-1 104.5 file creation mask (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "First inspect: pgrep -u ll-u6 -a. If any processes remain, stop only your exact tracked practice process before cleanup. Then sudo userdel -r ll-u6. This removes this disposable home/mail only; never run it on learner. ",
+        "Confirm ! getent passwd ll-u6; ! getent group ll-u6; test ! -e /home/ll-u6. A private group is normally removed when unused; inspect unexpected leftovers rather than deleting another account's group."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account.",
+        "Challenge fixture setup (starting conditions only; stop on collisions):\n! getent passwd ll-u6 && ! getent group ll-u6 && test ! -e /home/ll-u6 && sudo useradd -m -U -s /bin/bash ll-u6"
+      ],
+      "observations": [
+        "Six predicted/observed modes match; original f77 remains 600; parent umask unchanged.",
+        "No default ACL is set in this fixture; ACLs can change real creation behavior elsewhere."
+      ],
+      "questions": [
+        "Why does mask 0027 yield file 0640 but directory 0750?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    },
+    {
+      "id": "real-linux-users-restrictions",
+      "resource": "real-linux-users-restrictions.json",
+      "description": "Separate locked passwords, account expiry and a non-login shell using observed guest behavior.",
+      "objectives": [
+        "LPIC-1 107.1 limited accounts and chage; preparation only for LPIC-2 210.2 (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "First inspect: pgrep -u ll-u7 -a. If any processes remain, stop only your exact tracked practice process before cleanup. Then sudo userdel -r ll-u7. This removes this disposable home/mail only; never run it on learner. ",
+        "Confirm ! getent passwd ll-u7; ! getent group ll-u7; test ! -e /home/ll-u7. A private group is normally removed when unused; inspect unexpected leftovers rather than deleting another account's group."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account.",
+        "Challenge fixture setup (starting conditions only; stop on collisions):\n! getent passwd ll-u7 && ! getent group ll-u7 && test ! -e /home/ll-u7 && sudo useradd -m -U -s /bin/bash ll-u7"
+      ],
+      "observations": [
+        "Retain separate status/output for locked, expired, nologin and restored states, with runuser identity evidence.",
+        "State limits: no real password login, alternative token, remote service or existing-process termination was tested."
+      ],
+      "questions": [
+        "Which checks test authentication, account policy, shell execution, or only process identity?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    },
+    {
+      "id": "real-linux-users-repair",
+      "resource": "real-linux-users-repair.json",
+      "description": "Combine narrow membership, inherited ownership, modes and cleanup into an evidenced access repair.",
+      "objectives": [
+        "LPIC-1 107.1/104.5 reinforcement and integration (partial)"
+      ],
+      "troubleshooting": [
+        "If sudo is missing or the image is unavailable, stop: do not substitute the unprivileged image or install packages.",
+        "A permission error is evidence. Test as the intended user, not root. Inspect every parent directory and current process groups.",
+        "Stop before deleting an account with running processes. On interruption, inspect existing fixtures; do not repeat setup blindly. Use app Stop/Reset if guest recovery is needed."
+      ],
+      "cleanup": [
+        "First inspect: pgrep -u ll-u8 -a. If any processes remain, stop only your exact tracked practice process before cleanup. Then sudo userdel -r ll-u8. This removes this disposable home/mail only; never run it on learner. sudo rm -- /srv/ll-u8/note.txt /srv/ll-u8/new.txt; sudo rmdir /srv/ll-u8; sudo groupdel ll-u8keep; sudo groupdel ll-u8team. Retain learner-owned ll-u8-handover.txt.",
+        "Confirm ! getent passwd ll-u8; ! getent group ll-u8; test ! -e /home/ll-u8. A private group is normally removed when unused; inspect unexpected leftovers rather than deleting another account's group."
+      ],
+      "materials": [
+        "Guest-only administration: use the existing passwordless sudo only inside this disposable guest. Never change learner, root, ll-service, sudoers, PAM, networking or host accounts. No credentials are created.",
+        "Begin on a fresh lesson disk. All ll-uN names and /srv/ll-uN paths below are disposable guest fixtures. If a name/home/path already exists, stop setup: inspect it or perform this lesson's exact cleanup before repeating. Do not adopt an unrelated account.",
+        "Challenge fixture setup (starting conditions only; stop on collisions):\n! getent passwd ll-u8 && ! getent group ll-u8 && test ! -e /home/ll-u8 && sudo useradd -m -U -s /bin/bash ll-u8\n! getent group ll-u8keep && ! getent group ll-u8team && test ! -e /srv/ll-u8 && sudo groupadd ll-u8keep && sudo groupadd ll-u8team && sudo usermod -aG ll-u8keep ll-u8 && sudo install -d -o root -g root -m 0700 /srv/ll-u8\nprintf 'handover\\n' | sudo tee /srv/ll-u8/note.txt; sudo chmod 0600 /srv/ll-u8/note.txt; sudo runuser -u ll-u8 -- cat /srv/ll-u8/note.txt"
+      ],
+      "observations": [
+        "Retain original/final evidence and a short handover with actual identity-based observations; equivalent narrow repairs are acceptable.",
+        "After cleanup, account/groups and exact /srv/ll-u8 fixtures absent; learner and its sudo rights remain unchanged."
+      ],
+      "questions": [
+        "Which independent checks would have caught chmod 777 or replacing rather than appending groups?"
+      ],
+      "limitations": [
+        "Completion is self-reviewed, unscored. These are real guest commands; the app does not verify access or execute the displayed instructions.",
+        "sudo runuser -u USER -- COMMAND verifies process identity and filesystem access without a password. It is not a successful password/login test; root can bypass restrictions. Never grant lab accounts sudo or set/unlock passwords.",
+        "No ACL, remote authentication, PAM configuration, directory service or host security coverage. Password locking, account expiry and shell restrictions are distinct and do not terminate existing processes.",
+        "Files/session disks are excluded from profile backups. Resume boots disk files, not RAM or existing login groups. Confirmed Reset retains the old generation."
+      ]
+    }
+  ]
+}

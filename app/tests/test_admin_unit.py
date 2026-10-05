@@ -12,7 +12,7 @@ OLD_IDS=[e['id'] for u in registry.units()[:2] for e in u['entries']]
 class AdminCatalogTests(unittest.TestCase):
  def setUp(self):self.data=json.loads(resource('image-catalog.json'))
  def test_exact_explicit_routes_and_no_production_admission(self):
-  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons)),(2,36));self.assertFalse(c.keys or c.releases)
+  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons)),(2,44));self.assertFalse(c.keys or c.releases)
   for id in OLD_IDS:self.assertEqual(c.defaults(id)[0],image_spec())
   for id in COMMANDS:
    spec,lesson=c.defaults(id);self.assertEqual(spec['image_id'],'debian13-admin-local-v1');self.assertNotEqual(spec,image_spec());self.assertEqual(lesson['id'],id);self.assertEqual(spec,json.loads(resource('admin-image.json')))
@@ -71,18 +71,18 @@ class AdminRegistryTests(unittest.TestCase):
      with self.assertRaises(ValueError):registry.units()
   finally:registry._bundle.cache_clear()
   return reads
- def test_36_lessons_and_four_units_are_valid(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(4,16,36));self.assertEqual(len(registry.entries()),36);self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12])
+ def test_44_lessons_and_five_units_are_valid(self):
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(5,16,44));self.assertEqual(len(registry.entries()),44);self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8])
  def test_four_units_can_fit_total_bound(self):
   def change(n,v):
    if n=='units.json':v['units']=v['units'][:3]+[{'id':'fourth-unit','resource':'fourth-unit.json'}]
    if n=='admin-unit.json':v['entries']=v['entries'][:4]
   self.fixture(change,True)
- def test_fifth_unit_empty_index_and_wrong_version_rejected(self):
+ def test_sixth_unit_empty_index_and_wrong_version_rejected(self):
   self.fixture(lambda n,v:v['units'].extend(v['units'][:2]) if n=='units.json' else None)
   self.fixture(lambda n,v:v.update(units=[]) if n=='units.json' else None)
   self.fixture(lambda n,v:v.update(schema_version=True) if n=='units.json' else None)
- def test_17_per_unit_and_37_total_rejected(self):
+ def test_17_per_unit_and_cross_unit_duplicate_rejected(self):
   self.fixture(lambda n,v:v['entries'].extend(copy.deepcopy(v['entries'])+copy.deepcopy(v['entries'][:1])) if n=='admin-unit.json' else None)
   reads=self.fixture(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='admin-unit.json' else None)
   self.assertNotIn('real-linux-bash-files.json',reads)

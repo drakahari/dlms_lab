@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-users-inspect",
+  "content_version": "1.0.0",
+  "title": "Inspect users and their groups",
+  "goal": "Separate account database information from a running process's identity.",
+  "challenge": "Create one locked disposable ll-u1 account using the supplied setup. Identify its UID, primary/supplementary groups, home and shell; compare a process running as it with the account database. Leave learner and system accounts unchanged.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u1 && ! getent group ll-u1 && test ! -e /home/ll-u1 && sudo useradd -m -U -s /bin/bash ll-u1",
+      "explanation": "Fail closed if this disposable name or home exists. -m creates a home from /etc/skel; -U creates a primary group; no password is set.",
+      "expected": "Fresh account ll-u1, same-named primary group, home and Bash shell. A nonzero status/collision means stop setup."
+    },
+    {
+      "command": "id; id ll-u1; getent passwd ll-u1; getent group ll-u1",
+      "explanation": "id without a name describes this process; id with a name queries account membership. /etc/passwd contains account metadata, not plaintext passwords.",
+      "expected": "learner process differs from ll-u1; ll-u1 primary group/home/Bash visible."
+    },
+    {
+      "command": "sudo runuser -u ll-u1 -- id; sudo passwd -S ll-u1",
+      "explanation": "Run a real command under the new identity. L means password locked, not that root cannot launch commands as that user.",
+      "expected": "UID and GID belong to ll-u1; status L. No password/login success is claimed."
+    },
+    {
+      "command": "getent passwd ll-service; getent group ll-service",
+      "explanation": "Inspect the existing service account read-only. Service identities need not have interactive shells.",
+      "expected": "ll-service uses nologin. No service/learner metadata was edited."
+    }
+  ],
+  "hints": [
+    "Compare UID/GID numbers and names, rather than relying on a shell prompt.",
+    "The group record need not list a user whose membership comes from their primary GID.",
+    "Run id under the intended identity to distinguish database lookup from current credentials."
+  ],
+  "review": [
+    "Retain ll-u1 account metadata and the two id outputs; explain primary versus supplementary group.",
+    "Show ll-u1 locked status without displaying shadow entries or setting credentials."
+  ],
+  "coverage": "LPIC-1 107.1 account/group database inspection. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}

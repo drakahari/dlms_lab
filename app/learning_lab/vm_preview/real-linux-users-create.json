@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-users-create",
+  "content_version": "1.0.0",
+  "title": "Create a disposable local account",
+  "goal": "Create and verify a locked local account with a usable home and Bash shell.",
+  "challenge": "Create locked ll-u2 with home /home/ll-u2, own primary group and /bin/bash. Verify that the intended user can create a small home file, inspect the result and safely remove only this fixture. Do not set credentials or grant sudo.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u2 && ! getent group ll-u2 && test ! -e /home/ll-u2 && sudo useradd -m -U -s /bin/bash ll-u2",
+      "explanation": "Fail closed if this disposable name or home exists. -m creates a home from /etc/skel; -U creates a primary group; no password is set.",
+      "expected": "Fresh account ll-u2, same-named primary group, home and Bash shell. A nonzero status/collision means stop setup."
+    },
+    {
+      "command": "getent passwd ll-u2; ls -ld /home/ll-u2; sudo passwd -S ll-u2",
+      "explanation": "Inspect explicit choices instead of assuming distribution defaults. Locked passwords are intentional here.",
+      "expected": "Home belongs to ll-u2; shell is /bin/bash; password status L."
+    },
+    {
+      "command": "sudo runuser -u ll-u2 -- bash -c 'cd \"$HOME\" && printf \"owned\\n\" > note.txt && pwd && id'",
+      "explanation": "The nested command executes inside the guest as ll-u2. Single quotes keep $HOME for that user's Bash.",
+      "expected": "Directory /home/ll-u2 and non-root ll-u2 identity; note created."
+    },
+    {
+      "command": "sudo stat -c \"%U:%G %a\" /home/ll-u2/note.txt; sudo runuser -u ll-u2 -- cat /home/ll-u2/note.txt",
+      "explanation": "Verify actual write/read access and ownership. Creating an account is not permission to authenticate without credentials.",
+      "expected": "Owner ll-u2 and content owned; ordinary text file has no execute bit."
+    }
+  ],
+  "hints": [
+    "useradd without -m may leave a home path in the database but no created directory.",
+    "Use an explicit shell and inspect it; do not alter learner.",
+    "A root-created file in that home can still be root-owned. Run the creation as the new user."
+  ],
+  "review": [
+    "Retain home/shell/locked-status evidence and successful file creation/read under ll-u2.",
+    "Explain why this proves home access, not password authentication."
+  ],
+  "coverage": "LPIC-1 107.1 local account creation/removal. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}

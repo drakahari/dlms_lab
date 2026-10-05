@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-users-restrictions",
+  "content_version": "1.0.0",
+  "title": "Distinguish account restrictions",
+  "goal": "Separate locked passwords, account expiry and a non-login shell using observed guest behavior.",
+  "challenge": "Create locked ll-u7. Inspect locked status, test past account expiry and nologin restrictions, and compare privileged explicit-identity execution. Restore only expiry/shell; keep its password locked. Do not create credentials or change PAM.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u7 && ! getent group ll-u7 && test ! -e /home/ll-u7 && sudo useradd -m -U -s /bin/bash ll-u7",
+      "explanation": "Fail closed if this disposable name or home exists. -m creates a home from /etc/skel; -U creates a primary group; no password is set.",
+      "expected": "Fresh account ll-u7, same-named primary group, home and Bash shell. A nonzero status/collision means stop setup."
+    },
+    {
+      "command": "sudo passwd -l ll-u7; sudo passwd -S ll-u7; sudo runuser -u ll-u7 -- id",
+      "explanation": "The new password was already locked. Locking is idempotent; privileged runuser still runs as that identity. No password-authentication success/failure is being tested.",
+      "expected": "L remains L; ll-u7 process executes. No unlocking or passwords."
+    },
+    {
+      "command": "sudo chage -E 2000-01-01 ll-u7; sudo chage -l ll-u7; sudo su - ll-u7 -c id; printf \"su status=%s\\n\" \"$?\"",
+      "explanation": "Set a past account expiry, distinct from password ageing. This guest's su PAM account check must be observed; do not generalize every privileged launcher.",
+      "expected": "Expired account refused by su; nonzero status. Existing processes are not killed."
+    },
+    {
+      "command": "sudo runuser -u ll-u7 -- id; sudo chage -E -1 ll-u7",
+      "explanation": "Explicit runuser uses a different policy and still initializes the identity in this guest. Remove expiry only; password remains locked.",
+      "expected": "runuser succeeds despite expiry; expiry restored to never. This is not an authentication bypass granted to unprivileged users."
+    },
+    {
+      "command": "sudo usermod -s /usr/sbin/nologin ll-u7; sudo su - ll-u7 -c id; sudo runuser -u ll-u7 -- id",
+      "explanation": "su selects the account shell, so nologin exits. A root-launched explicit command need not use that shell.",
+      "expected": "su emits account unavailable; runuser id succeeds."
+    },
+    {
+      "command": "sudo usermod -s /bin/bash ll-u7; sudo passwd -S ll-u7; getent passwd ll-u7; sudo chage -l ll-u7",
+      "explanation": "Restore Bash and no account expiry but retain locked password. No sudo/remote access granted.",
+      "expected": "Bash, expiry never, L status."
+    }
+  ],
+  "hints": [
+    "A locked password is not a universal account/process disable switch.",
+    "Account expiry is not password expiry; each consumer's PAM policy matters.",
+    "nologin restricts shell-based entry, not arbitrary commands started by root or existing processes."
+  ],
+  "review": [
+    "Retain separate status/output for locked, expired, nologin and restored states, with runuser identity evidence.",
+    "State limits: no real password login, alternative token, remote service or existing-process termination was tested."
+  ],
+  "coverage": "LPIC-1 107.1 limited accounts and chage; preparation only for LPIC-2 210.2. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}

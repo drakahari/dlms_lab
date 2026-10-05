@@ -29,8 +29,8 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
   v=visit(w.contentItem());assert v is not None,name;return v
  def wait(error=False):
   end=time.monotonic()+15
-  while vm.view['busy'] and time.monotonic()<end:QTest.qWait(20)
-  assert not vm.view['busy']
+  while (vm.view['busy'] or vm._pending is not None) and time.monotonic()<end:QTest.qWait(20)
+  assert not vm.view['busy'] and vm._pending is None
   if not error:assert not vm.view['error'],vm.view['error']
  def press(name):
   item(name).forceActiveFocus(Qt.TabFocusReason);QTest.keyClick(w,Qt.Key_Return);QTest.qWait(100)
@@ -132,6 +132,22 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
     item('vmNext').forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
     next_pos=item('vmNext').mapToScene(QPointF(0,0))
     check(id+' Next reachable after long script '+str(size),next_pos.y()>=0 and next_pos.y()+item('vmNext').height()<=w.height())
+    w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
+  for size in ((800,600),(1280,900)):
+   w.resize(*size);QTest.qWait(100)
+   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair'):
+    select(id);m=vm.manager
+    with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
+     vm.reset('Learn',True);wait()
+    command=item('vmCommand');command.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    check(id+' command focus '+str(size),command.hasActiveFocus())
+    check(id+' command wraps without clipping '+str(size),command.property('contentWidth')<=command.width()+1 and command.property('contentHeight')<=command.height()+1)
+    with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
+     vm.reset('Challenge',True);wait()
+    material=item('vmPracticeMaterial');material.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    check(id+' independent setup wraps '+str(size),material.property('contentWidth')<=material.width()+1 and material.property('contentHeight')<=material.height()+1)
+    check(id+' setup focus '+str(size),material.hasActiveFocus())
+    check(id+' self-review label '+str(size),'self-review' in vm.view['lesson']['coverage'])
     w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   select(ids[0]);m=vm.manager
   with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):

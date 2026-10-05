@@ -119,3 +119,8 @@ No global scaling, guest image, privileges or isolation settings are changed.
 
 The fourth bundled unit is [Bash, Regex & Safe File Changes](bash-unit.md), twelve
 unprivileged lessons using the same original image. See [verification](bash-acceptance.md).
+
+The fifth bundled unit is [Users, Groups & Access Administration](users-unit.md),
+eight guest-only exercises using the unchanged approved administrator image.
+See [verification and remaining native limits](users-acceptance.md). The bounded
+registry now permits five units, sixteen lessons per unit, forty-four total.

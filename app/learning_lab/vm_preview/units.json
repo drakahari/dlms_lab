@@ -16,6 +16,10 @@
     {
       "id": "lpic-bash-regex-safe-files",
       "resource": "bash-unit.json"
+    },
+    {
+      "id": "linux-users-groups-access",
+      "resource": "users-unit.json"
     }
   ]
 }

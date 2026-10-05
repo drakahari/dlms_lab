@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-users-shared",
+  "content_version": "1.0.0",
+  "title": "Build a shared setgid directory",
+  "goal": "Combine group access and setgid inheritance without exposing files to outsiders.",
+  "challenge": "Create locked ll-u5a/ll-u5b, disposable group ll-u5team and /srv/ll-u5. Team members must create and edit each other's small notes; nobody must be denied. Verify inherited group and permissions independently. No credentials or sudo rights for lab accounts.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-u5a && ! getent passwd ll-u5b && ! getent group ll-u5a && ! getent group ll-u5b && ! getent group ll-u5team && test ! -e /home/ll-u5a && test ! -e /home/ll-u5b && test ! -e /srv/ll-u5 && sudo groupadd ll-u5team && sudo useradd -m -U -s /bin/bash -G ll-u5team ll-u5a && sudo useradd -m -U -s /bin/bash -G ll-u5team ll-u5b",
+      "explanation": "Guard all fixture identities and paths before setup. Both accounts remain password locked.",
+      "expected": "Two team members with separate primary groups."
+    },
+    {
+      "command": "sudo install -d -o root -g ll-u5team -m 2770 /srv/ll-u5",
+      "explanation": "2 sets directory setgid: new children inherit the directory group. Group rwx allows creation/traversal.",
+      "expected": "root:ll-u5team 2770, no outsider access."
+    },
+    {
+      "command": "sudo runuser -u ll-u5a -- bash -c 'umask 0007; printf \"first\\n\" > /srv/ll-u5/note.txt; mkdir /srv/ll-u5/sub'",
+      "explanation": "A process-local mask allows group write, not other access. Setgid does not itself grant file read/write.",
+      "expected": "note inherits team group and 660; subdirectory inherits setgid and 2770."
+    },
+    {
+      "command": "sudo runuser -u ll-u5b -- bash -c 'printf \"second\\n\" >> /srv/ll-u5/note.txt; cat /srv/ll-u5/note.txt'",
+      "explanation": "Cross-user writing must really work; a listing alone is not proof.",
+      "expected": "first and second, written by two different users."
+    },
+    {
+      "command": "sudo stat -c '%U:%G %a' /srv/ll-u5/note.txt /srv/ll-u5/sub; sudo runuser -u nobody -- ls /srv/ll-u5",
+      "explanation": "Check inheritance and outsider denial separately. A shared writable directory allows members to remove names; setgid does not prevent that.",
+      "expected": "Team group on both children, no execute on note; nobody denied."
+    }
+  ],
+  "hints": [
+    "chmod 0777 would admit outsiders; retain other=0.",
+    "Without setgid, a newly created file usually gets the creator's primary group.",
+    "A restrictive umask can defeat group-write even when setgid inheritance is correct."
+  ],
+  "review": [
+    "Actual ll-u5b append/read of ll-u5a file, inherited team group, 660/2770 children, outsider denied.",
+    "Explain shared-directory deletion rights; sticky-bit policy is not configured here."
+  ],
+  "coverage": "LPIC-1 104.5 setgid directories, group ownership; 107.1 reinforcement. Partial coverage; original material, self-review only. No automatic assessment or full LPIC preparation."
+}
