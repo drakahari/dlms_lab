@@ -12,7 +12,7 @@ OLD_IDS=[e['id'] for u in registry.units()[:2] for e in u['entries']]
 class AdminCatalogTests(unittest.TestCase):
  def setUp(self):self.data=json.loads(resource('image-catalog.json'))
  def test_exact_explicit_routes_and_no_production_admission(self):
-  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons)),(2,24));self.assertFalse(c.keys or c.releases)
+  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons)),(2,36));self.assertFalse(c.keys or c.releases)
   for id in OLD_IDS:self.assertEqual(c.defaults(id)[0],image_spec())
   for id in COMMANDS:
    spec,lesson=c.defaults(id);self.assertEqual(spec['image_id'],'debian13-admin-local-v1');self.assertNotEqual(spec,image_spec());self.assertEqual(lesson['id'],id);self.assertEqual(spec,json.loads(resource('admin-image.json')))
@@ -34,6 +34,7 @@ class AdminCatalogTests(unittest.TestCase):
   self.assertEqual(c.defaults(registry.LEGACY_ID)[0],image_spec())
  def test_legacy_catalog_without_mapping_retains_old_semantics(self):
   d=copy.deepcopy(self.data);d.pop('default_images');d['images']=d['images'][:1];d['lessons']=[l for l in d['lessons'] if l['id'] in OLD_IDS];d['default_lessons']={k:v for k,v in d['default_lessons'].items() if k in OLD_IDS}
+  d['images'][0]['lessons']=[x for x in d['images'][0]['lessons'] if x['id'] in OLD_IDS]
   c=Catalog(d)
   for id in OLD_IDS:self.assertEqual(c.defaults(id)[0],image_spec())
   self.assertEqual(digest(d),'76879cfcf51769fc451ee7f48105071bc29c2058c6cc393237d2106559dbe205')
@@ -70,21 +71,21 @@ class AdminRegistryTests(unittest.TestCase):
      with self.assertRaises(ValueError):registry.units()
   finally:registry._bundle.cache_clear()
   return reads
- def test_24_lessons_and_three_units_are_valid(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(4,16,24));self.assertEqual(len(registry.entries()),24);self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8])
+ def test_36_lessons_and_four_units_are_valid(self):
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(4,16,36));self.assertEqual(len(registry.entries()),36);self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12])
  def test_four_units_can_fit_total_bound(self):
   def change(n,v):
-   if n=='units.json':v['units'].append({'id':'fourth-unit','resource':'fourth-unit.json'})
+   if n=='units.json':v['units']=v['units'][:3]+[{'id':'fourth-unit','resource':'fourth-unit.json'}]
    if n=='admin-unit.json':v['entries']=v['entries'][:4]
   self.fixture(change,True)
  def test_fifth_unit_empty_index_and_wrong_version_rejected(self):
   self.fixture(lambda n,v:v['units'].extend(v['units'][:2]) if n=='units.json' else None)
   self.fixture(lambda n,v:v.update(units=[]) if n=='units.json' else None)
   self.fixture(lambda n,v:v.update(schema_version=True) if n=='units.json' else None)
- def test_17_per_unit_and_25_total_rejected(self):
+ def test_17_per_unit_and_37_total_rejected(self):
   self.fixture(lambda n,v:v['entries'].extend(copy.deepcopy(v['entries'])+copy.deepcopy(v['entries'][:1])) if n=='admin-unit.json' else None)
   reads=self.fixture(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='admin-unit.json' else None)
-  self.assertNotIn('real-linux-admin-change.json',reads)
+  self.assertNotIn('real-linux-bash-files.json',reads)
  def test_empty_unit_and_support_limits_rejected(self):
   self.fixture(lambda n,v:v.update(entries=[]) if n=='admin-unit.json' else None)
   self.fixture(lambda n,v:v['entries'][0].update(materials=['x']*17) if n=='admin-unit.json' else None)
@@ -103,4 +104,4 @@ class AdminRegistryTests(unittest.TestCase):
   self.fixture(lambda n,v:v['entries'][0].update(execute='sudo id') if n=='admin-unit.json' else None)
  def test_legacy_lesson_files_unchanged(self):
   for name,h in json.loads(PROTECTED_JSON).items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
-PROTECTED_JSON = '{"unit.json": "6de3c33587271f923ae230a99d9fbec013a005fb818fde07533ab3fe781b7ad1", "resource-unit.json": "e6d3c0e6e8d6e47fccfe383a02f455b14f60168b3971ec88d426afe3ee2c9879", "image.json": "1499ad6e7f5cced795f5f0ff97348fbaa321a60aba3c8a810f074a846410a417", "lesson.json": "246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da", "manager.py": "f54fef7cf249a103f48f72f79964bd47e36253d2da69e2ba84ad225f5af062e4", "policy.py": "0fc31036904c975950ed5902a910cfe2a3a02a8aa60e421aa460cdcbcc104031", "files.py": "548868ac623bb1a4796884a140c959fa2b2d5bbb539f3fa16d642c93b5f361c0", "runner.py": "dfc173564c073c0ac0d80c6a717a0b7a203d53194c466122a391ba932a2b5c48", "process.py": "b01bcf16fa10daa001f75c04e6054fcda610eb59db8c3737506e12bc2f9ba4c6", "catalog_manager.py": "8de739b4dfaebffb74aa5671a5be878b2fb9365984e208d20dd65ba536cd1aa2", "image_bundle.py": "7699e9544080028448a7742d212c267a93a82e4f82d239885e5876869067a470", "bundle_archive.py": "e474cbbc8ba9a3638b8fc9baee92faeb64f5566bc3ac399ee03718c2d5e629cd", "bundle_signature.py": "48c73f464e1a8c9259bf2f81042f089e13c10d0b346bfd5f586b0af3bf210068", "real-linux-process-inspection.json": "b954c498e5b3cb415d5e04091c7886c08cb632e3dc960e785362020d91e9feed", "real-linux-foreground-jobs.json": "d5b4794811e15969a8d0b81a82581648d72fcc0389e5fe2add0783f6b0217ee2", "real-linux-targeted-signals.json": "3be3c2d2f4fab885c7ca1d8eafe6833b2bc7c6fac58912dbde5a7de31c8cd2aa", "real-linux-live-monitoring.json": "24b4d79d57e31835559bde8a8212b6135df3311a17c48d7b616a2c1414ed40c2", "real-linux-logout-persistence.json": "7f5a32defd10c1a645b832df6359f53951e4ce8ca9ab23ca6b653f0559555d0d", "real-linux-process-priorities.json": "f81821b9d040be954a406f8c168e064a8d258504c9f13af9c4eb4bfd66f57fed", "real-linux-process-handover.json": "eab59839bc70e8c4acb05e184d5d11531f94b3fc524ee234eb61d3f36f29f32c", "real-linux-capacity-baseline.json": "89b3d63e1576524a31fcdbd70551c2fdb6137000c7a1a6b71172485066fdc4f1", "real-linux-capacity-cpu.json": "dfe1958e0d51f4c14393527e276f337d46516d8d4e00fbada1f71e8b17111bae", "real-linux-capacity-memory.json": "3c760586d55a1442bff0ec010576e653ba43c926ace2daad32c127cc671b9368", "real-linux-capacity-io.json": "f26c8148b9dacb9b5c4fb65b7130a569e43b8fc3eb2b7c4a54a72b3b604c653c", "real-linux-capacity-space-inodes.json": "506eb05d32b549e8da04870b54a98f77ba7902d87844c417567a7e9bc65cf2f7", "real-linux-capacity-trends.json": "e12aabc6ea190d3a435f619b228c01c3c2a61705e425f87145a697ded6781692", "real-linux-capacity-forecast.json": "c5c1ae68c7477b16380be8e41c6d84510e75ddaa6c2d6233c13f3ff0aa672c6f", "real-linux-capacity-recommendation.json": "31c38667c6bf87958b2dc9861876ad87e79fdd8444e68abd9e3b52a83608de32"}'
+PROTECTED_JSON = '{"unit.json": "6de3c33587271f923ae230a99d9fbec013a005fb818fde07533ab3fe781b7ad1", "resource-unit.json": "e6d3c0e6e8d6e47fccfe383a02f455b14f60168b3971ec88d426afe3ee2c9879", "image.json": "1499ad6e7f5cced795f5f0ff97348fbaa321a60aba3c8a810f074a846410a417", "lesson.json": "246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da", "manager.py": "10c9c248ef11bbb221c37054a47c4096b569ceff0fe9231cdf24d0fbe02fe236", "policy.py": "0fc31036904c975950ed5902a910cfe2a3a02a8aa60e421aa460cdcbcc104031", "files.py": "548868ac623bb1a4796884a140c959fa2b2d5bbb539f3fa16d642c93b5f361c0", "runner.py": "dfc173564c073c0ac0d80c6a717a0b7a203d53194c466122a391ba932a2b5c48", "process.py": "b01bcf16fa10daa001f75c04e6054fcda610eb59db8c3737506e12bc2f9ba4c6", "catalog_manager.py": "8de739b4dfaebffb74aa5671a5be878b2fb9365984e208d20dd65ba536cd1aa2", "image_bundle.py": "7699e9544080028448a7742d212c267a93a82e4f82d239885e5876869067a470", "bundle_archive.py": "e474cbbc8ba9a3638b8fc9baee92faeb64f5566bc3ac399ee03718c2d5e629cd", "bundle_signature.py": "48c73f464e1a8c9259bf2f81042f089e13c10d0b346bfd5f586b0af3bf210068", "real-linux-process-inspection.json": "b954c498e5b3cb415d5e04091c7886c08cb632e3dc960e785362020d91e9feed", "real-linux-foreground-jobs.json": "d5b4794811e15969a8d0b81a82581648d72fcc0389e5fe2add0783f6b0217ee2", "real-linux-targeted-signals.json": "3be3c2d2f4fab885c7ca1d8eafe6833b2bc7c6fac58912dbde5a7de31c8cd2aa", "real-linux-live-monitoring.json": "24b4d79d57e31835559bde8a8212b6135df3311a17c48d7b616a2c1414ed40c2", "real-linux-logout-persistence.json": "7f5a32defd10c1a645b832df6359f53951e4ce8ca9ab23ca6b653f0559555d0d", "real-linux-process-priorities.json": "f81821b9d040be954a406f8c168e064a8d258504c9f13af9c4eb4bfd66f57fed", "real-linux-process-handover.json": "eab59839bc70e8c4acb05e184d5d11531f94b3fc524ee234eb61d3f36f29f32c", "real-linux-capacity-baseline.json": "89b3d63e1576524a31fcdbd70551c2fdb6137000c7a1a6b71172485066fdc4f1", "real-linux-capacity-cpu.json": "dfe1958e0d51f4c14393527e276f337d46516d8d4e00fbada1f71e8b17111bae", "real-linux-capacity-memory.json": "3c760586d55a1442bff0ec010576e653ba43c926ace2daad32c127cc671b9368", "real-linux-capacity-io.json": "f26c8148b9dacb9b5c4fb65b7130a569e43b8fc3eb2b7c4a54a72b3b604c653c", "real-linux-capacity-space-inodes.json": "506eb05d32b549e8da04870b54a98f77ba7902d87844c417567a7e9bc65cf2f7", "real-linux-capacity-trends.json": "e12aabc6ea190d3a435f619b228c01c3c2a61705e425f87145a697ded6781692", "real-linux-capacity-forecast.json": "c5c1ae68c7477b16380be8e41c6d84510e75ddaa6c2d6233c13f3ff0aa672c6f", "real-linux-capacity-recommendation.json": "31c38667c6bf87958b2dc9861876ad87e79fdd8444e68abd9e3b52a83608de32"}'

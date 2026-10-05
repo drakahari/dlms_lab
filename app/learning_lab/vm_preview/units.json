@@ -12,6 +12,10 @@
     {
       "id": "linux-administration-services-logs-recovery",
       "resource": "admin-unit.json"
+    },
+    {
+      "id": "lpic-bash-regex-safe-files",
+      "resource": "bash-unit.json"
     }
   ]
 }

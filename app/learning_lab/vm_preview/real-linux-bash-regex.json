@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-bash-regex",
+  "content_version": "1.0.0",
+  "title": "Search with basic and extended regex",
+  "goal": "Distinguish fixed text, BRE and ERE using positive and negative examples.",
+  "challenge": "From the supplied records identify exactly the two-digit app names with ok/fail status. Compare BRE and ERE results, literal versus wildcard dots, empty records, no matches and invalid patterns. State each observed status.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-regex.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' 'app-01 ok' 'app-02 fail' 'backup-3 fail' 'app-001 fail' 'literal.a' 'literalXa' '' > records.txt",
+      "explanation": "Seven ASCII records, including a blank one.",
+      "expected": "A small deterministic input."
+    },
+    {
+      "command": "LC_ALL=C grep '^app-[0-9][0-9] ' records.txt > bre.txt; LC_ALL=C grep -E '^app-[0-9]{2} (ok|fail)$' records.txt > ere.txt; cmp bre.txt ere.txt",
+      "explanation": "Default grep uses BRE; -E uses ERE quantifiers/alternation. Anchors constrain position. The two adjacent digit classes avoid GNU BRE extension syntax.",
+      "expected": "Both select exactly app-01/app-02; cmp 0."
+    },
+    {
+      "command": "grep -F 'literal.a' records.txt > fixed.txt; grep 'literal.a' records.txt > wildcard.txt; cat fixed.txt wildcard.txt",
+      "explanation": "A regex dot matches one character; fixed-string -F treats it literally.",
+      "expected": "One fixed match versus two regex matches."
+    },
+    {
+      "command": "grep -E '^$' records.txt > blank.txt; grep -E '^db-' records.txt > none.txt; printf 'none=%s\\n' \"$?\" > status.txt",
+      "explanation": "A blank record is not an empty file. grep status 1 means no selected lines, not malformed syntax.",
+      "expected": "One blank record; none.txt empty; none=1."
+    },
+    {
+      "command": "grep -E '[' records.txt > invalid-output.txt 2> invalid.txt; printf 'invalid=%s\\n' \"$?\" >> status.txt; cat status.txt",
+      "explanation": "An unmatched bracket is an invalid expression. Keep stderr and status rather than calling it a no-match result.",
+      "expected": "invalid=2; nonempty error."
+    }
+  ],
+  "hints": [
+    "How do anchoring and expression dialect affect a search?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.7. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

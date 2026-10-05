@@ -63,8 +63,8 @@ class RegistryTests(unittest.TestCase):
             'image.json':'1499ad6e7f5cced795f5f0ff97348fbaa321a60aba3c8a810f074a846410a417'}
   for name,digest in expected.items():self.assertEqual(hashlib.sha256((root/name).read_bytes()).hexdigest(),digest)
   tree=ast.parse((root/'manager.py').read_text());cls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='Manager')
-  # Approved catalog hooks only; the remaining lifecycle/security AST must still
-  # match the accepted controller. Stop, QMP and process operations are untouched.
+  # Approved catalog hooks plus the bounded Stop completion lock wait.
+  # QMP, process identity, launch policy and all other operations stay pinned.
   hooks=[]
   class StripCatalogHooks(ast.NodeTransformer):
    def visit_Expr(self,node):
@@ -74,7 +74,7 @@ class RegistryTests(unittest.TestCase):
   cls=StripCatalogHooks().visit(cls)
   self.assertEqual(hooks,["self._authorize('new', None)","self._authorize('reset', old)","self._authorize('resume' if s else 'new', s)"])
   methods='\n'.join(ast.dump(n,include_attributes=False) for n in cls.body if isinstance(n,ast.FunctionDef) and n.name not in ('__init__','_authorize'))
-  self.assertEqual(hashlib.sha256(methods.encode()).hexdigest(),'8be8f31148f2cfd0020a86cdd19b3c40645093f48345342f05062715fc69e9bf')
+  self.assertEqual(hashlib.sha256(methods.encode()).hexdigest(),'c8cc8c33c05e63f852d264a13f0e561ae2d8ea3f8fc09d13d286dc4ef00ba079')
  def test_help_and_coverage_honest(self):
   text=json.dumps(catalog())+' '.join(json.dumps(load_lesson(e['id'])) for e in catalog()['entries'])
   for word in ('self-review','103.5','103.6','huponexit','Permission denied','normally 0','Resume','screen/tmux'):

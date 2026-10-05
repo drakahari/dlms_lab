@@ -80,6 +80,54 @@
         {
           "id": "real-linux-capacity-recommendation",
           "sha256": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725"
+        },
+        {
+          "id": "real-linux-bash-files",
+          "sha256": "4c80c96824cefe47165c29cc241f70044f5831fdc0fc2d8c8d6bbb5c1a008bff"
+        },
+        {
+          "id": "real-linux-bash-environment",
+          "sha256": "aa5fb183b74ae8380dfe1c6bcd265f6a79899b4b6896b9d31d447976fc7ffeb0"
+        },
+        {
+          "id": "real-linux-bash-quoting",
+          "sha256": "12da0aa23afe3d81aeab0894032ae7e8cf342a2b9537be4890129c40bfc58e96"
+        },
+        {
+          "id": "real-linux-bash-streams",
+          "sha256": "2695a0c2b6a54fa4f9c5aa7abea4a7552303c4469f43d2e79336dd9fe2c6e9a0"
+        },
+        {
+          "id": "real-linux-bash-regex",
+          "sha256": "d3f84a02556500ea809a2b3740287a5b6018cbd2ba2c6945355a9c0edebffa49"
+        },
+        {
+          "id": "real-linux-bash-transform",
+          "sha256": "95ac2f0ec46f68a4a0249fae93083351f9c008f7d5c057ecacff1e7e9088b470"
+        },
+        {
+          "id": "real-linux-bash-vi",
+          "sha256": "87825b09bdde74ae6f1f1fb83f2d172b60197b8c9362ba5978476a51f8ca4d25"
+        },
+        {
+          "id": "real-linux-bash-rollback",
+          "sha256": "832325af5ebd93b35e6a75b1461ecfe41f74fefa08189e034779150d91bb4a97"
+        },
+        {
+          "id": "real-linux-bash-script",
+          "sha256": "5b412853d52593974d1318e6f12774e4d194b82b8cc8fe02c52d0ff1dccf4da9"
+        },
+        {
+          "id": "real-linux-bash-guards",
+          "sha256": "760cdf2e296c862a3123a34ee795998c03d04e7123c90bd3aa0e44b9c0fe6642"
+        },
+        {
+          "id": "real-linux-bash-records",
+          "sha256": "6beff5fc92138b0282feeaf16c8d46a0fb75d5381389298f3dbe618b244b4361"
+        },
+        {
+          "id": "real-linux-bash-handover",
+          "sha256": "819feb713abaf260748bc47c6e342a7ebea3572694b6b85dcd572731a869ef9a"
         }
       ]
     },
@@ -278,6 +326,78 @@
       "sha256": "b53d6c2fbb43113f66902ba6fb4f9d0e8b7d5d22e939803006768bb52ad80b4c",
       "resource": "real-linux-admin-incident.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-bash-files",
+      "sha256": "4c80c96824cefe47165c29cc241f70044f5831fdc0fc2d8c8d6bbb5c1a008bff",
+      "resource": "real-linux-bash-files.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-environment",
+      "sha256": "aa5fb183b74ae8380dfe1c6bcd265f6a79899b4b6896b9d31d447976fc7ffeb0",
+      "resource": "real-linux-bash-environment.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-quoting",
+      "sha256": "12da0aa23afe3d81aeab0894032ae7e8cf342a2b9537be4890129c40bfc58e96",
+      "resource": "real-linux-bash-quoting.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-streams",
+      "sha256": "2695a0c2b6a54fa4f9c5aa7abea4a7552303c4469f43d2e79336dd9fe2c6e9a0",
+      "resource": "real-linux-bash-streams.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-regex",
+      "sha256": "d3f84a02556500ea809a2b3740287a5b6018cbd2ba2c6945355a9c0edebffa49",
+      "resource": "real-linux-bash-regex.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-transform",
+      "sha256": "95ac2f0ec46f68a4a0249fae93083351f9c008f7d5c057ecacff1e7e9088b470",
+      "resource": "real-linux-bash-transform.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-vi",
+      "sha256": "87825b09bdde74ae6f1f1fb83f2d172b60197b8c9362ba5978476a51f8ca4d25",
+      "resource": "real-linux-bash-vi.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-rollback",
+      "sha256": "832325af5ebd93b35e6a75b1461ecfe41f74fefa08189e034779150d91bb4a97",
+      "resource": "real-linux-bash-rollback.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-script",
+      "sha256": "5b412853d52593974d1318e6f12774e4d194b82b8cc8fe02c52d0ff1dccf4da9",
+      "resource": "real-linux-bash-script.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-guards",
+      "sha256": "760cdf2e296c862a3123a34ee795998c03d04e7123c90bd3aa0e44b9c0fe6642",
+      "resource": "real-linux-bash-guards.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-records",
+      "sha256": "6beff5fc92138b0282feeaf16c8d46a0fb75d5381389298f3dbe618b244b4361",
+      "resource": "real-linux-bash-records.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-bash-handover",
+      "sha256": "819feb713abaf260748bc47c6e342a7ebea3572694b6b85dcd572731a869ef9a",
+      "resource": "real-linux-bash-handover.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -305,7 +425,19 @@
     "real-linux-admin-access": "f2aa15f68d37ab0c0185acdf4b1614a4c66cfd80038610bbcec7290b87605b31",
     "real-linux-admin-logs": "b4dca7d5785a61986cf257b3cb3355650fa0349ab998380d6f0dcbd19e07319d",
     "real-linux-admin-rotation": "ff4caf253c9960dd3f59861cf29f2945bfd8f1f58f5dac686d128d7f4d0f1803",
-    "real-linux-admin-incident": "b53d6c2fbb43113f66902ba6fb4f9d0e8b7d5d22e939803006768bb52ad80b4c"
+    "real-linux-admin-incident": "b53d6c2fbb43113f66902ba6fb4f9d0e8b7d5d22e939803006768bb52ad80b4c",
+    "real-linux-bash-files": "4c80c96824cefe47165c29cc241f70044f5831fdc0fc2d8c8d6bbb5c1a008bff",
+    "real-linux-bash-environment": "aa5fb183b74ae8380dfe1c6bcd265f6a79899b4b6896b9d31d447976fc7ffeb0",
+    "real-linux-bash-quoting": "12da0aa23afe3d81aeab0894032ae7e8cf342a2b9537be4890129c40bfc58e96",
+    "real-linux-bash-streams": "2695a0c2b6a54fa4f9c5aa7abea4a7552303c4469f43d2e79336dd9fe2c6e9a0",
+    "real-linux-bash-regex": "d3f84a02556500ea809a2b3740287a5b6018cbd2ba2c6945355a9c0edebffa49",
+    "real-linux-bash-transform": "95ac2f0ec46f68a4a0249fae93083351f9c008f7d5c057ecacff1e7e9088b470",
+    "real-linux-bash-vi": "87825b09bdde74ae6f1f1fb83f2d172b60197b8c9362ba5978476a51f8ca4d25",
+    "real-linux-bash-rollback": "832325af5ebd93b35e6a75b1461ecfe41f74fefa08189e034779150d91bb4a97",
+    "real-linux-bash-script": "5b412853d52593974d1318e6f12774e4d194b82b8cc8fe02c52d0ff1dccf4da9",
+    "real-linux-bash-guards": "760cdf2e296c862a3123a34ee795998c03d04e7123c90bd3aa0e44b9c0fe6642",
+    "real-linux-bash-records": "6beff5fc92138b0282feeaf16c8d46a0fb75d5381389298f3dbe618b244b4361",
+    "real-linux-bash-handover": "819feb713abaf260748bc47c6e342a7ebea3572694b6b85dcd572731a869ef9a"
   },
   "releases": [],
   "keys": [],
@@ -333,6 +465,18 @@
     "real-linux-admin-access": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-admin-logs": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-admin-rotation": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
-    "real-linux-admin-incident": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
+    "real-linux-admin-incident": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-bash-files": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-environment": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-quoting": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-streams": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-regex": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-transform": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-vi": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-rollback": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-script": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-guards": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-records": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-bash-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548"
   }
 }

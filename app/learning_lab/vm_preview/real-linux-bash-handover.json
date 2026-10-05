@@ -1,0 +1,54 @@
+{
+  "id": "real-linux-bash-handover",
+  "content_version": "1.0.0",
+  "title": "Repair a file-processing workflow",
+  "goal": "Repair a small report script, test failures and preserve a verified rollback.",
+  "challenge": "Repair the supplied script to validate a readable file of at most 2048 bytes and twenty name|status records, with nonempty names containing no pipe and statuses ok/fail. Report FAIL <name> for failures and a final ok=N fail=N summary. Reject malformed rows/non-files, retain original bytes/mode, publish a report only on success, and prove rollback. Write your own short handover.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-handover.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' 'app one|ok' 'store\\east|fail' 'cache|fail' > checks.txt; printf '%s\\n' '#!/bin/bash' 'input=$1' 'grep -F \"|fail\" \"$input\" | wc -l' > report.sh",
+      "explanation": "The supplied script is syntactically valid but does not meet the required format, guards or named evidence. This is synthetic status data, not live services.",
+      "expected": "Three input rows and a deliberately inadequate script."
+    },
+    {
+      "command": "bash -n report.sh; bash report.sh checks.txt; cp -p report.sh original.sh; sha256sum original.sh > original.sha256; nano report.sh",
+      "explanation": "Preserve the faulty original before replacing its three lines. Enter this corrected sixteen-line implementation, save/exit:\n#!/bin/bash\nif [ \"$#\" -ne 1 ] || [ ! -f \"$1\" ] || [ ! -r \"$1\" ]; then exit 2; fi\n[ \"$(wc -c < \"$1\")\" -le 2048 ] || exit 2\nok=0; failed=0; n=0\nwhile IFS= read -r line || [ -n \"$line\" ]; do\n  n=$((n+1)); [ \"$n\" -le 20 ] || exit 4\n  case \"$line\" in *'|'*) ;; *) printf 'missing delimiter\\n' >&2; exit 3;; esac\n  name=${line%|*}; state=${line##*|}\n  case \"$name\" in ''|*'|'*) printf 'invalid name\\n' >&2; exit 3;; esac\n  case \"$state\" in\n    ok) ok=$((ok+1));;\n    fail) failed=$((failed+1)); printf 'FAIL %s\\n' \"$name\";;\n    *) printf \"invalid record\\n\" >&2; exit 3;;\n  esac\ndone < \"$1\"\nprintf 'ok=%s fail=%s\\n' \"$ok\" \"$failed\"",
+      "expected": "Valid syntax alone did not establish correct behavior."
+    },
+    {
+      "command": "bash -n report.sh; chmod u+x report.sh; timeout -k 2s 5s ./report.sh checks.txt > report.candidate 2> errors.txt; rc=$?; if [ \"$rc\" -eq 0 ]; then cp -p report.candidate report.txt; else printf 'report refused: %s\\n' \"$rc\"; fi; cat report.txt",
+      "explanation": "The candidate can be truncated or partial on error. Explicitly guard publication of the final report; do not invent automatic rollback.",
+      "expected": "FAIL store\\east; FAIL cache; ok=1 fail=2."
+    },
+    {
+      "command": "printf '%s\\n' stray > bad.txt; timeout -k 2s 5s ./report.sh bad.txt > report.candidate 2> errors.txt; rc=$?; if [ \"$rc\" -eq 0 ]; then cp -p report.candidate report.txt; else printf 'report preserved, status=%s\\n' \"$rc\"; fi; sha256sum -c original.sha256",
+      "explanation": "A malformed record must not replace the valid published report. The candidate/error may change; retain that evidence.",
+      "expected": "Status 3 and previous final report preserved; original still matches."
+    },
+    {
+      "command": "nano handover.txt",
+      "explanation": "Write observed fault, exact repair, success/error evidence, limitations and rollback. This is your report, not a placeholder self-assessment.",
+      "expected": "A short supported handover; no app inspection or score."
+    },
+    {
+      "command": "cp -p report.sh corrected.sh; cp -p original.sh report.sh; cmp original.sh report.sh; timeout -k 2s 5s ./corrected.sh checks.txt > repeated.txt; cmp report.txt repeated.txt",
+      "explanation": "Retain the corrected script, restore the original faulty script/metadata, and verify both rollback and reproducible corrected output.",
+      "expected": "Original restored, corrected report still reproducible."
+    }
+  ],
+  "hints": [
+    "Which evidence distinguishes valid syntax, correct behavior and safe publication?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 105.2; 103.1/103.4/103.7/103.8 reinforcement. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

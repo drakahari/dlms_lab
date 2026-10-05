@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-bash-guards",
+  "content_version": "1.0.0",
+  "title": "Guard a script’s inputs",
+  "goal": "Guard script inputs and report failures predictably before declaring success.",
+  "challenge": "Write a Bash checker accepting one readable regular file. Return 2 for argument count, 3 for missing/unreadable/non-file input, 4 for empty input and 5 when the exact READY record cannot be confirmed. Success prints ready: <path> and exits 0. Test failure cases; errors belong on stderr.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-guards.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' READY > 'ready note.txt'; : > empty.txt; printf '%s\\n' WAIT > wrong.txt",
+      "explanation": "Small fixtures make valid and invalid behavior observable.",
+      "expected": "Ready, empty and nonmatching files."
+    },
+    {
+      "command": "nano guarded.sh",
+      "explanation": "Enter this bounded checker and save/exit:\n#!/bin/bash\nif [ \"$#\" -ne 1 ]; then printf 'usage: guarded FILE\\n' >&2; exit 2; fi\ninput=$1\nif [ ! -f \"$input\" ] || [ ! -r \"$input\" ]; then\n  printf 'unreadable file\\n' >&2; exit 3\nfi\nif [ ! -s \"$input\" ]; then\n  printf 'empty file\\n' >&2; exit 4\nfi\ngrep -qx -- READY < \"$input\"; status=$?\nif [ \"$status\" -ne 0 ]; then\n  printf 'READY check failed, grep status=%s\\n' \"$status\" >&2; exit 5\nfi\nprintf 'ready: %s\\n' \"$input\"",
+      "expected": "Explicit argument/readability/content conditions; no set -e shortcut."
+    },
+    {
+      "command": "bash -n guarded.sh; chmod u+x guarded.sh; timeout -k 2s 5s ./guarded.sh 'ready note.txt' > good.txt; printf 'good=%s\\n' \"$?\" > status.txt",
+      "explanation": "Syntax and behavior are separate checks. Quoted argument preserves the space.",
+      "expected": "good=0; expected path printed."
+    },
+    {
+      "command": "timeout -k 2s 5s ./guarded.sh missing.txt > failed.txt 2> errors.txt; printf 'missing=%s\\n' \"$?\" >> status.txt; timeout -k 2s 5s ./guarded.sh empty.txt >> failed.txt 2>> errors.txt; printf 'empty=%s\\n' \"$?\" >> status.txt",
+      "explanation": "Neither existence nor successful syntax checks establish useful input.",
+      "expected": "missing=3, empty=4; no success stdout."
+    },
+    {
+      "command": "timeout -k 2s 5s ./guarded.sh wrong.txt >> failed.txt 2>> errors.txt; printf 'content=%s\\n' \"$?\" >> status.txt; timeout -k 2s 5s ./guarded.sh >> failed.txt 2>> errors.txt; printf 'args=%s\\n' \"$?\" >> status.txt; cat status.txt errors.txt",
+      "explanation": "Preserve the actual grep status in the error. A no-match and an I/O error both prevent success, without claiming they are the same cause.",
+      "expected": "content=5, args=2; retained clear errors."
+    }
+  ],
+  "hints": [
+    "Which conditions must hold before a success message is justified?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 105.2 tests/conditions/status. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

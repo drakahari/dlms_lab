@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-bash-records",
+  "content_version": "1.0.0",
+  "title": "Process records without losing data",
+  "goal": "Read literal records with bounded loops and a local function.",
+  "challenge": "Write a reader preserving spaces, backslashes, blank records and a final record without newline. Print each as <record> and then its count. Empty input has count zero. Refuse input over 2048 bytes or over 20 records with a nonzero status; demonstrate the bounds.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-records.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' 'two words' 'back\\slash' '' > records.txt; printf tail >> records.txt; : > empty.txt",
+      "explanation": "This deliberately includes a blank record and a final newline-free one.",
+      "expected": "Four records with exact bytes."
+    },
+    {
+      "command": "nano records.sh",
+      "explanation": "Enter these eleven lines and save/exit:\n#!/bin/bash\nif [ \"$#\" -ne 1 ] || [ ! -f \"$1\" ] || [ ! -r \"$1\" ]; then exit 2; fi\n[ \"$(wc -c < \"$1\")\" -le 2048 ] || exit 3\nshow() { printf '<%s>\\n' \"$1\"; }\nn=0\nwhile IFS= read -r line || [ -n \"$line\" ]; do\n  n=$((n+1))\n  [ \"$n\" -le 20 ] || { printf 'too many records\\n' >&2; exit 4; }\n  show \"$line\"\ndone < \"$1\"\nprintf 'records=%s\\n' \"$n\"",
+      "expected": "read -r preserves backslashes; IFS= preserves boundary whitespace. The EOF condition retains a final nonempty record."
+    },
+    {
+      "command": "bash -n records.sh; chmod u+x records.sh; timeout -k 2s 5s ./records.sh records.txt > result.txt; timeout -k 2s 5s ./records.sh empty.txt > empty-result.txt; cat result.txt empty-result.txt",
+      "explanation": "A function receives the whole quoted record, not an expanded list.",
+      "expected": "Four literal records, records=4; empty gives records=0."
+    },
+    {
+      "command": "printf '%s\\n' 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 > too-many.txt; timeout -k 2s 5s ./records.sh too-many.txt > partial.txt 2> errors.txt; printf 'bounded status=%s\\n' \"$?\"",
+      "explanation": "A counter guard makes the loop finite for these fixtures. An error can leave partial stdout; do not publish it as a complete report. timeout is additional supervision, not correctness.",
+      "expected": "Status 4, error retained, first twenty records may already be printed."
+    }
+  ],
+  "hints": [
+    "What do IFS=, read -r and the EOF test each protect?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 105.2 loops/read, 105.1 partial functions. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

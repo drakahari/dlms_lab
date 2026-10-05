@@ -287,3 +287,61 @@ class RealIoReviewTests(unittest.TestCase):
    manager=Manager(Path(d)/'vm','f'*64,Path(d)/'gate')
    with self.assertRaisesRegex(Refused,'ordinary user'):manager.status()
    self.assertFalse((Path(d)/'vm').exists())
+
+class StopCompletionTests(ManagerFixture):
+ """Guest shutdown is a fixture; lifetime and operation locks are real flock calls.
+ Native installed tests separately verify the QMP/process-exit boundary.
+ """
+ record=ReviewLifecycleTests.record
+ def stop_fixture(self):
+  from contextlib import ExitStack
+  from unittest.mock import MagicMock
+  first,r=self.record('running');r['process']={'pid':12345,'start':'fixture','boot':'fixture','argv_sha256':'fixture'}
+  with self.m.access() as (_,gate,p):
+   gate.write('running.json',r,replace=True)
+   with gate.child(r['run'],create=True):pass
+   self.m.journal(p,first['generation'],'running')
+   held=self.m.gate(gate)
+  stack=ExitStack();self.addCleanup(stack.close)
+  stack.enter_context(patch('learning_lab.vm_preview.manager.same_process',return_value=True))
+  stack.enter_context(patch('learning_lab.vm_preview.manager.verify_launch'))
+  q=MagicMock();q.__enter__.return_value=q;q.powerdown.return_value=True
+  stack.enter_context(patch('learning_lab.vm_preview.manager.Qmp',return_value=q))
+  return first,r,held,q
+ def test_delayed_lock_release_precedes_publication(self):
+  import threading,time
+  first,r,held,q=self.stop_fixture();shutdown=threading.Event();observed=[]
+  q.powerdown.side_effect=lambda _:shutdown.set() or True
+  def release():
+   shutdown.wait(2);time.sleep(.2)
+   observed.append(json.loads((self.root/'gate/running.json').read_text())['state'])
+   os.close(held)
+  thread=threading.Thread(target=release);thread.start()
+  try:self.assertEqual(self.m.stop(),'Cleanly stopped')
+  finally:thread.join(3)
+  self.assertEqual(observed,['running'])
+  self.assertEqual(self.m.status()['state'],'stopped')
+  self.assertEqual(self.current(),first)
+ def test_timeout_retains_records_and_never_claims_completion(self):
+  import time
+  first,r,held,q=self.stop_fixture();runtime=self.root/'gate/running.json';journal=self.root/'vm/profiles'/self.m.profile/'generations'/first['generation']/'lifecycle.json'
+  before=(runtime.read_bytes(),journal.read_bytes());started=time.monotonic()
+  try:
+   with self.assertRaisesRegex(Refused,'Stop completion was not published'):self.m.stop()
+   self.assertGreaterEqual(time.monotonic()-started,5)
+   self.assertEqual((runtime.read_bytes(),journal.read_bytes()),before)
+   with self.m.access() as (_,gate,p):
+    with self.assertRaisesRegex(Refused,'already running'):self.m.gate(gate)
+  finally:os.close(held)
+ def test_competing_acquisition_blocked_through_publication(self):
+  first,r,held,q=self.stop_fixture();q.powerdown.side_effect=lambda _:os.close(held) or True
+  original=self.m.journal;results=[]
+  def publish(profile,generation,state):
+   # Separate processes must fail to take either lock during final publication.
+   for name in ('running.lock','operations.lock'):
+    script='import os,fcntl,sys; f=os.open(sys.argv[1],os.O_RDWR); fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)'
+    child=subprocess.run([os.sys.executable,'-I','-B','-c',script,str(self.root/'gate'/name)],capture_output=True,timeout=5)
+    results.append(child.returncode!=0 and b'BlockingIOError' in child.stderr)
+   return original(profile,generation,state)
+  with patch.object(self.m,'journal',side_effect=publish):self.assertEqual(self.m.stop(),'Cleanly stopped')
+  self.assertEqual(results,[True,True]);self.assertEqual(self.current(),first)

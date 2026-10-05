@@ -116,3 +116,6 @@ a sufficiently large floating window; undersized tiles can distort the console
 and menu targets. Reopening returns to fit; the manual percentage is not saved.
 See [display behavior and native verification](display.md).
 No global scaling, guest image, privileges or isolation settings are changed.
+
+The fourth bundled unit is [Bash, Regex & Safe File Changes](bash-unit.md), twelve
+unprivileged lessons using the same original image. See [verification](bash-acceptance.md).

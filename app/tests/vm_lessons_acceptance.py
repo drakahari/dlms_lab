@@ -9,14 +9,17 @@ from learning_lab.__main__ import build_application
 from learning_lab.vm_preview.bridge import VmBridge
 from learning_lab.vm_preview.registry import LEGACY_ID,catalog,entries,units
 from learning_lab.profile_backup import snapshot,write_backup,read_backup,restore
-p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add_argument('--native',action='store_true');a=p.parse_args()
-out=Path(tempfile.mkdtemp(prefix='vm-lessons-ui-'));sizes=[];messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
+p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add_argument('--native',action='store_true');p.add_argument('--evidence-root',type=Path,help='Existing owned directory for persistent screenshots/checks; profile fixtures stay temporary');a=p.parse_args()
+if a.evidence_root:
+ assert a.evidence_root.is_absolute() and a.evidence_root.is_dir() and not a.evidence_root.is_symlink() and a.evidence_root.stat().st_uid==os.getuid()
+out=Path(tempfile.mkdtemp(prefix='vm-lessons-ui-',dir=a.evidence_root));sizes=[];messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
 with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
  root=Path(d);app,engine,b,lock=build_application(root/'data',root/'config',root/'vm');w=engine.rootObjects()[0];vm=b.vm_preview;vm.sessions.gate_root=root/'gate'
  for manager in vm.sessions.managers.values():manager.gate_root=root/'gate'
  fake=root/'fixture';fake.write_bytes(b'fixture')
  def check(n,c):
   assert c,n;checks.append(n)
+  with (out/'completed-checks.jsonl').open('a') as trace:trace.write(json.dumps({'check':n})+'\n')
  def item(name):
   def visit(x):
    if x.objectName()==name and x.isVisible():return x
@@ -65,6 +68,28 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
   first_record=first.status()['session']
   with patch('learning_lab.vm_preview.manager.Manager.reconcile',return_value=r),patch.object(first,'status',return_value={'state':'running','session':first_record}):
    select(ids[8]);check('cross-unit collection changed',vm.view['unit']['id']==units()[1]['id']);check('running lesson identified',vm.view['running_lesson_id']==ids[0]);check('Stop accessible',item('vmStop').isEnabled());check('second Start blocked',not item('vmStart').isEnabled());check('Reset while running blocked',not item('vmReset').isEnabled());check('return action available',item('vmReturnRunning').isEnabled())
+   # The former live harness asserted focus after a 100 ms event-loop yield.
+   # A refresh in that interval legitimately disables this button and removes
+   # focus. Reproduce that interleaving explicitly, without launching a guest.
+   import threading
+   entered=threading.Event();release=threading.Event();original_view=vm.sessions.view
+   target=item('vmReturnRunning');target.forceActiveFocus(Qt.TabFocusReason)
+   check('focus probe initially focused',target.hasActiveFocus())
+   def held_view(selected):
+    entered.set();assert release.wait(5);return original_view(selected)
+   with patch.object(vm.sessions,'view',side_effect=held_view):
+    try:
+     vm.refresh()
+     deadline=time.monotonic()+5
+     while not entered.is_set() and time.monotonic()<deadline:QTest.qWait(5)
+     check('refresh probe entered',entered.is_set())
+     QTest.qWait(100)
+     check('refresh disables pending input',vm.view['busy'] and not target.isEnabled())
+     check('old delayed focus assumption reproduced',not target.hasActiveFocus())
+    finally:release.set();wait()
+   check('readiness restored after refresh',not vm.view['busy'] and target.isEnabled())
+   target.forceActiveFocus(Qt.TabFocusReason)
+   check('ready focus immediately available',target.hasActiveFocus())
    press('vmReturnRunning');wait();check('return selects running lesson',vm.view['selected_lesson_id']==ids[0]);check('running Stop still enabled',item('vmStop').isEnabled());select(LEGACY_ID)
   vm.refresh();wait();check('legacy untouched by selection',legacy.status()['session']==before)
   for size in ((800,600),(1280,900)):
@@ -79,6 +104,35 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
    material=item('vmPracticeMaterial');material.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
    check('setup focus '+str(size),material.hasActiveFocus())
    check('setup wraps '+str(size),material.property('lineCount')>1 and material.width()>250 and material.property('contentWidth')<=material.width()+1)
+  # Long manually entered script instructions need full-height, plain wrapping
+  # and reachable controls; no QML changes or native guest mocks-as-proof.
+  for size in ((800,600),(1280,900)):
+   w.resize(*size);QTest.qWait(100)
+   for id in ('real-linux-bash-guards','real-linux-bash-records','real-linux-bash-handover'):
+    select(id);m=vm.manager
+    with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
+     m.reset('Learn',True);vm.refresh();wait()
+    target=next(i for i,step in enumerate(m.lesson['steps']) if 'nano ' in step['command'])
+    for _ in range(target):vm.progress('next');wait()
+    command=item('vmCommand');command.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    check(id+' command focus '+str(size),command.hasActiveFocus())
+    check(id+' command no horizontal clipping '+str(size),command.property('contentWidth')<=command.width()+1)
+    def text_item(x,text):
+     if x.isVisible() and x.property('text')==text:return x
+     for child in x.childItems():
+      found=text_item(child,text)
+      if found is not None:return found
+    explanation=text_item(w.contentItem(),m.lesson['steps'][target]['explanation'])
+    check(id+' complete explanation '+str(size),explanation is not None and explanation.property('contentHeight')<=explanation.height()+1)
+    check(id+' script wraps '+str(size),explanation.property('lineCount')>=len(m.lesson['steps'][target]['explanation'].splitlines()))
+    from PySide6.QtQml import QQmlExpression
+    plain=QQmlExpression(engine.rootContext(),explanation,'textFormat === 0')
+    result=plain.evaluate()
+    check(id+' plain text '+str(size),not plain.hasError() and result[0] is True and result[1] is False)
+    item('vmNext').forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    next_pos=item('vmNext').mapToScene(QPointF(0,0))
+    check(id+' Next reachable after long script '+str(size),next_pos.y()>=0 and next_pos.y()+item('vmNext').height()<=w.height())
+    w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   select(ids[0]);m=vm.manager
   with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
    press('vmReset');QTest.keyClick(w,Qt.Key_Escape);QTest.qWait(100);check('Reset cancel preserves completion',vm.view['session']['completion'] is not None)

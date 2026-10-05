@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-bash-vi",
+  "content_version": "1.0.0",
+  "title": "Edit confidently with vi",
+  "goal": "Use modes, navigation, search and editing to create a precise file change.",
+  "challenge": "In vi change Beta to Beta revised, duplicate that line and remove Gamma, leaving Alpha and two Beta revised lines. Preserve the original; explain insertion, normal and command-line modes, search and save.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-vi.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' Alpha Beta Gamma > note.txt; cp -p note.txt original.txt",
+      "explanation": "Make a backup before entering the actual guest vi implementation.",
+      "expected": "Original is three lines."
+    },
+    {
+      "command": "vi note.txt",
+      "explanation": "Inside vi: Escape, 1G, j, 0, cw; type Beta revised; Escape; yy; p; /Gamma then Enter; dd; :wq then Enter. Commands in normal mode are not shell commands. h/j/k/l navigate.",
+      "expected": "Saved file: Alpha then Beta revised twice. Original remains unchanged."
+    },
+    {
+      "command": "cat note.txt; diff -u original.txt note.txt; command -v vi; vi --version | head -2",
+      "explanation": "Review the result and actual implementation. The pinned image routes vi to vim.tiny; this is not every feature of full Vim.",
+      "expected": "Intended three-line edit and implementation information."
+    }
+  ],
+  "hints": [
+    "What changes when Escape leaves insertion mode?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.8. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

@@ -1,0 +1,408 @@
+{
+  "schema_version": 1,
+  "id": "lpic-bash-regex-safe-files",
+  "title": "LPIC-1 Foundations: Bash, Regex & Safe File Changes",
+  "purpose": "Twelve offline unprivileged lessons: use Bash deliberately, search and transform text, edit/recover files and write small tested scripts. Recommended sequence, no unlocks. Completion is self-reviewed and unscored.",
+  "prerequisites": "Navigation, ordinary file permissions and text/filter basics. Use the existing unprivileged image; no sudo or new packages. The first four lessons build the shell prerequisites for regex, editor and script work.",
+  "coverage": "LPIC-1 v5.0 partial 103.1, 103.3/104.7 reinforcement, 103.4, 103.7, 103.2 sed, 103.8, 105.1 environment/functions and 105.2 scripts. No full objectives, general Bash mastery, boot/rescue recovery, system profiles, mail, script suid, links/archives or privileged administration.",
+  "entries": [
+    {
+      "id": "real-linux-bash-files",
+      "resource": "real-linux-bash-files.json",
+      "description": "Select and copy named files without splitting spaces or backslashes.",
+      "objectives": [
+        "103.3 globbing/scoped find; 104.7 reinforcement"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Optional: remove only 'picked/red note.txt' and 'picked/blue\\path.txt' after retaining evidence; leave input originals intact.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-files.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nmkdir input picked; printf '%s\\n' red > 'input/red note.txt'; printf '%s\\n' blue > 'input/blue\\path.txt'; printf '%s\\n' keep > input/keep.log"
+      ],
+      "observations": [
+        "Exact selected paths; matching copied contents/modes and unchanged originals."
+      ],
+      "questions": [
+        "How does a quoted find pattern differ from a shell glob?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports."
+      ]
+    },
+    {
+      "id": "real-linux-bash-environment",
+      "resource": "real-linux-bash-environment.json",
+      "description": "Explain local versus exported values and restore a temporary command-search path.",
+      "objectives": [
+        "103.1",
+        "105.1 partial environment"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Restore PATH from saved_path; unset only LAB_NOTE and note. Keep the saved path until verified.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-environment.XXXXXX\") && cd \"$work\" && pwd"
+      ],
+      "observations": [
+        "Parent/child outputs, lookup results and exact PATH restoration."
+      ],
+      "questions": [
+        "Why can a child inherit an exported value but not change its parent?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "Login/startup-file customization, skeleton directories and secret management are outside this lesson."
+      ]
+    },
+    {
+      "id": "real-linux-bash-quoting",
+      "resource": "real-linux-bash-quoting.json",
+      "description": "Keep literal text, expansion and filename boundaries distinct.",
+      "objectives": [
+        "103.1",
+        "103.3 globbing"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Keep the five small text fixtures as evidence. Unset value and here when finished.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-quoting.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nvalue='two words'; printf '%s\\n' alpha > 'red note.txt'; printf '%s\\n' beta > 'back\\slash.txt'"
+      ],
+      "observations": [
+        "quoted.txt, location.txt, literal.txt and absence of surprise."
+      ],
+      "questions": [
+        "Which expansions still occur inside double quotes?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports."
+      ]
+    },
+    {
+      "id": "real-linux-bash-streams",
+      "resource": "real-linux-bash-streams.json",
+      "description": "Observe streams, truncation and pipeline exit status before trusting a report.",
+      "objectives": [
+        "103.4",
+        "105.2 status preparation"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Return to set +o pipefail in this practice shell. Keep the tiny stream artifacts.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-streams.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' alpha beta > input.txt; printf '%s\\n' retained > empty.txt"
+      ],
+      "observations": [
+        "copy/empty/error/count files; immediate failed/default/pipefail statuses."
+      ],
+      "questions": [
+        "Does pipefail prevent truncation or roll back partial output?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "set -e has context-dependent exceptions and is not universal error handling. This lesson uses explicit status checks; no universal transactional shell behavior is claimed."
+      ]
+    },
+    {
+      "id": "real-linux-bash-regex",
+      "resource": "real-linux-bash-regex.json",
+      "description": "Distinguish fixed text, BRE and ERE using positive and negative examples.",
+      "objectives": [
+        "103.7"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Keep the eight tiny search result/error files. No source records were changed.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-regex.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' 'app-01 ok' 'app-02 fail' 'backup-3 fail' 'app-001 fail' 'literal.a' 'literalXa' '' > records.txt"
+      ],
+      "observations": [
+        "Matching line sets and statuses 0, 1 and 2; literal-dot difference."
+      ],
+      "questions": [
+        "How do anchoring and expression dialect affect a search?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "ASCII fixtures use LC_ALL=C where range semantics matter. Locale/Unicode, PCRE and advanced regex are not covered; globs are a different language."
+      ]
+    },
+    {
+      "id": "real-linux-bash-transform",
+      "resource": "real-linux-bash-transform.json",
+      "description": "Apply one anchored substitution while preserving and verifying the original.",
+      "objectives": [
+        "103.2 sed",
+        "103.7 substitution"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Retain original.conf, before.conf and candidate.conf. Only working.conf was changed.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-transform.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' '# label=old' 'port=8080' 'label=old' > original.conf; cp -p original.conf working.conf; sha256sum original.conf > original.sha256"
+      ],
+      "observations": [
+        "Preview, one-line diff, original hash, preserved backup and rollback comparison."
+      ],
+      "questions": [
+        "Why inspect a candidate before overwriting the working file?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "This tiny three-line fixture is not validation for arbitrary service configs. In-place sed, permissions/ownership beyond learner files and crash-safe deployment are deferred."
+      ]
+    },
+    {
+      "id": "real-linux-bash-vi",
+      "resource": "real-linux-bash-vi.json",
+      "description": "Use modes, navigation, search and editing to create a precise file change.",
+      "objectives": [
+        "103.8"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Keep note.txt and original.txt. Exit the editor before using app Stop.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-vi.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' Alpha Beta Gamma > note.txt; cp -p note.txt original.txt"
+      ],
+      "observations": [
+        "Saved file, unchanged original and explanation of vi modes/navigation."
+      ],
+      "questions": [
+        "What changes when Escape leaves insertion mode?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "No full Vim plugins/macros, terminal clipboard or editor crash/swap recovery is claimed. If input is interrupted, Escape and inspect; discard with :q! if appropriate."
+      ]
+    },
+    {
+      "id": "real-linux-bash-rollback",
+      "resource": "real-linux-bash-rollback.json",
+      "description": "Distinguish undo, discarding unsaved edits and restoring a saved mistake.",
+      "objectives": [
+        "103.8",
+        "103.3 file recovery reinforcement"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Keep the original and saved-mistake.txt. No broad deletion or system recovery changes.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-rollback.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' safe 'retained line' > note.txt; cp -p note.txt original.txt; sha256sum original.txt > original.sha256"
+      ],
+      "observations": [
+        "Undo/discard outcome, saved mistake, restored bytes/mode and original checksum."
+      ],
+      "questions": [
+        "Which recovery action works after a change has already been saved?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "Controlled editor interruption/rollback is not power-loss, filesystem repair or LPIC-2 boot/rescue recovery."
+      ]
+    },
+    {
+      "id": "real-linux-bash-script",
+      "resource": "real-linux-bash-script.json",
+      "description": "Select an interpreter and test arguments, execution permission and behavior.",
+      "objectives": [
+        "105.2"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Keep the script and output/status fixtures; no startup files were edited.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-script.XXXXXX\") && cd \"$work\" && pwd"
+      ],
+      "observations": [
+        "Script, syntax result, execute mode, output/status/error files."
+      ],
+      "questions": [
+        "Why does bash -n passing not establish correct behavior?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "Shebang invocation and simple arguments only. Script suid, mail, general scripting mastery and a universal set -e policy are not taught."
+      ]
+    },
+    {
+      "id": "real-linux-bash-guards",
+      "resource": "real-linux-bash-guards.json",
+      "description": "Guard script inputs and report failures predictably before declaring success.",
+      "objectives": [
+        "105.2 tests/conditions/status"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Keep all three inputs and checker/results. If testing chmod 0000 on a copied fixture, restore that copy to 0600.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-guards.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' READY > 'ready note.txt'; : > empty.txt; printf '%s\\n' WAIT > wrong.txt"
+      ],
+      "observations": [
+        "Good result and distinct failure statuses/stderr; syntax versus behavioral evidence."
+      ],
+      "questions": [
+        "Which conditions must hold before a success message is justified?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "The exact READY predicate is only this small file format. A read can still race a later file change; no security-grade validation or transactional file consumption is claimed."
+      ]
+    },
+    {
+      "id": "real-linux-bash-records",
+      "resource": "real-linux-bash-records.json",
+      "description": "Read literal records with bounded loops and a local function.",
+      "objectives": [
+        "105.2 loops/read",
+        "105.1 partial functions"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Keep the reader and small inputs/results. Function changes belong only to this script, not login files.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-records.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' 'two words' 'back\\slash' '' > records.txt; printf tail >> records.txt; : > empty.txt"
+      ],
+      "observations": [
+        "Literal bytes/count, empty result and bounded error with partial output."
+      ],
+      "questions": [
+        "What do IFS=, read -r and the EOF test each protect?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "This is a line format, not a CSV/parser for arbitrary binary input. Byte size and record limits are distinct; no unbounded loop or background subprocess."
+      ]
+    },
+    {
+      "id": "real-linux-bash-handover",
+      "resource": "real-linux-bash-handover.json",
+      "description": "Repair a small report script, test failures and preserve a verified rollback.",
+      "objectives": [
+        "105.2; 103.1/103.4/103.7/103.8 reinforcement"
+      ],
+      "troubleshooting": [
+        "Check PWD and the exact filename before a redirect or edit. Preserve errors; do not add sudo.",
+        "If a file or command is missing, investigate it rather than inventing success. Use Escape to leave editor insertion; :q! discards unsaved vi edits.",
+        "If the shell was interrupted or reopened, locate your recorded workspace and reinspect files; never reuse stale shell variables."
+      ],
+      "cleanup": [
+        "Leave the restored original and corrected.sh as separate evidence. Keep the handover and report; no broad cleanup.",
+        "Keep evidence. Optional cleanup removes only the explicitly named exercise files inside this recorded workspace. Do not use rm -r, rm -rf or deletion globs. Leave it and use rmdir only when empty."
+      ],
+      "materials": [
+        "Guest-local setup (stop on failure):\nwork=$(mktemp -d \"$HOME/bash-handover.XXXXXX\") && cd \"$work\" && pwd",
+        "Small fixture to enter manually inside the workspace:\nprintf '%s\\n' 'app one|ok' 'store\\east|fail' 'cache|fail' > checks.txt; printf '%s\\n' '#!/bin/bash' 'input=$1' 'grep -F \"|fail\" \"$input\" | wc -l' > report.sh"
+      ],
+      "observations": [
+        "Original hash/mode; corrected script; exact report/counts; failure preserves report; handover and rollback."
+      ],
+      "questions": [
+        "Which evidence distinguishes valid syntax, correct behavior and safe publication?"
+      ],
+      "limitations": [
+        "Use the existing unprivileged offline image. All commands run in the guest, with no sudo, host sharing, clipboard or guest network. This is ordinary Linux practice, not the simulated terminal.",
+        "Normal script inputs are at most 20 records and 2048 bytes; deliberate failure checks use 21 records or 2049 bytes. Keep total small files/notes under this unique guest-home directory below 64 KiB. Bound script experiments with timeout -k 2s 5s plus size/counter guards; suspended or uninterruptible I/O can exceed wall-clock supervision. Do not start background workers.",
+        "Completion is self-reviewed and unscored. Advancing guidance is not proof of execution. Resume boots disk files, not RAM/jobs. VM notes, records and disks remain excluded from profile backups/exports.",
+        "This defined name|status fixture is not a general log/CSV parser or live administration assessment. Boot/rescue recovery, links/archives, privileged scheduling and networking are deferred."
+      ]
+    }
+  ]
+}

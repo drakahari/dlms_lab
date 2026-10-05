@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-bash-quoting",
+  "content_version": "1.0.0",
+  "title": "Quote arguments correctly",
+  "goal": "Keep literal text, expansion and filename boundaries distinct.",
+  "challenge": "Use the supplied filenames and a variable containing two words. Demonstrate literal versus expanded values, a quoted wildcard, safe glob expansion and quoted command substitution. Preserve the literal backslash and prove literal command-like text did not execute.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-quoting.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "value='two words'; printf '%s\\n' alpha > 'red note.txt'; printf '%s\\n' beta > 'back\\slash.txt'",
+      "explanation": "Single quotes protect literal filename characters.",
+      "expected": "Two files with the exact stated names."
+    },
+    {
+      "command": "printf '<%s>\\n' '$value' \"$value\" '*.txt' > quoted.txt; cat quoted.txt",
+      "explanation": "Single quotes suppress expansion. Double quotes permit variable expansion as one argument. A quoted * remains literal.",
+      "expected": "Three lines: <$value>, <two words>, <*.txt>."
+    },
+    {
+      "command": "printf '<%s>\\n' ./*.txt",
+      "explanation": "Filename expansion creates complete arguments; quote a variable holding a path. This includes quoted.txt created in the previous step. No match normally leaves the pattern literal.",
+      "expected": "Names with spaces/backslashes remain whole."
+    },
+    {
+      "command": "here=$(pwd); printf '<%s>\\n' \"$here\" > location.txt; printf '%s\\n' 'literal $(touch surprise)' > literal.txt",
+      "explanation": "Command substitution executes pwd in the guest. Single-quoted command-like text remains data; never use eval to reinterpret it.",
+      "expected": "location.txt identifies this workspace; no surprise file."
+    },
+    {
+      "command": "cat literal.txt; test ! -e surprise; printf 'literal status=%s\\n' \"$?\"",
+      "explanation": "Capture the test status immediately.",
+      "expected": "Literal text printed, status 0."
+    }
+  ],
+  "hints": [
+    "Which expansions still occur inside double quotes?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.1, 103.3 globbing. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

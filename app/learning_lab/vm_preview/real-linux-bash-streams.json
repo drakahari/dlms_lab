@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-bash-streams",
+  "content_version": "1.0.0",
+  "title": "Separate output from errors",
+  "goal": "Observe streams, truncation and pipeline exit status before trusting a report.",
+  "challenge": "Copy supplied input using stdin/stdout redirects. Demonstrate an input failure truncating a disposable output, retain stderr, compare default and pipefail statuses, and use tee. Explain why a pipeline can report success while an earlier command failed.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-streams.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' alpha beta > input.txt; printf '%s\\n' retained > empty.txt",
+      "explanation": "Only this disposable output will be used to demonstrate truncation.",
+      "expected": "Two input lines and an initial output."
+    },
+    {
+      "command": "cat < input.txt > copy.txt; cat missing.txt > empty.txt 2> errors.txt; failed=$?; printf 'failed=%s\\n' \"$failed\" > status.txt",
+      "explanation": "The shell opens/truncates > before cat tries to read. A failed command does not restore the old output.",
+      "expected": "copy matches input; empty.txt is empty; stderr and status 1 retained."
+    },
+    {
+      "command": "set +o pipefail; cat missing.txt 2> pipe-errors.txt | wc -l > count.txt; printf 'default=%s\\n' \"$?\" >> status.txt",
+      "explanation": "Without pipefail the pipeline status is the last command status; wc can succeed on no input.",
+      "expected": "count is 0; default status 0, despite stderr."
+    },
+    {
+      "command": "set -o pipefail; cat missing.txt 2>> pipe-errors.txt | wc -l > count.txt; printf 'pipefail=%s\\n' \"$?\" >> status.txt; set +o pipefail",
+      "explanation": "With pipefail this pipeline reports its rightmost nonzero status. Restore the practice-shell setting after the comparison.",
+      "expected": "pipefail status 1; count is still 0, errors remain."
+    },
+    {
+      "command": "printf '%s\\n' observed | tee observed.txt; cat status.txt; cmp input.txt copy.txt",
+      "explanation": "tee writes stdout and a named file. Check status and artifacts separately.",
+      "expected": "observed is displayed/stored; comparison succeeds."
+    }
+  ],
+  "hints": [
+    "Does pipefail prevent truncation or roll back partial output?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.4, 105.2 status preparation. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

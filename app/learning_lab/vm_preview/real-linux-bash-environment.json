@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-bash-environment",
+  "content_version": "1.0.0",
+  "title": "Understand your shell environment",
+  "goal": "Explain local versus exported values and restore a temporary command-search path.",
+  "challenge": "Demonstrate a local variable absent from a child Bash, an exported value visible there, command lookup, and a temporary PATH change. Restore the exact original PATH and remove only your practice variables. Do not edit login files.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-environment.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "saved_path=$PATH; note='local value'; unset LAB_NOTE; type printf; printf '<%s>\\n' \"$note\"",
+      "explanation": "Save PATH before any change. type reveals builtins as well as external commands.",
+      "expected": "printf is a builtin here; note has a space."
+    },
+    {
+      "command": "bash -c 'printf \"child note=<%s>\\n\" \"${note-unset}\"'",
+      "explanation": "A shell variable is not automatically in a newly executed child environment. ${name-default} handles unset values.",
+      "expected": "child note=<unset>."
+    },
+    {
+      "command": "LAB_NOTE='child value'; export LAB_NOTE; bash -c 'printf \"child LAB_NOTE=<%s>\\n\" \"$LAB_NOTE\"'",
+      "explanation": "Export affects future children, not a parent shell. Do not store secrets in this exercise.",
+      "expected": "Child sees child value."
+    },
+    {
+      "command": "PATH=/usr/bin:/bin; export PATH; type -a printf; command -v bash; /usr/bin/printf '%s\\n' absolute",
+      "explanation": "This change is temporary in the practice shell. An absolute pathname bypasses PATH lookup.",
+      "expected": "Lookup works; absolute is printed."
+    },
+    {
+      "command": "PATH=$saved_path; export PATH; unset LAB_NOTE note; printf 'PATH restored=%s\\n' \"$PATH\"",
+      "explanation": "Restore exactly; no .bashrc, profile or global configuration edits.",
+      "expected": "PATH matches the saved value."
+    }
+  ],
+  "hints": [
+    "Why can a child inherit an exported value but not change its parent?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.1, 105.1 partial environment. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

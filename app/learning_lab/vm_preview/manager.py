@@ -227,8 +227,20 @@ class Manager:
                     while time.monotonic()<deadline and same_process(r):time.sleep(.05)
                     require(not same_process(r),'QEMU exit not confirmed; reset remains blocked');clean=False
                 else:clean=q.powerdown(r)
-            r['state']='stopped' if clean else 'unclean';gate.write('running.json',r,replace=True)
-            self.journal(profile,r['generation'],r['state'])
+            # Process exit and release of its inherited lifetime lock are separate
+            # observations. Keep operation serialization until both are verified;
+            # never publish completion while the next status check must refuse it.
+            deadline=time.monotonic()+5
+            fd=gate.open('running.lock',write=True)
+            try:
+                while True:
+                    try:fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB);break
+                    except BlockingIOError:
+                        require(time.monotonic()<deadline,'Guest shutdown observed, but lifetime lock release was not confirmed within five seconds. Stop completion was not published; records and disks retained.')
+                        time.sleep(min(.05,max(0,deadline-time.monotonic())))
+                r['state']='stopped' if clean else 'unclean';gate.write('running.json',r,replace=True)
+                self.journal(profile,r['generation'],r['state'])
+            finally:os.close(fd)
             return 'Cleanly stopped' if clean else 'Stopped uncleanly; disk retained, no repair performed'
     def status(self):
         with self.access() as (root,gate,profile):

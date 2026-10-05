@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-bash-rollback",
+  "content_version": "1.0.0",
+  "title": "Recover from a mistaken edit",
+  "goal": "Distinguish undo, discarding unsaved edits and restoring a saved mistake.",
+  "challenge": "Demonstrate vi undo and discard without changing note.txt, then save a deliberate mistake. Preserve that mistaken file, restore the original bytes and metadata, and prove the original backup remains unchanged.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-rollback.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' safe 'retained line' > note.txt; cp -p note.txt original.txt; sha256sum original.txt > original.sha256",
+      "explanation": "Keep a verified metadata-preserving backup.",
+      "expected": "Original evidence exists before edits."
+    },
+    {
+      "command": "vi note.txt",
+      "explanation": "Escape, 1G, 0, cw; type WRONG; Escape; u to undo. Then cw and type UNSAVED; Escape; :q! Enter to discard. Undo is in the current editor; discard does not undo earlier saved files.",
+      "expected": "No on-disk change."
+    },
+    {
+      "command": "cmp original.txt note.txt; vi note.txt",
+      "explanation": "Check no change, then deliberately replace safe with broken using 1G, 0, cw; Escape; :wq Enter.",
+      "expected": "Now the saved file differs."
+    },
+    {
+      "command": "diff -u original.txt note.txt; cp -p note.txt saved-mistake.txt; cp -p original.txt note.txt; cmp original.txt note.txt; sha256sum -c original.sha256",
+      "explanation": "Preserve the mistake before restoration. A saved change needs a retained original, not merely :q!.",
+      "expected": "Exact rollback and untouched backup; mistake retained."
+    }
+  ],
+  "hints": [
+    "Which recovery action works after a change has already been saved?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.8, 103.3 file recovery reinforcement. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

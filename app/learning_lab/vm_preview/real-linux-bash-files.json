@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-bash-files",
+  "content_version": "1.0.0",
+  "title": "Select files safely",
+  "goal": "Select and copy named files without splitting spaces or backslashes.",
+  "challenge": "In a fresh workspace create the supplied input files. Discover only its .txt files, copy both into picked while preserving metadata, and prove all originals and keep.log remain unchanged. Explain quoting versus filename globbing.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-files.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "mkdir input picked; printf '%s\\n' red > 'input/red note.txt'; printf '%s\\n' blue > 'input/blue\\path.txt'; printf '%s\\n' keep > input/keep.log",
+      "explanation": "Create three tiny fixtures. Single quotes preserve the backslash and space as literal filename characters.",
+      "expected": "Two .txt files and one unrelated .log file."
+    },
+    {
+      "command": "find input -maxdepth 1 -type f -name '*.txt' -print; printf '<%s>\\n' input/*.txt",
+      "explanation": "Quote the find pattern so find receives it. The shell glob expands into complete filename arguments, including spaces. With no matches Bash normally leaves a glob literal. Do not parse ls output.",
+      "expected": "Only the two .txt filenames, each preserved as one argument."
+    },
+    {
+      "command": "cp -p -- 'input/red note.txt' picked/; cp -p -- 'input/blue\\path.txt' picked/",
+      "explanation": "Copy the explicit inspected names. -- ends option parsing; cp -p preserves metadata. No wildcard deletion.",
+      "expected": "Both copies exist, originals remain."
+    },
+    {
+      "command": "cmp -- 'input/red note.txt' 'picked/red note.txt'; cmp -- 'input/blue\\path.txt' 'picked/blue\\path.txt'; cat input/keep.log",
+      "explanation": "Check exact contents and the untouched unrelated file. A copy existing alone is insufficient.",
+      "expected": "Both cmp statuses are 0; keep is printed."
+    }
+  ],
+  "hints": [
+    "How does a quoted find pattern differ from a shell glob?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.3 globbing/scoped find; 104.7 reinforcement. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

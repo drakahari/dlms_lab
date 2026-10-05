@@ -1,32 +1,42 @@
 """Actual native app/GTK routing proof, disposable profile; retains all disks."""
-import argparse,hashlib,json,os,re,socket,subprocess,sys,tempfile,time
+import argparse,hashlib,json,os,re,socket,subprocess,sys,tempfile,time,uuid
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--vm-home',type=Path,required=True)
-p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change'), default='real-linux-background-job')
+p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change','real-linux-bash-script'), default='real-linux-background-job')
 p.add_argument('--installed',action='store_true',help='Use the isolated wheel package, never insert the checkout')
-p.add_argument('--smoke-phase',choices=('start','resume'))
-p.add_argument('--profile',type=Path,help='Same disposable /tmp profile for separate-process installed phases')
+p.add_argument('--smoke-phase',choices=('start','resume','reset'))
+p.add_argument('--profile',type=Path,help='Same disposable temporary profile for installed phases; TMPDIR is supported')
 a=p.parse_args()
 if not a.installed:sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 if a.smoke_phase:
- assert a.installed and a.profile and a.profile.is_absolute() and a.profile.resolve().is_relative_to('/tmp')
+ temp_root=Path(tempfile.gettempdir()).resolve()
+ assert a.installed and a.profile and a.profile.is_absolute() and a.profile.resolve().is_relative_to(temp_root)
+ assert a.profile.resolve()!=temp_root, 'Use a dedicated disposable child profile'
  assert not a.profile.is_symlink()
 from PySide6.QtCore import Qt,QPointF,qInstallMessageHandler
 from PySide6.QtTest import QTest
 from learning_lab.__main__ import build_application
 from learning_lab.vm_preview.registry import catalog,LEGACY_ID,entries,units,session_binding,unit_for_lesson
-from learning_lab.vm_preview.process import same_process
+from learning_lab.vm_preview.process import same_process,verify_launch
 from learning_lab.vm_preview.sessions import Sessions
 from learning_lab.vm_preview.files import Refused
 out=a.profile if a.smoke_phase else Path(tempfile.mkdtemp(prefix='vm-lessons-switch-live-'))
-out.mkdir(exist_ok=True);messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
+out.mkdir(exist_ok=True);evidence=out/('run-'+str(os.getpid())+'-'+uuid.uuid4().hex[:8]);evidence.mkdir();messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
 app,engine,b,lock=build_application(out/'data',out/'config',a.vm_home);w=engine.rootObjects()[0];vm=b.vm_preview;ids=[e['id'] for e in catalog()['entries']]
+events=[]
+def event(kind,**details):
+ value={'at':time.monotonic_ns(),'pid':os.getpid(),'event':kind,**details};events.append(value)
+ with (evidence/'events.jsonl').open('a') as f:f.write(json.dumps(value)+'\n')
+vm.finished.connect(lambda result:event('operation-finished',result=result))
+def ready(predicate,label,seconds=240):
+ deadline=time.monotonic()+seconds
+ while not predicate():
+  assert time.monotonic()<deadline,label+' readiness timeout'
+  QTest.qWait(5);time.sleep(.05) # Yield the GIL for image hashing; readiness stays predicate-driven.
 def check(n,c):
  assert c,n;checks.append(n);print(n,flush=True)
 def wait(error=False):
- deadline=time.monotonic()+240
- while vm.view['busy'] and time.monotonic()<deadline:QTest.qWait(5);time.sleep(.05)
- assert not vm.view['busy']
+ ready(lambda:not vm.view['busy'] and vm._pending is None,'VM operation')
  if not error:assert not vm.view['error'],vm.view['error']
 def item(name):
  def visit(x):
@@ -43,14 +53,28 @@ def press(name):
   # Wait for native activation before choosing focus. Space activates the exact
   # Button instead of a restored dialog default; this is synthesized input.
   assert QTest.qWaitForWindowActive(w,5000), 'Native Lab activation unavailable'
-  wait(True);x=item(name);assert x.isEnabled(),name
-  x.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+  ready(lambda:w.isActive() and not vm.view['busy'] and vm._pending is None and item(name).isEnabled(),name)
+  x=item(name);x.forceActiveFocus(Qt.TabFocusReason)
+  # Do not yield after choosing focus: refresh may disable the button.
+  event('input-ready',target=name,active=w.isActive(),busy=vm.view['busy'],enabled=x.isEnabled(),focused=x.hasActiveFocus())
   assert x.hasActiveFocus(),name+' focus'
-  (out/(a.smoke_phase+'-'+name+'-before.json')).write_text(json.dumps({'target':name,'window':[w.width(),w.height()],'focus':w.activeFocusItem().objectName(),'state':vm.view['state'],'running':vm.view['running_lesson_id'],'error':vm.view['error']}))
-  QTest.keyClick(w,Qt.Key_Space)
+  (evidence/(a.smoke_phase+'-'+name+'-before.json')).write_text(json.dumps({'target':name,'window':[w.width(),w.height()],'focus':w.activeFocusItem().objectName(),'state':vm.view['state'],'running':vm.view['running_lesson_id'],'error':vm.view['error']}))
+  activated=[]
+  def record_activation():
+   activated.append(name)
+   with (evidence/(a.smoke_phase+'-activations.jsonl')).open('a') as trace:trace.write(json.dumps({'target':name,'state':vm.view['state'],'error':vm.view['error']})+'\n')
+  x.clicked.connect(record_activation)
+  if name=='vmStop':
+   # Lifecycle proof uses a targeted pointer click; keyboard acceptance is
+   # separately reported, not inferred from successful shutdown.
+   center=x.mapToScene(QPointF(x.width()/2,x.height()/2)).toPoint()
+   QTest.mouseClick(w,Qt.LeftButton,Qt.NoModifier,center)
+  else:QTest.keyClick(w,Qt.Key_Space)
+  x.clicked.disconnect(record_activation)
+  assert activated==[name],name+' exact activation'
  else:
   item(name).forceActiveFocus(Qt.TabFocusReason);QTest.keyClick(w,Qt.Key_Return)
- QTest.qWait(100);wait()
+ wait()
 def select(id):wait();vm.selectLesson(id);wait();check('selection applied '+id,vm.view['selected_lesson_id']==id)
 def installed_smoke():
  # Fixed developer input only: these operations are not runtime QMP operations,
@@ -58,7 +82,7 @@ def installed_smoke():
  import learning_lab
  package=Path(learning_lab.__file__).resolve().parent
  check('isolated installed package',package.is_relative_to(Path(sys.prefix)) and 'site-packages' in package.parts)
- check('three installed units and twenty-four lessons',len(units())==3 and len(entries())==24)
+ check('four installed units and thirty-six lessons',len(units())==4 and len(entries())==36)
  check('original unit still eight',len(catalog()['entries'])==8)
  check('accepted lesson bytes',hashlib.sha256((package/'vm_preview/lesson.json').read_bytes()).hexdigest()=='246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da')
  check('native exposed',app.platformName()=='wayland' and QTest.qWaitForWindowExposed(w,5000))
@@ -72,17 +96,28 @@ def installed_smoke():
  else:
   saved=json.loads(expected.read_text());check('application restart preserved session',vm.view['session']==saved)
   check('clean disk Resume available',vm.view['state']=='stopped' and item('vmStart').property('text')=='Resume disk')
- press('vmStart');QTest.qWait(20000);wait();check('GTK guest running',vm.view['running_lesson_id']==a.lesson)
+ if a.smoke_phase=='reset':
+  retained=a.vm_home/'profiles'/m.profile/'generations'/saved['generation']/'disk.qcow2'
+  retained_hash=hashlib.sha256(retained.read_bytes()).hexdigest();old_saved=saved
+  event('confirmed-reset',old_session=saved)
+  vm.reset('Learn',True);wait();saved=vm.view['session']
+  check('Reset unique generation exact pins',saved['generation']!=old_saved['generation'] and saved['pin']==old_saved['pin'])
+  check('Reset retained bytes',hashlib.sha256(retained.read_bytes()).hexdigest()==retained_hash)
+  (out/'expected-reset-session.json').write_text(json.dumps(saved,indent=2))
+ press('vmStart');wait();check('GTK guest running',vm.view['running_lesson_id']==a.lesson)
+ event('running-identity',record=json.loads((m.gate_root/'running.json').read_text()),session=vm.view['session'])
  if a.lesson!=LEGACY_ID:
   select(LEGACY_ID)
   check('installed cross-unit running controls',item('vmStop').isEnabled() and item('vmReturnRunning').isVisible() and not item('vmStart').isEnabled())
-  press('vmReturnRunning');check('installed Return selects capacity lesson',vm.view['selected_lesson_id']==a.lesson)
+  press('vmReturnRunning');check('installed Return selects chosen lesson',vm.view['selected_lesson_id']==a.lesson)
   foreign=Sessions(a.vm_home,hashlib.sha256((str(out)+'-foreign').encode()).hexdigest()).manager(LEGACY_ID)
   try:foreign.start();raise AssertionError('Cross-profile second VM started')
-  except Refused as exc:check('installed real cross-profile exclusion','already running' in str(exc))
+  except Refused as exc:
+   check('installed real cross-profile exclusion','already running' in str(exc));event('expected-foreign-start-refusal',foreign_profile=foreign.profile,error=str(exc),record=json.loads((m.gate_root/'running.json').read_text()))
  def qmp(c,args=None):
   r=json.loads((m.gate_root/'running.json').read_text())
   assert r['state']=='running' and r['profile']==m.profile and r['store']==m.binding and same_process(r), 'Not our verified fixture guest'
+  verify_launch(r,str(m.gate_root/r['run']/'qmp'))
   with socket.socket(socket.AF_UNIX) as sock:
    sock.settimeout(5);sock.connect(str(m.gate_root/r['run']/'qmp'));f=sock.makefile('rwb');f.readline()
    def op(cmd,arguments):
@@ -95,40 +130,68 @@ def installed_smoke():
  def key(k):
   qmp('human-monitor-command',{'command-line':'sendkey '+k+' 5'});QTest.qWait(150)
   qmp('input-send-event',{'events':[{'type':'key','data':{'down':False,'key':{'type':'qcode','data':code}}} for code in ('ctrl','ctrl_r','shift','shift_r','alt','alt_r')]});QTest.qWait(50)
+ def screen(label):
+  path=evidence/(label+'.png');qmp('screendump',{'filename':str(path),'format':'png'})
+  ocr_path=path
+  if label.startswith('command-'):
+   from PySide6.QtGui import QImage
+   im=QImage(str(path));im.invertPixels();im=im.scaled(im.width()*3,im.height()*3,Qt.IgnoreAspectRatio,Qt.FastTransformation)
+   ocr_path=evidence/(label+'-ocr.png');assert im.save(str(ocr_path))
+  value=subprocess.run(['/usr/bin/tesseract',str(ocr_path),'stdout','--psm','6'],capture_output=True,text=True,check=True).stdout
+  (evidence/(label+'.txt')).write_text(value);return value
+ def guest_ready():
+  return re.search(r'learner@[^\n]*[$]',screen('boot-ready')) is not None
+ ready(guest_ready,'guest console prompt',90);event('guest-prompt-ready')
+ sequence=0
  def line(t):
+  nonlocal sequence
+  sequence+=1;marker='READY'+''.join('ABCDEFGHJKMNPQRSTUVWXYZ'[(sequence//(22**i))%22] for i in (2,1,0))
+  event('guest-command',sequence=sequence,command=t)
+  t=t+"; printf '\\n"+marker+"\\n'"
+
   basic={' ':'spc','-':'minus','=':'equal','/':'slash','.':'dot',',':'comma',"'":'apostrophe',';':'semicolon','[':'bracket_left',']':'bracket_right','\\':'backslash','`':'grave_accent'}
   shifted={'!':'1','@':'2','#':'3','$':'4','%':'5','^':'6','&':'7','*':'8','(':'9',')':'0','_':'minus','+':'equal',':':'semicolon','"':'apostrophe','<':'comma','>':'dot','?':'slash','|':'backslash','~':'grave_accent','{':'bracket_left','}':'bracket_right'}
   key('ctrl-u')
   for c in t:
    k=('shift-'+c.lower() if c.isupper() else c) if c.isascii() and c.isalnum() else basic[c] if c in basic else 'shift-'+shifted[c]
    qmp('human-monitor-command',{'command-line':'sendkey '+k+' 5'});QTest.qWait(50)
-  key('ret');QTest.qWait(800)
+  key('ret')
+  ready(lambda:re.search(r'(?m)^'+marker+r'\s*$',screen('command-'+str(sequence))) is not None,'guest command '+str(sequence),30)
+ commands=[]
  if a.smoke_phase=='start':
   commands=[': > ~/fixture-failures','sleep 300 & p=$!','jobs -l','ps -o pid,ppid,stat,comm -p "$p"','kill -STOP "$p"; sleep 1','test "$(ps -o stat= -p "$p" | cut -c1)" = T || echo STOP_FAIL >> ~/fixture-failures','bg %+','kill "$p"; wait "$p"; test $? = 143 || echo TERM_FAIL >> ~/fixture-failures','printf "wheel-smoke-marker\\n" > ~/installed-wheel-smoke.txt']
- else:
+ elif a.smoke_phase=='resume':
   check('same pinned disk generation',vm.view['session']==saved)
   commands=[': > ~/fixture-failures','test "$(cat ~/installed-wheel-smoke.txt)" = wheel-smoke-marker || echo DISK_FAIL >> ~/fixture-failures','test -z "$(pgrep -u learner -x sleep)" || echo PROCESS_FAIL >> ~/fixture-failures']
  if a.lesson!=LEGACY_ID:
   if a.smoke_phase=='start':commands=[': > ~/fixture-failures','work=$(mktemp -d "$HOME/capacity-installed.XXXXXX"); cd "$work"','{ date -Is; nproc; uptime; free -m; df -Pk .; df -Pi .; } > baseline.txt','grep -q Mem baseline.txt || echo BASELINE_FAIL >> ~/fixture-failures','printf "%s\\n" "$work" > ~/installed-capacity-workspace','printf "wheel-smoke-marker\\n" > ~/installed-wheel-smoke.txt']
   else:commands+=['work=$(cat ~/installed-capacity-workspace); cd "$work"; grep -q Mem baseline.txt || echo BASELINE_RESUME_FAIL >> ~/fixture-failures']
+ if a.lesson=='real-linux-bash-script':
+  if a.smoke_phase=='start':commands=[': > ~/fixture-failures', 'work=$(mktemp -d "$HOME/bash-installed.XXXXXX") && cd "$work"', 'printf \'%s\\n\' \'#!/bin/bash\' \'if [ "$#" -ne 1 ]; then printf "usage: check-note FILE\\n" >&2; exit 2; fi\' \'printf "target=<%s>\\n" "$1"\' > check.sh', 'bash -n check.sh && chmod u+x check.sh', "timeout -k 2s 5s ./check.sh 'red note.txt' > target.txt; grep -qx 'target=<red note.txt>' target.txt || echo SCRIPT_FAIL >> ~/fixture-failures", 'timeout -k 2s 5s ./check.sh > bad-out.txt 2> bad-error.txt; rc=$?; test "$rc" -eq 2 && test ! -s bad-out.txt && grep -q usage bad-error.txt || echo USAGE_FAIL >> ~/fixture-failures', 'printf "%s\\n" "$work" > ~/installed-bash-workspace', 'printf "wheel-smoke-marker\\n" > ~/installed-wheel-smoke.txt']
+  else:commands=[': > ~/fixture-failures', 'work=$(cat ~/installed-bash-workspace); cd "$work"; grep -qx "target=<red note.txt>" target.txt || echo BASH_RESUME_FAIL >> ~/fixture-failures', 'test "$(cat ~/installed-wheel-smoke.txt)" = wheel-smoke-marker || echo DISK_FAIL >> ~/fixture-failures']
+ if a.smoke_phase=='reset':commands=[': > ~/fixture-failures','test ! -e ~/installed-wheel-smoke.txt && test ! -e ~/installed-bash-workspace || echo RESET_FAIL >> ~/fixture-failures']
  for c in commands:line(c)
  if a.lesson=='real-linux-admin-change':
   line('sudo -n id -u | grep -qx 0 || echo ADMIN_FAIL >> ~/fixture-failures')
  key('ctrl-q');line('clear');line('if [ -s ~/fixture-failures ]; then echo FAILED; cat ~/fixture-failures; else echo PASSED; fi')
- screenshot=out/(a.smoke_phase+'-guest.png');qmp('screendump',{'filename':str(screenshot),'format':'png'})
+ screenshot=evidence/(a.smoke_phase+'-guest.png');qmp('screendump',{'filename':str(screenshot),'format':'png'})
  text=subprocess.run(['/usr/bin/tesseract',str(screenshot),'stdout','--psm','6'],capture_output=True,text=True,check=True).stdout
- (out/(a.smoke_phase+'-guest.txt')).write_text(text)
+ (evidence/(a.smoke_phase+'-guest.txt')).write_text(text)
  check('guest assertions passed',re.search(r'(?m)^PASSED\s*$',text) is not None)
  if a.smoke_phase=='start':vm.progress('next');wait();vm.progress('complete');wait()
  press('vmStop');check('clean Stop',vm.view['state']=='stopped' and not vm.view['running_lesson_id'])
+ event('clean-stop',record=json.loads((m.gate_root/'running.json').read_text()),session=vm.view['session'])
+ if a.smoke_phase=='reset':check('retained disk remains unchanged after new guest',hashlib.sha256(retained.read_bytes()).hexdigest()==retained_hash)
  if a.smoke_phase=='start':expected.write_text(json.dumps(vm.view['session'],indent=2))
  else:check('progress and pins retained',vm.view['session']==saved)
- w.grabWindow().save(str(out/(a.smoke_phase+'-app.png')))
+ w.grabWindow().save(str(evidence/(a.smoke_phase+'-app.png')))
  check('zero QML warnings',not messages)
- (out/(a.smoke_phase+'-report.json')).write_text(json.dumps({'checks':checks,'package':str(package),'session':vm.view['session'],'input':'Synthesized native input; physical keyboard/accessibility unverified'},indent=2))
- print(json.dumps({'phase':a.smoke_phase,'checks':len(checks),'evidence':str(out)}),flush=True)
+ (evidence/(a.smoke_phase+'-report.json')).write_text(json.dumps({'checks':checks,'package':str(package),'session':vm.view['session'],'input':'Synthesized native input; physical keyboard/accessibility unverified'},indent=2))
+ print(json.dumps({'phase':a.smoke_phase,'checks':len(checks),'evidence':str(evidence)}),flush=True)
 if a.smoke_phase:
  try:installed_smoke()
+ except BaseException as exc:
+  event('failure',error=repr(exc),view=vm.view);raise
  finally:
   try:
    vm.refresh();wait(True)

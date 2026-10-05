@@ -35,7 +35,7 @@ class CatalogTests(unittest.TestCase):
   cat=production_catalog();old=Manager(self.root/'unused','a'*64);m=self.manager(cat)
   self.assertEqual(old.pin,m.pin);self.assertEqual(m.profile,'a'*64);self.assertFalse(self.root.joinpath('unused').exists())
   cat.allow(m.pin,LEGACY_ID,'new');cat.allow(m.pin,LEGACY_ID,'reset');cat.allow(m.pin,LEGACY_ID,'resume')
-  self.assertEqual(len(cat.lessons),24);self.assertEqual(len(cat.images),2);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
+  self.assertEqual(len(cat.lessons),36);self.assertEqual(len(cat.images),2);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
  def test_catalog_edit_reopen_preserves_exact_learn_challenge_bytes(self):
   for mode,profile in (('Learn','a'*64),('Challenge','b'*64)):
    old=self.manager(profile=profile);self.record(old,mode)
@@ -90,6 +90,7 @@ class CatalogTests(unittest.TestCase):
   record={'state':'running','store':m.binding,'profile':m.profile,'generation':saved['generation'],'run':str(uuid.uuid4())}
   with m.access() as (_,gate,p):
    with gate.child(record['run'],create=True):pass
+   fd=m.gate(gate);os.close(fd) # Actual running sessions always have a lifetime lock.
   from unittest.mock import MagicMock
   q=MagicMock();q.__enter__.return_value.powerdown.return_value=True
   with patch.object(m,'reconcile',return_value=record),patch('learning_lab.vm_preview.manager.Qmp',return_value=q):
@@ -145,7 +146,7 @@ class CatalogTests(unittest.TestCase):
   self.assertEqual(os.getpid(),forged['process']['pid'])
 
  def test_every_explicit_route_availability_and_preserved_records(self):
-  # All 24 routes, both image and lesson availability; no image/disk mock can
+  # All 36 routes, both image and lesson availability; no image/disk mock can
   # hide an accidental boot. Authorization must reject before process creation.
   for id in self.data['default_lessons']:
    m=self.manager(id=id);saved=self.record(m);before=self.inventory()

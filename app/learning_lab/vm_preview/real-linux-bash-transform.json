@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-bash-transform",
+  "content_version": "1.0.0",
+  "title": "Preview a text transformation",
+  "goal": "Apply one anchored substitution while preserving and verifying the original.",
+  "challenge": "Change only the label=old data line to label=new in the supplied home-directory config. Leave the comment and port unchanged. Preview, inspect a candidate diff, preserve a metadata backup, apply deliberately, verify, then restore exactly.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-transform.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "printf '%s\\n' '# label=old' 'port=8080' 'label=old' > original.conf; cp -p original.conf working.conf; sha256sum original.conf > original.sha256",
+      "explanation": "This is a guest-home sample, not /etc or a real service configuration.",
+      "expected": "Three lines; original hash retained."
+    },
+    {
+      "command": "sed 's/^label=old$/label=new/' working.conf",
+      "explanation": "Preview emits stdout and does not edit working.conf. Anchors avoid changing the comment.",
+      "expected": "Only the exact data line is transformed."
+    },
+    {
+      "command": "sed 's/^label=old$/label=new/' working.conf > candidate.conf; diff -u original.conf candidate.conf",
+      "explanation": "A diff status of 1 means differences, not a read failure; inspect which differences.",
+      "expected": "Only one label line differs."
+    },
+    {
+      "command": "grep -Fx 'port=8080' candidate.conf; grep -Fx 'label=new' candidate.conf; cp -p working.conf before.conf; cp -p candidate.conf working.conf; cmp candidate.conf working.conf; sha256sum -c original.sha256",
+      "explanation": "Publish only after checking the small defined format. No general configuration validation is implied.",
+      "expected": "Correct candidate copied; original unchanged."
+    },
+    {
+      "command": "cp -p before.conf working.conf; cmp original.conf working.conf; printf 'rollback=%s\\n' \"$?\"",
+      "explanation": "Restore the preserved file and verify exact bytes. Keep the candidate as evidence.",
+      "expected": "Rollback status 0, original metadata restored."
+    }
+  ],
+  "hints": [
+    "Why inspect a candidate before overwriting the working file?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.2 sed, 103.7 substitution. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}

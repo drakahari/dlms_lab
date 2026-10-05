@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-bash-script",
+  "content_version": "1.0.0",
+  "title": "Write and run a small Bash script",
+  "goal": "Select an interpreter and test arguments, execution permission and behavior.",
+  "challenge": "Write a Bash script accepting exactly one argument and printing target=<argument>. Wrong argument count must emit a usage error on stderr and exit 2. Demonstrate Bash invocation versus direct executable invocation, syntax checking and behavior checking.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/bash-script.XXXXXX\") && cd \"$work\" && pwd",
+      "explanation": "Create a unique learner-owned guest workspace. Stop if creation or cd fails. Retain its printed path; variables do not survive disk Resume.",
+      "expected": "A fresh directory inside the guest home; no existing files are changed."
+    },
+    {
+      "command": "nano check-note.sh",
+      "explanation": "Enter these six lines, save with Ctrl-O then Enter, exit Ctrl-X:\n#!/bin/bash\nif [ \"$#\" -ne 1 ]; then\n  printf 'usage: check-note FILE\\n' >&2\n  exit 2\nfi\nprintf 'target=<%s>\\n' \"$1\"",
+      "expected": "A small Bash script; no placeholder is the completed answer."
+    },
+    {
+      "command": "bash -n check-note.sh; printf 'syntax=%s\\n' \"$?\"; bash check-note.sh 'red note.txt'",
+      "explanation": "bash -n checks syntax only. Calling bash reads the script even without its executable bit.",
+      "expected": "Syntax status 0 and target=<red note.txt>."
+    },
+    {
+      "command": "./check-note.sh 'red note.txt'; printf 'direct before chmod=%s\\n' \"$?\"; chmod u+x check-note.sh",
+      "explanation": "A new ordinary editor file is not executable; the expected direct refusal is 126. Grant only owner execute for this script.",
+      "expected": "Permission refusal first, then owner execute added."
+    },
+    {
+      "command": "timeout -k 2s 5s ./check-note.sh 'red note.txt' > target.txt; printf 'run=%s\\n' \"$?\" > status.txt; timeout -k 2s 5s ./check-note.sh > bad-output.txt 2> usage.txt; printf 'usage=%s\\n' \"$?\" >> status.txt; cat target.txt status.txt",
+      "explanation": "The shebang selects Bash for direct execution. Bound test runs. Capture status immediately.",
+      "expected": "Correct output, run=0, usage=2 and stderr usage."
+    }
+  ],
+  "hints": [
+    "Why does bash -n passing not establish correct behavior?",
+    "Compare actual output, immediate exit status and resulting files. A syntactically valid command or script can still do the wrong thing.",
+    "Keep the original, verify a small intended change, and demonstrate rollback inside this workspace."
+  ],
+  "review": [
+    "I retained the stated observations and can explain the outcome.",
+    "I checked failure cases and preserved originals; my review is not an application-verified score."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 105.2. Reinforcement is labeled; no full-objective mastery. Completion records self-review, not verified assessment. No score."
+}
