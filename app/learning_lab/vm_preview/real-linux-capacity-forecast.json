@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-capacity-forecast",
+  "content_version": "1.0.0",
+  "title": "Forecast with assumptions and uncertainty",
+  "goal": "Calculate a reserve-aware forecast and recognize insufficient evidence.",
+  "challenge": "Use the synthetic history to estimate reaching a 1000 MiB capacity with a 100 MiB reserve. State current sample day, growth assumptions, headroom and time units. Explain why the supplied irregular history cannot justify a reliable linear forecast.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-forecast.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-forecast.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "printf '%s\\n' 'day used_MiB' '0 200' '7 270' '14 340' '21 410' > history.txt",
+      "explanation": "Create the same small synthetic history; do not substitute current df capacity.",
+      "expected": "At day 21, use is 410 MiB."
+    },
+    {
+      "command": "awk 'NR==2 {first_day=$1; first_used=$2} NR>1 {last_day=$1; last_used=$2} END {rate=(last_used-first_used)/(last_day-first_day); limit=1000; reserve=100; if(rate<=0) {print \"insufficient positive trend\"; exit 1}; remaining=limit-reserve-last_used; printf \"rate=%g MiB/day; headroom=%g MiB; days_after_last=%g; threshold_day=%g\\n\",rate,remaining,remaining/rate,last_day+remaining/rate}' history.txt > forecast.txt; cat forecast.txt",
+      "explanation": "Compute with awk and independently check: (410-200)/21=10; (1000-100-410)/10=49. These are arithmetic estimates, not promises.",
+      "expected": "490 MiB headroom; 49 days after day 21; threshold day 70. Without reserve, physical capacity would be reached on day 80."
+    },
+    {
+      "command": "printf '%s\\n' 'day used_MiB' '0 200' '7 190' '14 300' '21 210' > irregular.txt",
+      "explanation": "Type an insufficient-evidence case with changes -10, +110 and -90 MiB.",
+      "expected": "Endpoint growth alone masks reversals; do not claim its small positive average is reliable."
+    },
+    {
+      "command": "cat irregular.txt",
+      "explanation": "Explain what additional samples, workload context or retention policy are needed.",
+      "expected": "Accept “insufficient evidence for a reliable forecast,” with reasons. A zero/negative trend also cannot establish a future exhaustion date."
+    }
+  ],
+  "hints": [
+    "Usable threshold is capacity minus reserve, not full capacity.",
+    "49 days means after the last sample; day 70 is measured from day zero.",
+    "A mechanically calculated endpoint average can be mathematically correct and predictively unjustified."
+  ],
+  "review": [
+    "I independently checked rate, headroom, days after the last sample and the absolute threshold day.",
+    "I declared the linear-growth/reserve assumptions.",
+    "I rejected a reliable forecast for the irregular case and identified missing evidence."
+  ],
+  "coverage": "Partial 200.2 reserve-aware prediction, assumptions and insufficient-evidence reasoning. Completion records self-review, not verified guest assessment; there is no score."
+}

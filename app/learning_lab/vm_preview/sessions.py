@@ -2,7 +2,7 @@
 from pathlib import Path
 from .files import Directory, Refused, require
 from .catalog_manager import CatalogManager as Manager
-from .registry import LEGACY_ID, catalog, entry, session_binding
+from .registry import LEGACY_ID, entries, entry, session_binding
 
 class Sessions:
     def __init__(self, home, profile, gate_root=None):
@@ -46,7 +46,7 @@ class Sessions:
         running_id = ''; foreign = False
         if record and record['state'] == 'running':
             if record['store'] == m.binding:
-                running_id = next((e['id'] for e in catalog()['entries']
+                running_id = next((e['id'] for e in entries()
                     if session_binding(self.profile,e['id']) == record['profile']), '')
             foreign = not bool(running_id)
         error = ''

@@ -1,0 +1,50 @@
+{
+  "id": "real-linux-capacity-cpu",
+  "content_version": "1.0.0",
+  "title": "Compare CPU before, during and after",
+  "goal": "Observe one short-lived CPU worker without imposing a performance threshold.",
+  "challenge": "Record bounded before/during/after samples, identify the actual worker and supervisor, explain interval versus lifetime CPU measurements, and verify the worker ended. Do not start a second worker or signal a PID saved from an older shell.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-cpu.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-cpu.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "timeout -k 2s 8s vmstat 1 3 > before.txt; cat before.txt",
+      "explanation": "Record an idle/context baseline before creating work.",
+      "expected": "First row is a since-boot average; later rows are interval samples."
+    },
+    {
+      "command": "if [ -z \"$(jobs -p)\" ]; then timeout -k 2s 12s bash -c 'while :; do :; done' & worker=$!; sleep 1; birth=$(awk '{print $22}' \"/proc/$worker/stat\"); cpu=$(ps -o pid= --ppid \"$worker\"); ps -o pid,ppid,pcpu,stat,args -p \"$worker\" --ppid \"$worker\"; timeout -k 2s 8s vmstat 1 4 > during.txt; wait \"$worker\"; result=$?; printf \"supervisor=%s child=%s status=%s\\n\" \"$worker\" \"$cpu\" \"$result\" > worker.txt; cat during.txt worker.txt; else printf \"Finish existing shell jobs before another worker.\\n\"; fi",
+      "explanation": "Read this entire compound command first, then type it as one line. One busy Bash is supervised for 12 seconds; do not pause midway. The shell waits for that exact child.",
+      "expected": "Supervisor normally returns 124 after its timer. One busy worker may change CPU observations; differences are not guaranteed."
+    },
+    {
+      "command": "timeout -k 2s 8s vmstat 1 3 > after.txt; cat after.txt",
+      "explanation": "Observe after the bounded worker has ended.",
+      "expected": "Load averages can decay slowly; other activity may remain."
+    },
+    {
+      "command": "if [ -n \"$worker\" ] && jobs -p | grep -qx \"$worker\" && [ \"$(awk '{print $22}' \"/proc/$worker/stat\" 2>/dev/null)\" = \"$birth\" ]; then kill -TERM \"$worker\"; fi; if [ -n \"$worker\" ]; then wait \"$worker\" 2>/dev/null || :; fi",
+      "explanation": "Safe interruption cleanup: only the still-owned job with the same recorded start tick can receive TERM. wait reaps the exact child. Repeating cleanup is safe; no PID files survive logout.",
+      "expected": "No lesson worker remains. If interrupted before birth was captured, the timer still ends the worker; wait for it."
+    },
+    {
+      "command": "jobs -l; cat worker.txt",
+      "explanation": "Retain actual identities and exit result, not a fixed PID.",
+      "expected": "No live lesson job remains; unavailable output after interruption is inconclusive, not a failure to fabricate."
+    }
+  ],
+  "hints": [
+    "Type the whole timed compound line without stopping to read between commands.",
+    "One worker on a two-vCPU guest may not consume every CPU; do not enforce 50% or 100%.",
+    "Only signal a current shell child with matching /proc start ticks; otherwise wait for the timer."
+  ],
+  "review": [
+    "I recorded before/during/after and actual child identities.",
+    "I checked timer completion or documented an interruption honestly.",
+    "I distinguished CPU utilization, lifetime averages and load."
+  ],
+  "coverage": "Partial 200.1 CPU measurements/correlation, reinforcing 103.5 process inspection. Completion records self-review, not verified guest assessment; there is no score."
+}

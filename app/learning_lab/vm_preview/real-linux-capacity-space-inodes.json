@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-capacity-space-inodes",
+  "content_version": "1.0.0",
+  "title": "Separate space from inode capacity",
+  "goal": "Diagnose supplied space and inode shortages without causing either one.",
+  "challenge": "Compare live byte/inode availability and classify both synthetic cases. Explain what each counter can establish and propose a safe next investigation, without filling a filesystem or deleting unrelated files.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-space.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-space.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "df -Pk .; df -Pi .; du -sk .",
+      "explanation": "Compare current byte capacity, inode capacity and this small workspace.",
+      "expected": "Units differ; du does not enumerate every cause of df/du differences."
+    },
+    {
+      "command": "printf '%s\\n' 'SYNTHETIC cases; not this VM' 'case available_KiB free_inodes' 'A 1024 500000' 'B 1048576 0' > shortages.txt",
+      "explanation": "Type the exact tiny dataset; both cases are hypothetical.",
+      "expected": "A has only 1 MiB available despite many inodes. B has 1 GiB available and no free inodes."
+    },
+    {
+      "command": "cat shortages.txt",
+      "explanation": "Interpret capacity for new file creation.",
+      "expected": "Either resource can prevent creation. Diagnose inode usage without assuming file contents are large."
+    },
+    {
+      "command": "du -sk .; ls -l",
+      "explanation": "Verify the exercise created only a tiny dataset.",
+      "expected": "No exhaustion workload ran; current VM may show neither fault."
+    }
+  ],
+  "hints": [
+    "Compare df -Pk with df -Pi: one reports blocks, the other inodes.",
+    "A filesystem can have room for bytes but no available inode for a new file.",
+    "Do not fill the VM to recreate a fictional example."
+  ],
+  "review": [
+    "I classified A as byte-space shortage and B as inode shortage.",
+    "I separated the examples from live evidence and proposed scoped investigation."
+  ],
+  "coverage": "Partial 200.1 capacity symptoms; preparation for filesystem administration, not repair. Completion records self-review, not verified guest assessment; there is no score."
+}

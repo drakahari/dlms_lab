@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt,QPointF,qInstallMessageHandler
 from PySide6.QtTest import QTest
 from learning_lab.__main__ import build_application
 from learning_lab.vm_preview.bridge import VmBridge
-from learning_lab.vm_preview.registry import LEGACY_ID,catalog
+from learning_lab.vm_preview.registry import LEGACY_ID,catalog,entries,units
 from learning_lab.profile_backup import snapshot,write_backup,read_backup,restore
 p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add_argument('--native',action='store_true');a=p.parse_args()
 out=Path(tempfile.mkdtemp(prefix='vm-lessons-ui-'));sizes=[];messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
  def press(name):
   item(name).forceActiveFocus(Qt.TabFocusReason);QTest.keyClick(w,Qt.Key_Return);QTest.qWait(100)
  def select(id):vm.selectLesson(id);wait()
- ids=[e['id'] for e in catalog()['entries']]
+ ids=[e['id'] for e in entries()]
  try:
   check('exposed',QTest.qWaitForWindowExposed(w,5000));check('DPR',abs(w.devicePixelRatio()-a.scale)<.01);check('platform',app.platformName()==('wayland' if a.native else 'offscreen'));check('lazy optional startup',not (root/'vm').exists())
   press('vmPreviewButton');wait();item('vmLessonChoice').forceActiveFocus(Qt.TabFocusReason)
@@ -41,12 +41,20 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
    check('display guidance '+phrase,phrase in display_text)
   for key in (Qt.Key_Space,Qt.Key_Home,Qt.Key_Return):QTest.keyClick(w,key)
   QTest.qWait(100);wait();check('keyboard ComboBox selection',vm.view['selected_lesson_id']==ids[0])
+  item('vmUnitChoice').forceActiveFocus(Qt.TabFocusReason)
+  for key in (Qt.Key_Space,Qt.Key_End,Qt.Key_Return):QTest.keyClick(w,key)
+  QTest.qWait(100);wait();check('keyboard unit selection',vm.view['selected_lesson_id']==ids[8])
   for id in ids:
    select(id);m=vm.manager
+   check(id+' collection matches',vm.view['unit']['id']==next(u['id'] for u in units() if any(e['id']==id for e in u['entries'])))
+   check(id+' unit selector visible',item('vmUnitChoice').width()>250)
    with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
     m.reset(confirmed=True);vm.refresh();wait();check(id+' Learn command',item('vmCommand').property('text')==m.lesson['steps'][0]['command'])
     press('vmNext');wait();vm.progress('hint');wait();vm.progress('complete');wait();check(id+' self-review only',vm.view['session']['completion']['kind']=='self-reviewed' and 'score' not in vm.view['session'])
     m.reset('Challenge',True);vm.refresh();wait();check(id+' Challenge associated',vm.view['session']['mode']=='Challenge')
+    if id in ids[8:]:
+     check(id+' Challenge setup available',item('vmPracticeMaterial').property('text').startswith('Guest-local setup'))
+     check(id+' interpretation remains available',item('vmInterpretationHeading').property('text')=='Interpretation questions')
     try:item('vmCommand');raise AssertionError('Challenge leaked guidance')
     except AssertionError as exc:assert str(exc)=='vmCommand'
     check(id+' Challenge keeps display guidance',item('vmDisplayGuidance').property('text')==display_text)
@@ -56,17 +64,21 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
   before=legacy.status()['session'];first=vm.sessions.manager(ids[0]);r={'state':'running','store':first.binding,'profile':first.profile,'generation':first.status()['session']['generation']}
   first_record=first.status()['session']
   with patch('learning_lab.vm_preview.manager.Manager.reconcile',return_value=r),patch.object(first,'status',return_value={'state':'running','session':first_record}):
-   select(LEGACY_ID);check('running lesson identified',vm.view['running_lesson_id']==ids[0]);check('Stop accessible',item('vmStop').isEnabled());check('second Start blocked',not item('vmStart').isEnabled());check('Reset while running blocked',not item('vmReset').isEnabled());check('return action available',item('vmReturnRunning').isEnabled())
+   select(ids[8]);check('cross-unit collection changed',vm.view['unit']['id']==units()[1]['id']);check('running lesson identified',vm.view['running_lesson_id']==ids[0]);check('Stop accessible',item('vmStop').isEnabled());check('second Start blocked',not item('vmStart').isEnabled());check('Reset while running blocked',not item('vmReset').isEnabled());check('return action available',item('vmReturnRunning').isEnabled())
    press('vmReturnRunning');wait();check('return selects running lesson',vm.view['selected_lesson_id']==ids[0]);check('running Stop still enabled',item('vmStop').isEnabled());select(LEGACY_ID)
   vm.refresh();wait();check('legacy untouched by selection',legacy.status()['session']==before)
   for size in ((800,600),(1280,900)):
+   select(ids[8+6])
    w.resize(*size);QTest.qWait(100);sizes.append({'requested':list(size),'actual':[w.width(),w.height()]})
    for name in ('vmStart','vmStop','vmReset','vmClose'):
     x=item(name);pos=x.mapToScene(QPointF(0,0));check(name+' contained '+str(size),pos.x()>=0 and pos.y()>=0 and pos.x()+x.width()<=w.width() and pos.y()+x.height()<=w.height())
-   check('selection width '+str(size),item('vmLessonChoice').width()>250);w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}.png'))
+   check('selection width '+str(size),item('vmLessonChoice').width()>250);check('unit width '+str(size),item('vmUnitChoice').width()>250);w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}.png'))
    guide=item('vmDisplayGuidance');pos=guide.mapToScene(QPointF(0,0))
    check('display guidance width '+str(size),pos.x()>=0 and pos.x()+guide.width()<=w.width() and guide.width()>250)
    check('display guidance wraps '+str(size),guide.property('lineCount')>1)
+   material=item('vmPracticeMaterial');material.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+   check('setup focus '+str(size),material.hasActiveFocus())
+   check('setup wraps '+str(size),material.property('lineCount')>1 and material.width()>250 and material.property('contentWidth')<=material.width()+1)
   select(ids[0]);m=vm.manager
   with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
    press('vmReset');QTest.keyClick(w,Qt.Key_Escape);QTest.qWait(100);check('Reset cancel preserves completion',vm.view['session']['completion'] is not None)

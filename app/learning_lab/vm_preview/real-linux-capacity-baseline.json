@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-capacity-baseline",
+  "content_version": "1.0.0",
+  "title": "Record a resource baseline",
+  "goal": "Capture a dated baseline before diagnosing a performance problem.",
+  "challenge": "Create a guest-local baseline recording CPU count, load, available memory and filesystem space/inodes. Explain at least two limits of a single snapshot; do not claim a fault solely from an idle or busy value.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-baseline.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-baseline.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "date -Is; nproc; uptime",
+      "explanation": "Record time, available CPUs and load averages.",
+      "expected": "Values describe this virtual guest; load is not CPU percentage."
+    },
+    {
+      "command": "free -m; df -Pk .; df -Pi .",
+      "explanation": "Compare memory availability, usable KiB and inodes.",
+      "expected": "Available memory is different from free memory; byte and inode capacity are separate."
+    },
+    {
+      "command": "timeout -k 2s 8s vmstat 1 3",
+      "explanation": "Take three bounded samples. The first is normally an average since boot; later rows describe intervals.",
+      "expected": "The command returns after about two seconds; quiet or varying samples are valid."
+    },
+    {
+      "command": "{ date -Is; nproc; uptime; free -m; df -Pk .; df -Pi .; } > baseline.txt; cat baseline.txt",
+      "explanation": "Save and inspect a small timestamped snapshot.",
+      "expected": "A guest-local baseline, not historical monitoring or proof of a bottleneck."
+    }
+  ],
+  "hints": [
+    "Start with units: CPUs, percentages, MiB, KiB and inode counts are different.",
+    "Use the available column in free, and do not equate load with percent CPU.",
+    "Record the sampling interval and guest context before proposing a cause."
+  ],
+  "review": [
+    "I retained a timestamped baseline with units.",
+    "I distinguished a snapshot from a trend and named virtualization limits."
+  ],
+  "coverage": "Partial 200.1 baseline resource observations; no network or full bottleneck diagnosis. Completion records self-review, not verified guest assessment; there is no score."
+}

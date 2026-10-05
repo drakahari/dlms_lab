@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "units": [
+    {
+      "id": "lpic-processes-jobs-priorities",
+      "resource": "unit.json"
+    },
+    {
+      "id": "lpic-resource-diagnosis-capacity",
+      "resource": "resource-unit.json"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "id": "real-linux-capacity-recommendation",
+  "content_version": "1.0.0",
+  "title": "Write an evidence-based recommendation",
+  "goal": "Combine observations and uncertainty into a defensible operational handover.",
+  "challenge": "Retain a timestamped live baseline and analyze the supplied synthetic planning history. Write a guest-local recommendation separating facts, assumptions and missing evidence. Give a reserve-aware review date, scoped next investigation and cleanup report. No unexplained hardware purchase or verified-assessment claim.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-recommendation.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-recommendation.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "{ date -Is; nproc; uptime; free -m; df -Pk .; df -Pi .; } > baseline.txt; cat baseline.txt",
+      "explanation": "Collect live guest evidence without introducing another workload.",
+      "expected": "Live context and units; not the history below."
+    },
+    {
+      "command": "printf '%s\\n' 'day used_MiB' '0 200' '7 270' '14 340' '21 410' > history.txt",
+      "explanation": "Type the four synthetic weekly samples. Planning capacity 1000 MiB, reserve 100 MiB.",
+      "expected": "A separate teaching scenario, not measured VM storage growth."
+    },
+    {
+      "command": "awk 'NR==2 {first_day=$1; first_used=$2} NR>1 {last_day=$1; last_used=$2} END {rate=(last_used-first_used)/(last_day-first_day); limit=1000; reserve=100; if(rate<=0) {print \"insufficient positive trend\"; exit 1}; remaining=limit-reserve-last_used; printf \"rate=%g MiB/day; headroom=%g MiB; days_after_last=%g; threshold_day=%g\\n\",rate,remaining,remaining/rate,last_day+remaining/rate}' history.txt > forecast.txt; cat forecast.txt",
+      "explanation": "Recheck the example forecast; choose an earlier review checkpoint and explain why.",
+      "expected": "Threshold day 70 under unchanged linear growth; an earlier review is a policy choice, not a guaranteed failure date."
+    },
+    {
+      "command": "printf '%s\\n' 'LIVE FACTS: replace with dated observations' 'SYNTHETIC PLAN: 10 MiB/day; 490 MiB headroom; 49 days after day 21' 'ASSUMPTIONS: unchanged growth; 100 MiB reserve' 'RECOMMENDATION: review before day 70; justify timing' 'MISSING EVIDENCE: workload changes and longer history' 'CLEANUP: no practice workload remains' > recommendation.txt",
+      "explanation": "Create a small skeleton, then fill the LIVE FACTS and recommendation lines with your observations using the available guest editor (nano recommendation.txt). The skeleton alone is not a completed report.",
+      "expected": "The report must contain your own values, a reasoned review timing and explicit uncertainties."
+    },
+    {
+      "command": "nano recommendation.txt",
+      "explanation": "Edit only your guest-local report. Ctrl-O/Enter saves; Ctrl-X exits. Do not treat placeholder text as evidence.",
+      "expected": "A concise report, no new packages or privileges."
+    },
+    {
+      "command": "cat recommendation.txt; jobs -l",
+      "explanation": "Read the final report and confirm there are no lesson workloads.",
+      "expected": "Claim only supported facts; inconclusive observations and requests for better evidence are valid."
+    }
+  ],
+  "hints": [
+    "Separate LIVE FACTS, SYNTHETIC PLAN and ASSUMPTIONS so invented history cannot masquerade as measurements.",
+    "Threshold day 70 is not your review deadline; choose an earlier checkpoint and state its basis.",
+    "A recommendation should say what to measure next and why, not just buy more hardware."
+  ],
+  "review": [
+    "My report contains actual dated live values, units and the labeled synthetic plan.",
+    "I explained the forecast assumptions and a justified earlier review.",
+    "I proposed scoped next evidence, retained the report and verified cleanup."
+  ],
+  "coverage": "Partial 200.1/200.2 interpretation and planning; reinforcement assessment without automatic guest verification. Completion records self-review, not verified guest assessment; there is no score."
+}

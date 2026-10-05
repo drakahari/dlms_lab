@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-capacity-memory",
+  "content_version": "1.0.0",
+  "title": "Interpret available memory and cache",
+  "goal": "Distinguish free memory, available memory and cache without manufacturing pressure.",
+  "challenge": "Retain live memory observations and interpret the supplied synthetic example. Explain why low free memory alone does not establish a shortage, what evidence would strengthen a pressure diagnosis, and why no OOM experiment is appropriate.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-memory.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-memory.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "free -m; grep -E \"^(MemTotal|MemFree|MemAvailable|Cached|SwapTotal|SwapFree):\" /proc/meminfo",
+      "explanation": "Inspect real guest counters and their displayed units; /proc meminfo uses KiB despite its kB label.",
+      "expected": "Values vary; MemAvailable estimates what new applications can use without swapping."
+    },
+    {
+      "command": "timeout -k 2s 8s vmstat 1 3",
+      "explanation": "Observe swap-in/out and context without allocating a pressure workload.",
+      "expected": "Zero swap or quiet intervals are valid. No swap does not prove unlimited memory."
+    },
+    {
+      "command": "printf '%s\\n' 'SYNTHETIC example; MiB, not this VM' 'total=2048 free=120 available=1200 cached=900 swap_total=0' > memory-example.txt",
+      "explanation": "Create a small teaching case by typing this exact printf.",
+      "expected": "A manually created scenario, not collected historical evidence."
+    },
+    {
+      "command": "cat memory-example.txt",
+      "explanation": "Interpret it rather than adding free and cached as an exact available formula.",
+      "expected": "Low free with substantial available/cache is not sufficient evidence of a shortage."
+    }
+  ],
+  "hints": [
+    "free is unused memory; available includes an estimate of reclaimable memory.",
+    "Look for sustained symptoms and relevant counters, not one alarming number.",
+    "Without swap, si/so cannot demonstrate swap activity; use honest limits."
+  ],
+  "review": [
+    "I separated live counters from the synthetic case.",
+    "I explained cache reclaimability without assuming all cache is instantly reclaimable.",
+    "I described missing evidence rather than claiming OOM or exhaustion."
+  ],
+  "coverage": "Partial 200.1 memory interpretation; no pressure generation or full memory troubleshooting. Completion records self-review, not verified guest assessment; there is no score."
+}

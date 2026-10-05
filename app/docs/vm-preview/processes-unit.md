@@ -1,7 +1,8 @@
 # LPIC-1 Foundations: Processes, Jobs & Priorities
 
 Eight bundled real-Linux lessons, approximately 60–90 minutes. Open Library →
-**Real Linux VM preview…**, then choose a lesson. Sequence is guidance; no unlocks.
+**Real Linux VM preview…** → **Choose a real-Linux collection** →
+**LPIC-1 Foundations: Processes, Jobs & Priorities**, then choose a lesson. Sequence is guidance; no unlocks.
 Start/Resume uses the reviewed optional offline Debian image and native GTK console.
 Core simulations remain usable without QEMU or the image. Type commands in the
 **guest**, never a host terminal. Clipboard integration remains disabled.

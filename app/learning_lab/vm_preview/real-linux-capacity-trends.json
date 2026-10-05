@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-capacity-trends",
+  "content_version": "1.0.0",
+  "title": "Read a synthetic growth trend",
+  "goal": "Turn a labeled historical dataset into a table and a plain-text trend chart.",
+  "challenge": "Manually create the supplied synthetic history, retain a table/chart with units and explain interval growth. Identify limits of four idealized samples; do not present the chart as live VM monitoring.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-trends.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-trends.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "printf '%s\\n' 'day used_MiB' '0 200' '7 270' '14 340' '21 410' > history.txt",
+      "explanation": "Type all four rows and header exactly. These measurements are invented for teaching.",
+      "expected": "Four weekly samples, MiB used; not this VM’s recorded history."
+    },
+    {
+      "command": "cat history.txt",
+      "explanation": "Check dates and units before deriving a trend.",
+      "expected": "Days 0, 7, 14, 21; used 200, 270, 340, 410 MiB."
+    },
+    {
+      "command": "awk 'NR>1 {printf \"day %2d %4d MiB \",$1,$2; for(i=0;i<int($2/50);i++) printf \"#\"; print \"\"}' history.txt > chart.txt; cat chart.txt",
+      "explanation": "Each # represents a full 50 MiB; rounding down loses detail. Keep exact table alongside the chart.",
+      "expected": "Bars contain 4, 5, 6, 8 # symbols; the exact readings increase 70 MiB per week."
+    },
+    {
+      "command": "awk 'NR==2 {day=$1; used=$2; next} NR>2 {printf \"days %d-%d: %g MiB/day\\n\",day,$1,($2-used)/($1-day); day=$1; used=$2}' history.txt",
+      "explanation": "Compare each adjacent interval rather than inferring a trend from a title.",
+      "expected": "10 MiB/day for each interval, only for this synthetic table."
+    }
+  ],
+  "hints": [
+    "Check that every interval is seven days before dividing.",
+    "A rounded bar chart is a visual aid; the numeric table is authoritative.",
+    "Four perfect samples do not guarantee future linear growth."
+  ],
+  "review": [
+    "I entered and checked the rows by inspection and labeled them synthetic.",
+    "I retained exact values, chart scale and interval growth.",
+    "I named an assumption that could invalidate the trend."
+  ],
+  "coverage": "Partial 200.2 growth/trend interpretation; no monitoring-platform deployment. Completion records self-review, not verified guest assessment; there is no score."
+}

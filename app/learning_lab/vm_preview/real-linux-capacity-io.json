@@ -1,0 +1,50 @@
+{
+  "id": "real-linux-capacity-io",
+  "content_version": "1.0.0",
+  "title": "Observe bounded file I/O",
+  "goal": "Observe a small regular-file write/read while preserving a generous space reserve.",
+  "challenge": "Use a fresh private workspace; check at least 528 MiB available. Write/read no more than one 16 MiB scratch file with the documented timers and child file-size limit. Retain timings and byte count, explain cache/virtual-disk limitations, then remove only that scratch file.",
+  "steps": [
+    {
+      "command": "work=$(mktemp -d \"$HOME/capacity-io.XXXXXX\"); cd \"$work\" && pwd",
+      "explanation": "Create a unique private guest workspace. Retain its printed path; repeat starts a new workspace, never overwrites old evidence. Stop if creation/change-directory fails.",
+      "expected": "A new /home/learner/capacity-io.XXXXXX directory. All files below are guest-local."
+    },
+    {
+      "command": "df -Pk .; df -Pi .",
+      "explanation": "Check the guest filesystem, not a raw device. Admission requires 540672 KiB: 512 MiB reserve plus 16 MiB payload. Stop if unavailable.",
+      "expected": "Normally much more is free; this check is not an aggregate quota or permanent reservation."
+    },
+    {
+      "command": "test \"$PWD\" = \"$work\" && available=$(df -Pk . | awk 'NR==2 {print $4}') && [ \"$available\" -ge 540672 ] && TIMEFORMAT='%3R seconds' && { time ( ulimit -f 16384; timeout -k 2s 15s dd if=/dev/zero of=io.bin bs=1M count=16 conv=fsync status=none ); } 2> write-time.txt",
+      "explanation": "Read the whole line first. Guard the directory/reserve; the subshell limits each output file to 16 MiB (Bash’s default 1024-byte ulimit units). dd writes only io.bin, never a device. Record any error instead of interpreting failed I/O as throughput.",
+      "expected": "On success io.bin is exactly 16777216 bytes. The fsync write may be cached/virtualized; timeout is 15 seconds plus 2-second kill grace."
+    },
+    {
+      "command": "test \"$PWD\" = \"$work\" && TIMEFORMAT='%3R seconds' && { time timeout -k 2s 15s dd if=io.bin of=/dev/null bs=1M count=16 status=none; } 2> read-time.txt",
+      "explanation": "Read at most the same payload to /dev/null; this is not a physical-disk benchmark. No cache dropping or direct I/O.",
+      "expected": "A read can be extremely fast or slow; a faster read is consistent with cache, not proof of its sole cause."
+    },
+    {
+      "command": "wc -c io.bin; cat write-time.txt read-time.txt",
+      "explanation": "Keep byte count, completion/error and elapsed observations. Do not compute throughput from a rounded zero duration.",
+      "expected": "16777216 bytes only if the write succeeded; inconclusive measurements are accepted."
+    },
+    {
+      "command": "if [ \"$PWD\" = \"$work\" ]; then rm -f -- io.bin; fi; ls -l",
+      "explanation": "Remove only the named scratch file in the verified working directory; repeat safely. Keep small timing notes.",
+      "expected": "io.bin is gone; evidence files remain. No recursive cleanup or broad termination."
+    }
+  ],
+  "hints": [
+    "528 MiB is 540672 KiB; the reserve is 512 MiB after a 16 MiB payload.",
+    "A timer/error or size mismatch invalidates a speed claim; retain it as failed/inconclusive evidence.",
+    "Page cache and host storage make these observations unsuitable for buying hardware based on one run."
+  ],
+  "review": [
+    "I checked reserve, directory and exact scratch bytes.",
+    "I recorded successful or inconclusive timings without fixed thresholds.",
+    "I removed only io.bin and retained small notes."
+  ],
+  "coverage": "Partial 200.1 file-I/O observations; no device attribution, iostat/sar or hardware benchmark. Completion records self-review, not verified guest assessment; there is no score."
+}

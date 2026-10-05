@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "id": "lpic-resource-diagnosis-capacity",
+  "title": "LPIC-2 Foundations: Resource Diagnosis & Capacity Evidence",
+  "purpose": "Eight offline real-Linux lessons: record observations, separate symptoms from causes and make a qualified capacity recommendation. Recommended sequence, no unlocks. Completion is self-reviewed and unscored.",
+  "prerequisites": "Paths, reading output, the text/report unit and Processes, Jobs & Priorities. Read timed commands before typing; all work is inside the unprivileged guest.",
+  "coverage": "LPIC-2 v4.5 partial 200.1 resource measurement/interpretation and 200.2 trends/forecasting. No network measurements, sar/iostat/iotop, monitoring-platform configuration or full LPIC-2 coverage. Synthetic datasets are teaching examples, not this VM’s history.",
+  "entries": [
+    {
+      "id": "real-linux-capacity-baseline",
+      "resource": "real-linux-capacity-baseline.json",
+      "description": "Capture a dated baseline before diagnosing a performance problem.",
+      "objectives": [
+        "200.1"
+      ],
+      "troubleshooting": [
+        "Missing vmstat is a prerequisite failure; do not install packages or substitute invented output.",
+        "If workspace setup failed, stop before redirects and create a new valid workspace."
+      ],
+      "cleanup": [
+        "No workload was created. Keep baseline.txt for review. Optional removal: only while PWD equals your recorded work directory, remove baseline.txt; leave it with cd \"$HOME\" and use rmdir \"$work\" only when empty. Never use recursive removal."
+      ],
+      "observations": [
+        "baseline.txt and sampling interval; CPU count, memory available, byte/inode availability."
+      ],
+      "questions": [
+        "What can this snapshot establish? What additional observation would you collect before diagnosing a fault?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-baseline.XXXXXX\"); cd \"$work\" && pwd"
+      ]
+    },
+    {
+      "id": "real-linux-capacity-cpu",
+      "resource": "real-linux-capacity-cpu.json",
+      "description": "Observe one short-lived CPU worker without imposing a performance threshold.",
+      "objectives": [
+        "200.1"
+      ],
+      "troubleshooting": [
+        "A fast interruption may leave no during.txt/worker.txt; record that and repeat only after jobs is empty.",
+        "Status 124 is normal timer expiry; 143 can reflect deliberate TERM. No such process after expiry is not evidence of a leak."
+      ],
+      "cleanup": [
+        "if [ -n \"$worker\" ] && jobs -p | grep -qx \"$worker\" && [ \"$(awk '{print $22}' \"/proc/$worker/stat\" 2>/dev/null)\" = \"$birth\" ]; then kill -TERM \"$worker\"; fi; if [ -n \"$worker\" ]; then wait \"$worker\" 2>/dev/null || :; fi",
+        "Keep the four small observation files. Cleanup never uses pkill, killall or a stale saved PID. On shell loss, let the 12-second timer finish; disk Resume does not recover jobs."
+      ],
+      "observations": [
+        "before.txt, during.txt, after.txt, worker.txt; interval, PID/PPID and timeout status."
+      ],
+      "questions": [
+        "Did observations support a CPU cause? Could host scheduling or other guest activity explain the difference?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-cpu.XXXXXX\"); cd \"$work\" && pwd",
+        "Approved workload starter (prepare your sampling commands first; no second job):\nif [ -z \"$(jobs -p)\" ]; then timeout -k 2s 12s bash -c 'while :; do :; done' & worker=$!; birth=$(awk '{print $22}' \"/proc/$worker/stat\"); fi\nTrack supervisor $worker and actual child using ps. If the timer expires before sampling, retain the inconclusive result; wait/reap before repeating. Cleanup uses the current shell job plus matching start tick, never a stale PID."
+      ]
+    },
+    {
+      "id": "real-linux-capacity-memory",
+      "resource": "real-linux-capacity-memory.json",
+      "description": "Distinguish free memory, available memory and cache without manufacturing pressure.",
+      "objectives": [
+        "200.1"
+      ],
+      "troubleshooting": [
+        "Repeated reads need not match; record sampling times.",
+        "Do not drop caches, allocate until failure, change swap or request privileges."
+      ],
+      "cleanup": [
+        "No memory workload was created. Retain the tiny teaching file/notes; optional cleanup removes only memory-example.txt inside your recorded work directory."
+      ],
+      "observations": [
+        "Live free/meminfo values with units and time; the labeled synthetic example and interpretation."
+      ],
+      "questions": [
+        "What additional evidence would distinguish cache use from harmful memory pressure? Why is zero swap activity inconclusive here?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-memory.XXXXXX\"); cd \"$work\" && pwd",
+        "Supplied synthetic data; not observed VM history:\nprintf '%s\\n' 'SYNTHETIC example; MiB, not this VM' 'total=2048 free=120 available=1200 cached=900 swap_total=0' > memory-example.txt"
+      ]
+    },
+    {
+      "id": "real-linux-capacity-io",
+      "resource": "real-linux-capacity-io.json",
+      "description": "Observe a small regular-file write/read while preserving a generous space reserve.",
+      "objectives": [
+        "200.1"
+      ],
+      "troubleshooting": [
+        "A failed admission guard creates no scratch payload. Do not reduce the reserve to force the exercise.",
+        "File too large or timeout is evidence of refusal/failure, not successful throughput. Do not weaken ulimit or rerun larger inputs."
+      ],
+      "cleanup": [
+        "if [ \"$PWD\" = \"$work\" ]; then rm -f -- io.bin; fi",
+        "I/O runs in the foreground under timeout. Ctrl-C interrupts it; after the prompt returns, remove the exact partial scratch file using the same guard. Keep notes; do not use recursive removal."
+      ],
+      "observations": [
+        "Available KiB before/after, file byte count, both timing/error files and whether each command succeeded."
+      ],
+      "questions": [
+        "What does conv=fsync request, and what can the guest still not establish about physical durability? Is a rounded zero elapsed value a valid denominator?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-io.XXXXXX\"); cd \"$work\" && pwd",
+        "Approved guarded scratch write (Bash default ulimit units; stop on failure):\ntest \"$PWD\" = \"$work\" && available=$(df -Pk . | awk 'NR==2 {print $4}') && [ \"$available\" -ge 540672 ] && TIMEFORMAT='%3R seconds' && { time ( ulimit -f 16384; timeout -k 2s 15s dd if=/dev/zero of=io.bin bs=1M count=16 conv=fsync status=none ); } 2> write-time.txt",
+        "Approved bounded scratch read:\ntest \"$PWD\" = \"$work\" && TIMEFORMAT='%3R seconds' && { time timeout -k 2s 15s dd if=io.bin of=/dev/null bs=1M count=16 status=none; } 2> read-time.txt"
+      ]
+    },
+    {
+      "id": "real-linux-capacity-space-inodes",
+      "resource": "real-linux-capacity-space-inodes.json",
+      "description": "Diagnose supplied space and inode shortages without causing either one.",
+      "objectives": [
+        "200.1"
+      ],
+      "troubleshooting": [
+        "A zero or variable live reading is an observation, not a required answer.",
+        "Do not create masses of files or write until full."
+      ],
+      "cleanup": [
+        "No workload beyond the tiny dataset. Keep shortages.txt; optional removal is limited to this known file in your workspace."
+      ],
+      "observations": [
+        "Live df/du values and time; shortages.txt; reasons for each classification."
+      ],
+      "questions": [
+        "What would you inspect before deleting anything? Why might df and du differ even when both are correct?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-space.XXXXXX\"); cd \"$work\" && pwd",
+        "Supplied synthetic data; not observed VM history:\nprintf '%s\\n' 'SYNTHETIC cases; not this VM' 'case available_KiB free_inodes' 'A 1024 500000' 'B 1048576 0' > shortages.txt"
+      ]
+    },
+    {
+      "id": "real-linux-capacity-trends",
+      "resource": "real-linux-capacity-trends.json",
+      "description": "Turn a labeled historical dataset into a table and a plain-text trend chart.",
+      "objectives": [
+        "200.2"
+      ],
+      "troubleshooting": [
+        "A mistyped row changes the result; inspect the four rows rather than correcting the answer by guesswork.",
+        "Do not install plotting tools; plain text is enough."
+      ],
+      "cleanup": [
+        "No workload. Keep the two tiny files; optional cleanup removes only history.txt and chart.txt inside your recorded workspace."
+      ],
+      "observations": [
+        "history.txt, chart.txt; units, interval calculations, chart rounding and synthetic label."
+      ],
+      "questions": [
+        "What detail does the chart hide? How would seasonality, cleanup or workload changes affect this apparent trend?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-trends.XXXXXX\"); cd \"$work\" && pwd",
+        "Supplied synthetic data; not observed VM history:\nprintf '%s\\n' 'day used_MiB' '0 200' '7 270' '14 340' '21 410' > history.txt"
+      ]
+    },
+    {
+      "id": "real-linux-capacity-forecast",
+      "resource": "real-linux-capacity-forecast.json",
+      "description": "Calculate a reserve-aware forecast and recognize insufficient evidence.",
+      "objectives": [
+        "200.2"
+      ],
+      "troubleshooting": [
+        "Do not mix KiB/MiB or forecast against the actual VM disk; 1000/100 are hypothetical policy values.",
+        "If sample days coincide, fix the data rather than divide by zero. No positive rate means no finite linear exhaustion estimate."
+      ],
+      "cleanup": [
+        "No workload. Keep the three small files; optional cleanup removes only their exact names in your recorded workspace."
+      ],
+      "observations": [
+        "Both labeled synthetic tables, forecast.txt, independent arithmetic and uncertainty statement."
+      ],
+      "questions": [
+        "When could a correct calculation still be a poor forecast? What would you collect before committing money or a maintenance date?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-forecast.XXXXXX\"); cd \"$work\" && pwd",
+        "Supplied synthetic data; not observed VM history:\nprintf '%s\\n' 'day used_MiB' '0 200' '7 270' '14 340' '21 410' > history.txt",
+        "Supplied synthetic data; not observed VM history:\nprintf '%s\\n' 'day used_MiB' '0 200' '7 190' '14 300' '21 210' > irregular.txt",
+        "Synthetic planning policy: total capacity 1000 MiB; reserve 100 MiB. Use the most recent sample as the forecast starting point. Separate this invented policy from live VM counters."
+      ]
+    },
+    {
+      "id": "real-linux-capacity-recommendation",
+      "resource": "real-linux-capacity-recommendation.json",
+      "description": "Combine observations and uncertainty into a defensible operational handover.",
+      "objectives": [
+        "200.1",
+        "200.2"
+      ],
+      "troubleshooting": [
+        "nano is in the pinned image; if unavailable report the mismatch, do not install it.",
+        "App Next/completion clicks do not validate a report. Placeholder text and a screenshot alone do not establish understanding."
+      ],
+      "cleanup": [
+        "No workload is introduced here. Retain the small report/data for self-review; remove only named files inside your workspace if you choose. Never clean unrelated directories."
+      ],
+      "observations": [
+        "baseline.txt, history.txt, forecast.txt and your edited recommendation.txt."
+      ],
+      "questions": [
+        "Which statement is directly observed, calculated, assumed or still unknown? What evidence would change your recommendation?"
+      ],
+      "limitations": [
+        "One CPU worker only: timeout sends TERM at 12 seconds, then KILL after 2 seconds if necessary. File-I/O commands have 15-second timers plus 2 seconds. These are practical supervision bounds, not guarantees for suspended guests or uninterruptible kernel waits.",
+        "Use only the fresh learner-owned workspace. Maximum teaching scratch payload is 16 MiB plus small notes (under 8 KiB per lesson); require at least 528 MiB available before I/O, preserving a 512 MiB reserve. Do not fill disks/inodes, allocate pressure workloads, drop caches, write devices or terminate unrelated tasks.",
+        "This offline VM shares host scheduling/storage. Cache effects and virtualization limit conclusions; no fixed live threshold or measured speed is required. Self-review is unscored; Resume boots disk files, not jobs. VM notes/disks are excluded from profile backups."
+      ],
+      "materials": [
+        "Guest-local setup (stop if creation or cd fails):\nwork=$(mktemp -d \"$HOME/capacity-recommendation.XXXXXX\"); cd \"$work\" && pwd",
+        "Supplied synthetic data; not observed VM history:\nprintf '%s\\n' 'day used_MiB' '0 200' '7 270' '14 340' '21 410' > history.txt",
+        "Synthetic planning policy: total capacity 1000 MiB; reserve 100 MiB. Use the most recent sample as the forecast starting point. Separate this invented policy from live VM counters."
+      ]
+    }
+  ]
+}

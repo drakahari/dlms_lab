@@ -83,7 +83,10 @@ QT_QPA_PLATFORMTHEME='' python3 -B -m learning_lab \
   --vm-home /home/drak/.local/share/learning-lab-vm/preview-v1
 ```
 
-Library → **Real Linux VM preview…** → choose Learn → **Start**. Type commands
+Library → **Real Linux VM preview…** → choose a collection and lesson → choose Learn → **Start**.
+The [Processes, Jobs & Priorities](processes-unit.md) and
+[Resource Diagnosis & Capacity Evidence](resource-unit.md) units share the same
+optional image and controller; each lesson retains its own pinned session. Type commands
 in the separate native GTK console. The app's guidance is not a command runner.
 Use **Stop** for clean guest shutdown, then **Resume disk** for the same files.
 Reset is enabled only while stopped and requires confirmation; choose the new mode

@@ -48,6 +48,38 @@
         {
           "id": "real-linux-process-handover",
           "sha256": "1cb7c3424c060c1657e61d695d4bbf14a9e529df4e48bd3d92a614e477f8a7b7"
+        },
+        {
+          "id": "real-linux-capacity-baseline",
+          "sha256": "41cc267d780c0e9136854de29f1dfc7b9fa5744ed58f5f715347dde9e132996a"
+        },
+        {
+          "id": "real-linux-capacity-cpu",
+          "sha256": "c13165b576009b791d49a6ea9cc8b4eb675ce94ec5d88fa0b8271dc3962920b8"
+        },
+        {
+          "id": "real-linux-capacity-memory",
+          "sha256": "ecb9b46ae72d8956a7197acbe314340c832f09df9490417de1b312bc9a4207b0"
+        },
+        {
+          "id": "real-linux-capacity-io",
+          "sha256": "77eb2440251300b1543dbf563d9bdffc06c916e34778a574d7a6af9dc1a23a24"
+        },
+        {
+          "id": "real-linux-capacity-space-inodes",
+          "sha256": "3fefcc5a3beb27e8c87655c1f598d07fb99ee8717eebf9578e615d38265382af"
+        },
+        {
+          "id": "real-linux-capacity-trends",
+          "sha256": "f26bfa186714f92a788b6db5ed76f10bf97fcee127d038c7bbcf282a7c296fd5"
+        },
+        {
+          "id": "real-linux-capacity-forecast",
+          "sha256": "ebe23159673894619117b44c54e8f1d188add51a3c59c704c235fa86fbb2b8e0"
+        },
+        {
+          "id": "real-linux-capacity-recommendation",
+          "sha256": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725"
         }
       ]
     }
@@ -100,6 +132,54 @@
       "sha256": "1cb7c3424c060c1657e61d695d4bbf14a9e529df4e48bd3d92a614e477f8a7b7",
       "resource": "real-linux-process-handover.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-baseline",
+      "sha256": "41cc267d780c0e9136854de29f1dfc7b9fa5744ed58f5f715347dde9e132996a",
+      "resource": "real-linux-capacity-baseline.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-cpu",
+      "sha256": "c13165b576009b791d49a6ea9cc8b4eb675ce94ec5d88fa0b8271dc3962920b8",
+      "resource": "real-linux-capacity-cpu.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-memory",
+      "sha256": "ecb9b46ae72d8956a7197acbe314340c832f09df9490417de1b312bc9a4207b0",
+      "resource": "real-linux-capacity-memory.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-io",
+      "sha256": "77eb2440251300b1543dbf563d9bdffc06c916e34778a574d7a6af9dc1a23a24",
+      "resource": "real-linux-capacity-io.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-space-inodes",
+      "sha256": "3fefcc5a3beb27e8c87655c1f598d07fb99ee8717eebf9578e615d38265382af",
+      "resource": "real-linux-capacity-space-inodes.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-trends",
+      "sha256": "f26bfa186714f92a788b6db5ed76f10bf97fcee127d038c7bbcf282a7c296fd5",
+      "resource": "real-linux-capacity-trends.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-forecast",
+      "sha256": "ebe23159673894619117b44c54e8f1d188add51a3c59c704c235fa86fbb2b8e0",
+      "resource": "real-linux-capacity-forecast.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-capacity-recommendation",
+      "sha256": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725",
+      "resource": "real-linux-capacity-recommendation.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -111,7 +191,15 @@
     "real-linux-live-monitoring": "09418373ac0317e45a6a7e54bf4b5e277b1964cec29b69b3321bd0986cb87270",
     "real-linux-logout-persistence": "f61fe25369e916aa928397dde2f670d83f9f55c5f8b7c945a383c7356f076ae1",
     "real-linux-process-priorities": "41e60137f469672450ebc59b91003b63864821edd002f608e9c1e032efbc8f7c",
-    "real-linux-process-handover": "1cb7c3424c060c1657e61d695d4bbf14a9e529df4e48bd3d92a614e477f8a7b7"
+    "real-linux-process-handover": "1cb7c3424c060c1657e61d695d4bbf14a9e529df4e48bd3d92a614e477f8a7b7",
+    "real-linux-capacity-baseline": "41cc267d780c0e9136854de29f1dfc7b9fa5744ed58f5f715347dde9e132996a",
+    "real-linux-capacity-cpu": "c13165b576009b791d49a6ea9cc8b4eb675ce94ec5d88fa0b8271dc3962920b8",
+    "real-linux-capacity-memory": "ecb9b46ae72d8956a7197acbe314340c832f09df9490417de1b312bc9a4207b0",
+    "real-linux-capacity-io": "77eb2440251300b1543dbf563d9bdffc06c916e34778a574d7a6af9dc1a23a24",
+    "real-linux-capacity-space-inodes": "3fefcc5a3beb27e8c87655c1f598d07fb99ee8717eebf9578e615d38265382af",
+    "real-linux-capacity-trends": "f26bfa186714f92a788b6db5ed76f10bf97fcee127d038c7bbcf282a7c296fd5",
+    "real-linux-capacity-forecast": "ebe23159673894619117b44c54e8f1d188add51a3c59c704c235fa86fbb2b8e0",
+    "real-linux-capacity-recommendation": "f73de4611ae9a8076feca21f7d73e93c2b366c38f20d290b2348b9d6f2ff2725"
   },
   "releases": [],
   "keys": []

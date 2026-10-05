@@ -23,6 +23,13 @@ Dialog {
     Timer { interval: 5000; repeat: true; running: panel.opened; onTriggered: if(!info.busy) backend.refresh() }
     contentItem: InsetScrollView {
         id: contents; objectName: "vmContents"
+        Label { text: "Choose a real-Linux collection" }
+        ComboBox {
+            objectName: "vmUnitChoice"; Layout.fillWidth: true; model: info.units; textRole: "title"
+            currentIndex: { for(var i=0;i<info.units.length;i++) if(info.units[i].id===info.unit.id) return i; return -1 }
+            enabled: !info.busy; Accessible.name: "Choose a real-Linux collection"
+            onActivated: function(index) { backend.selectUnit(info.units[index].id) }
+        }
         LabText { text: info.unit.title; font.bold: true; Layout.fillWidth: true }
         LabText { text: info.unit.purpose; Layout.fillWidth: true }
         Label { text: "Choose a real-Linux lesson" }
@@ -38,6 +45,8 @@ Dialog {
         LabText { visible: !!info.running_error; text: info.running_error; Layout.fillWidth: true }
         LabText { text: info.lesson.title; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
         LabText { text: info.lesson.goal; Layout.fillWidth: true }
+        LabText { visible: !!info.support.materials; text: "Practice setup and supplied data · available in both modes"; font.bold: true; Layout.fillWidth: true }
+        Repeater { model: info.support.materials || []; TextArea { objectName: "vmPracticeMaterial"; required property string modelData; Layout.fillWidth: true; readOnly: true; selectByMouse: true; wrapMode: TextEdit.Wrap; font.family: "monospace"; text: modelData; Accessible.name: "Guest-local practice setup and data"; onActiveFocusChanged: if(activeFocus) contents.ensureVisible(this) } }
         LabText { objectName: "vmBoundary"; text: "Use the separate GTK console for real guest commands. No networking, host folders or clipboard; not protection against hostile malware."; Layout.fillWidth: true }
         LabText { objectName: "vmDisplayGuidance"; text: "Console view: keep View → Zoom To Fit enabled beside the Lab. For manual zoom, use a sufficiently large floating window; undersized tiles can distort the console and menu targets. Reopening returns to fit. The manual zoom percentage is not saved."; Layout.fillWidth: true }
         LabText { objectName: "vmBackupWarning"; text: "VM sessions and disks are NOT included in profile backups or exports. Resume keeps files, not RAM or shell jobs."; Layout.fillWidth: true; font.bold: true }
@@ -64,6 +73,11 @@ Dialog {
         }
         LabText { visible: !session || session.mode==="Challenge"; text: info.lesson.challenge; Layout.fillWidth: true }
         LabText { text: "Self-review · no verification score"; font.bold: true; Layout.fillWidth: true }
+        LabText { visible: !!info.support.observations; text: "Observations to retain"; font.bold: true; Layout.fillWidth: true }
+        Repeater { model: info.support.observations || []; LabText { required property string modelData; text: "• "+modelData; Layout.fillWidth: true } }
+        LabText { objectName: "vmInterpretationHeading"; visible: !!info.support.questions; text: "Interpretation questions"; font.bold: true; Layout.fillWidth: true }
+        Repeater { model: info.support.questions || []; LabText { required property string modelData; text: modelData; Layout.fillWidth: true } }
+        Repeater { model: info.support.limitations || []; LabText { required property string modelData; text: "Limit: "+modelData; Layout.fillWidth: true } }
         Repeater { model: info.lesson.review; LabText { required property string modelData; text: "• "+modelData; Layout.fillWidth: true } }
         LabText { objectName: "vmCompletion"; text: session && session.completion ? "Recorded as self-reviewed on "+session.completion.at+". Guest state was not verified." : "Completion records your own review; the app does not inspect guest commands or results."; Layout.fillWidth: true }
         LabButton { objectName: "vmComplete"; text: "Record my self-review…"; enabled: !!session && !info.busy; onActiveFocusChanged: if(activeFocus) contents.ensureVisible(this); onClicked: selfReview.open() }
@@ -76,7 +90,7 @@ Dialog {
             visible: supportToggle.checked; Layout.fillWidth: true; spacing: 12
             LabText { text: "Before signaling, inspect the actual owner, arguments and PID again. Use bounded owned practice tasks. Saved PIDs can expire or be reused. Finish practice tasks before leaving a lesson. Closing GTK can be an unclean VM stop."; Layout.fillWidth: true }
             Repeater { model: session && session.mode==="Learn" ? info.support.troubleshooting : []; LabText { required property string modelData; text: modelData; Layout.fillWidth: true } }
-            Repeater { model: session && session.mode==="Learn" ? info.support.cleanup : []; LabText { required property string modelData; text: "Cleanup: "+modelData; Layout.fillWidth: true } }
+            Repeater { model: info.support.observations || (session && session.mode==="Learn") ? info.support.cleanup : []; LabText { required property string modelData; text: "Cleanup: "+modelData; Layout.fillWidth: true } }
         }
         LabText { text: "Disk safety: 18 GiB per-file limit; no aggregate quota or guaranteed free-space reserve. Retained generations are never automatically pruned. Storage monitoring runs while this panel is open. Close the guest with Stop for a clean shutdown."; Layout.fillWidth: true }
         LabText { text: "Closing this panel/app can leave the guest running. Reopen the same profile to control it. Only one preview VM can run for this user, across all profiles."; Layout.fillWidth: true }
