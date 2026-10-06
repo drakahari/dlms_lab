@@ -112,13 +112,28 @@ separate user-obtained prerequisites; their binaries are not redistributed here.
 
 The Services, Logs & Safe Recovery unit adds a fresh, local-only Debian image;
 its contents are not covered by Learning Lab's MIT license or included in the
-application wheel. It has 204 exact binary packages and a 194-source-package
-closure, including incorporated sources. The five added binaries are sudo,
-rsyslog, libestr0, libfastjson4 and liblognorm5. Exact versions are in
-[`admin-packages.tsv`](docs/vm-preview/admin-packages.tsv); signed-input hashes,
-source URLs and notice/inventory hashes are in
-[`admin-image-provenance.json`](docs/vm-preview/admin-image-provenance.json).
-Matching binaries, notices and source archives are retained outside Git.
+application wheel. The finalized older image contains **216 binary packages**.
+The original [204-row inventory](docs/vm-preview/admin-packages.tsv) was exported
+before later Debian Installer hooks added twelve packages. It remains historical
+evidence, not a complete installed-package inventory. See the separate
+[216-row inventory](docs/vm-preview/admin-finalized-packages.tsv) and
+[supplemental provenance](docs/vm-preview/admin-finalized-provenance.json).
+
+The supplemental collection maps all 216 binaries to exact versions and notices,
+and retains 204 source versions (635 authenticated source files), including the
+ten previously missing source versions. Declared Built-Using/Static-Built-Using
+references are covered. This describes verified material collection, not a
+completed per-file/component licensing review. All materials remain outside Git.
+The unchanged legacy descriptor still references the early inventory for exact
+session compatibility; no image, descriptor, receipt or pin was rewritten.
+
+Intel microcode's exact notice permits unmodified binary redistribution subject
+to retaining its copyright/disclaimer, its endorsement restriction and its
+reverse-engineering/decompilation/disassembly prohibition. Its Debian packaging
+is GPL-2.0-or-later. The retained Debian source archive does **not** establish
+availability of the microcode implementation source. Preserve the full notice
+and applicable common-license texts; do not apply the project's MIT license to
+firmware. See the [remediation report](docs/vm-preview/admin-provenance-remediation.md).
 This does not replace the earlier image inventory or establish public release
 clearance. Per-file licensing review, production signing/distribution decisions,
 the unfinished Qt review and the ICU signing-key warning remain outstanding.

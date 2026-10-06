@@ -191,3 +191,19 @@ Physical-keyboard, accessibility and exhaustive native scaling gaps remain open.
   trust, unchanged runtime/pack/recipe files and whitespace checked. Candidate
   files contain documentation/inventory and build-source copying only. Downloads,
   environments, public-key material and runtime evidence remain outside Git.
+
+## Older administrator image: supplemental provenance
+
+The earlier Debian guest rows above describe the original unprivileged-image
+inventory and must not be reused as the administrator inventory. The older
+`debian13-admin-local-v1` image contains 216 packages; its original 204-row export
+preceded installer finalization. Supplemental exact-version material collection
+now covers 216 binary/notice mappings and 204 source versions (635 files), with
+the early inventory and every runtime image/descriptor/pin preserved.
+See [the remediation report](vm-preview/admin-provenance-remediation.md) and
+[machine-readable supplement](vm-preview/admin-finalized-provenance.json).
+
+This closes the identified inventory/material-collection omission. It does not
+complete per-file/component license review, provide Intel microcode implementation
+source, resolve the Qt/ICU blockers, or authorize public image distribution.
+Production bundle admission remains empty and no new image was prepared.

@@ -1,0 +1,533 @@
+{
+  "schema_version": 1,
+  "kind": "documentation-only supplemental provenance; not a runtime descriptor, receipt or admission manifest",
+  "image_id": "debian13-admin-local-v1",
+  "image_sha256": "f956d5c98848296f6887235c742ee4cc44ed5981acd0d2efd0a593b16d8a578f",
+  "image_bytes": 17179869184,
+  "legacy_descriptor_sha256": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+  "historical_inventory": {
+    "resource": "admin-packages.tsv",
+    "binary_count": 204,
+    "sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+    "meaning": "Captured in 07preseed before installer finalization; preserved unchanged, including the legacy descriptor packages_sha256 reference."
+  },
+  "finalized_inventory": {
+    "resource": "admin-finalized-packages.tsv",
+    "binary_count": 216,
+    "sha256": "2271bd8b719e7d51c40810d5f08f10ce9feb80ae1ae9d8962a08d68a52520cd8"
+  },
+  "cause": "07preseed ran the inventory-exporting late_command before 08hw-detect. KVM/QEMU detection then installed qemu-guest-agent with recommendations and queued Intel CPU microcode from the verified Debian DVD. All original 204 rows remain unchanged.",
+  "iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+  "iso_signer": "DF9B9C49EAA9298432589D76DA87E80D6294BE9B",
+  "source_version_count": 204,
+  "source_file_count": 635,
+  "additional_source_version_count": 10,
+  "additional_source_bytes": 71395070,
+  "retained_evidence_root": "/home/drak/.local/state/omarchy-learning-lab/recovery/admin-provenance-closure-20261006T225345241379Z",
+  "material_manifest": {
+    "file": "collected-material-manifest.json",
+    "sha256": "d624613760b6f0efc9d13fccd1c885f05d230b1ce5bf72c46bc79f10c89b0f98"
+  },
+  "metadata": [
+    {
+      "file": "DA87E80D6294BE9B.gpg",
+      "sha256": "b170997fa60b664a5fa0b8f69fde618c8f3fd1209a7bb50739f59666be4b1f22",
+      "bytes": 4469
+    },
+    {
+      "file": "SHA256SUMS",
+      "sha256": "b960a988620d0a55e6578288829bcd26d80eac0d4c0890a5ee4c41b9ab7971cd",
+      "bytes": 2610
+    },
+    {
+      "file": "SHA256SUMS.sign",
+      "sha256": "1dc2b08c7c970f7306afe658029e57950f5062119b776973f0906723d45d084b",
+      "bytes": 833
+    },
+    {
+      "file": "debian-InRelease",
+      "sha256": "0584fba32e13e0ab8285fb16c27adea1ec03a73669c18702821094fd6ca86675",
+      "bytes": 140421
+    },
+    {
+      "file": "debian-Sources.xz",
+      "sha256": "6002f81f463a2d976d84b34170367cc16da2d60bd0ba9ab9d868d6e1c1a935d9",
+      "bytes": 10540436
+    },
+    {
+      "file": "debian-release-keyring.gpg",
+      "sha256": "cea293fd74d83b8f55ed5d31d3ec7fe0267828791d64115b1ee60c577b20ba82",
+      "bytes": 35776
+    },
+    {
+      "file": "non-free-firmware-Sources.xz",
+      "sha256": "3f89217895c14aaf59bf456ff3d2500772fbd0a299d836ef8ed422b5f0927899",
+      "bytes": 6552
+    },
+    {
+      "file": "security-InRelease",
+      "sha256": "a5bc5449ff218c85ebc4fca64eb81682fb0e8ed84a8191c28e76644c4023b2b7",
+      "bytes": 43405
+    },
+    {
+      "file": "security-Sources.xz",
+      "sha256": "422e1bf6854209d8d6ab8527fe4b4ca032035f66ce1d6d3eb874f89000b9439b",
+      "bytes": 239472
+    }
+  ],
+  "additional_packages": [
+    {
+      "binary": "intel-microcode",
+      "version": "3.20251111.1~deb13u1",
+      "source": "intel-microcode",
+      "source_version": "3.20251111.1~deb13u1",
+      "binary_sha256": "1731b32e9dd2187ede409a74efa466c9f3a8178dce8151b5ba37e457bee5d25e",
+      "filename": "pool/non-free-firmware/i/intel-microcode/intel-microcode_3.20251111.1~deb13u1_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/intel-microcode/copyright",
+      "notice_sha256": "7223eab00971e0dafa2977214f8e1caf4d18209dc2042e7074bd419a9a5bfa92",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "iucode-tool",
+      "version": "2.3.1-3",
+      "source": "iucode-tool",
+      "source_version": "2.3.1-3",
+      "binary_sha256": "7b20b90c02499afef90ad7cfff24d008eac496f4afcb291852541b8483e4c6e1",
+      "filename": "pool/main/i/iucode-tool/iucode-tool_2.3.1-3_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/iucode-tool/copyright",
+      "notice_sha256": "e33c11ac07c121ea2d572cd7c72c7feaebb0fd4588ae9bbefd99530fe59182d4",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "libatomic1:amd64",
+      "version": "14.2.0-19",
+      "source": "gcc-14",
+      "source_version": "14.2.0-19",
+      "binary_sha256": "212b399aae2f7299203d261a57e49372e09565a9a5ea971905f94a3960366c05",
+      "filename": "pool/main/g/gcc-14/libatomic1_14.2.0-19_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/gcc-14-base/copyright",
+      "notice_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "notice_resolution": "Declared package-relative documentation symlink to exact installed gcc-14-base; no host symlink followed",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "libffi8:amd64",
+      "version": "3.4.8-2",
+      "source": "libffi",
+      "source_version": "3.4.8-2",
+      "binary_sha256": "0ebdc340de33333639c3c63874cd4b15ac2e83dfa1ef3053b7eefaf4919f4f68",
+      "filename": "pool/main/libf/libffi/libffi8_3.4.8-2_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/libffi8/copyright",
+      "notice_sha256": "25ee86cfccc2b7eb9a156a127f1e1b38c46c231f516ff201912223eaf62ee186",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "libglib2.0-0t64:amd64",
+      "version": "2.84.4-3~deb13u5",
+      "source": "glib2.0",
+      "source_version": "2.84.4-3~deb13u5",
+      "binary_sha256": "e2baf92c57d1db1753e5781a61450d9a01e7833c7bd2dfe87776a6811c11ecc2",
+      "filename": "pool/main/g/glib2.0/libglib2.0-0t64_2.84.4-3~deb13u5_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/libglib2.0-0t64/copyright",
+      "notice_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "libglib2.0-data",
+      "version": "2.84.4-3~deb13u5",
+      "source": "glib2.0",
+      "source_version": "2.84.4-3~deb13u5",
+      "binary_sha256": "11c671d0a21dd99215bc62fc0219a1fcbb1482f36329ab6b85732e09ddff9e1c",
+      "filename": "pool/main/g/glib2.0/libglib2.0-data_2.84.4-3~deb13u5_all.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/libglib2.0-data/copyright",
+      "notice_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "libnuma1:amd64",
+      "version": "2.0.19-1",
+      "source": "numactl",
+      "source_version": "2.0.19-1",
+      "binary_sha256": "e578583f73f8208564e5035b18aa729c441fc7ecb389c666923552e123f4d655",
+      "filename": "pool/main/n/numactl/libnuma1_2.0.19-1_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/libnuma1/copyright",
+      "notice_sha256": "179c34f5e56cd0b6b73dd7970a97357ee784e2236e8293826656c7ebb3bface7",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "liburing2:amd64",
+      "version": "2.9-1",
+      "source": "liburing",
+      "source_version": "2.9-1",
+      "binary_sha256": "4b589c00c7a51172aace2cb2fb3d3ff32daf86c644023126dcfcaa840cc941ea",
+      "filename": "pool/main/libu/liburing/liburing2_2.9-1_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/liburing2/copyright",
+      "notice_sha256": "c1c394745e57257f5a7fc2f652e0e5f5ece08f6dc979f395b7216cb62b1e98ec",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "libxml2:amd64",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+      "source": "libxml2",
+      "source_version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+      "binary_sha256": "e0c6b63ce4602a036a526f60fe5e6c1586710688058d98fc1001b9b3147b7efd",
+      "filename": "pool/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/libxml2/copyright",
+      "notice_sha256": "ee746b96cfa5be73c3ea3e4cfb1285e9b315d4c9267f99b2ee9c5d911d9fe3f4",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "qemu-guest-agent",
+      "version": "1:10.0.13+ds-0+deb13u1",
+      "source": "qemu",
+      "source_version": "1:10.0.13+ds-0+deb13u1",
+      "binary_sha256": "7d7d6be6a52d6ea21eabdb78f686e4bb886f933171d33f5f3cf3cf2390343abd",
+      "filename": "pool/main/q/qemu/qemu-guest-agent_10.0.13+ds-0+deb13u1_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/qemu-guest-agent/copyright",
+      "notice_sha256": "7092076611fd6b8499ae39720ed86b7977a5dfa378038966d85d9987f7cfe784",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "shared-mime-info",
+      "version": "2.4-5+b2",
+      "source": "shared-mime-info",
+      "source_version": "2.4-5",
+      "binary_sha256": "d7d061df29326b0ca6b273ac9332168659ff1562659f0a33609657a143dd7881",
+      "filename": "pool/main/s/shared-mime-info/shared-mime-info_2.4-5+b2_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/shared-mime-info/copyright",
+      "notice_sha256": "5145b47d997486e5327091374e807046a32216168b6f2bbf6d1816f60927686c",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    },
+    {
+      "binary": "xdg-user-dirs",
+      "version": "0.18-2",
+      "source": "xdg-user-dirs",
+      "source_version": "0.18-2",
+      "binary_sha256": "d3be3c7315722fe58921839f8bbf962e638540f2936627acc29464e63feded95",
+      "filename": "pool/main/x/xdg-user-dirs/xdg-user-dirs_0.18-2_amd64.deb",
+      "built_using": "",
+      "static_built_using": "",
+      "notice_member": "usr/share/doc/xdg-user-dirs/copyright",
+      "notice_sha256": "8fea73a6a82aa48f7b00aa9f88a6a36935528f60e2f79799e521754e1621bcf4",
+      "notice_resolution": "Direct exact-package copyright",
+      "installation_source": "Verified Debian DVD; no network package transaction"
+    }
+  ],
+  "additional_sources": [
+    {
+      "source": "glib2.0",
+      "version": "2.84.4-3~deb13u5",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "glib2.0_2.84.4-3~deb13u5.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/glib2.0_2.84.4-3~deb13u5.dsc",
+          "bytes": 5294,
+          "sha256": "2587beb2f5b90511d0c88a7595c1d3b3ea7a5b7e6582713ecae3713864012858"
+        },
+        {
+          "file": "glib2.0_2.84.4.orig-unicode-data.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/glib2.0_2.84.4.orig-unicode-data.tar.xz",
+          "bytes": 660708,
+          "sha256": "c1742461e8c0e9673a3453a3127671169de9cb0138493e5c916f1b989530efcd"
+        },
+        {
+          "file": "glib2.0_2.84.4.orig.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/glib2.0_2.84.4.orig.tar.xz",
+          "bytes": 5618200,
+          "sha256": "8a9ea10943c36fc117e253f80c91e477b673525ae45762942858aef57631bb90"
+        },
+        {
+          "file": "glib2.0_2.84.4-3~deb13u5.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/g/glib2.0/glib2.0_2.84.4-3~deb13u5.debian.tar.xz",
+          "bytes": 172260,
+          "sha256": "d8e3603c3780d2cc883d762cf81db9199d8c4c492a82a1a791c117a6d402dbeb"
+        }
+      ]
+    },
+    {
+      "source": "intel-microcode",
+      "version": "3.20251111.1~deb13u1",
+      "authenticated_index": "non-free-firmware",
+      "files": [
+        {
+          "file": "intel-microcode_3.20251111.1~deb13u1.dsc",
+          "url": "https://deb.debian.org/debian/pool/non-free-firmware/i/intel-microcode/intel-microcode_3.20251111.1~deb13u1.dsc",
+          "bytes": 1932,
+          "sha256": "510ab377b42a669dbc60ea35780b0533c384417c07c50859ce00c3ca91f0f3fd"
+        },
+        {
+          "file": "intel-microcode_3.20251111.1~deb13u1.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/non-free-firmware/i/intel-microcode/intel-microcode_3.20251111.1~deb13u1.tar.xz",
+          "bytes": 13517660,
+          "sha256": "737b2df5264a00a898cc7188bd32ee531193c80df4f72d6d1683d3914b39a18a"
+        }
+      ]
+    },
+    {
+      "source": "iucode-tool",
+      "version": "2.3.1-3",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "iucode-tool_2.3.1-3.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/i/iucode-tool/iucode-tool_2.3.1-3.dsc",
+          "bytes": 2252,
+          "sha256": "9f8792524435a08630c9ffa84c41d48a1d226fd8c5bef8c1efce20197d001035"
+        },
+        {
+          "file": "iucode-tool_2.3.1.orig.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/i/iucode-tool/iucode-tool_2.3.1.orig.tar.xz",
+          "bytes": 153380,
+          "sha256": "12b88efa4d0d95af08db05a50b3dcb217c0eb2bfc67b483779e33d498ddb2f95"
+        },
+        {
+          "file": "iucode-tool_2.3.1.orig.tar.xz.asc",
+          "url": "https://deb.debian.org/debian/pool/main/i/iucode-tool/iucode-tool_2.3.1.orig.tar.xz.asc",
+          "bytes": 833,
+          "sha256": "deb2d13a0a367e815f173a77cfc399c731175115383780ef1b4102fcf8208f8e"
+        },
+        {
+          "file": "iucode-tool_2.3.1-3.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/i/iucode-tool/iucode-tool_2.3.1-3.debian.tar.xz",
+          "bytes": 19996,
+          "sha256": "024e435210eeeb3ad199ce995482e37dbd208266b9161399261d50ce03a52720"
+        }
+      ]
+    },
+    {
+      "source": "libffi",
+      "version": "3.4.8-2",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "libffi_3.4.8-2.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi_3.4.8-2.dsc",
+          "bytes": 1948,
+          "sha256": "4424defe3f37c0084f062e03330b2ba3d3f927367c33be455cfacf7f85a78161"
+        },
+        {
+          "file": "libffi_3.4.8.orig.tar.gz",
+          "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi_3.4.8.orig.tar.gz",
+          "bytes": 595051,
+          "sha256": "cbb7f0b3b095dc506387ec1e35b891bfb4891d05b90a495bc69a10f2293f80ff"
+        },
+        {
+          "file": "libffi_3.4.8-2.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi_3.4.8-2.debian.tar.xz",
+          "bytes": 11220,
+          "sha256": "f23ac79a19895ebb6bbb539263d0d945ebc2d3e91217a597f5819777f08b401c"
+        }
+      ]
+    },
+    {
+      "source": "liburing",
+      "version": "2.9-1",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "liburing_2.9-1.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/libu/liburing/liburing_2.9-1.dsc",
+          "bytes": 2381,
+          "sha256": "fba5e3711b9aa0b39fe144ded788617acac76648438b2b51586354efcc30f680"
+        },
+        {
+          "file": "liburing_2.9.orig.tar.gz",
+          "url": "https://deb.debian.org/debian/pool/main/libu/liburing/liburing_2.9.orig.tar.gz",
+          "bytes": 407142,
+          "sha256": "57e9b36e4ac1e46b8e0351dfb1694dc59638fc25e384b4ba36d87b800b16db1a"
+        },
+        {
+          "file": "liburing_2.9.orig.tar.gz.asc",
+          "url": "https://deb.debian.org/debian/pool/main/libu/liburing/liburing_2.9.orig.tar.gz.asc",
+          "bytes": 858,
+          "sha256": "9f299918f065f3ac364d70f512d137aa5fdbd6a8963d46af9d7608025832b3ef"
+        },
+        {
+          "file": "liburing_2.9-1.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/libu/liburing/liburing_2.9-1.debian.tar.xz",
+          "bytes": 15964,
+          "sha256": "9faf814213721f6844a49c8e7bb376003010dad5e81dcfe6857d5a50af0b1674"
+        }
+      ]
+    },
+    {
+      "source": "libxml2",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.dsc",
+          "bytes": 3085,
+          "sha256": "04b1da890535b11e3db231f39114ee09e643badceff79441d749d0ca78efaaa5"
+        },
+        {
+          "file": "libxml2_2.12.7+dfsg+really2.9.14.orig.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14.orig.tar.xz",
+          "bytes": 2351200,
+          "sha256": "4fe913dec8b1ab89d13b489b419a8203176ea39e931eaa0d25b17eafb9c279e9"
+        },
+        {
+          "file": "libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.debian.tar.xz",
+          "bytes": 58040,
+          "sha256": "3b6d265f482d6a8fbe3c056d2006fb3b563b4a838f7258b388ac5f0b29206921"
+        }
+      ]
+    },
+    {
+      "source": "numactl",
+      "version": "2.0.19-1",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "numactl_2.0.19-1.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/n/numactl/numactl_2.0.19-1.dsc",
+          "bytes": 1967,
+          "sha256": "b56e7893fc7da5374946f3767518e8d7b3707e0487a4d92fb76d672a988921e2"
+        },
+        {
+          "file": "numactl_2.0.19.orig.tar.gz",
+          "url": "https://deb.debian.org/debian/pool/main/n/numactl/numactl_2.0.19.orig.tar.gz",
+          "bytes": 218333,
+          "sha256": "8b84ffdebfa0d730fb2fc71bb7ec96bb2d38bf76fb67246fde416a68e04125e4"
+        },
+        {
+          "file": "numactl_2.0.19-1.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/n/numactl/numactl_2.0.19-1.debian.tar.xz",
+          "bytes": 7340,
+          "sha256": "93b4e00d8b7b1e465d931b29e65d220fadd84ac76431437307ecd075277355d3"
+        }
+      ]
+    },
+    {
+      "source": "qemu",
+      "version": "1:10.0.13+ds-0+deb13u1",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "qemu_10.0.13+ds-0+deb13u1.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/q/qemu/qemu_10.0.13+ds-0+deb13u1.dsc",
+          "bytes": 12462,
+          "sha256": "a426c892e5369058c3423816c8625bc8010bb5a58ece57261f62b64ee4d765ad"
+        },
+        {
+          "file": "qemu_10.0.13+ds.orig.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/q/qemu/qemu_10.0.13+ds.orig.tar.xz",
+          "bytes": 40010016,
+          "sha256": "6a0888e806c2ffc0c5f0733e974f9aea55491950d3c47c98669c8b236dde59ae"
+        },
+        {
+          "file": "qemu_10.0.13+ds-0+deb13u1.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/q/qemu/qemu_10.0.13+ds-0+deb13u1.debian.tar.xz",
+          "bytes": 156096,
+          "sha256": "da73c092f5684c551b0334d675eb16a3dec91e1edea94759cfb1102fa4a0364e"
+        }
+      ]
+    },
+    {
+      "source": "shared-mime-info",
+      "version": "2.4-5",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "shared-mime-info_2.4-5.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/s/shared-mime-info/shared-mime-info_2.4-5.dsc",
+          "bytes": 2237,
+          "sha256": "daadcf9aadf96cb45875856d8046f692d1e563bda5687150d993f9deba274a39"
+        },
+        {
+          "file": "shared-mime-info_2.4.orig.tar.bz2",
+          "url": "https://deb.debian.org/debian/pool/main/s/shared-mime-info/shared-mime-info_2.4.orig.tar.bz2",
+          "bytes": 7096347,
+          "sha256": "32dc32ae39ff1c1bf8434dd3b36770b48538a1772bc0298509d034f057005992"
+        },
+        {
+          "file": "shared-mime-info_2.4-5.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/s/shared-mime-info/shared-mime-info_2.4-5.debian.tar.xz",
+          "bytes": 10812,
+          "sha256": "10eceaa29c5927dcc9cc9ba419f7bbdee68542cc5cfb3be15dde3e36735a3206"
+        }
+      ]
+    },
+    {
+      "source": "xdg-user-dirs",
+      "version": "0.18-2",
+      "authenticated_index": "debian",
+      "files": [
+        {
+          "file": "xdg-user-dirs_0.18-2.dsc",
+          "url": "https://deb.debian.org/debian/pool/main/x/xdg-user-dirs/xdg-user-dirs_0.18-2.dsc",
+          "bytes": 2136,
+          "sha256": "c85f578ebe4e511480442ebf5619dccbe6b3a310af6f45670df862b96f6e4589"
+        },
+        {
+          "file": "xdg-user-dirs_0.18.orig.tar.gz",
+          "url": "https://deb.debian.org/debian/pool/main/x/xdg-user-dirs/xdg-user-dirs_0.18.orig.tar.gz",
+          "bytes": 273556,
+          "sha256": "ec6f06d7495cdba37a732039f9b5e1578bcb296576fde0da40edb2f52220df3c"
+        },
+        {
+          "file": "xdg-user-dirs_0.18-2.debian.tar.xz",
+          "url": "https://deb.debian.org/debian/pool/main/x/xdg-user-dirs/xdg-user-dirs_0.18-2.debian.tar.xz",
+          "bytes": 4364,
+          "sha256": "910ffd004e4e64fcc3a3f51c46ed396ed48b7f9c831750e11411142053d9249b"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "all_216_binary_notice_mappings_checked": true,
+    "all_source_files_rehashed": true,
+    "all_dsc_references_checked": true,
+    "additional_built_using": [],
+    "additional_static_built_using": [],
+    "historical_metadata": "Debian signatures and release-to-index hashes reverified; this attests the historical build inputs, not current repository freshness or security updates.",
+    "source_authentication": "Signed Release -> SHA256 of exact Sources.xz -> exact file hashes, plus .dsc reference checks. No separate maintainer-key authenticity claim."
+  },
+  "unresolved": [
+    "Full per-file/component redistribution review remains outstanding, including QEMU bundled components.",
+    "Intel firmware implementation source is not supplied/established by its Debian source archive; binary license applies separately.",
+    "Qt review and expired ICU signing-key issue remain release blockers.",
+    "Fresh public image preparation, release signing and public distribution remain unapproved."
+  ],
+  "compatibility": "No change to raw images, runtime descriptors, catalog/defaults, registered directory members or receipts, lesson bytes, session pins or backup formats. The full descriptor digest remains the exact legacy compatibility key.",
+  "intel_microcode": {
+    "notice_sha256": "7223eab00971e0dafa2977214f8e1caf4d18209dc2042e7074bd419a9a5bfa92",
+    "terms": "The exact package notice permits unmodified binary redistribution/use with copyright and disclaimer retained, no endorsement using Intel/supplier names without permission, and no reverse engineering, decompilation or disassembly. Debian packaging is GPL-2.0-or-later; retain the referenced GPL-2 text.",
+    "source_boundary": "The authenticated Debian source package supplies packaging and microcode data. It does not establish availability of Intel microcode implementation source. Source collection and compliance with the firmware binary license are separate questions."
+  }
+}

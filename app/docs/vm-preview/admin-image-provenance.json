@@ -266,6 +266,10 @@
     "missing_source_versions": 10,
     "effect": "Existing behavioral test evidence remains historical evidence, but not proof of complete package/source closure or absence of guest-agent package. qemu-guest-agent was inactive/static with no process/channel in review. No controller guest-agent channel exists.",
     "remediation_requires_separate_scope": "Review and retain complete exact legacy closure for distribution, or prepare a separately versioned corrected administrator image and test all dependent units; never replace or silently migrate existing pins.",
-    "details": "package-image-provenance.json rejected_candidate.discrepancy"
+    "details": "package-image-provenance.json rejected_candidate.discrepancy",
+    "supplemental_remediation": {
+      "resource": "admin-finalized-provenance.json",
+      "status": "Exact supplemental 216-package/204-source-version materials verified; historical inventory and runtime descriptor preserved. Per-file licensing and public-release obligations remain open."
+    }
   }
 }

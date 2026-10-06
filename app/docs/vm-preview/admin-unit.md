@@ -97,11 +97,14 @@ See `tools/vm_image/admin/preseed.cfg`, `finish-image.sh` and `prepare.py`. The 
 installs independently from the signature/hash-verified Debian 13.7.0 amd64 DVD
 whose SHA-256 is recorded in [setup](setup.md). It uses existing approved host tools,
 normal shared VM exclusion and no guest network. It does not derive from the old
-base or a practice overlay. Exact installed versions are in
-[admin-packages.tsv](admin-packages.tsv). [Image provenance](admin-image-provenance.json)
-records the signed inputs, package/source inventory hashes and added dependencies;
-the retained build evidence inventory maps every
-binary to authenticated DVD hashes, exact corresponding sources and notices.
+base or a practice overlay. This is a historical build recipe: its inventory
+export occurred before later installer hooks completed. Do not describe the
+early [admin-packages.tsv](admin-packages.tsv) as the finalized package set or
+use this recipe as an approved fresh-release finalization procedure. The exact
+216-row set is [admin-finalized-packages.tsv](admin-finalized-packages.tsv).
+[Supplemental provenance](admin-finalized-provenance.json) accounts for the late
+packages and collected sources/notices without changing the existing image or
+its pins. See the [scope and remaining obligations](admin-provenance-remediation.md).
 
 ```bash
 python3 -B app/tools/vm_image/admin/prepare.py \

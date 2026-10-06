@@ -9,6 +9,45 @@ from learning_lab.vm_preview.policy import image_spec
 from admin_guest_fixtures import COMMANDS
 UNIT='linux-administration-services-logs-recovery'
 OLD_IDS=[e['id'] for u in registry.units()[:2] for e in u['entries']]
+class AdminProvenanceTests(unittest.TestCase):
+ def setUp(self):
+  self.docs=Path(__file__).resolve().parents[1]/'docs/vm-preview'
+  self.p=json.loads((self.docs/'admin-finalized-provenance.json').read_text())
+ def test_final_inventory_is_exact_superset_without_rewriting_history(self):
+  early=(self.docs/'admin-packages.tsv').read_bytes();final=(self.docs/'admin-finalized-packages.tsv').read_bytes()
+  self.assertEqual(hashlib.sha256(early).hexdigest(),'22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b')
+  self.assertEqual(hashlib.sha256(final).hexdigest(),'2271bd8b719e7d51c40810d5f08f10ce9feb80ae1ae9d8962a08d68a52520cd8')
+  before=set(early.decode().splitlines());after=set(final.decode().splitlines())
+  self.assertEqual((len(before),len(after)),(204,216));self.assertLessEqual(before,after)
+  self.assertEqual(after-before,{'\t'.join(p[k] for k in ('binary','version','source','source_version')) for p in self.p['additional_packages']})
+  for name,count in [('historical_inventory',204),('finalized_inventory',216)]:
+   rec=self.p[name];self.assertEqual(rec['binary_count'],count);self.assertEqual(hashlib.sha256((self.docs/rec['resource']).read_bytes()).hexdigest(),rec['sha256'])
+ def test_supplement_does_not_change_exact_descriptor_or_pinned_resolution(self):
+  spec=json.loads(resource('admin-image.json'));c=production_catalog()
+  self.assertEqual(digest(spec),'dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d')
+  self.assertEqual(spec['sha256'],self.p['image_sha256']);self.assertEqual(digest(spec),self.p['legacy_descriptor_sha256'])
+  self.assertEqual(spec['packages_sha256'],self.p['historical_inventory']['sha256']);self.assertNotEqual(spec['packages_sha256'],self.p['finalized_inventory']['sha256'])
+  for id in COMMANDS:
+   old,lesson=c.defaults(id);self.assertEqual(old,spec)
+   pinned={'backend':'offline-qemu-preview-1','image':old,'lesson_sha256':digest(lesson)}
+   self.assertEqual(c.resolve(pinned,id)[0]['descriptor'],spec)
+   altered=copy.deepcopy(pinned);altered['image']['packages_sha256']=self.p['finalized_inventory']['sha256']
+   with self.assertRaisesRegex(ValueError,'descriptor unavailable'):c.resolve(altered,id)
+  self.assertFalse(c.keys or c.releases)
+ def test_additional_source_and_notice_mapping(self):
+  p=self.p;self.assertEqual((p['source_version_count'],p['source_file_count'],p['additional_source_version_count']),(204,635,10))
+  sources={(s['source'],s['version']) for s in p['additional_sources']}
+  self.assertEqual(len(sources),10);self.assertEqual(sum(len(s['files']) for s in p['additional_sources']),32)
+  self.assertEqual(sum(f['bytes'] for s in p['additional_sources'] for f in s['files']),p['additional_source_bytes'])
+  for b in p['additional_packages']:
+   self.assertFalse(b['built_using'] or b['static_built_using'])
+   self.assertTrue((b['source'],b['source_version']) in sources or (b['source'],b['source_version'])==('gcc-14','14.2.0-19'))
+   self.assertRegex(b['notice_sha256'],r'^[a-f0-9]{64}$');self.assertRegex(b['binary_sha256'],r'^[a-f0-9]{64}$')
+  atomic=next(b for b in p['additional_packages'] if b['binary']=='libatomic1:amd64')
+  self.assertEqual(atomic['notice_member'],'usr/share/doc/gcc-14-base/copyright')
+  microcode=next(b for b in p['additional_packages'] if b['binary']=='intel-microcode')
+  self.assertEqual(microcode['notice_sha256'],p['intel_microcode']['notice_sha256'])
+  self.assertTrue(p['unresolved']);self.assertEqual(len(p['material_manifest']['sha256']),64)
 class AdminCatalogTests(unittest.TestCase):
  def setUp(self):self.data=json.loads(resource('image-catalog.json'))
  def test_exact_explicit_routes_and_no_production_admission(self):

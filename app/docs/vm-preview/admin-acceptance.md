@@ -2,7 +2,15 @@
 
 ## Inventory erratum (2026-10-06)
 
-Independent review found **216 actual installed packages**, not the early recorded 204. Twelve were added by a later Debian Installer hook; ten additional source versions are absent from the retained closure. Historical statements of complete package/source inventory below are superseded. Behavioral test results do not establish that closure. The existing administrator disk, descriptor, policy and pins are unchanged. See [provenance erratum](admin-image-provenance.json) and [finalization analysis](package-image-provenance.json). Separate remediation must preserve existing sessions; this task does not replace their image.
+Independent review found **216 actual installed packages**, not the early recorded
+204. Later Debian Installer hooks added twelve packages. The subsequently
+approved [supplemental remediation](admin-provenance-remediation.md) collected
+the ten missing source versions and twelve notice mappings. The complete
+216-row inventory is separate; the original 204-row file remains unchanged.
+Historical completeness statements below apply only to that early subset and
+are superseded by the supplemental record. Behavioral evidence remains useful
+for unchanged artifacts; it does not establish redistribution clearance. The
+image, runtime descriptor and session pins remain unchanged.
 
 Baseline `bbb19d7eb94d49bd70c49e117ec2ffd2b46b5972` was clean before editing.
 The 32-file batch was reviewed for the authorized local commit. Existing local
