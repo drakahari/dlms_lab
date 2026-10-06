@@ -1,0 +1,43 @@
+{
+  "id": "real-linux-backup-requirements",
+  "content_version": "1.0.0",
+  "title": "Define recovery requirements and expected metadata",
+  "goal": "State what must be recovered before making a backup.",
+  "challenge": "Using the supplied two-file fixture, retain an independent recovery inventory: exact names, bytes, modes, owner/group and timestamps. Define acceptable recovery time and data-loss assumptions; no repair command is supplied.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-1; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-1 && test ! -L /home/learner/ll-backup-1 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && printf '%s\\n' 'Files: note.txt and space name.txt' 'Bytes: alpha and bravo, each ending in newline' 'Modes: 640 and 600; owner/group learner' 'mtime: 2026-01-01 UTC; recover within this practice session' 'RPO: this fixture snapshot; RTO: inspect and restore manually' > requirements.txt",
+      "explanation": "Requirements precede the backup. RPO is acceptable data loss; RTO is time to recovery.",
+      "expected": "A short explicit recovery plan."
+    },
+    {
+      "command": "guard && (cd source && sha256sum -- note.txt 'space name.txt') > expected.sha256 && stat -c '%n %U:%G %a %Y %s' source/note.txt 'source/space name.txt' > expected.metadata && cat requirements.txt expected.metadata",
+      "explanation": "Keep references outside the source/backup; later protect them separately.",
+      "expected": "Two known hashes; modes640/600 and matching fixed mtime."
+    }
+  ],
+  "hints": [
+    "Inventory names as well as file bytes.",
+    "A checksum alone does not capture owner or mode.",
+    "A locally editable reference is not proof of authenticity."
+  ],
+  "review": [
+    "Exact inventory, two hashes, expected metadata and RPO/RTO assumptions."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

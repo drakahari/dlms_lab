@@ -1,0 +1,126 @@
+# Curriculum coverage and release target — 6 October 2026
+
+Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.org/our-certifications/exam-101-102-objectives/) and [LPIC-2 v4.5 (4.5.0), 201-450/202-450](https://www.lpi.org/our-certifications/exam-201-202-objectives/), verified 2026-10-06. This is a repository/lesson/evidence audit, not LPI endorsement or an exam-readiness guarantee. Supersedes the historical pre-VM gap table in Unit 3; accepted scenario content is unchanged.
+
+**Implemented** below means the stated subskills have exercises and evidence. **Partial** means significant objective skills still remain. **Reinforcement/preparation only** adds no complete-objective credit. **Missing** means there is no dedicated demonstrated exercise. **No complete official objective is claimed**. Simulated labs have objective grading within a bounded contract; VM completion is self-reviewed, not automatically assessed. Real guest execution evidence validates lesson feasibility, not every learner's mastery.
+
+The core simulated app remains usable without VM images/QEMU. The 60 trusted VM lessons are seven bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
+
+## LPIC-1 — every published objective
+
+| Objective | Status | Existing unit/evidence and essential gaps |
+|---|---|---|
+| 101.1 | Missing | —. No dedicated demonstrated hardware exercise. |
+| 101.2 | Reinforcement only | [Services & Recovery](vm-preview/admin-unit.md). Current-boot journal evidence; no boot-chain/loader exercise. |
+| 101.3 | Partial | [Services & Recovery](vm-preview/admin-unit.md). Implemented clean reboot/service enabled-state observations; targets, runlevels and user notification missing. |
+| 102.1 | Missing | —. No dedicated demonstrated disk layout exercise. |
+| 102.2 | Missing | —. No dedicated demonstrated boot manager exercise. |
+| 102.3 | Missing | —. No dedicated demonstrated libraries exercise. |
+| 102.4 | Missing | —. No dedicated demonstrated Debian packages exercise. |
+| 102.5 | Missing | —. No dedicated demonstrated RPM ecosystem exercise. |
+| 102.6 | Preparation only | [Processes & Jobs](vm-preview/processes-unit.md). Using an offline VM is not assessed image/cloud/container preparation. |
+| 103.1 | Partial | [Bash & Safe Changes](vm-preview/bash-unit.md). Implemented quoting, lookup, temporary PATH/env and statuses; history editing and broader command/environment mastery missing. |
+| 103.2 | Partial | [Text & Reports](lpic-unit-3.md), [Bash & Safe Changes](vm-preview/bash-unit.md), [Backup & Recovery](vm-preview/backup-unit.md). Implemented bounded filters, anchored sed previews and hashes; broader utilities/options and binary/locale cases missing. |
+| 103.3 | Partial | [Organize & Find](lpic-unit-2.md), [Bash & Safe Changes](vm-preview/bash-unit.md), [Backup & Recovery](vm-preview/backup-unit.md). Implemented scoped file operations, quoted paths and tar/gzip recovery; recursive management, richer find, cpio and other compression missing. |
+| 103.4 | Partial | [Text & Reports](lpic-unit-3.md), [Bash & Safe Changes](vm-preview/bash-unit.md). Implemented pipes, stdout/stderr, truncation/append and pipeline status; xargs/tee and wider composition missing. |
+| 103.5 | Partial | [Processes & Jobs](vm-preview/processes-unit.md). Implemented actual process inspection, job control, scoped signals and logout survival; multiplexers and broader process workflows missing. |
+| 103.6 | Partial | [Processes & Jobs](vm-preview/processes-unit.md). Implemented unprivileged nice/renice, refusal and actual values; privileged priority recovery missing. |
+| 103.7 | Partial | [Bash & Safe Changes](vm-preview/bash-unit.md). Implemented BRE/ERE, anchors/classes, matches/nonmatches, sed replacement; broader filesystem/regex tasks missing. grep-F alone adds no regex coverage. |
+| 103.8 | Partial | [Bash & Safe Changes](vm-preview/bash-unit.md). Implemented actual vi modes, navigation, edits, search and rollback; broader editor awareness/default-editor practice missing. |
+| 104.1 | Missing | —. No dedicated demonstrated partition/filesystem creation exercise. |
+| 104.2 | Preparation only | [Resource Evidence](vm-preview/resource-unit.md). Space/inode observations do not demonstrate filesystem checking or repair. |
+| 104.3 | Missing | —. No dedicated demonstrated mounting exercise. |
+| 104.4 | Removed / not applicable | —. Removed in the current official objectives; not counted as a missing active skill. |
+| 104.5 | Partial | [Files & Permissions](lpic-unit-1.md), [Users & Access](vm-preview/users-unit.md), [Backup & Recovery](vm-preview/backup-unit.md). Implemented file/directory permissions, actual identities, owner/group, setgid and umask; remaining special-bit workflows and broader cases missing. No ACL claim. |
+| 104.6 | Missing | —. No dedicated demonstrated links exercise. |
+| 104.7 | Partial | [Organize & Find](lpic-unit-2.md). Implemented representative home/etc/var path reasoning and bounded locating; complete hierarchy and locating utilities missing. |
+| 105.1 | Partial | [Bash & Safe Changes](vm-preview/bash-unit.md). Implemented temporary environment/functions; persistent startup-file customization and full scope missing. |
+| 105.2 | Partial | [Bash & Safe Changes](vm-preview/bash-unit.md), [Scheduling](vm-preview/scheduling-unit.md). Implemented short scripts, arguments, conditions, bounded loops, statuses, environment and repeatable jobs; broader workflows missing. |
+| 106.1 | Missing | —. No dedicated demonstrated X11 exercise. |
+| 106.2 | Missing | —. No dedicated demonstrated desktops exercise. |
+| 106.3 | Missing | —. No dedicated demonstrated accessibility exercise. |
+| 107.1 | Partial | [Users & Access](vm-preview/users-unit.md). Implemented disposable accounts, homes/shells, primary/supplementary groups, expiry/locking distinctions; complete account policy and credential administration omitted. |
+| 107.2 | Partial | [Scheduling](vm-preview/scheduling-unit.md). Implemented real cron, system/user timers, identities, catch-up/overlap and cleanup; at, access policies, mail/DST and complete scheduling coverage omitted. |
+| 107.3 | Missing | —. No dedicated demonstrated locales exercise. |
+| 108.1 | Reinforcement only | [Scheduling](vm-preview/scheduling-unit.md). Read-only clock/timezone observations; no time synchronization/configuration practice. |
+| 108.2 | Partial | [Services & Recovery](vm-preview/admin-unit.md). Implemented journal/rsyslog correlation, local rules and rotation; remote logging and full facility/configuration workflows missing. |
+| 108.3 | Missing | —. No dedicated demonstrated mail basics exercise. |
+| 108.4 | Missing | —. No dedicated demonstrated printing exercise. |
+| 109.1 | Preparation only | [Original networking](native-acceptance.md). Original networking simulations practice IPv4 subnets/routes/DNS/TCP, not complete protocol coverage or real Linux configuration. |
+| 109.2 | Missing | —. No dedicated demonstrated persistent networking exercise. |
+| 109.3 | Preparation only | [Original networking](native-acceptance.md). Bounded original network diagnostics; no real interface/routing troubleshooting. |
+| 109.4 | Preparation only | [Original networking](native-acceptance.md). Simulated gateway/DNS repair; no real resolver configuration. |
+| 110.1 | Reinforcement only | [Users & Access](vm-preview/users-unit.md). Least privilege/locked disposable identities; no security audit/sudo-policy administration claim. |
+| 110.2 | Reinforcement only | [Users & Access](vm-preview/users-unit.md). Authentication/expiry/shell distinctions; no host security hardening exercise. |
+| 110.3 | Missing | —. No dedicated demonstrated encryption exercise. |
+
+## LPIC-2 — every published objective
+
+| Objective | Status | Existing unit/evidence and essential gaps |
+|---|---|---|
+| 200.1 | Partial | [Resource Evidence](vm-preview/resource-unit.md), [Processes & Jobs](vm-preview/processes-unit.md). Implemented actual CPU/memory/file-I/O observations plus supplied space/inode fault interpretation; advanced/network throughput and missing monitoring tools omitted. |
+| 200.2 | Partial | [Resource Evidence](vm-preview/resource-unit.md). Implemented synthetic trends, independently checked forecasts and insufficient-evidence decisions; production monitoring deployment missing. |
+| 201.1 | Missing | —. No dedicated demonstrated kernel components exercise. |
+| 201.2 | Missing | —. No dedicated demonstrated kernel builds exercise. |
+| 201.3 | Missing | —. No dedicated demonstrated kernel runtime exercise. |
+| 202.1 | Partial | [Services & Recovery](vm-preview/admin-unit.md), [Scheduling](vm-preview/scheduling-unit.md). Implemented systemd service enablement/overrides and boot evidence; targets, SysV/LSB and broader startup missing. |
+| 202.2 | Preparation only | [Services & Recovery](vm-preview/admin-unit.md). Service/file rollback is not bootloader, rescue/emergency or whole-system recovery. |
+| 202.3 | Missing | —. No dedicated demonstrated other bootloaders exercise. |
+| 203.1 | Preparation only | [Resource Evidence](vm-preview/resource-unit.md). File space/inode observation; no filesystem mount/unmount administration. |
+| 203.2 | Missing | —. No dedicated demonstrated filesystem maintenance exercise. |
+| 203.3 | Missing | —. No dedicated demonstrated filesystem options exercise. |
+| 204.1 | Missing | —. No dedicated demonstrated RAID exercise. |
+| 204.2 | Missing | —. No dedicated demonstrated storage access exercise. |
+| 204.3 | Missing | —. No dedicated demonstrated LVM exercise. |
+| 205.1 | Missing | —. No dedicated demonstrated network configuration exercise. |
+| 205.2 | Missing | —. No dedicated demonstrated advanced networking exercise. |
+| 205.3 | Preparation only | [Original networking](native-acceptance.md). Simulated network diagnosis does not demonstrate advanced real Linux troubleshooting. |
+| 206.1 | Reinforcement only | [Backup & Recovery](vm-preview/backup-unit.md). Archive skills alone do not demonstrate configure/make/install or source-build management. |
+| 206.2 | Partial | [Backup & Recovery](vm-preview/backup-unit.md). Implemented manual scoped archives, independent references, damage/completeness/version checks, separate restore and actual-user access; system directory selection, media/tape, rsync and backup suites omitted. |
+| 206.3 | Missing | —. No dedicated demonstrated user notices exercise. |
+| 207.1 | Missing | —. No dedicated demonstrated DNS configuration exercise. |
+| 207.2 | Missing | —. No dedicated demonstrated DNS zones exercise. |
+| 207.3 | Missing | —. No dedicated demonstrated DNS security exercise. |
+| 208.1 | Missing | —. No dedicated demonstrated Apache exercise. |
+| 208.2 | Missing | —. No dedicated demonstrated HTTPS exercise. |
+| 208.3 | Missing | —. No dedicated demonstrated Squid exercise. |
+| 208.4 | Missing | —. No dedicated demonstrated Nginx exercise. |
+| 209.1 | Missing | —. No dedicated demonstrated Samba exercise. |
+| 209.2 | Missing | —. No dedicated demonstrated NFS exercise. |
+| 210.1 | Missing | —. No dedicated demonstrated DHCP exercise. |
+| 210.2 | Preparation only | [Users & Access](vm-preview/users-unit.md). Observed expiry/password-lock/shell distinctions are not PAM module/configuration practice. |
+| 210.3 | Missing | —. No dedicated demonstrated LDAP client exercise. |
+| 210.4 | Missing | —. No dedicated demonstrated LDAP server exercise. |
+| 211.1 | Missing | —. No dedicated demonstrated mail servers exercise. |
+| 211.2 | Missing | —. No dedicated demonstrated mail delivery exercise. |
+| 211.3 | Missing | —. No dedicated demonstrated mailboxes exercise. |
+| 212.1 | Preparation only | [Original networking](native-acceptance.md). Original simulated ordered firewall rules are not real router/NAT/firewall administration. |
+| 212.2 | Missing | —. No dedicated demonstrated FTP exercise. |
+| 212.3 | Missing | —. No dedicated demonstrated SSH exercise. |
+| 212.4 | Reinforcement only | [Users & Access](vm-preview/users-unit.md), [Services & Recovery](vm-preview/admin-unit.md). Least privilege and scoped service access; no network/system security-tool workflow. |
+| 212.5 | Missing | —. No dedicated demonstrated VPN exercise. |
+
+## Proposed coherent batches, in useful order (not implemented here)
+
+| Batch / proposed lessons | Outcomes and mapping | Existing capability vs approval needed |
+|---|---|---|
+| Local system discovery and package reasoning, 8 | Hardware/kernel/boot evidence, library lookup, dpkg ownership/integrity, FHS/links, environment/locales/time observations (101/102, 104.6/7, 107.3/108.1). Distinguish installed metadata from safe package transactions. | Read-only tools on existing guests can be probed first. Package install/remove fixtures, repository media, locale additions or clock changes need a separately approved image/capability scope; no host changes. RPM needs a separate approved distribution image. |
+| Storage and boot recovery, 10–12 | Disposable partition/fs/swap, mount/fstab faults, inode/space repair, LVM/RAID snapshots and rescue/bootloader recovery (104.1–3, 201–204). Verify after restart with a preserved good disk. | Guest-only administration already exists, but additional guest disks/boot media/controller block graph or packages require explicit architecture approval. Never raw host devices. No automatic approval inferred from existing sudo. |
+| Local operational completeness, 8 | Remaining priority/special-bit/link/shell/editor skills, user notices, at and scheduler policy, richer logging/backup plans (103/104/105/107/108, 206). | Content can use verified current tools; absent at, ACL, rsync or multiplexer tools require approved offline packages/image revision, exact pins and compatibility. No networking required. Avoid padding with chmod variations. |
+| Isolated networking and security, 8–10 | IPv4/IPv6 addressing, resolver/client routing, diagnosis, firewall/NAT, SSH and TLS identity (109/110, 205, 212). Verify from another guest, not mode bits or configuration alone. | Separate approval for isolated guest-only networking and often two guests, NIC/launch-policy changes, packages and disposable test credentials. Never host LAN/Internet exposure or shared personal folders. |
+| DNS/DHCP and secure web services, 10–12 | Zones/reverse/delegation/cache/security, lease diagnosis, Apache/Nginx/HTTPS, bounded proxy access (207/208/210.1). Positive and negative client tests with narrow cleanup. | Approved offline server/client images, packages, trust fixtures and isolated multi-guest network required; certificates/credentials require explicit scope. |
+| Shared files and identity, 8–10 | NFS/Samba ownership/access/client behavior, PAM and LDAP diagnosis (209/210.2–4). Verify actual identities, mounts and denial. | Separate images/packages, isolated clients/network and narrowly approved guest authentication fixtures; no real accounts or directory services. |
+| Mail, transfer and service-security recovery, 8–10 | Local mail queues/delivery/mailbox access, FTP policy, VPN/firewall recovery and auditing (108.3, 211/212). | Additional packages and isolated multi-guest network; test credentials/keys and guest privilege scopes explicitly approved, no public mail/FTP/VPN services. |
+| Source builds and platform breadth, 8 | Trusted source configure/make/install/uninstall, kernel/module provenance, RPM packaging, graphics/printing/accessibility (102.5/106/108.4/201/206.1). | Approved offline inputs/build tooling and separate distro/GUI images; kernel/boot experiments need recoverable images. Accessibility requires actual assistive-technology/owner evidence, not metadata tests. |
+
+Current registry capacity is full at seven units/60 lessons; the retained catalog/default-image maps also have a 64-entry bound. The next eight-lesson unit therefore requires a separately approved bounded registry **and catalog-capacity** change, with byte-size and retained-revision tests; changing only the registry would fail. No such additional change is made here.
+
+Each future batch needs bounded registry capacity, pinned exact image/lesson revisions, failure and rollback fixtures, both modes, native lifecycle and installed-wheel tests. Preserve current image versions/session access; neither task authorization nor full guest root authorizes new host/security capabilities.
+
+## Practical release target
+
+Recommend a clearly labelled **Linux operations foundations preview**, covering the existing simulated file/text practice and real process/resource/service/access/scheduling/recovery units, with explicit partial LPIC mapping. Meaningful LPIC-2 preparation now includes resource evidence and manual recovery; it is not full LPIC-2 preparation. If the release is advertised as comprehensive certification preparation, **all missing active objective areas above become essential**, not optional.
+
+For a usable foundations release, essential gates are: accepted unchanged lesson pins; complete repeatable installation and all eight new recovery outcomes; lifecycle/failure and backup-exclusion disclosure; remaining native keyboard/accessibility checks; clean public image provenance, authenticated release admission, source/notices and license compliance (unfinished Qt review and ICU signing-key warning); independent fresh-user installation; and honest curriculum gaps. Production trust stays empty until separately approved release preparation. No publication is authorized.
+
+For a broader administrator curriculum, prioritize local system/package discovery, then storage/boot recovery before network service troubleshooting. Networking, multi-VM orchestration and new image packages are substantive approvals, not routine content edits. Later enhancements: UI polish/shorter explanations, additional reinforcement, monitoring dashboards, more tooling and cross-domain expansion. Do not confuse interface polish with missing assessed skills.

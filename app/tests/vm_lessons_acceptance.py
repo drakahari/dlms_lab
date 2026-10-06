@@ -1,5 +1,5 @@
 """Qt selection fixtures, isolated profiles. Native rendering is not physical input."""
-import argparse,json,os,sys,tempfile,time
+import argparse,contextlib,json,os,sys,tempfile,time
 from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
@@ -13,11 +13,14 @@ p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add
 if a.evidence_root:
  assert a.evidence_root.is_absolute() and a.evidence_root.is_dir() and not a.evidence_root.is_symlink() and a.evidence_root.stat().st_uid==os.getuid()
 out=Path(tempfile.mkdtemp(prefix='vm-lessons-ui-',dir=a.evidence_root));sizes=[];messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
-with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
+# Preserve disposable fixtures and failure evidence; no personal profile is used.
+with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=out)) as d:
  root=Path(d);app,engine,b,lock=build_application(root/'data',root/'config',root/'vm');w=engine.rootObjects()[0];vm=b.vm_preview;vm.sessions.gate_root=root/'gate'
  for manager in vm.sessions.managers.values():manager.gate_root=root/'gate'
  fake=root/'fixture';fake.write_bytes(b'fixture')
  def check(n,c):
+  if not c:
+   (out/'failed-check.json').write_text(json.dumps({'check':n,'busy':vm.view['busy'],'pending':vm._pending is not None,'window_active':w.isActive(),'size':[w.width(),w.height()]},indent=2))
   assert c,n;checks.append(n)
   with (out/'completed-checks.jsonl').open('a') as trace:trace.write(json.dumps({'check':n})+'\n')
  def item(name):
@@ -32,6 +35,20 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
   while (vm.view['busy'] or vm._pending is not None) and time.monotonic()<end:QTest.qWait(20)
   assert not vm.view['busy'] and vm._pending is None
   if not error:assert not vm.view['error'],vm.view['error']
+ def focus_ready(name):
+  # Refresh can temporarily disable controls; native activation/scrolling is
+  # asynchronous. Require actual readiness, not a fixed 100 ms focus assumption.
+  wait()
+  if a.native:
+   w.requestActivate();assert QTest.qWaitForWindowActive(w,5000),'Native test window not active'
+  deadline=time.monotonic()+5
+  while True:
+   target=item(name)
+   if not vm.view['busy'] and target.isEnabled():
+    target.forceActiveFocus(Qt.TabFocusReason);app.processEvents()
+    if target.hasActiveFocus() and target.isEnabled():return target
+   assert time.monotonic()<deadline,'Input not ready: '+name
+   QTest.qWait(10)
  def press(name):
   item(name).forceActiveFocus(Qt.TabFocusReason);QTest.keyClick(w,Qt.Key_Return);QTest.qWait(100)
  def select(id):vm.selectLesson(id);wait()
@@ -56,7 +73,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
     press('vmNext');wait();vm.progress('hint');wait();vm.progress('complete');wait();check(id+' self-review only',vm.view['session']['completion']['kind']=='self-reviewed' and 'score' not in vm.view['session'])
     m.reset('Challenge',True);vm.refresh();wait();check(id+' Challenge associated',vm.view['session']['mode']=='Challenge')
     if id in ids[8:]:
-     check(id+' Challenge setup available',item('vmPracticeMaterial').property('text').startswith(('Guest-local setup','Guest-only administration')))
+     check(id+' Challenge setup available',item('vmPracticeMaterial').property('text')==vm.view['support']['materials'][0])
      check(id+' interpretation remains available',item('vmInterpretationHeading').property('text')=='Interpretation questions')
     try:item('vmCommand');raise AssertionError('Challenge leaked guidance')
     except AssertionError as exc:assert str(exc)=='vmCommand'
@@ -101,7 +118,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
    guide=item('vmDisplayGuidance');pos=guide.mapToScene(QPointF(0,0))
    check('display guidance width '+str(size),pos.x()>=0 and pos.x()+guide.width()<=w.width() and guide.width()>250)
    check('display guidance wraps '+str(size),guide.property('lineCount')>1)
-   material=item('vmPracticeMaterial');material.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+   material=item('vmPracticeMaterial');focus_ready('vmPracticeMaterial')
    check('setup focus '+str(size),material.hasActiveFocus())
    check('setup wraps '+str(size),material.property('lineCount')>1 and material.width()>250 and material.property('contentWidth')<=material.width()+1)
   # Long manually entered script instructions need full-height, plain wrapping
@@ -114,7 +131,7 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
      m.reset('Learn',True);vm.refresh();wait()
     target=next(i for i,step in enumerate(m.lesson['steps']) if 'nano ' in step['command'])
     for _ in range(target):vm.progress('next');wait()
-    command=item('vmCommand');command.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    command=item('vmCommand');focus_ready('vmCommand')
     check(id+' command focus '+str(size),command.hasActiveFocus())
     check(id+' command no horizontal clipping '+str(size),command.property('contentWidth')<=command.width()+1)
     def text_item(x,text):
@@ -129,27 +146,27 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
     plain=QQmlExpression(engine.rootContext(),explanation,'textFormat === 0')
     result=plain.evaluate()
     check(id+' plain text '+str(size),not plain.hasError() and result[0] is True and result[1] is False)
-    item('vmNext').forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    focus_ready('vmNext');QTest.qWait(20)
     next_pos=item('vmNext').mapToScene(QPointF(0,0))
     check(id+' Next reachable after long script '+str(size),next_pos.y()>=0 and next_pos.y()+item('vmNext').height()<=w.height())
     w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   for size in ((800,600),(1280,900)):
    w.resize(*size);QTest.qWait(100)
-   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment'):
+   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment','real-linux-backup-damage','real-linux-backup-access','real-linux-backup-assessment'):
     select(id);m=vm.manager
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      vm.reset('Learn',True);wait()
     target=max(range(len(m.lesson['steps'])),key=lambda i:len(m.lesson['steps'][i]['command']))
     for _ in range(target):vm.progress('next');wait()
-    command=item('vmCommand');command.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    command=item('vmCommand');focus_ready('vmCommand')
     check(id+' command focus '+str(size),command.hasActiveFocus())
     check(id+' command wraps without clipping '+str(size),command.property('contentWidth')<=command.width()+1 and command.property('contentHeight')<=command.height()+1)
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      vm.reset('Challenge',True);wait()
-    material=item('vmPracticeMaterial');material.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
+    material=item('vmPracticeMaterial');focus_ready('vmPracticeMaterial')
     check(id+' independent setup wraps '+str(size),material.property('contentWidth')<=material.width()+1 and material.property('contentHeight')<=material.height()+1)
     check(id+' setup focus '+str(size),material.hasActiveFocus())
-    check(id+' self-review label '+str(size),'self-review' in vm.view['lesson']['coverage'])
+    check(id+' self-review label '+str(size),'self-review' in vm.view['lesson']['coverage'].lower())
     w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   select(ids[0]);m=vm.manager
   with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
@@ -165,6 +182,11 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
   check('backup excludes VM state',not any('vm' in n for n in backup.files));check('backup version unchanged',saved.manifest['schema_version'] in (1,2))
   reopen=VmBridge(root/'data',root/'config',root/'vm',gate_root=root/'gate');check('selection reopens',reopen.view['selected_lesson_id']==ids[0]);check('legacy record reopens exact',reopen.sessions.manager(LEGACY_ID).status()['session']==before)
   press('vmClose');check('focus returns',item('vmPreviewButton').hasActiveFocus());check('no QML warnings '+repr(messages),not messages)
- finally:w.close();app.processEvents();lock.unlock()
+ finally:
+  w.close();app.processEvents()
+  deadline=time.monotonic()+15
+  while (vm.view['busy'] or vm._pending is not None) and time.monotonic()<deadline:QTest.qWait(10)
+  assert not vm.view['busy'] and vm._pending is None,'Pending UI work at teardown'
+  lock.unlock()
 report={'checks':checks,'platform':app.platformName(),'DPR':a.scale,'evidence':str(out),'qml_messages':messages,'sizes':sizes,'input':'QtTest synthesized; physical keyboard/accessibility unverified'}
 (out/'report.json').write_text(json.dumps(report,indent=2));print(json.dumps(report))

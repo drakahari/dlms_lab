@@ -2,7 +2,7 @@
 import argparse,hashlib,json,os,re,socket,subprocess,sys,tempfile,time,uuid
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--vm-home',type=Path,required=True)
-p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change','real-linux-bash-script','real-linux-users-ownership','real-linux-schedule-report'), default='real-linux-background-job')
+p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change','real-linux-bash-script','real-linux-users-ownership','real-linux-schedule-report','real-linux-backup-checksum'), default='real-linux-background-job')
 p.add_argument('--installed',action='store_true',help='Use the isolated wheel package, never insert the checkout')
 p.add_argument('--smoke-phase',choices=('start','resume','reset'))
 p.add_argument('--profile',type=Path,help='Same disposable temporary profile for installed phases; TMPDIR is supported')
@@ -88,7 +88,7 @@ def installed_smoke():
  import learning_lab
  package=Path(learning_lab.__file__).resolve().parent
  check('isolated installed package',package.is_relative_to(Path(sys.prefix)) and 'site-packages' in package.parts)
- check('six installed units and fifty-two lessons',len(units())==6 and len(entries())==52)
+ check('seven installed units and sixty lessons',len(units())==7 and len(entries())==60)
  check('original unit still eight',len(catalog()['entries'])==8)
  check('accepted lesson bytes',hashlib.sha256((package/'vm_preview/lesson.json').read_bytes()).hexdigest()=='246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da')
  check('native exposed',app.platformName()=='wayland' and QTest.qWaitForWindowExposed(w,5000))
@@ -181,7 +181,10 @@ def installed_smoke():
  if a.lesson=='real-linux-schedule-report':
   if a.smoke_phase=='start':commands=[': > ~/fixture-failures','! getent passwd ll-s2 && test ! -e /home/ll-s2 && sudo useradd -m -U -s /bin/bash ll-s2',"""printf '%s\\n' '#!/bin/bash' 'PATH=/usr/bin:/bin' 'umask 077' '[ "$(id -un)" = ll-s2 ] || exit 2' 'printf "user=%s\\n" "$(id -un)" > /home/ll-s2/report.txt' | sudo tee /home/ll-s2/job.sh > /dev/null""",'sudo chown ll-s2:ll-s2 /home/ll-s2/job.sh; sudo chmod 0700 /home/ll-s2/job.sh; sudo runuser -u ll-s2 -- timeout -k 1s 5s /home/ll-s2/job.sh; test $? -eq 0 && sudo runuser -u ll-s2 -- grep -qx user=ll-s2 /home/ll-s2/report.txt || echo JOB_FAIL >> ~/fixture-failures']
   else:commands=[': > ~/fixture-failures','sudo runuser -u ll-s2 -- grep -qx user=ll-s2 /home/ll-s2/report.txt && test "$(sudo stat -c %a:%U /home/ll-s2/report.txt)" = 600:ll-s2 || echo SAME_DISK_FAIL >> ~/fixture-failures']
- if a.smoke_phase=='reset':commands=[': > ~/fixture-failures','test ! -e ~/installed-wheel-smoke.txt && test ! -e ~/installed-bash-workspace && ! getent passwd ll-wheel && ! getent passwd ll-s2 || echo RESET_FAIL >> ~/fixture-failures']
+ if a.lesson=='real-linux-backup-checksum':
+  if a.smoke_phase=='start':commands=[': > ~/fixture-failures', 'work=$(mktemp -d "$HOME/backup-installed.XXXXXX") && cd "$work" && mkdir source restore', "printf 'alpha\\n' > source/note.txt; chmod 0600 source/note.txt", 'timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt && timeout -k 1s 10s gzip -c v1.tar > v1.tar.gz && sha256sum v1.tar.gz > expected.sha256', 'timeout -k 1s 10s gzip -t v1.tar.gz && sha256sum -c expected.sha256 && timeout -k 1s 10s tar -xf v1.tar -C restore --no-same-owner --same-permissions && cmp source/note.txt restore/note.txt && test "$(stat -c %a restore/note.txt)" = 600 || echo RECOVERY_FAIL >> ~/fixture-failures', 'printf "%s\\n" "$work" > ~/installed-backup-workspace', 'printf "wheel-smoke-marker\\n" > ~/installed-wheel-smoke.txt']
+  else:commands=[': > ~/fixture-failures', 'work=$(cat ~/installed-backup-workspace); cd "$work"; gzip -t v1.tar.gz && sha256sum -c expected.sha256 && cmp source/note.txt restore/note.txt && test "$(cat ~/installed-wheel-smoke.txt)" = wheel-smoke-marker || echo SAME_DISK_FAIL >> ~/fixture-failures']
+ if a.smoke_phase=='reset':commands=[': > ~/fixture-failures','test ! -e ~/installed-backup-workspace && test ! -e ~/installed-wheel-smoke.txt && test ! -e ~/installed-bash-workspace && ! getent passwd ll-wheel && ! getent passwd ll-s2 || echo RESET_FAIL >> ~/fixture-failures']
  for c in commands:line(c)
  if a.lesson=='real-linux-admin-change':
   line('sudo -n id -u | grep -qx 0 || echo ADMIN_FAIL >> ~/fixture-failures')

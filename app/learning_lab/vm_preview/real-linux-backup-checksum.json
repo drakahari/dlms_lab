@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-backup-checksum",
+  "content_version": "1.0.0",
+  "title": "Compress and retain an independent checksum reference",
+  "goal": "Keep the archive, compressed copy and separate checksum reference.",
+  "challenge": "Compress the supplied archive without deleting it. Keep an independent checksum reference outside source and archive; demonstrate both stream validation and a matching digest, and state their trust limits.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-3; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-3 && test ! -L /home/learner/ll-backup-3 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536",
+      "explanation": "Create v1 without replacing another backup.",
+      "expected": "Source and v1 retained."
+    },
+    {
+      "command": "guard && test ! -e v1.tar.gz && test ! -L v1.tar.gz && timeout -k 1s 10s gzip -c -- v1.tar > v1.tar.gz && test \"$(stat -c %s v1.tar.gz)\" -le 65536 && sha256sum -- v1.tar.gz > expected-backup.sha256",
+      "explanation": "gzip -c keeps the original archive. This independently retained reference is outside the compressed data.",
+      "expected": "Three separate files; originals intact."
+    },
+    {
+      "command": "guard && timeout -k 1s 10s gzip -t -- v1.tar.gz && sha256sum -c -- expected-backup.sha256",
+      "explanation": "Stream integrity and equality to a retained reference answer different questions.",
+      "expected": "Both pass; neither authenticates an untrusted reference."
+    }
+  ],
+  "hints": [
+    "Do not gzip without -c if you need to retain the raw backup.",
+    "Keep the checksum reference separately, not inside the backup being checked.",
+    "Authentication requires independent trust, not merely two matching downloads."
+  ],
+  "review": [
+    "gzip status, digest result, raw/compressed/reference retained."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

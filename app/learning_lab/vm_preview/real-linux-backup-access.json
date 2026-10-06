@@ -1,0 +1,53 @@
+{
+  "id": "real-linux-backup-access",
+  "content_version": "1.0.0",
+  "title": "Restore ownership and verify actual access",
+  "goal": "Recover a private file for its intended disposable user.",
+  "challenge": "Use the supplied ll-b6 fixture. Restore separately and prove the intended account can read alpha while another identity cannot read the private restored file. Correct ownership/mode narrowly, preserve originals and explain privileged identity switching is not login authentication.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-6; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && saved_umask=$(umask) && umask 077 && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails. Use a private practice-shell umask; restore the saved value during cleanup.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-6 && test ! -L /home/learner/ll-backup-6 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && ! getent passwd ll-b6 && ! getent group ll-b6 && sudo useradd -M -U -s /usr/sbin/nologin ll-b6 && sudo passwd -S ll-b6",
+      "explanation": "Create a locked, non-login disposable account only; do not change learner or sudoers.",
+      "expected": "ll-b6 password locked, no home or login."
+    },
+    {
+      "command": "guard && test ! -e v1.tar && test ! -L v1.tar && chmod 0711 . source && sudo chown ll-b6:ll-b6 source/note.txt && sudo chmod 0600 source/note.txt && sudo timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt && sudo chown learner:learner v1.tar && sudo chmod 0600 v1.tar && mkdir -m 0711 restore && timeout -k 1s 10s tar -xf v1.tar -C restore --no-same-owner --same-permissions",
+      "explanation": "Root reads the known private source for backup. Learner extraction deliberately does not restore ownership; no system destinations. Refuse existing backup/reference names before changing source or writing an archive.",
+      "expected": "Private restored file initially learner-owned."
+    },
+    {
+      "command": "guard && sudo runuser -u ll-b6 -- cat restore/note.txt; printf 'wrong owner status=%s\\n' \"$?\"; stat -c '%U:%G %a' restore/note.txt",
+      "explanation": "Actual account test detects ownership fault; root reading would hide it.",
+      "expected": "Denied for ll-b6; learner:learner600."
+    },
+    {
+      "command": "guard && sudo chown ll-b6:ll-b6 restore/note.txt && sudo chmod 0600 restore/note.txt && sudo runuser -u ll-b6 -- cat restore/note.txt; cat restore/note.txt; printf 'learner status=%s\\n' \"$?\"; sudo cmp -- source/note.txt restore/note.txt",
+      "explanation": "Restore known owner/group and private mode; verify as actual user and wrong user. Parent traversal0711 permits known-file access, not listing.",
+      "expected": "ll-b6 reads alpha; learner denied; sudo cmp status0. Backups/references remain private, not world-readable."
+    }
+  ],
+  "hints": [
+    "Root access is not evidence of ll-b6 access.",
+    "Parent search permission matters too.",
+    "No chmod777 or authentication changes; runuser is privileged switching."
+  ],
+  "review": [
+    "Locked account, before/after actual identity reads, owner:group600 and matching payload."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

@@ -10,10 +10,10 @@ from learning_lab.vm_preview.sessions import Sessions
 from users_guest_fixtures import COMMANDS,UNIT
 
 class UsersUnitTests(unittest.TestCase):
- def test_exact_limits_six_units_and_52_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(6,16,52))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8])
-  self.assertEqual(len(registry.entries()),52)
+ def test_exact_limits_seven_units_and_60_lessons(self):
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(7,16,60))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8])
+  self.assertEqual(len(registry.entries()),60)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def malformed(self,mutate,pattern):
   original=registry._read;reads=[]
@@ -24,11 +24,11 @@ class UsersUnitTests(unittest.TestCase):
    with patch.object(registry,'_read',side_effect=read),self.assertRaisesRegex(ValueError,pattern):registry.units()
   finally:registry._bundle.cache_clear()
   return reads
- def test_reject_53_before_last_unit_lesson_read(self):
-  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='scheduling-unit.json' else None,'52')
-  self.assertNotIn('real-linux-schedule-inspect.json',reads)
- def test_reject_seventh_unit_before_resource_reads(self):
-  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–6')
+ def test_reject_61_before_last_unit_lesson_read(self):
+  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='backup-unit.json' else None,'60')
+  self.assertNotIn('real-linux-backup-requirements.json',reads)
+ def test_reject_eighth_unit_before_resource_reads(self):
+  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–7')
   self.assertEqual(reads,['units.json'])
  def test_reject_17_per_unit_and_oversized_guidance(self):
   self.malformed(lambda n,v:v['entries'].extend(v['entries']+[v['entries'][0]]) if n=='users-unit.json' else None,'1–16')
@@ -39,7 +39,7 @@ class UsersUnitTests(unittest.TestCase):
   other=registry.catalog('linux-administration-services-logs-recovery')['entries']
   def read(n):
    v=original(n)
-   if n=='units.json':v['units']=v['units'][:1]+v['units'][-2:-1]
+   if n=='units.json':v['units']=v['units'][:1]+[next(x for x in v['units'] if x['resource']=='users-unit.json')]
    if n=='users-unit.json':v['entries'].extend(copy.deepcopy(other))
    return v
   registry._bundle.cache_clear()
@@ -50,6 +50,7 @@ class UsersUnitTests(unittest.TestCase):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
  def test_exact_catalog_projection(self):
   c=json.loads(resource('image-catalog.json'));new=set(COMMANDS)|{e['id'] for e in registry.catalog('linux-scheduling-automation')['entries']}
+  new |= {e['id'] for e in registry.catalog('linux-backup-safe-recovery')['entries']}
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for i in c['images']:i['lessons']=[l for l in i['lessons'] if l['id'] not in new]
   for name in ('default_lessons','default_images'):c[name]={k:v for k,v in c[name].items() if k not in new}

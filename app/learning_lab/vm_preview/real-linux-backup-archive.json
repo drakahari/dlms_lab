@@ -1,0 +1,43 @@
+{
+  "id": "real-linux-backup-archive",
+  "content_version": "1.0.0",
+  "title": "Create and inspect a scoped archive",
+  "goal": "Archive exactly the expected relative members.",
+  "challenge": "Create one bounded archive of the supplied fixture, with relative regular-file members only. Inspect names and metadata and explain why inspection does not verify payload bytes.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-2; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-2 && test ! -L /home/learner/ll-backup-2 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536",
+      "explanation": "-C changes the input directory; explicit names avoid archiving unrelated files. No absolute paths.",
+      "expected": "v1.tar <=64 KiB, two relative members."
+    },
+    {
+      "command": "guard && timeout -k 1s 10s tar -tf v1.tar && timeout -k 1s 10s tar -tvf v1.tar",
+      "explanation": "List names and header metadata before extraction.",
+      "expected": "note.txt and space name.txt; no links, parent or absolute paths."
+    }
+  ],
+  "hints": [
+    "Use explicit members after -C source.",
+    "Listing does not compare payloads to the originals.",
+    "Check mode and owner shown in the header."
+  ],
+  "review": [
+    "Archive names, type/mode/owner headers and size."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

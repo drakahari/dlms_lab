@@ -37,7 +37,7 @@ def phase(root, resume, require_icon):
     assert (package/'vm_preview/runner.py').is_file()
     from learning_lab.vm_preview.image_catalog import production_catalog
     images=production_catalog()
-    assert len(images.images)==2 and len(images.lessons)==52
+    assert len(images.images)==2 and len(images.lessons)==60
     assert not images.keys and not images.releases
     for lesson_id,revision in images.lessons:
         images.resolve({'backend':'offline-qemu-preview-1','image':images.defaults(lesson_id)[0],'lesson_sha256':revision},lesson_id)
@@ -49,7 +49,7 @@ def phase(root, resume, require_icon):
     from learning_lab.vm_preview.sessions import Sessions
     import uuid
     vm_unit=vm_catalog(); assert len(vm_unit['entries'])==8
-    assert len(vm_units())==6 and len(vm_entries())==52
+    assert len(vm_units())==7 and len(vm_entries())==60
     assert vm_unit['entries'][2]['id']==LEGACY_ID
     vm_sessions=Sessions(root/'vm-metadata-fixture','c'*64,root/'vm-gate-fixture')
     for index,entry in enumerate(vm_entries()):
@@ -167,7 +167,7 @@ def phase(root, resume, require_icon):
                 'attempts': {k: lab.session.attempt for k, lab in bridge.labs.items()}}))
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
                 'package': str(package), 'platform': app.platformName(),
-                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'vm_lessons':52, 'vm_units':6, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
+                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'vm_lessons':60, 'vm_units':7, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
         window.close(); app.processEvents(); lock.unlock()
 

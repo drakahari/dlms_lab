@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "id": "linux-backup-safe-recovery",
+  "title": "Backup & Safe File Recovery",
+  "purpose": "Eight connected manual recovery exercises. Choose any lesson; the recommended sequence builds an evidence-based recovery workflow.",
+  "prerequisites": "Bash quoting, files/permissions, disposable-user administration; unchanged approved administrator image. Guest-only sudo where stated.",
+  "coverage": "LPIC-1 v5.0 103.3 partial tar/gzip; LPIC-2 v4.5 206.2 partial manual backup, integrity and restore. Not a complete backup syllabus; self-reviewed and unscored.",
+  "entries": [
+    {
+      "id": "real-linux-backup-requirements",
+      "resource": "real-linux-backup-requirements.json",
+      "description": "State what must be recovered before making a backup.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge fixture only:\nw=/home/learner/ll-backup-1; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-1 && test ! -L /home/learner/ll-backup-1 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'"
+      ],
+      "observations": [
+        "Exact inventory, two hashes, expected metadata and RPO/RTO assumptions."
+      ],
+      "questions": [
+        "Which metadata matters to access? What would make this reference trustworthy?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-1; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-1 && test ! -L /home/learner/ll-backup-1 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, rm -- 'source/note.txt' 'source/space name.txt' 'requirements.txt' 'expected.sha256' 'expected.metadata'; rmdir -- source; cd -- /home/learner; rmdir -- /home/learner/ll-backup-1. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    },
+    {
+      "id": "real-linux-backup-archive",
+      "resource": "real-linux-backup-archive.json",
+      "description": "Archive exactly the expected relative members.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge fixture only:\nw=/home/learner/ll-backup-2; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-2 && test ! -L /home/learner/ll-backup-2 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'"
+      ],
+      "observations": [
+        "Archive names, type/mode/owner headers and size."
+      ],
+      "questions": [
+        "Can a readable listing prove the file contents?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-2; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-2 && test ! -L /home/learner/ll-backup-2 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, rm -- 'source/note.txt' 'source/space name.txt' 'v1.tar'; rmdir -- source; cd -- /home/learner; rmdir -- /home/learner/ll-backup-2. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    },
+    {
+      "id": "real-linux-backup-checksum",
+      "resource": "real-linux-backup-checksum.json",
+      "description": "Keep the archive, compressed copy and separate checksum reference.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge fixture only:\nw=/home/learner/ll-backup-3; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-3 && test ! -L /home/learner/ll-backup-3 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'\nguard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536"
+      ],
+      "observations": [
+        "gzip status, digest result, raw/compressed/reference retained."
+      ],
+      "questions": [
+        "What if an attacker changes both backup and reference?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-3; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-3 && test ! -L /home/learner/ll-backup-3 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, rm -- 'source/note.txt' 'source/space name.txt' 'v1.tar' 'v1.tar.gz' 'expected-backup.sha256'; rmdir -- source; cd -- /home/learner; rmdir -- /home/learner/ll-backup-3. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    },
+    {
+      "id": "real-linux-backup-damage",
+      "resource": "real-linux-backup-damage.json",
+      "description": "Distinguish corrupt streams from incorrect but well-formed payloads.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge fixture only:\nw=/home/learner/ll-backup-4; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-4 && test ! -L /home/learner/ll-backup-4 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'\nguard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536"
+      ],
+      "observations": [
+        "Passing altered tar/gzip, failing truncated gzip, differing payload and unchanged good hash."
+      ],
+      "questions": [
+        "Does a nonzero gzip result tell you the cause or repair the backup?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-4; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-4 && test ! -L /home/learner/ll-backup-4 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, rm -- 'source/note.txt' 'source/space name.txt' 'v1.tar' 'expected-backup.sha256' 'altered.tar' 'altered.tar.gz' 'truncated.gz' 'restore/note.txt' 'restore/space name.txt'; rmdir -- source restore; cd -- /home/learner; rmdir -- /home/learner/ll-backup-4. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    },
+    {
+      "id": "real-linux-backup-restore",
+      "resource": "real-linux-backup-restore.json",
+      "description": "Recover into an empty destination while originals remain unchanged.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge fixture only:\nw=/home/learner/ll-backup-5; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-5 && test ! -L /home/learner/ll-backup-5 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'\nguard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536"
+      ],
+      "observations": [
+        "Separate paths, equal data/metadata, missing-member detection and originals retained."
+      ],
+      "questions": [
+        "Which archive would you choose when listing succeeds on both?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-5; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-5 && test ! -L /home/learner/ll-backup-5 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, rm -- 'source/note.txt' 'source/space name.txt' 'v1.tar' 'restore/note.txt' 'restore/space name.txt' 'incomplete.tar' 'incomplete/note.txt'; rmdir -- source restore incomplete; cd -- /home/learner; rmdir -- /home/learner/ll-backup-5. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    },
+    {
+      "id": "real-linux-backup-access",
+      "resource": "real-linux-backup-access.json",
+      "description": "Recover a private file for its intended disposable user.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge starting conditions only:\nw=/home/learner/ll-backup-6; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && saved_umask=$(umask) && umask 077 && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-6 && test ! -L /home/learner/ll-backup-6 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'\nguard && ! getent passwd ll-b6 && ! getent group ll-b6 && sudo useradd -M -U -s /usr/sbin/nologin ll-b6 && sudo passwd -S ll-b6\nguard && test ! -e v1.tar && test ! -L v1.tar && chmod 0711 . source && sudo chown ll-b6:ll-b6 source/note.txt && sudo chmod 0600 source/note.txt && sudo timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt && sudo chown learner:learner v1.tar && sudo chmod 0600 v1.tar && mkdir -m 0711 restore && timeout -k 1s 10s tar -xf v1.tar -C restore --no-same-owner --same-permissions"
+      ],
+      "observations": [
+        "Locked account, before/after actual identity reads, owner:group600 and matching payload.",
+        "Backup archives/references are mode600; restore the saved practice-shell umask after cleanup."
+      ],
+      "questions": [
+        "What can root bypass? Why does no-login not prevent runuser -- cat?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-6; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-6 && test ! -L /home/learner/ll-backup-6 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, sudo rm -- 'source/note.txt' 'source/space name.txt' 'v1.tar' 'restore/note.txt'; sudo rmdir -- source restore; cd -- /home/learner; rmdir -- /home/learner/ll-backup-6. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them.",
+        "With your fixture removed and no processes shown by pgrep -u ll-b6 -a: sudo userdel ll-b6; if the empty primary group remains, inspect then sudo groupdel ll-b6. Never remove learner or change sudoers.",
+        "After removing your fixture, restore this practice shell only: umask \"$saved_umask\". No login configuration is changed."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    },
+    {
+      "id": "real-linux-backup-versions",
+      "resource": "real-linux-backup-versions.json",
+      "description": "Recover v1 without losing v2 or the current source.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge fixture only:\nw=/home/learner/ll-backup-7; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-7 && test ! -L /home/learner/ll-backup-7 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'\nguard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536\nguard && test ! -e v2.tar && test ! -L v2.tar && test ! -e versions.sha256 && test ! -L versions.sha256 && printf 'alpha-v2\\n' > source/note.txt && timeout -k 1s 10s tar -cf v2.tar -C source -- note.txt 'space name.txt' && sha256sum -- v1.tar v2.tar > versions.sha256"
+      ],
+      "observations": [
+        "Wrong-version mismatch, restoredalpha, currentalpha-v2, unchanged v1/v2digests."
+      ],
+      "questions": [
+        "Which RPO requirement tells you the correct version?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-7; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-7 && test ! -L /home/learner/ll-backup-7 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, rm -- 'source/note.txt' 'source/space name.txt' 'v1.tar' 'v2.tar' 'versions.sha256' 'wrong/note.txt' 'wrong/space name.txt' 'restore/note.txt' 'restore/space name.txt'; rmdir -- source wrong restore; cd -- /home/learner; rmdir -- /home/learner/ll-backup-7. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    },
+    {
+      "id": "real-linux-backup-assessment",
+      "resource": "real-linux-backup-assessment.json",
+      "description": "Select, recover and justify the right private version.",
+      "objectives": [
+        "LPIC-1 v5.0 103.3 partial; LPIC-2 v4.5 206.2 partial; permission skills reinforce 104.5"
+      ],
+      "materials": [
+        "Guest-only practice. Lessons are display-only; the application never executes this text. Start on a fresh lesson disk. Enter the small fixture lines manually; no shared clipboard is assumed.",
+        "Stop on any failed guard, account collision, unexpected member, link or existing destination. Never adopt someone else's fixture. Only trusted, locally created regular files are extracted here; this is not a safe untrusted-archive extraction tool.",
+        "Use only the declared /home/learner/ll-backup-N area, no parent paths or system configuration. Archives are at most 64 KiB; commands have a ten-second timeout plus one-second kill grace. Begin with at least 64 MiB guest free space; this check is not a storage quota.",
+        "Challenge starting conditions only:\nw=/home/learner/ll-backup-8; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && saved_umask=$(umask) && umask 077 && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { test \"$(pwd -P)\" = /home/learner/ll-backup-8 && test ! -L /home/learner/ll-backup-8 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard\nguard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'\nguard && ! getent passwd ll-b8 && ! getent group ll-b8 && sudo useradd -M -U -s /usr/sbin/nologin ll-b8 && sudo passwd -S ll-b8\nguard && test ! -e v1.tar && test ! -L v1.tar && test ! -e v2.tar && test ! -L v2.tar && test ! -e versions.sha256 && test ! -L versions.sha256 && chmod 0711 . && chmod 0600 source/note.txt && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt && printf 'alpha-v2\\n' > source/note.txt && timeout -k 1s 10s tar -cf v2.tar -C source -- note.txt && sha256sum -- v1.tar v2.tar > versions.sha256"
+      ],
+      "observations": [
+        "v1 selection, exactprivatecontent/metadata/useraccess, originalv2+backups retained and handover.",
+        "Backup archives/references are mode600; restore the saved practice-shell umask after cleanup."
+      ],
+      "questions": [
+        "Would passing gzip validation alone justify this recovery?"
+      ],
+      "limitations": [
+        "Self-reviewed and unscored. Keep evidence before Reset: VM disks and guest reports are excluded from profile backups; Resume boots disk state, not RAM/jobs.",
+        "Tar listing proves readable headers/member names, not payload correctness. gzip -t checks stream integrity, not expected contents or authenticity. A checksum reference is useful only if independently trusted and preserved.",
+        "Compare restored bytes, exact members, modes, owner/group and timestamps to known expectations. No ACL/xattr, rsync, cpio, links, devices, sparse files, remote backup, tape or complete objective coverage. Guest root can override guest-side limits."
+      ],
+      "cleanup": [
+        "cd -- /home/learner/ll-backup-8; guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-8 && test ! -L /home/learner/ll-backup-8 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard; find . -mindepth 1 -maxdepth 2 -printf '%y %p\\n'. Stop if anything differs from your fixture; retain evidence and backups until recovery review is complete.",
+        "After that inspection, sudo rm -- 'source/note.txt' 'source/space name.txt' 'v1.tar' 'v2.tar' 'versions.sha256' 'restore/note.txt' 'handover.txt'; sudo rmdir -- source restore; cd -- /home/learner; rmdir -- /home/learner/ll-backup-8. Use no -r, -f, globs or parent paths. On repetition, absent items are already clean; inspect remaining exact items before removing them.",
+        "With your fixture removed and no processes shown by pgrep -u ll-b8 -a: sudo userdel ll-b8; if the empty primary group remains, inspect then sudo groupdel ll-b8. Never remove learner or change sudoers.",
+        "After removing your fixture, restore this practice shell only: umask \"$saved_umask\". No login configuration is changed."
+      ],
+      "troubleshooting": [
+        "Do not extract again into a nonempty destination; inspect and use a fresh, named destination.",
+        "Read command status and compare data/metadata, not just a successful listing. Missing members and wrong versions can be perfectly valid archives.",
+        "On interruption retain the partial archive separately, inspect it, and create a differently named backup. Do not overwrite originals or earlier backups."
+      ]
+    }
+  ]
+}

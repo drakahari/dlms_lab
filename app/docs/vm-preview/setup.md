@@ -132,3 +132,7 @@ The sixth bundled unit is
 It uses the unchanged administrator image and named disposable guest fixtures.
 Completion remains self-reviewed/unscored; no at, clock or network changes.
 Registry bounds: six units, sixteen lessons each, fifty-two total.
+
+## Backup practice unit
+
+The existing administrator image also supports [Backup & Safe File Recovery](backup-unit.md): eight self-reviewed lessons, no new image/packages/networking. Registry bounds are seven units, 60 total lessons and 16 per unit. Existing lesson/session pins are unchanged.

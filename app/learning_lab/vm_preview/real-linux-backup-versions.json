@@ -1,0 +1,53 @@
+{
+  "id": "real-linux-backup-versions",
+  "content_version": "1.0.0",
+  "title": "Preserve versions and recover an earlier one",
+  "goal": "Recover v1 without losing v2 or the current source.",
+  "challenge": "Retain both backups and recover alpha from the earlier version into a separate directory while current source says alpha-v2. Detect a wrong-version restore using expected contents, not a successful tar listing.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-7; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-7 && test ! -L /home/learner/ll-backup-7 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536",
+      "explanation": "Snapshot1 before edit.",
+      "expected": "v1 retained."
+    },
+    {
+      "command": "guard && test ! -e v2.tar && test ! -L v2.tar && test ! -e versions.sha256 && test ! -L versions.sha256 && printf 'alpha-v2\\n' > source/note.txt && timeout -k 1s 10s tar -cf v2.tar -C source -- note.txt 'space name.txt' && sha256sum -- v1.tar v2.tar > versions.sha256",
+      "explanation": "Distinct names; never overwrite a previous backup. Refuse existing backup/reference names before changing source or writing an archive.",
+      "expected": "Two differing snapshots, current source v2."
+    },
+    {
+      "command": "guard && mkdir -m 0700 wrong restore && timeout -k 1s 10s tar -xf v2.tar -C wrong --no-same-owner --same-permissions && printf 'alpha\\n' | cmp - wrong/note.txt; printf 'wrong version status=%s\\n' \"$?\"",
+      "explanation": "Wrong backup is structurally fine but not the required version.",
+      "expected": "cmp nonzero."
+    },
+    {
+      "command": "guard && timeout -k 1s 10s tar -xf v1.tar -C restore --no-same-owner --same-permissions && printf 'alpha\\n' | cmp - restore/note.txt && printf 'alpha-v2\\n' | cmp - source/note.txt && sha256sum -c -- versions.sha256",
+      "explanation": "Recover v1, retain live v2 and both unchanged backups.",
+      "expected": "All checks pass; originals/prior backups preserved."
+    }
+  ],
+  "hints": [
+    "Name versions explicitly.",
+    "A valid archive can be the wrong recovery point.",
+    "Keep both snapshots and compare the requested version."
+  ],
+  "review": [
+    "Wrong-version mismatch, restoredalpha, currentalpha-v2, unchanged v1/v2digests."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

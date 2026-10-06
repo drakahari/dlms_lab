@@ -1,0 +1,58 @@
+{
+  "id": "real-linux-backup-assessment",
+  "content_version": "1.0.0",
+  "title": "Complete an independent recovery assessment",
+  "goal": "Select, recover and justify the right private version.",
+  "challenge": "Recover alpha for ll-b8, mode600, expected timestamp2026-01-01UTC, into a new empty directory. Keep the current alpha-v2 source, both version archives and independent references. Prove actual ll-b8 read access, wrong-identity denial, exact contents and metadata. Retain a short recovery handover; completion is self-reviewed.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-8; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && saved_umask=$(umask) && umask 077 && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails. Use a private practice-shell umask; restore the saved value during cleanup.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-8 && test ! -L /home/learner/ll-backup-8 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && ! getent passwd ll-b8 && ! getent group ll-b8 && sudo useradd -M -U -s /usr/sbin/nologin ll-b8 && sudo passwd -S ll-b8",
+      "explanation": "Locked disposable target identity.",
+      "expected": "No credential or learner-policy changes."
+    },
+    {
+      "command": "guard && test ! -e v1.tar && test ! -L v1.tar && test ! -e v2.tar && test ! -L v2.tar && test ! -e versions.sha256 && test ! -L versions.sha256 && chmod 0711 . && chmod 0600 source/note.txt && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt && printf 'alpha-v2\\n' > source/note.txt && timeout -k 1s 10s tar -cf v2.tar -C source -- note.txt && sha256sum -- v1.tar v2.tar > versions.sha256",
+      "explanation": "Create starting backups. Desired recovered ownership is explicitly ll-b8; archived owner is learner. Refuse existing backup/reference names before changing source or writing an archive.",
+      "expected": "Current v2, previous v1, references retained."
+    },
+    {
+      "command": "guard && mkdir -m 0711 restore && timeout -k 1s 10s tar -xf v1.tar -C restore --no-same-owner --same-permissions && sudo chown ll-b8:ll-b8 restore/note.txt && sudo chmod 0600 restore/note.txt",
+      "explanation": "Select earlier version and apply declared ownership policy. Never extract over current source.",
+      "expected": "Restored v1 private to ll-b8."
+    },
+    {
+      "command": "guard && sudo runuser -u ll-b8 -- cat restore/note.txt && sudo runuser -u ll-b8 -- stat -c '%U:%G %a %Y' restore/note.txt && printf 'alpha\\n' | sudo cmp - restore/note.txt && printf 'alpha-v2\\n' | cmp - source/note.txt && sha256sum -c -- versions.sha256; cat restore/note.txt; printf 'wrong identity status=%s\\n' \"$?\"",
+      "explanation": "Gather independent outcomes; a check failure cannot be waved away by self-review.",
+      "expected": "ll-b8 reads alpha, mode600/expectedmtime, learner denied, live v2/backups unchanged."
+    },
+    {
+      "command": "guard && printf '%s\\n' 'POINT: v1; current v2 preserved' 'EVIDENCE: contents, owner/group/mode/mtime, actual user read' 'TRUST: local retained checksum, not signature' 'LIMIT: no ACLs or untrusted archive guarantees' 'CLEANUP: exact practice paths/account only after review' > handover.txt",
+      "explanation": "Record why the selection meets requirements and its limits.",
+      "expected": "Concise evidence-based handover, no verification score. Backups/references remain private, not world-readable."
+    }
+  ],
+  "hints": [
+    "Choose by requested content/version.",
+    "Check access as ll-b8 and denial as learner.",
+    "Preserve backups and current source, then justify recovery."
+  ],
+  "review": [
+    "v1 selection, exactprivatecontent/metadata/useraccess, originalv2+backups retained and handover."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

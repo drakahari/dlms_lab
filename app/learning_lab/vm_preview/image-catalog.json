@@ -242,6 +242,38 @@
         {
           "id": "real-linux-schedule-assessment",
           "sha256": "2e6714cf6309f931d8cf463268400122a188a066424bfff9dfe191208bfcbf8d"
+        },
+        {
+          "id": "real-linux-backup-requirements",
+          "sha256": "2b99def93472457008c3aaa2ec9a1d8abd7500109ed753db602853604c1d2740"
+        },
+        {
+          "id": "real-linux-backup-archive",
+          "sha256": "f787652f242c090505baa5631ffb09021a8fb59e4c38fdb5b99a2f7ec218407e"
+        },
+        {
+          "id": "real-linux-backup-checksum",
+          "sha256": "4fb6794d224baba0938e9b3444258b08e794f892d308bec28fae2e39b09c3a34"
+        },
+        {
+          "id": "real-linux-backup-damage",
+          "sha256": "686cf8ecc05d5b6cd61462901d3a67f58fdea53f72447c322b283337c7c35183"
+        },
+        {
+          "id": "real-linux-backup-restore",
+          "sha256": "8dafdec85de070b335c4e8c24f4598d1ad25c61b883a29cfef04115fd5503659"
+        },
+        {
+          "id": "real-linux-backup-access",
+          "sha256": "491cc3001e4aed3ba91b2975be3d5122594814dfb6c735481e290bbcdfda40ec"
+        },
+        {
+          "id": "real-linux-backup-versions",
+          "sha256": "7ec7cf0815a88558f2d0445b5f2c8958d07ad30df50de8d1e26b3b57d8d56f96"
+        },
+        {
+          "id": "real-linux-backup-assessment",
+          "sha256": "e7394c3cb154db3719ffa62a33922a1b8500eb699989f8db80a32a618454de4e"
         }
       ]
     }
@@ -558,6 +590,54 @@
       "sha256": "2e6714cf6309f931d8cf463268400122a188a066424bfff9dfe191208bfcbf8d",
       "state": "active",
       "resource": "real-linux-schedule-assessment.json"
+    },
+    {
+      "id": "real-linux-backup-requirements",
+      "sha256": "2b99def93472457008c3aaa2ec9a1d8abd7500109ed753db602853604c1d2740",
+      "resource": "real-linux-backup-requirements.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-backup-archive",
+      "sha256": "f787652f242c090505baa5631ffb09021a8fb59e4c38fdb5b99a2f7ec218407e",
+      "resource": "real-linux-backup-archive.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-backup-checksum",
+      "sha256": "4fb6794d224baba0938e9b3444258b08e794f892d308bec28fae2e39b09c3a34",
+      "resource": "real-linux-backup-checksum.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-backup-damage",
+      "sha256": "686cf8ecc05d5b6cd61462901d3a67f58fdea53f72447c322b283337c7c35183",
+      "resource": "real-linux-backup-damage.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-backup-restore",
+      "sha256": "8dafdec85de070b335c4e8c24f4598d1ad25c61b883a29cfef04115fd5503659",
+      "resource": "real-linux-backup-restore.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-backup-access",
+      "sha256": "491cc3001e4aed3ba91b2975be3d5122594814dfb6c735481e290bbcdfda40ec",
+      "resource": "real-linux-backup-access.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-backup-versions",
+      "sha256": "7ec7cf0815a88558f2d0445b5f2c8958d07ad30df50de8d1e26b3b57d8d56f96",
+      "resource": "real-linux-backup-versions.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-backup-assessment",
+      "sha256": "e7394c3cb154db3719ffa62a33922a1b8500eb699989f8db80a32a618454de4e",
+      "resource": "real-linux-backup-assessment.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -613,7 +693,15 @@
     "real-linux-schedule-monotonic": "461cc032f0624bf21a0c22bf7deceb5fda5b57068649fe8c6452180b0e5473af",
     "real-linux-schedule-calendar": "62e4c7b2e6f31c26d868a9c5bf2438b1bd1604e4fc22537a972620c11f5d5229",
     "real-linux-schedule-persistence": "4857022ec6923b15dfb517ecc88886214d2444f0a6e737b20c9b5534c9ae1e26",
-    "real-linux-schedule-assessment": "2e6714cf6309f931d8cf463268400122a188a066424bfff9dfe191208bfcbf8d"
+    "real-linux-schedule-assessment": "2e6714cf6309f931d8cf463268400122a188a066424bfff9dfe191208bfcbf8d",
+    "real-linux-backup-requirements": "2b99def93472457008c3aaa2ec9a1d8abd7500109ed753db602853604c1d2740",
+    "real-linux-backup-archive": "f787652f242c090505baa5631ffb09021a8fb59e4c38fdb5b99a2f7ec218407e",
+    "real-linux-backup-checksum": "4fb6794d224baba0938e9b3444258b08e794f892d308bec28fae2e39b09c3a34",
+    "real-linux-backup-damage": "686cf8ecc05d5b6cd61462901d3a67f58fdea53f72447c322b283337c7c35183",
+    "real-linux-backup-restore": "8dafdec85de070b335c4e8c24f4598d1ad25c61b883a29cfef04115fd5503659",
+    "real-linux-backup-access": "491cc3001e4aed3ba91b2975be3d5122594814dfb6c735481e290bbcdfda40ec",
+    "real-linux-backup-versions": "7ec7cf0815a88558f2d0445b5f2c8958d07ad30df50de8d1e26b3b57d8d56f96",
+    "real-linux-backup-assessment": "e7394c3cb154db3719ffa62a33922a1b8500eb699989f8db80a32a618454de4e"
   },
   "releases": [],
   "keys": [],
@@ -669,6 +757,14 @@
     "real-linux-schedule-monotonic": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-schedule-calendar": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-schedule-persistence": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
-    "real-linux-schedule-assessment": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
+    "real-linux-schedule-assessment": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-requirements": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-archive": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-checksum": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-damage": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-restore": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-access": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-versions": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-backup-assessment": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
   }
 }

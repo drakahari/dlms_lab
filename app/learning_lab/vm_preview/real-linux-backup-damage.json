@@ -1,0 +1,58 @@
+{
+  "id": "real-linux-backup-damage",
+  "content_version": "1.0.0",
+  "title": "Diagnose damaged and misleading backups",
+  "goal": "Distinguish corrupt streams from incorrect but well-formed payloads.",
+  "challenge": "Using copies only, distinguish a truncated gzip stream from an altered regular-file payload whose tar listing and gzip stream still pass. Preserve the good backup and trusted expected reference; explain what each check establishes.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-4; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-4 && test ! -L /home/learner/ll-backup-4 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536",
+      "explanation": "Preserve the known backup.",
+      "expected": "v1.tar intact."
+    },
+    {
+      "command": "guard && sha256sum -- v1.tar > expected-backup.sha256 && cp -- v1.tar altered.tar && printf X | dd of=altered.tar bs=1 seek=512 conv=notrunc status=none",
+      "explanation": "This trusted GNU tar fixture stores note.txt first; offset512 changes its payload, not its header. Never edit the good backup.",
+      "expected": "Altered copy has wrong first byte."
+    },
+    {
+      "command": "guard && timeout -k 1s 10s tar -tf altered.tar && timeout -k 1s 10s gzip -c -- altered.tar > altered.tar.gz && timeout -k 1s 10s gzip -t -- altered.tar.gz; sha256sum -- v1.tar altered.tar",
+      "explanation": "A newly compressed wrong payload has a valid CRC. Readable headers are not content validation.",
+      "expected": "Listing and gzip check pass; digests differ."
+    },
+    {
+      "command": "guard && cp -- altered.tar.gz truncated.gz && truncate -s -4 truncated.gz; timeout -k 1s 10s gzip -t -- truncated.gz; printf 'gzip status=%s\\n' \"$?\"",
+      "explanation": "Remove four trailer bytes on another copy only. Nonzero status detects this stream damage.",
+      "expected": "Nonzero; preserve every copy."
+    },
+    {
+      "command": "guard && mkdir -m 0700 restore && timeout -k 1s 10s tar -xf altered.tar -C restore --no-same-owner --same-permissions; cmp -- source/note.txt restore/note.txt; printf 'comparison status=%s\\n' \"$?\"; sha256sum -c -- expected-backup.sha256",
+      "explanation": "Compare restored data to known expectations; the good reference still matches the untouched backup.",
+      "expected": "cmp nonzero; v1 hash remains OK."
+    }
+  ],
+  "hints": [
+    "Check the copy, not the retained original.",
+    "A CRC checks encoded stream consistency, not whether alpha was intended.",
+    "Restore into a separate directory then compare to expected content."
+  ],
+  "review": [
+    "Passing altered tar/gzip, failing truncated gzip, differing payload and unchanged good hash."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

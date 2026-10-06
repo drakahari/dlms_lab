@@ -1,0 +1,685 @@
+{
+  "verified": "2026-10-06",
+  "sources": {
+    "LPIC-1": {
+      "version": "5.0",
+      "exams": [
+        "101-500",
+        "102-500"
+      ],
+      "url": "https://www.lpi.org/our-certifications/exam-101-102-objectives/"
+    },
+    "LPIC-2": {
+      "version": "4.5.0",
+      "exams": [
+        "201-450",
+        "202-450"
+      ],
+      "url": "https://www.lpi.org/our-certifications/exam-201-202-objectives/"
+    }
+  },
+  "full_objective_claims": false,
+  "objectives": [
+    {
+      "certification": "LPIC-1",
+      "objective": "101.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated hardware exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "101.2",
+      "status": "Reinforcement only",
+      "units": [
+        "admin"
+      ],
+      "implemented_and_missing": "Current-boot journal evidence; no boot-chain/loader exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "101.3",
+      "status": "Partial",
+      "units": [
+        "admin"
+      ],
+      "implemented_and_missing": "Implemented clean reboot/service enabled-state observations; targets, runlevels and user notification missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "102.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated disk layout exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "102.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated boot manager exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "102.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated libraries exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "102.4",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated Debian packages exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "102.5",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated RPM ecosystem exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "102.6",
+      "status": "Preparation only",
+      "units": [
+        "jobs"
+      ],
+      "implemented_and_missing": "Using an offline VM is not assessed image/cloud/container preparation."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.1",
+      "status": "Partial",
+      "units": [
+        "bash"
+      ],
+      "implemented_and_missing": "Implemented quoting, lookup, temporary PATH/env and statuses; history editing and broader command/environment mastery missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.2",
+      "status": "Partial",
+      "units": [
+        "text",
+        "bash",
+        "backup"
+      ],
+      "implemented_and_missing": "Implemented bounded filters, anchored sed previews and hashes; broader utilities/options and binary/locale cases missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.3",
+      "status": "Partial",
+      "units": [
+        "organize",
+        "bash",
+        "backup"
+      ],
+      "implemented_and_missing": "Implemented scoped file operations, quoted paths and tar/gzip recovery; recursive management, richer find, cpio and other compression missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.4",
+      "status": "Partial",
+      "units": [
+        "text",
+        "bash"
+      ],
+      "implemented_and_missing": "Implemented pipes, stdout/stderr, truncation/append and pipeline status; xargs/tee and wider composition missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.5",
+      "status": "Partial",
+      "units": [
+        "jobs"
+      ],
+      "implemented_and_missing": "Implemented actual process inspection, job control, scoped signals and logout survival; multiplexers and broader process workflows missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.6",
+      "status": "Partial",
+      "units": [
+        "jobs"
+      ],
+      "implemented_and_missing": "Implemented unprivileged nice/renice, refusal and actual values; privileged priority recovery missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.7",
+      "status": "Partial",
+      "units": [
+        "bash"
+      ],
+      "implemented_and_missing": "Implemented BRE/ERE, anchors/classes, matches/nonmatches, sed replacement; broader filesystem/regex tasks missing. grep-F alone adds no regex coverage."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "103.8",
+      "status": "Partial",
+      "units": [
+        "bash"
+      ],
+      "implemented_and_missing": "Implemented actual vi modes, navigation, edits, search and rollback; broader editor awareness/default-editor practice missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "104.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated partition/filesystem creation exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "104.2",
+      "status": "Preparation only",
+      "units": [
+        "capacity"
+      ],
+      "implemented_and_missing": "Space/inode observations do not demonstrate filesystem checking or repair."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "104.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated mounting exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "104.4",
+      "status": "Removed / not applicable",
+      "units": [],
+      "implemented_and_missing": "Removed in the current official objectives; not counted as a missing active skill."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "104.5",
+      "status": "Partial",
+      "units": [
+        "files",
+        "users",
+        "backup"
+      ],
+      "implemented_and_missing": "Implemented file/directory permissions, actual identities, owner/group, setgid and umask; remaining special-bit workflows and broader cases missing. No ACL claim."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "104.6",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated links exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "104.7",
+      "status": "Partial",
+      "units": [
+        "organize"
+      ],
+      "implemented_and_missing": "Implemented representative home/etc/var path reasoning and bounded locating; complete hierarchy and locating utilities missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "105.1",
+      "status": "Partial",
+      "units": [
+        "bash"
+      ],
+      "implemented_and_missing": "Implemented temporary environment/functions; persistent startup-file customization and full scope missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "105.2",
+      "status": "Partial",
+      "units": [
+        "bash",
+        "schedule"
+      ],
+      "implemented_and_missing": "Implemented short scripts, arguments, conditions, bounded loops, statuses, environment and repeatable jobs; broader workflows missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "106.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated X11 exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "106.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated desktops exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "106.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated accessibility exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "107.1",
+      "status": "Partial",
+      "units": [
+        "users"
+      ],
+      "implemented_and_missing": "Implemented disposable accounts, homes/shells, primary/supplementary groups, expiry/locking distinctions; complete account policy and credential administration omitted."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "107.2",
+      "status": "Partial",
+      "units": [
+        "schedule"
+      ],
+      "implemented_and_missing": "Implemented real cron, system/user timers, identities, catch-up/overlap and cleanup; at, access policies, mail/DST and complete scheduling coverage omitted."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "107.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated locales exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "108.1",
+      "status": "Reinforcement only",
+      "units": [
+        "schedule"
+      ],
+      "implemented_and_missing": "Read-only clock/timezone observations; no time synchronization/configuration practice."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "108.2",
+      "status": "Partial",
+      "units": [
+        "admin"
+      ],
+      "implemented_and_missing": "Implemented journal/rsyslog correlation, local rules and rotation; remote logging and full facility/configuration workflows missing."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "108.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated mail basics exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "108.4",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated printing exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "109.1",
+      "status": "Preparation only",
+      "units": [],
+      "implemented_and_missing": "Original networking simulations practice IPv4 subnets/routes/DNS/TCP, not complete protocol coverage or real Linux configuration."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "109.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated persistent networking exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "109.3",
+      "status": "Preparation only",
+      "units": [],
+      "implemented_and_missing": "Bounded original network diagnostics; no real interface/routing troubleshooting."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "109.4",
+      "status": "Preparation only",
+      "units": [],
+      "implemented_and_missing": "Simulated gateway/DNS repair; no real resolver configuration."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "110.1",
+      "status": "Reinforcement only",
+      "units": [
+        "users"
+      ],
+      "implemented_and_missing": "Least privilege/locked disposable identities; no security audit/sudo-policy administration claim."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "110.2",
+      "status": "Reinforcement only",
+      "units": [
+        "users"
+      ],
+      "implemented_and_missing": "Authentication/expiry/shell distinctions; no host security hardening exercise."
+    },
+    {
+      "certification": "LPIC-1",
+      "objective": "110.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated encryption exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "200.1",
+      "status": "Partial",
+      "units": [
+        "capacity",
+        "jobs"
+      ],
+      "implemented_and_missing": "Implemented actual CPU/memory/file-I/O observations plus supplied space/inode fault interpretation; advanced/network throughput and missing monitoring tools omitted."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "200.2",
+      "status": "Partial",
+      "units": [
+        "capacity"
+      ],
+      "implemented_and_missing": "Implemented synthetic trends, independently checked forecasts and insufficient-evidence decisions; production monitoring deployment missing."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "201.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated kernel components exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "201.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated kernel builds exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "201.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated kernel runtime exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "202.1",
+      "status": "Partial",
+      "units": [
+        "admin",
+        "schedule"
+      ],
+      "implemented_and_missing": "Implemented systemd service enablement/overrides and boot evidence; targets, SysV/LSB and broader startup missing."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "202.2",
+      "status": "Preparation only",
+      "units": [
+        "admin"
+      ],
+      "implemented_and_missing": "Service/file rollback is not bootloader, rescue/emergency or whole-system recovery."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "202.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated other bootloaders exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "203.1",
+      "status": "Preparation only",
+      "units": [
+        "capacity"
+      ],
+      "implemented_and_missing": "File space/inode observation; no filesystem mount/unmount administration."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "203.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated filesystem maintenance exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "203.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated filesystem options exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "204.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated RAID exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "204.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated storage access exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "204.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated LVM exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "205.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated network configuration exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "205.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated advanced networking exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "205.3",
+      "status": "Preparation only",
+      "units": [],
+      "implemented_and_missing": "Simulated network diagnosis does not demonstrate advanced real Linux troubleshooting."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "206.1",
+      "status": "Reinforcement only",
+      "units": [
+        "backup"
+      ],
+      "implemented_and_missing": "Archive skills alone do not demonstrate configure/make/install or source-build management."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "206.2",
+      "status": "Partial",
+      "units": [
+        "backup"
+      ],
+      "implemented_and_missing": "Implemented manual scoped archives, independent references, damage/completeness/version checks, separate restore and actual-user access; system directory selection, media/tape, rsync and backup suites omitted."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "206.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated user notices exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "207.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated DNS configuration exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "207.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated DNS zones exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "207.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated DNS security exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "208.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated Apache exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "208.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated HTTPS exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "208.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated Squid exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "208.4",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated Nginx exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "209.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated Samba exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "209.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated NFS exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "210.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated DHCP exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "210.2",
+      "status": "Preparation only",
+      "units": [
+        "users"
+      ],
+      "implemented_and_missing": "Observed expiry/password-lock/shell distinctions are not PAM module/configuration practice."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "210.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated LDAP client exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "210.4",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated LDAP server exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "211.1",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated mail servers exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "211.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated mail delivery exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "211.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated mailboxes exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "212.1",
+      "status": "Preparation only",
+      "units": [],
+      "implemented_and_missing": "Original simulated ordered firewall rules are not real router/NAT/firewall administration."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "212.2",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated FTP exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "212.3",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated SSH exercise."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "212.4",
+      "status": "Reinforcement only",
+      "units": [
+        "users",
+        "admin"
+      ],
+      "implemented_and_missing": "Least privilege and scoped service access; no network/system security-tool workflow."
+    },
+    {
+      "certification": "LPIC-2",
+      "objective": "212.5",
+      "status": "Missing",
+      "units": [],
+      "implemented_and_missing": "No dedicated demonstrated VPN exercise."
+    }
+  ]
+}

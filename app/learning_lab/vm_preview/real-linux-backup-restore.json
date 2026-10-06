@@ -1,0 +1,53 @@
+{
+  "id": "real-linux-backup-restore",
+  "content_version": "1.0.0",
+  "title": "Restore separately and verify contents and metadata",
+  "goal": "Recover into an empty destination while originals remain unchanged.",
+  "challenge": "Restore both known files into a new separate directory. Compare exact member inventory, bytes, modes and mtime against originals; retain the original source and backup. Diagnose an incomplete but readable archive as insufficient.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-backup-5; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Guard a fresh, learner-owned workspace and check guest free space. Stop if any command fails.",
+      "expected": "Private practice directory; at least 65536 KiB available."
+    },
+    {
+      "command": "guard() { test \"$(pwd -P)\" = /home/learner/ll-backup-5 && test ! -L /home/learner/ll-backup-5 && test \"$(stat -c %U .)\" = learner && test -z \"$(find . -type l -print -quit)\"; }; guard",
+      "explanation": "Define and use a location/owner guard for every later change.",
+      "expected": "Exact physical path, not a link."
+    },
+    {
+      "command": "guard && mkdir -m 0700 source && printf 'alpha\\n' > source/note.txt && printf 'bravo\\n' > 'source/space name.txt' && chmod 0640 source/note.txt && chmod 0600 'source/space name.txt' && touch -d '2026-01-01 00:00:00 UTC' source/note.txt 'source/space name.txt'",
+      "explanation": "Create two known regular files, including a name with a space.",
+      "expected": "alpha and bravo lines, modes640/600, fixed UTC timestamp."
+    },
+    {
+      "command": "guard && test ! -e v1.tar && test ! -L v1.tar && timeout -k 1s 10s tar -cf v1.tar -C source -- note.txt 'space name.txt' && test \"$(stat -c %s v1.tar)\" -le 65536",
+      "explanation": "Scoped backup.",
+      "expected": "Two members."
+    },
+    {
+      "command": "guard && test ! -e restore && test ! -L restore && mkdir -m 0700 restore && timeout -k 1s 10s tar -xf v1.tar -C restore --no-same-owner --same-permissions",
+      "explanation": "Empty separate destination; --no-same-owner avoids privileged identity changes. --same-permissions restores archived file modes.",
+      "expected": "Originals remain untouched."
+    },
+    {
+      "command": "guard && cmp -- source/note.txt restore/note.txt && cmp -- 'source/space name.txt' 'restore/space name.txt' && stat -c '%n %U:%G %a %Y %s' source/note.txt restore/note.txt 'source/space name.txt' 'restore/space name.txt'",
+      "explanation": "Compare bytes and relevant metadata, including space-containing names.",
+      "expected": "Both cmp status0; file modes640/600 and equalmtime."
+    },
+    {
+      "command": "guard && timeout -k 1s 10s tar -cf incomplete.tar -C source -- note.txt && mkdir -m 0700 incomplete && timeout -k 1s 10s tar -xf incomplete.tar -C incomplete --no-same-owner --same-permissions; test -f 'incomplete/space name.txt'; printf 'required member status=%s\\n' \"$?\"",
+      "explanation": "Valid syntax and successful extraction do not prove completeness.",
+      "expected": "Missing second member detected; good backup retained."
+    }
+  ],
+  "hints": [
+    "Never extract over the source.",
+    "A valid archive can be incomplete.",
+    "Compare names, bytes and metadata, not just extraction status."
+  ],
+  "review": [
+    "Separate paths, equal data/metadata, missing-member detection and originals retained."
+  ],
+  "coverage": "LPIC-1 v5.0 103.3 and LPIC-2 v4.5 206.2 partial manual archives/recovery; 104.5 reinforcement where applicable. Self-reviewed, unscored; not complete objectives."
+}

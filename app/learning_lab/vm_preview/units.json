@@ -24,6 +24,10 @@
     {
       "id": "linux-scheduling-automation",
       "resource": "scheduling-unit.json"
+    },
+    {
+      "id": "linux-backup-safe-recovery",
+      "resource": "backup-unit.json"
     }
   ]
 }

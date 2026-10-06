@@ -9,9 +9,9 @@ from .files import require
 
 LEGACY_ID = 'real-linux-background-job'
 ROOT = Path(__file__).parent
-MAX_UNITS = 6
+MAX_UNITS = 7
 MAX_LESSONS_PER_UNIT = 16
-MAX_TOTAL_LESSONS = 52
+MAX_TOTAL_LESSONS = 60
 LEGACY_UNIT = 'lpic-processes-jobs-priorities'
 
 def _read(name):
@@ -54,7 +54,7 @@ def _bundle():
             type(index['schema_version']) is int and index['schema_version'] == 1,
             'Unsupported bundled VM unit index')
     require(isinstance(index['units'], list) and 1 <= len(index['units']) <= MAX_UNITS,
-            'Expected 1–6 bundled VM units')
+            'Expected 1–7 bundled VM units')
     units = []; lessons = {}; seen = set(); unit_ids = set(); resources = set()
     for item in index['units']:
         require(isinstance(item, dict) and set(item) == {'id', 'resource'} and
@@ -68,7 +68,7 @@ def _bundle():
         require(isinstance(value, dict) and value.get('id') == item['id'], 'Bundled VM unit identity differs')
         _validate_unit(value, seen, lessons)
         units.append(value)
-    require(len(lessons) <= MAX_TOTAL_LESSONS, 'Expected at most 52 total bundled VM lessons')
+    require(len(lessons) <= MAX_TOTAL_LESSONS, 'Expected at most 60 total bundled VM lessons')
     require(LEGACY_UNIT in unit_ids and LEGACY_ID in seen, 'Accepted unit/lesson missing')
     return units, lessons
 
@@ -78,7 +78,7 @@ def _validate_unit(value, seen, lessons):
     require(type(value['schema_version']) is int and value['schema_version'] == 1, 'Unsupported VM unit version')
     for key in ('id', 'title', 'purpose', 'prerequisites', 'coverage'): _text(value[key], key)
     require(isinstance(value['entries'], list) and 1 <= len(value['entries']) <= MAX_LESSONS_PER_UNIT, 'Expected 1–16 bundled unit entries')
-    require(len(seen) + len(value['entries']) <= MAX_TOTAL_LESSONS, 'Expected at most 52 total bundled VM lessons')
+    require(len(seen) + len(value['entries']) <= MAX_TOTAL_LESSONS, 'Expected at most 60 total bundled VM lessons')
     for entry in value['entries']:
         base = {'id', 'resource', 'description', 'objectives', 'troubleshooting', 'cleanup'}
         require(isinstance(entry, dict) and set(entry) in (base, base | {'observations', 'questions', 'limitations', 'materials'}),
