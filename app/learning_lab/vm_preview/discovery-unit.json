@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "id": "linux-system-discovery-package-fundamentals",
+  "title": "System Discovery & Package Fundamentals",
+  "purpose": "Eight connected observations and bounded offline package exercises. Sequence is guidance, not an unlock system.",
+  "prerequisites": "Bash quoting/statuses, files/permissions and deliberate guest-only sudo. Exact package-administrator image required.",
+  "coverage": "LPIC-1 v5.0 101.1, 101.2, 102.3, 102.4 partial; LPIC-2 v4.5 201.3 partial kernel querying. No complete objective or boot/storage recovery claim.",
+  "entries": [
+    {
+      "id": "real-linux-discovery-identity",
+      "resource": "real-linux-discovery-identity.json",
+      "description": "Separate distribution, kernel, CPU and virtual device evidence.",
+      "objectives": [
+        "LPIC-1 v5.0 101.1 partial hardware/resource discovery"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-1; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-1 && test ! -L /home/learner/ll-discovery-1 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok"
+      ],
+      "observations": [
+        "Inventory with distribution, kernel, architecture, CPU count and a PCI ID; explain virtual hardware."
+      ],
+      "questions": [
+        "Which values can change on another supported host?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. After retaining evidence: guard && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'system.txt' 'cpu.txt' 'pci.txt' 'evidence.txt' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-1. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    },
+    {
+      "id": "real-linux-discovery-kernel",
+      "resource": "real-linux-discovery-kernel.json",
+      "description": "Distinguish loaded modules from built-in drivers without changing either.",
+      "objectives": [
+        "LPIC-2 v4.5 201.3 partial kernel/module querying"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-2; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-2 && test ! -L /home/learner/ll-discovery-2 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok"
+      ],
+      "observations": [
+        "Driver classification, parameter and loaded-module observations; no loading/unloading."
+      ],
+      "questions": [
+        "Why can a functional driver be absent from lsmod?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. After retaining evidence: guard && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'modules.txt' 'driver.txt' 'paths.txt' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-2. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    },
+    {
+      "id": "real-linux-discovery-boot",
+      "resource": "real-linux-discovery-boot.json",
+      "description": "Use scoped boot evidence and distinguish target configuration from health.",
+      "objectives": [
+        "LPIC-1 v5.0 101.2 partial boot logs; 101.3/LPIC-2 202.1 reinforcement only"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-3; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-3 && test ! -L /home/learner/ll-discovery-3 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok"
+      ],
+      "observations": [
+        "Current-boot scope, target/health distinction, stages and limitations."
+      ],
+      "questions": [
+        "What would require a separate boot-recovery exercise?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. After retaining evidence: guard && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'boot.txt' 'kernel-log.txt' 'early.txt' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-3. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    },
+    {
+      "id": "real-linux-discovery-libraries",
+      "resource": "real-linux-discovery-libraries.json",
+      "description": "Connect a trusted executable to a resolved library and its package.",
+      "objectives": [
+        "LPIC-1 v5.0 102.3 partial shared-library discovery"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-4; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-4 && test ! -L /home/learner/ll-discovery-4 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok"
+      ],
+      "observations": [
+        "Executable/library/package chain and loader-cache explanation."
+      ],
+      "questions": [
+        "Why is finding a dependency different from installing it?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. After retaining evidence: guard && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'libraries.txt' 'loader.txt' 'owner.txt' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-4. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    },
+    {
+      "id": "real-linux-discovery-ownership",
+      "resource": "real-linux-discovery-ownership.json",
+      "description": "Inspect installed ownership/status and dormant package metadata.",
+      "objectives": [
+        "LPIC-1 v5.0 102.4 partial package information/ownership"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-5; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-5 && test ! -L /home/learner/ll-discovery-5 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok"
+      ],
+      "observations": [
+        "Owner/version/status plus archive payload/dependency report; fixture remains uninstalled."
+      ],
+      "questions": [
+        "What could be installed even when an executable is missing from PATH?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. After retaining evidence: guard && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'package.txt' 'archive.txt' 'members.txt' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-5. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    },
+    {
+      "id": "real-linux-discovery-integrity",
+      "resource": "real-linux-discovery-integrity.json",
+      "description": "Separate package verification, database audit and a learner-copy checksum.",
+      "objectives": [
+        "LPIC-1 v5.0 102.4 partial integrity/state inspection; checksum reinforcement"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-6; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-6 && test ! -L /home/learner/ll-discovery-6 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok"
+      ],
+      "observations": [
+        "Statuses, scoped interpretation and learner-file mismatch; coreutils unchanged."
+      ],
+      "questions": [
+        "Which experiment verifies installed package-owned bytes?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. After retaining evidence: guard && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'verification.txt' 'audit.txt' 'note.txt' 'expected.sha256' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-6. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    },
+    {
+      "id": "real-linux-discovery-lifecycle",
+      "resource": "real-linux-discovery-lifecycle.json",
+      "description": "Execute a scoped two-package lifecycle and verify configuration retention.",
+      "objectives": [
+        "LPIC-1 v5.0 102.4 partial actual install/upgrade/remove/purge"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-7; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-7 && test ! -L /home/learner/ll-discovery-7 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+        "apt_base=(apt-get --assume-yes --no-download --no-install-recommends -oDir::Cache::archives=\"$w/cache\" -oDir::Etc::sourcelist=\"$w/no-sources.list\" -oDir::Etc::sourceparts=\"$w/no-sources.d\"); plan() { guard && sha256sum -c cache.sha256 > cache-check.txt && sudo env LC_ALL=C \"${apt_base[@]}\" -s \"$@\" > plan.txt 2>&1 && awk '/^(Reading package lists|Building dependency tree|Reading state information|Correcting dependencies)\\.\\.\\.( Done)?$/ {next} /^Note, selecting .ll-discovery-(data|report). instead of .\\/opt\\/learning-lab\\/package-fixtures\\/archives\\/ll-discovery-(data_1[.]0-1|report_1[.][01]-1)_all[.]deb.$/ {next} /^The following (additional packages will be installed|NEW packages will be installed|packages will be upgraded|packages will be REMOVED):$/ {next} /^  / {for(i=1;i<=NF;i++){p=$i;sub(/\\*$/,\"\",p);if(p!=\"ll-discovery-data\" && p!=\"ll-discovery-report\")bad=1} next} /^[0-2] upgraded, [0-2] newly installed, ([0-2] reinstalled, )?[0-2] to remove and [0-9]+ not upgraded\\.$/ {summary++;next} /^[0-2] not fully installed or removed\\.$/ {next} $1==\"Inst\" || $1==\"Conf\" || $1==\"Remv\" || $1==\"Purg\" {n++;if(NF<2 || ($1!=\"Purg\" && NF<3) || ($2!=\"ll-discovery-data\" && $2!=\"ll-discovery-report\"))bad=1;next} /^[[:space:]]*$/ {next} {bad=1} END {exit (bad || summary!=1 || n>4)}' plan.txt && cat plan.txt; }; d=/opt/learning-lab/package-fixtures/archives/ll-discovery-data_1.0-1_all.deb; r1=/opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.0-1_all.deb; r2=/opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.1-1_all.deb; guard && mkdir -m 0700 cache no-sources.d && : > no-sources.list && cp -- \"$d\" \"$r1\" \"$r2\" cache/ && grep '  archives/' /opt/learning-lab/package-fixtures/SHA256SUMS | sed 's|  archives/|  cache/|' > cache.sha256 && sha256sum -c cache.sha256"
+      ],
+      "observations": [
+        "Actual versions/output, planned and completed actions, configuration retention/purge, unrelated state unchanged."
+      ],
+      "questions": [
+        "Why is --no-download not a complete transaction boundary?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. Purge report before data using the bounded preview/execution procedure; verify no unrelated proposal. After retaining evidence: guard && sudo rm -- cache/ll-discovery-data_1.0-1_all.deb cache/ll-discovery-report_1.0-1_all.deb cache/ll-discovery-report_1.1-1_all.deb cache/lock && rmdir -- cache/partial cache no-sources.d && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'plan.txt' 'no-sources.list' 'cache.sha256' 'cache-check.txt' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-7. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    },
+    {
+      "id": "real-linux-discovery-repair",
+      "resource": "real-linux-discovery-repair.json",
+      "description": "Recover an unconfigured fixture and reinstall damaged package-owned data.",
+      "objectives": [
+        "LPIC-1 v5.0 102.4 partial dependency repair/reinstallation"
+      ],
+      "materials": [
+        "Display-only guest practice. Fresh lesson disk; no clipboard or networking. All new lessons require the exact package-administrator image; no older-image fallback.",
+        "Read-only tools do not teach installation. Only Lessons7/8 change the two project fixture packages. These are real guest transactions, not simulated package management.",
+        "Only trusted fixture archives; root-owned source/archives are protected against ordinary learner writes, not guest root. No maintainer scripts or services. Stop on failed guards, unexpected identities or conflicting package state.",
+        "Challenge setup only:\nw=/home/learner/ll-discovery-8; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536\nguard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-8 && test ! -L /home/learner/ll-discovery-8 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard\nunrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+        "apt_base=(apt-get --assume-yes --no-download --no-install-recommends -oDir::Cache::archives=\"$w/cache\" -oDir::Etc::sourcelist=\"$w/no-sources.list\" -oDir::Etc::sourceparts=\"$w/no-sources.d\"); plan() { guard && sha256sum -c cache.sha256 > cache-check.txt && sudo env LC_ALL=C \"${apt_base[@]}\" -s \"$@\" > plan.txt 2>&1 && awk '/^(Reading package lists|Building dependency tree|Reading state information|Correcting dependencies)\\.\\.\\.( Done)?$/ {next} /^Note, selecting .ll-discovery-(data|report). instead of .\\/opt\\/learning-lab\\/package-fixtures\\/archives\\/ll-discovery-(data_1[.]0-1|report_1[.][01]-1)_all[.]deb.$/ {next} /^ll-discovery-report is already the newest version [(]1[.]0-1[)][.]$/ {next} /^The following package was automatically installed and is no longer required:$/ {next} /^Use \\047sudo apt autoremove\\047 to remove it[.]$/ {next} /^The following (additional packages will be installed|NEW packages will be installed|packages will be upgraded|packages will be REMOVED):$/ {next} /^  / {for(i=1;i<=NF;i++){p=$i;sub(/\\*$/,\"\",p);if(p!=\"ll-discovery-data\" && p!=\"ll-discovery-report\")bad=1} next} /^[0-2] upgraded, [0-2] newly installed, ([0-2] reinstalled, )?[0-2] to remove and [0-9]+ not upgraded\\.$/ {summary++;next} /^[0-2] not fully installed or removed\\.$/ {next} $1==\"Inst\" || $1==\"Conf\" || $1==\"Remv\" || $1==\"Purg\" {n++;if(NF<2 || ($1!=\"Purg\" && NF<3) || ($2!=\"ll-discovery-data\" && $2!=\"ll-discovery-report\"))bad=1;next} /^[[:space:]]*$/ {next} {bad=1} END {exit (bad || summary!=1 || n>4)}' plan.txt && cat plan.txt; }; d=/opt/learning-lab/package-fixtures/archives/ll-discovery-data_1.0-1_all.deb; r1=/opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.0-1_all.deb; r2=/opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.1-1_all.deb; guard && mkdir -m 0700 cache no-sources.d && : > no-sources.list && cp -- \"$d\" \"$r1\" \"$r2\" cache/ && grep '  archives/' /opt/learning-lab/package-fixtures/SHA256SUMS | sed 's|  archives/|  cache/|' > cache.sha256 && sha256sum -c cache.sha256",
+        "Challenge fault setup, before diagnosis (the fresh image starts with neither fixture installed): run guard && sudo dpkg -i \"$r1\" > failed-install.txt 2>&1; printf \"install status=%s\\n\" \"$?\". A dependency error is intentional; keep this log. Diagnose and repair that state using the bounded plan procedure.",
+        "Challenge fault setup, only after you have a configured, working report: run guard && sudo dpkg --verify ll-discovery-data > verified-before.txt && printf \"altered fixture data\\n\" | sudo tee /usr/share/ll-discovery/message.txt. Then collect your own mismatch evidence, repair only this package-owned file from the trusted archive, verify the contents and retain the evidence. These setup commands create faults; they do not perform either repair."
+      ],
+      "observations": [
+        "Unconfigured/configured states, exact mismatch, restored package-owned content, real output and unchanged unrelated state."
+      ],
+      "questions": [
+        "What does package verification miss, and how does your source trust originate?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. No boot/storage recovery, module loading, library installation, USB tools, RPM, remote repositories or full objective claim. VM disks/reports are excluded from profile backups; Resume does not preserve RAM/jobs.",
+        "APT preview is not execution proof or a transaction lock. Recheck scope immediately before/after execution; any unrelated proposal stops this practice. Guest root can override checks. No automatic lesson execution."
+      ],
+      "cleanup": [
+        "Retain observations before cleanup. Purge report before data using the bounded preview/execution procedure; verify no unrelated proposal. After retaining evidence: guard && sudo rm -- cache/ll-discovery-data_1.0-1_all.deb cache/ll-discovery-report_1.0-1_all.deb cache/ll-discovery-report_1.1-1_all.deb cache/lock && rmdir -- cache/partial cache no-sources.d && rm -- 'before.tsv' 'after.tsv' 'sudo.before' 'learner.before' 'learner.after' 'failed-install.txt' 'verified-before.txt' 'damaged.txt' 'verified-after.txt' 'plan.txt' 'no-sources.list' 'cache.sha256' 'cache-check.txt' && cd -- /home/learner && rmdir -- /home/learner/ll-discovery-8. Inspect existing exact members first; absent files are already clean on repetition. No recursion, force, globs or unrelated paths."
+      ],
+      "troubleshooting": [
+        "Absolute /sbin paths avoid the learner PATH issue; (builtin) is not a module pathname.",
+        "A failed guard or unexpected package state requires investigation, not force, unrestricted repair or reuse of another workspace.",
+        "On interruption retain logs/disk. Inspect status only after a permitted clean boot; use confirmed Reset for unclean sessions, never force Resume."
+      ]
+    }
+  ]
+}

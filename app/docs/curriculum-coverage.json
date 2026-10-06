@@ -23,18 +23,21 @@
     {
       "certification": "LPIC-1",
       "objective": "101.1",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated hardware exercise."
+      "status": "Partial",
+      "units": [
+        "discovery"
+      ],
+      "implemented_and_missing": "Virtual CPU/PCI and /proc and /sys hardware observations. No USB tools, firmware/device configuration or physical-hardware control."
     },
     {
       "certification": "LPIC-1",
       "objective": "101.2",
-      "status": "Reinforcement only",
+      "status": "Partial",
       "units": [
-        "admin"
+        "admin",
+        "discovery"
       ],
-      "implemented_and_missing": "Current-boot journal evidence; no boot-chain/loader exercise."
+      "implemented_and_missing": "Current-boot kernel/log evidence and kernel arguments; boot stages explained. No loader interaction, boot options or recovery."
     },
     {
       "certification": "LPIC-1",
@@ -62,16 +65,20 @@
     {
       "certification": "LPIC-1",
       "objective": "102.3",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated libraries exercise."
+      "status": "Partial",
+      "units": [
+        "discovery"
+      ],
+      "implemented_and_missing": "Trusted executable dependencies, loader cache/configuration and canonical package ownership. No library installation or runtime loader changes."
     },
     {
       "certification": "LPIC-1",
       "objective": "102.4",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated Debian packages exercise."
+      "status": "Partial",
+      "units": [
+        "discovery"
+      ],
+      "implemented_and_missing": "Installed/archived ownership, versions, status and scoped verification; actual offline fixture installation, upgrade, dependency repair, reinstallation, remove/purge. No online repository administration or complete Debian workflow."
     },
     {
       "certification": "LPIC-1",
@@ -409,9 +416,11 @@
     {
       "certification": "LPIC-2",
       "objective": "201.3",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated kernel runtime exercise."
+      "status": "Partial",
+      "units": [
+        "discovery"
+      ],
+      "implemented_and_missing": "Running kernel, loaded/built-in module and parameter queries. No module load/unload, sysctl mutation, udev administration or boot/runtime repair."
     },
     {
       "certification": "LPIC-2",

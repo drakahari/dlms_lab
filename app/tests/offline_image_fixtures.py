@@ -28,11 +28,11 @@ class SigningFixture:
         members={'image.raw.gz':gzip.compress(raw,mtime=0) if compressed is None else compressed,
                  'packages.json':b'[]\n','provenance.json':b'{"purpose":"TEST ONLY"}\n','notices.txt':b'Synthetic fixture; never a guest image.\n'}
         manifest={'schema_version':1,'release_id':'synthetic-test-only-1','descriptor':spec,'backend':BACKEND,
-                  'lessons':[{'id':l['id'],'sha256':l['sha256']} for l in data['lessons']],
+                  'lessons':copy.deepcopy(data['images'][0]['lessons']),
                   'members':{k:{'bytes':len(v),'sha256':hash_(v)} for k,v in members.items()}}
         if manifest_edit:manifest_edit(manifest)
         encoded=canonical(manifest)+b'\n';signature=self.sign(encoded)
-        data['images'].append({'descriptor':spec,'state':state,'legacy':False,'lessons':[{'id':l['id'],'sha256':l['sha256']} for l in data['lessons']]})
+        data['images'].append({'descriptor':spec,'state':state,'legacy':False,'lessons':copy.deepcopy(data['images'][0]['lessons'])})
         data['keys']=[{'fingerprint':self.fingerprint,'resource':'fixture.gpg'}]
         data['releases']=[{'manifest_sha256':hash_(encoded),'descriptor_sha256':digest(spec),'signer':self.fingerprint,'state':state}]
         catalog=Catalog(data,lambda name:self.public if name=='fixture.gpg' else resource(name))
@@ -111,7 +111,7 @@ def stream_bundle(signer, path, source, descriptor, *, metadata=None, progress=N
     data = json.loads(resource('image-catalog.json'))
     descriptor_key = digest(spec)
     images = [i for i in data['images'] if digest(i['descriptor']) == descriptor_key]
-    compatible = images[0]['lessons'] if images else [{'id':l['id'],'sha256':l['sha256']} for l in data['lessons']]
+    compatible = images[0]['lessons'] if images else copy.deepcopy(data['images'][0]['lessons'])
     if not images:
         data['images'].append({'descriptor':spec,'state':'active','legacy':False,'lessons':compatible})
     manifest = {'schema_version':1,'release_id':'isolated-full-size-test-only',

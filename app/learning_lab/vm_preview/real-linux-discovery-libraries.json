@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-discovery-libraries",
+  "content_version": "1.0.0",
+  "title": "Find a trusted program's shared libraries",
+  "goal": "Connect a trusted executable to a resolved library and its package.",
+  "challenge": "Inspect the bundled /usr/bin/cat, identify its libc dependency and package, and explain the loader cache/configuration. Do not run ldd on arbitrary downloaded executables or alter loader settings.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-discovery-4; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Create a fresh private workspace; stop on collision or insufficient space.",
+      "expected": "Exact learner path, no existing entry, at least64MiB free."
+    },
+    {
+      "command": "guard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-4 && test ! -L /home/learner/ll-discovery-4 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard",
+      "explanation": "Define a cooperative location/owner/link guard.",
+      "expected": "No path substitution; guest root can override guest safeguards."
+    },
+    {
+      "command": "unrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+      "explanation": "Retain unrelated package and learner/sudo evidence before any transaction.",
+      "expected": "Protected unrelated state captured; stop on mismatch."
+    },
+    {
+      "command": "guard && ldd /usr/bin/cat > libraries.txt && cat libraries.txt",
+      "explanation": "ldd is for this known trusted program; do not inspect untrusted programs this way.",
+      "expected": "libc and loader paths; addresses vary and are not an assessment threshold."
+    },
+    {
+      "command": "guard && { /sbin/ldconfig -p | grep -F libc.so.6; cat /etc/ld.so.conf; cat /etc/ld.so.conf.d/x86_64-linux-gnu.conf; } > loader.txt && cat loader.txt",
+      "explanation": "ldconfig -p prints the cache; it does not regenerate it.",
+      "expected": "Cache/configuration entries; no bare ldconfig or LD_LIBRARY_PATH changes."
+    },
+    {
+      "command": "guard && dpkg-query -S /usr/lib/x86_64-linux-gnu/libc.so.6 > owner.txt && cat owner.txt",
+      "explanation": "Merged /usr aliases can differ from package-record paths.",
+      "expected": "The libc6:amd64 owner of this canonical package path."
+    }
+  ],
+  "hints": [
+    "Use ldconfig -p, not a cache update.",
+    "Library paths may resolve through merged /usr aliases.",
+    "Runtime addresses vary; identify dependency names and ownership."
+  ],
+  "review": [
+    "Executable/library/package chain and loader-cache explanation."
+  ],
+  "coverage": "LPIC-1 v5.0 102.3 partial shared-library discovery. Self-reviewed, unscored; not complete objectives."
+}

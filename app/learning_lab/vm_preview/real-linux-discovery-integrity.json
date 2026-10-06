@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-discovery-integrity",
+  "content_version": "1.0.0",
+  "title": "Interpret checks without overstating integrity",
+  "goal": "Separate package verification, database audit and a learner-copy checksum.",
+  "challenge": "Verify coreutils content metadata and audit package state, then demonstrate a mismatch on a learner-owned copy. Explain what each result establishes and why none alone authenticates the system. Do not modify installed coreutils.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-discovery-6; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Create a fresh private workspace; stop on collision or insufficient space.",
+      "expected": "Exact learner path, no existing entry, at least64MiB free."
+    },
+    {
+      "command": "guard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-6 && test ! -L /home/learner/ll-discovery-6 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard",
+      "explanation": "Define a cooperative location/owner/link guard.",
+      "expected": "No path substitution; guest root can override guest safeguards."
+    },
+    {
+      "command": "unrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+      "explanation": "Retain unrelated package and learner/sudo evidence before any transaction.",
+      "expected": "Protected unrelated state captured; stop on mismatch."
+    },
+    {
+      "command": "guard && dpkg --verify coreutils > verification.txt; rc=$?; printf 'verify status=%s\\n' \"$rc\"; cat verification.txt; dpkg --audit > audit.txt; printf 'audit status=%s\\n' \"$?\"; cat audit.txt",
+      "explanation": "dpkg verification uses recorded MD5 content metadata where available; audit checks package state.",
+      "expected": "On a fresh guest both are quiet/status0. This is not authenticity or a complete permissions/security audit."
+    },
+    {
+      "command": "guard && test ! -e note.txt && printf 'original\\n' > note.txt && sha256sum note.txt > expected.sha256 && sha256sum -c expected.sha256",
+      "explanation": "This reference concerns only your own file, not an installed package.",
+      "expected": "An initial match against your retained reference."
+    },
+    {
+      "command": "guard && printf 'changed\\n' > note.txt && sha256sum -c expected.sha256; printf 'comparison status=%s\\n' \"$?\"",
+      "explanation": "Intentionally alter only this learner-owned copy.",
+      "expected": "Mismatch/nonzero status; actual package-owned damage and reinstallation come in Lesson8."
+    }
+  ],
+  "hints": [
+    "No output is scoped to metadata and checks actually performed.",
+    "A writable checksum reference does not authenticate content.",
+    "Changing note.txt is not a dpkg verification experiment."
+  ],
+  "review": [
+    "Statuses, scoped interpretation and learner-file mismatch; coreutils unchanged."
+  ],
+  "coverage": "LPIC-1 v5.0 102.4 partial integrity/state inspection; checksum reinforcement. Self-reviewed, unscored; not complete objectives."
+}

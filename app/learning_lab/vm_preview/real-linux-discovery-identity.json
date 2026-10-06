@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-discovery-identity",
+  "content_version": "1.0.0",
+  "title": "Identify your system and visible hardware",
+  "goal": "Separate distribution, kernel, CPU and virtual device evidence.",
+  "challenge": "Create a short inventory that identifies this guest distribution, running kernel, architecture, CPU count and one PCI device. Explain which observations describe the guest rather than all physical host devices.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-discovery-1; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Create a fresh private workspace; stop on collision or insufficient space.",
+      "expected": "Exact learner path, no existing entry, at least64MiB free."
+    },
+    {
+      "command": "guard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-1 && test ! -L /home/learner/ll-discovery-1 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard",
+      "explanation": "Define a cooperative location/owner/link guard.",
+      "expected": "No path substitution; guest root can override guest safeguards."
+    },
+    {
+      "command": "unrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+      "explanation": "Retain unrelated package and learner/sudo evidence before any transaction.",
+      "expected": "Protected unrelated state captured; stop on mismatch."
+    },
+    {
+      "command": "guard && { cat /etc/os-release; uname -r; uname -m; } > system.txt && cat system.txt",
+      "explanation": "Distribution and kernel versions are different facts.",
+      "expected": "Debian 13 and this running kernel/architecture; do not assume fixed host CPU text."
+    },
+    {
+      "command": "guard && lscpu > cpu.txt && head -n 14 cpu.txt && lspci -nn > pci.txt && head -n 8 pci.txt",
+      "explanation": "PCI numeric IDs help identify devices. This guest has virtual hardware.",
+      "expected": "Two vCPUs and a virtual PCI inventory; no USB tool or physical-device configuration exercise."
+    },
+    {
+      "command": "guard && { head -n 4 /proc/meminfo; ls /sys/bus/pci/devices | head -n 8; } > evidence.txt && cat evidence.txt",
+      "explanation": "/proc and /sys expose kernel observations, not ordinary saved files.",
+      "expected": "A small resource/device evidence excerpt."
+    }
+  ],
+  "hints": [
+    "uname -r reports the kernel, not Debian release.",
+    "Use the PCI numeric IDs alongside device descriptions.",
+    "A VM does not expose every physical host device."
+  ],
+  "review": [
+    "Inventory with distribution, kernel, architecture, CPU count and a PCI ID; explain virtual hardware."
+  ],
+  "coverage": "LPIC-1 v5.0 101.1 partial hardware/resource discovery. Self-reviewed, unscored; not complete objectives."
+}

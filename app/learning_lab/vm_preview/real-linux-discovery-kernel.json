@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-discovery-kernel",
+  "content_version": "1.0.0",
+  "title": "Connect kernel components to device support",
+  "goal": "Distinguish loaded modules from built-in drivers without changing either.",
+  "challenge": "Identify one available driver, its parameters and whether it is built in or loadable. Correlate that with loaded-module evidence. Do not load, unload or change parameters.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-discovery-2; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Create a fresh private workspace; stop on collision or insufficient space.",
+      "expected": "Exact learner path, no existing entry, at least64MiB free."
+    },
+    {
+      "command": "guard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-2 && test ! -L /home/learner/ll-discovery-2 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard",
+      "explanation": "Define a cooperative location/owner/link guard.",
+      "expected": "No path substitution; guest root can override guest safeguards."
+    },
+    {
+      "command": "unrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+      "explanation": "Retain unrelated package and learner/sudo evidence before any transaction.",
+      "expected": "Protected unrelated state captured; stop on mismatch."
+    },
+    {
+      "command": "guard && { uname -r; head -n 6 /proc/modules; lsmod | head -n 6; } > modules.txt && cat modules.txt",
+      "explanation": "Loaded modules are one part of the running kernel.",
+      "expected": "Current kernel and a bounded module list; absence alone does not prove a missing driver."
+    },
+    {
+      "command": "guard && { /sbin/modinfo -F filename virtio_pci; /sbin/modinfo -F parm virtio_pci; } > driver.txt && cat driver.txt",
+      "explanation": "Use the verified absolute path; virtio_pci is built into this pinned kernel.",
+      "expected": "(builtin) and a declared parameter; it is not a package-owned module-file path."
+    },
+    {
+      "command": "guard && ls /lib/modules/\"$(uname -r)\" > paths.txt && cat paths.txt",
+      "explanation": "Kernel-version-specific module metadata describes available components.",
+      "expected": "Paths including built-in/dependency metadata; no module mutation."
+    }
+  ],
+  "hints": [
+    "lsmod does not list every built-in driver.",
+    "modinfo works at /sbin/modinfo even when that directory is absent from PATH.",
+    "Do not pass (builtin) to a file ownership query."
+  ],
+  "review": [
+    "Driver classification, parameter and loaded-module observations; no loading/unloading."
+  ],
+  "coverage": "LPIC-2 v4.5 201.3 partial kernel/module querying. Self-reviewed, unscored; not complete objectives."
+}

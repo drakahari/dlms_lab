@@ -1,0 +1,600 @@
+{
+  "status": "Replacement finalized and native acceptance passed; local development only, no production admission or distribution clearance.",
+  "image": {
+    "image_id": "debian13-package-admin-local-v1",
+    "sha256": "dbeccefc187d4bffb280636023dc2313ebd88204d8f5dd498fc08d01cc929d27",
+    "bytes": 17179869184,
+    "format": "raw",
+    "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+    "packages_sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+    "version": 2,
+    "prepared": true,
+    "trust": "Local finalized 204-package build; not a signed public release",
+    "recipe_version": 2
+  },
+  "iso": {
+    "url": "https://cdimage.debian.org/debian-cd/13.7.0/amd64/iso-dvd/debian-13.7.0-amd64-DVD-1.iso",
+    "sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+    "signed_checksum_signer": "DF9B9C49EAA9298432589D76DA87E80D6294BE9B"
+  },
+  "installed_package_manifest": {
+    "resource": "admin-packages.tsv",
+    "sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+    "binary_count": 204,
+    "source_count_including_built_using": 194,
+    "scope": "Authoritative inventory captured during a separate finalization boot after Debian Installer powered off; exactly compared to predeclared 204-package policy. Native normal-boot admission also compares the complete inventory before lesson commands."
+  },
+  "retained_full_inventory": {
+    "guest-package-inventory.json": {
+      "sha256": "3dfd82a642a23170936ece303afaae40c64b18629febd96a6f449a242e952502",
+      "bytes": 212532
+    },
+    "source-inventory.json": {
+      "sha256": "9cfea4dc39308d238577909a5c39df0fadbdbfce0e4b3b67b335acbde59bc592",
+      "bytes": 264421
+    },
+    "input-verification.json": {
+      "sha256": "2baf862ef33187c51a7b403158558d00e4ba18001fd06e71a5396f85dba7edcb",
+      "bytes": 651
+    },
+    "scope": "Exact 204-package replacement closure; binary/control/source and notice correspondence independently reverified."
+  },
+  "source_metadata": {
+    "debian-InRelease": {
+      "sha256": "0584fba32e13e0ab8285fb16c27adea1ec03a73669c18702821094fd6ca86675",
+      "bytes": 140421
+    },
+    "security-InRelease": {
+      "sha256": "a5bc5449ff218c85ebc4fca64eb81682fb0e8ed84a8191c28e76644c4023b2b7",
+      "bytes": 43405
+    },
+    "debian-Sources.xz": {
+      "sha256": "6002f81f463a2d976d84b34170367cc16da2d60bd0ba9ab9d868d6e1c1a935d9",
+      "bytes": 10540436
+    },
+    "security-Sources.xz": {
+      "sha256": "422e1bf6854209d8d6ab8527fe4b4ca032035f66ce1d6d3eb874f89000b9439b",
+      "bytes": 239472
+    },
+    "debian-release-keyring.gpg": {
+      "sha256": "cea293fd74d83b8f55ed5d31d3ec7fe0267828791d64115b1ee60c577b20ba82",
+      "bytes": 35776
+    }
+  },
+  "source_metadata_signers": [
+    "04B54C3CDCA79751B16BC6B5225629DF75B188BD",
+    "05AB90340C0C5E797F44A8C8254CF3B5AEC0A8F0",
+    "41587F7DB8C774BCCF131416762F67A0B2C39DE4",
+    "5E04A1E3223A19A20706E20F9904613D4CCE68C6",
+    "B8B80B5B623EAB6AD8775C45B7C5D7D6350947F8"
+  ],
+  "recipe_payload_sha256": {
+    "preseed.cfg": "d3080f3edebab26833902592349a5aff96e1e784fa0545d4e71f22d43851a512",
+    "finish-image.sh": "e078f19173675b42b302ef9314fcb37ab79da04323c31f1b62d29b01b907c2af",
+    "finalize-image.sh": "dd2c076ce6df1554cb28863d42abf4181ba1a1e8467d935cafb314552a47201c",
+    "final_inventory.py": "a1c03c33b8547eca028b49f110e2d42651e733c49cd15fbb951b52f391ce1ede",
+    "build-fixtures.sh": "5850392661db0ae64f3d87e4106f02bfd27fa5ccdcf13b7779ace2d4f1d5dc0c",
+    "prepare.py": "a871bcd671a22b58f0c174b28d5723c426e9f267bd752e6b6d0f2bc0f6b4768f",
+    "expected-packages.tsv": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b"
+  },
+  "new_offline_packages": [],
+  "new_package_sources": [],
+  "verification": "Verified ISO signed checksum; exact Debian package inventory and binary/control-to-source mapping; all 204 copyright notices match binary payloads, resolving links only within verified package set; 194 source versions/603 files match signed source metadata. Replacement excludes all twelve late installer additions.",
+  "limitations": [
+    "Not byte-for-byte reproducible: installation UUIDs/timestamps vary.",
+    "Source and notice retention is evidence, not blanket legal clearance. Qt review and ICU signing-key warning remain open.",
+    "No production signing keys, approved releases, online update or public image distribution."
+  ],
+  "dormant_project_fixtures": {
+    "reproducibility": "two guest builds compared byte-for-byte for all three archives",
+    "packages": [
+      {
+        "archive": "ll-discovery-data_1.0-1_all.deb",
+        "bytes": 1494,
+        "sha256": "7d835107e39830115e9de5ca30bc293ec84ecfc67be0eafcab2fece1fad82023",
+        "fields": {
+          "Package": "ll-discovery-data",
+          "Version": "1.0-1",
+          "Architecture": "all",
+          "Maintainer": "Learning Lab project",
+          "Section": "misc",
+          "Priority": "optional",
+          "Description": "Small trusted offline teaching fixture"
+        },
+        "control_members": [
+          "control",
+          "md5sums"
+        ],
+        "payload": [
+          {
+            "path": "usr/share/doc/ll-discovery-data/copyright",
+            "mode": "0o644",
+            "sha256": "c9edc682b985b87e20a83ade37677f0cb86acaf0cf8e40fa1779662678aa5cb2",
+            "bytes": 1070
+          },
+          {
+            "path": "usr/share/ll-discovery/message.txt",
+            "mode": "0o644",
+            "sha256": "448e099c46c690c218ca335b249e07c4cc7846d9d58bc553e26bf57c358e3599",
+            "bytes": 28
+          }
+        ]
+      },
+      {
+        "archive": "ll-discovery-report_1.0-1_all.deb",
+        "bytes": 1650,
+        "sha256": "35f1cdf503bf6ebb99cfae4dfd0658d3cc91b1360f7d83d50a3e018bc565fc97",
+        "fields": {
+          "Package": "ll-discovery-report",
+          "Version": "1.0-1",
+          "Architecture": "all",
+          "Maintainer": "Learning Lab project",
+          "Section": "misc",
+          "Priority": "optional",
+          "Description": "Small trusted offline teaching fixture",
+          "Depends": "ll-discovery-data (= 1.0-1), dash, coreutils"
+        },
+        "control_members": [
+          "conffiles",
+          "control",
+          "md5sums"
+        ],
+        "payload": [
+          {
+            "path": "etc/ll-discovery-report.conf",
+            "mode": "0o644",
+            "sha256": "aea1c57bd83b8e993a8c43168b70832469e6bbc5e32e4e8ae0025f5cb42b2177",
+            "bytes": 13
+          },
+          {
+            "path": "usr/bin/ll-discovery-report",
+            "mode": "0o755",
+            "sha256": "ca7b8654c778847bb67b36860df36ec084ff02084b6af14c80f0f1c2358c6fcd",
+            "bytes": 134
+          },
+          {
+            "path": "usr/share/doc/ll-discovery-report/copyright",
+            "mode": "0o644",
+            "sha256": "c9edc682b985b87e20a83ade37677f0cb86acaf0cf8e40fa1779662678aa5cb2",
+            "bytes": 1070
+          }
+        ]
+      },
+      {
+        "archive": "ll-discovery-report_1.1-1_all.deb",
+        "bytes": 1654,
+        "sha256": "264b9136c6fac777c6c05406a0057f95f7f341b74c0781a0f4922e05f10dc7d5",
+        "fields": {
+          "Package": "ll-discovery-report",
+          "Version": "1.1-1",
+          "Architecture": "all",
+          "Maintainer": "Learning Lab project",
+          "Section": "misc",
+          "Priority": "optional",
+          "Description": "Small trusted offline teaching fixture",
+          "Depends": "ll-discovery-data (= 1.0-1), dash, coreutils"
+        },
+        "control_members": [
+          "conffiles",
+          "control",
+          "md5sums"
+        ],
+        "payload": [
+          {
+            "path": "etc/ll-discovery-report.conf",
+            "mode": "0o644",
+            "sha256": "aea1c57bd83b8e993a8c43168b70832469e6bbc5e32e4e8ae0025f5cb42b2177",
+            "bytes": 13
+          },
+          {
+            "path": "usr/bin/ll-discovery-report",
+            "mode": "0o755",
+            "sha256": "a4ec0c999fde9de9a41287179ec7726c9ef7bc9fbac694915edeccb5e76c8817",
+            "bytes": 134
+          },
+          {
+            "path": "usr/share/doc/ll-discovery-report/copyright",
+            "mode": "0o644",
+            "sha256": "c9edc682b985b87e20a83ade37677f0cb86acaf0cf8e40fa1779662678aa5cb2",
+            "bytes": 1070
+          }
+        ]
+      }
+    ]
+  },
+  "material_verification": {
+    "verified_binary_and_notice_files": 408,
+    "source_packages": 194,
+    "source_files": 603,
+    "new_debian_packages": 0,
+    "existing_materials_preserved": true
+  },
+  "evidence_root": "/home/drak/.local/state/omarchy-learning-lab/recovery/discovery-finalization-20261006T181307605758Z",
+  "independent_build": true,
+  "derived_from_used_overlay": false,
+  "tested_image_recipe_note": "Guest payloads used for candidate-3 are retained byte-for-byte with build argv. Strict final_inventory.py admission was applied to the actual final console and expected bytes; negative fixtures reject missing, repeated, malformed or changed inventory. No byte-for-byte image reproducibility claimed.",
+  "finalization": {
+    "recipe_version": 2,
+    "intended_packages": 204,
+    "captured_packages": 204,
+    "policy_sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+    "installer_completed_before_inventory": true,
+    "separate_finalization_boot": true,
+    "automatic_installer_hook_disabled": "08hw-detect",
+    "hook_sha256": "c60fe7bd0951c6a154a2fea25ebfb91549a1e30eff8798f1a49eafa01eb64b6a",
+    "reason": "Prevent automatic guest-agent/recommends and CPU microcode addition after 07preseed; all twelve packages are outside the predeclared set. No host setting changed.",
+    "shutdown": "PID1 SuccessAction=poweroff after finalizer exits successfully; hash only after QEMU exits.",
+    "evidence_root": "/home/drak/.local/state/omarchy-learning-lab/recovery/discovery-finalization-20261006T181307605758Z",
+    "build": "candidate-3"
+  },
+  "late_package_analysis": {
+    "captured_count": 204,
+    "final_count": 216,
+    "reconstructed_sha256": "2271bd8b719e7d51c40810d5f08f10ce9feb80ae1ae9d8962a08d68a52520cd8",
+    "extra_packages": [
+      {
+        "binary": "intel-microcode",
+        "version": "3.20251111.1~deb13u1",
+        "source": "intel-microcode",
+        "source_version": "3.20251111.1~deb13u1",
+        "source_retained": false,
+        "binary_sha256": "1731b32e9dd2187ede409a74efa466c9f3a8178dce8151b5ba37e457bee5d25e",
+        "filename": "pool/non-free-firmware/i/intel-microcode/intel-microcode_3.20251111.1~deb13u1_amd64.deb",
+        "depends": "iucode-tool (>= 1.0)",
+        "iso_dependency_fields": {},
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/non-free-firmware/i/intel-microcode/intel-microcode_3.20251111.1~deb13u1_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "CPU detection queued intel-microcode; 08hw-detect installs it after preseed/late_command."
+      },
+      {
+        "binary": "iucode-tool",
+        "version": "2.3.1-3",
+        "source": "iucode-tool",
+        "source_version": "2.3.1-3",
+        "source_retained": false,
+        "binary_sha256": "7b20b90c02499afef90ad7cfff24d008eac496f4afcb291852541b8483e4c6e1",
+        "filename": "pool/main/i/iucode-tool/iucode-tool_2.3.1-3_amd64.deb",
+        "depends": "libc6 (>= 2.34)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.34)",
+          "Suggests": "intel-microcode (>= 1)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/i/iucode-tool/iucode-tool_2.3.1-3_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Dependency of intel-microcode."
+      },
+      {
+        "binary": "libatomic1:amd64",
+        "version": "14.2.0-19",
+        "source": "gcc-14",
+        "source_version": "14.2.0-19",
+        "source_retained": true,
+        "binary_sha256": "212b399aae2f7299203d261a57e49372e09565a9a5ea971905f94a3960366c05",
+        "filename": "pool/main/g/gcc-14/libatomic1_14.2.0-19_amd64.deb",
+        "depends": "gcc-14-base (= 14.2.0-19), libc6 (>= 2.14)",
+        "iso_dependency_fields": {
+          "Depends": "gcc-14-base (= 14.2.0-19), libc6 (>= 2.14)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/g/gcc-14/libatomic1_14.2.0-19_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Dependency of libglib2.0-0t64."
+      },
+      {
+        "binary": "libffi8:amd64",
+        "version": "3.4.8-2",
+        "source": "libffi",
+        "source_version": "3.4.8-2",
+        "source_retained": false,
+        "binary_sha256": "0ebdc340de33333639c3c63874cd4b15ac2e83dfa1ef3053b7eefaf4919f4f68",
+        "filename": "pool/main/libf/libffi/libffi8_3.4.8-2_amd64.deb",
+        "depends": "libc6 (>= 2.34)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.34)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/libf/libffi/libffi8_3.4.8-2_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Dependency of libglib2.0-0t64."
+      },
+      {
+        "binary": "libglib2.0-0t64:amd64",
+        "version": "2.84.4-3~deb13u5",
+        "source": "glib2.0",
+        "source_version": "2.84.4-3~deb13u5",
+        "source_retained": false,
+        "binary_sha256": "e2baf92c57d1db1753e5781a61450d9a01e7833c7bd2dfe87776a6811c11ecc2",
+        "filename": "pool/main/g/glib2.0/libglib2.0-0t64_2.84.4-3~deb13u5_amd64.deb",
+        "depends": "libatomic1 (>= 4.8), libc6 (>= 2.38), libffi8 (>= 3.4), libmount1 (>= 2.40~rc2), libpcre2-8-0 (>= 10.22), libselinux1 (>= 3.1~), zlib1g (>= 1:1.2.2)",
+        "iso_dependency_fields": {
+          "Depends": "libatomic1 (>= 4.8), libc6 (>= 2.38), libffi8 (>= 3.4), libmount1 (>= 2.40~rc2), libpcre2-8-0 (>= 10.22), libselinux1 (>= 3.1~), zlib1g (>= 1:1.2.2)",
+          "Recommends": "libglib2.0-data, shared-mime-info, xdg-user-dirs",
+          "Suggests": "low-memory-monitor"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/g/glib2.0/libglib2.0-0t64_2.84.4-3~deb13u5_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Dependency of qemu-guest-agent."
+      },
+      {
+        "binary": "libglib2.0-data",
+        "version": "2.84.4-3~deb13u5",
+        "source": "glib2.0",
+        "source_version": "2.84.4-3~deb13u5",
+        "source_retained": false,
+        "binary_sha256": "11c671d0a21dd99215bc62fc0219a1fcbb1482f36329ab6b85732e09ddff9e1c",
+        "filename": "pool/main/g/glib2.0/libglib2.0-data_2.84.4-3~deb13u5_all.deb",
+        "depends": "",
+        "iso_dependency_fields": {},
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/g/glib2.0/libglib2.0-data_2.84.4-3~deb13u5_all.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Recommendation of libglib2.0-0t64, enabled by --with-recommends."
+      },
+      {
+        "binary": "libnuma1:amd64",
+        "version": "2.0.19-1",
+        "source": "numactl",
+        "source_version": "2.0.19-1",
+        "source_retained": false,
+        "binary_sha256": "e578583f73f8208564e5035b18aa729c441fc7ecb389c666923552e123f4d655",
+        "filename": "pool/main/n/numactl/libnuma1_2.0.19-1_amd64.deb",
+        "depends": "libc6 (>= 2.38)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.38)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/n/numactl/libnuma1_2.0.19-1_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Dependency of qemu-guest-agent."
+      },
+      {
+        "binary": "liburing2:amd64",
+        "version": "2.9-1",
+        "source": "liburing",
+        "source_version": "2.9-1",
+        "source_retained": false,
+        "binary_sha256": "4b589c00c7a51172aace2cb2fb3d3ff32daf86c644023126dcfcaa840cc941ea",
+        "filename": "pool/main/libu/liburing/liburing2_2.9-1_amd64.deb",
+        "depends": "libc6 (>= 2.4)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.4)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/libu/liburing/liburing2_2.9-1_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Dependency of qemu-guest-agent."
+      },
+      {
+        "binary": "libxml2:amd64",
+        "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+        "source": "libxml2",
+        "source_version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+        "source_retained": false,
+        "binary_sha256": "e0c6b63ce4602a036a526f60fe5e6c1586710688058d98fc1001b9b3147b7efd",
+        "filename": "pool/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3_amd64.deb",
+        "depends": "libc6 (>= 2.38), liblzma5 (>= 5.1.1alpha+20120614), zlib1g (>= 1:1.2.3.4)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.38), liblzma5 (>= 5.1.1alpha+20120614), zlib1g (>= 1:1.2.3.4)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Dependency of shared-mime-info."
+      },
+      {
+        "binary": "qemu-guest-agent",
+        "version": "1:10.0.13+ds-0+deb13u1",
+        "source": "qemu",
+        "source_version": "1:10.0.13+ds-0+deb13u1",
+        "source_retained": false,
+        "binary_sha256": "7d7d6be6a52d6ea21eabdb78f686e4bb886f933171d33f5f3cf3cf2390343abd",
+        "filename": "pool/main/q/qemu/qemu-guest-agent_10.0.13+ds-0+deb13u1_amd64.deb",
+        "depends": "libc6 (>= 2.38), libglib2.0-0t64 (>= 2.78.0), libnuma1 (>= 2.0.11), libudev1 (>= 183), liburing2 (>= 2.3)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.38), libglib2.0-0t64 (>= 2.78.0), libnuma1 (>= 2.0.11), libudev1 (>= 183), liburing2 (>= 2.3)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/q/qemu/qemu-guest-agent_10.0.13+ds-0+deb13u1_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "08hw-detect detects KVM/QEMU and requests guest-agent with recommends."
+      },
+      {
+        "binary": "shared-mime-info",
+        "version": "2.4-5+b2",
+        "source": "shared-mime-info",
+        "source_version": "2.4-5",
+        "source_retained": false,
+        "binary_sha256": "d7d061df29326b0ca6b273ac9332168659ff1562659f0a33609657a143dd7881",
+        "filename": "pool/main/s/shared-mime-info/shared-mime-info_2.4-5+b2_amd64.deb",
+        "depends": "libc6 (>= 2.38), libgcc-s1 (>= 3.0), libglib2.0-0t64 (>= 2.76.0), libstdc++6 (>= 12), libxml2 (>= 2.7.4)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.38), libgcc-s1 (>= 3.0), libglib2.0-0t64 (>= 2.76.0), libstdc++6 (>= 12), libxml2 (>= 2.7.4)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/s/shared-mime-info/shared-mime-info_2.4-5+b2_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Recommendation of libglib2.0-0t64, enabled by --with-recommends."
+      },
+      {
+        "binary": "xdg-user-dirs",
+        "version": "0.18-2",
+        "source": "xdg-user-dirs",
+        "source_version": "0.18-2",
+        "source_retained": false,
+        "binary_sha256": "d3be3c7315722fe58921839f8bbf962e638540f2936627acc29464e63feded95",
+        "filename": "pool/main/x/xdg-user-dirs/xdg-user-dirs_0.18-2_amd64.deb",
+        "depends": "libc6 (>= 2.34)",
+        "iso_dependency_fields": {
+          "Depends": "libc6 (>= 2.34)"
+        },
+        "installation_source": "Verified Debian 13.7 DVD-1 ISO; pool/main/x/xdg-user-dirs/xdg-user-dirs_0.18-2_amd64.deb",
+        "replacement_disposition": "Excluded by disabling the installer-only automatic virtualization/microcode hook; not required by the approved 204-package set.",
+        "reason": "Recommendation of libglib2.0-0t64, enabled by --with-recommends."
+      }
+    ],
+    "policy": "Exact original 204 packages retained, no substitutions; absent packages must not be silently ignored by admission.",
+    "cause": "07preseed executes late_command before 08hw-detect. The latter detects KVM and apt-install --with-recommends qemu-guest-agent, then installs queued intel-microcode."
+  },
+  "rejected_candidate": {
+    "descriptor": {
+      "image_id": "debian13-package-admin-local-v1",
+      "sha256": "9dddf19d72343a17e682c012d8ff049f54c1fbed8dbc6823ea899569053aee0a",
+      "bytes": 17179869184,
+      "format": "raw",
+      "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+      "packages_sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+      "version": 1,
+      "prepared": true,
+      "trust": "Local reviewed package-administrator build only; not a signed public release",
+      "recipe_version": 1
+    },
+    "state": "withdrawn",
+    "records_preserved": true,
+    "discrepancy": {
+      "captured_count": 204,
+      "final_count": 216,
+      "reconstructed_sha256": "2271bd8b719e7d51c40810d5f08f10ce9feb80ae1ae9d8962a08d68a52520cd8",
+      "extra_packages": [
+        {
+          "binary": "intel-microcode",
+          "version": "3.20251111.1~deb13u1",
+          "source": "intel-microcode",
+          "source_version": "3.20251111.1~deb13u1",
+          "source_retained": false,
+          "binary_sha256": "1731b32e9dd2187ede409a74efa466c9f3a8178dce8151b5ba37e457bee5d25e",
+          "filename": "pool/non-free-firmware/i/intel-microcode/intel-microcode_3.20251111.1~deb13u1_amd64.deb",
+          "depends": "iucode-tool (>= 1.0)"
+        },
+        {
+          "binary": "iucode-tool",
+          "version": "2.3.1-3",
+          "source": "iucode-tool",
+          "source_version": "2.3.1-3",
+          "source_retained": false,
+          "binary_sha256": "7b20b90c02499afef90ad7cfff24d008eac496f4afcb291852541b8483e4c6e1",
+          "filename": "pool/main/i/iucode-tool/iucode-tool_2.3.1-3_amd64.deb",
+          "depends": "libc6 (>= 2.34)"
+        },
+        {
+          "binary": "libatomic1:amd64",
+          "version": "14.2.0-19",
+          "source": "gcc-14",
+          "source_version": "14.2.0-19",
+          "source_retained": true,
+          "binary_sha256": "212b399aae2f7299203d261a57e49372e09565a9a5ea971905f94a3960366c05",
+          "filename": "pool/main/g/gcc-14/libatomic1_14.2.0-19_amd64.deb",
+          "depends": "gcc-14-base (= 14.2.0-19), libc6 (>= 2.14)"
+        },
+        {
+          "binary": "libffi8:amd64",
+          "version": "3.4.8-2",
+          "source": "libffi",
+          "source_version": "3.4.8-2",
+          "source_retained": false,
+          "binary_sha256": "0ebdc340de33333639c3c63874cd4b15ac2e83dfa1ef3053b7eefaf4919f4f68",
+          "filename": "pool/main/libf/libffi/libffi8_3.4.8-2_amd64.deb",
+          "depends": "libc6 (>= 2.34)"
+        },
+        {
+          "binary": "libglib2.0-0t64:amd64",
+          "version": "2.84.4-3~deb13u5",
+          "source": "glib2.0",
+          "source_version": "2.84.4-3~deb13u5",
+          "source_retained": false,
+          "binary_sha256": "e2baf92c57d1db1753e5781a61450d9a01e7833c7bd2dfe87776a6811c11ecc2",
+          "filename": "pool/main/g/glib2.0/libglib2.0-0t64_2.84.4-3~deb13u5_amd64.deb",
+          "depends": "libatomic1 (>= 4.8), libc6 (>= 2.38), libffi8 (>= 3.4), libmount1 (>= 2.40~rc2), libpcre2-8-0 (>= 10.22), libselinux1 (>= 3.1~), zlib1g (>= 1:1.2.2)"
+        },
+        {
+          "binary": "libglib2.0-data",
+          "version": "2.84.4-3~deb13u5",
+          "source": "glib2.0",
+          "source_version": "2.84.4-3~deb13u5",
+          "source_retained": false,
+          "binary_sha256": "11c671d0a21dd99215bc62fc0219a1fcbb1482f36329ab6b85732e09ddff9e1c",
+          "filename": "pool/main/g/glib2.0/libglib2.0-data_2.84.4-3~deb13u5_all.deb",
+          "depends": ""
+        },
+        {
+          "binary": "libnuma1:amd64",
+          "version": "2.0.19-1",
+          "source": "numactl",
+          "source_version": "2.0.19-1",
+          "source_retained": false,
+          "binary_sha256": "e578583f73f8208564e5035b18aa729c441fc7ecb389c666923552e123f4d655",
+          "filename": "pool/main/n/numactl/libnuma1_2.0.19-1_amd64.deb",
+          "depends": "libc6 (>= 2.38)"
+        },
+        {
+          "binary": "liburing2:amd64",
+          "version": "2.9-1",
+          "source": "liburing",
+          "source_version": "2.9-1",
+          "source_retained": false,
+          "binary_sha256": "4b589c00c7a51172aace2cb2fb3d3ff32daf86c644023126dcfcaa840cc941ea",
+          "filename": "pool/main/libu/liburing/liburing2_2.9-1_amd64.deb",
+          "depends": "libc6 (>= 2.4)"
+        },
+        {
+          "binary": "libxml2:amd64",
+          "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+          "source": "libxml2",
+          "source_version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+          "source_retained": false,
+          "binary_sha256": "e0c6b63ce4602a036a526f60fe5e6c1586710688058d98fc1001b9b3147b7efd",
+          "filename": "pool/main/libx/libxml2/libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3_amd64.deb",
+          "depends": "libc6 (>= 2.38), liblzma5 (>= 5.1.1alpha+20120614), zlib1g (>= 1:1.2.3.4)"
+        },
+        {
+          "binary": "qemu-guest-agent",
+          "version": "1:10.0.13+ds-0+deb13u1",
+          "source": "qemu",
+          "source_version": "1:10.0.13+ds-0+deb13u1",
+          "source_retained": false,
+          "binary_sha256": "7d7d6be6a52d6ea21eabdb78f686e4bb886f933171d33f5f3cf3cf2390343abd",
+          "filename": "pool/main/q/qemu/qemu-guest-agent_10.0.13+ds-0+deb13u1_amd64.deb",
+          "depends": "libc6 (>= 2.38), libglib2.0-0t64 (>= 2.78.0), libnuma1 (>= 2.0.11), libudev1 (>= 183), liburing2 (>= 2.3)"
+        },
+        {
+          "binary": "shared-mime-info",
+          "version": "2.4-5+b2",
+          "source": "shared-mime-info",
+          "source_version": "2.4-5",
+          "source_retained": false,
+          "binary_sha256": "d7d061df29326b0ca6b273ac9332168659ff1562659f0a33609657a143dd7881",
+          "filename": "pool/main/s/shared-mime-info/shared-mime-info_2.4-5+b2_amd64.deb",
+          "depends": "libc6 (>= 2.38), libgcc-s1 (>= 3.0), libglib2.0-0t64 (>= 2.76.0), libstdc++6 (>= 12), libxml2 (>= 2.7.4)"
+        },
+        {
+          "binary": "xdg-user-dirs",
+          "version": "0.18-2",
+          "source": "xdg-user-dirs",
+          "source_version": "0.18-2",
+          "source_retained": false,
+          "binary_sha256": "d3be3c7315722fe58921839f8bbf962e638540f2936627acc29464e63feded95",
+          "filename": "pool/main/x/xdg-user-dirs/xdg-user-dirs_0.18-2_amd64.deb",
+          "depends": "libc6 (>= 2.34)"
+        }
+      ],
+      "status": "BLOCKED",
+      "evidence_root": "/home/drak/.local/state/omarchy-learning-lab/recovery/discovery-independent-review-20261006T173224610689Z",
+      "cause": "Inventory exported before installer completed later package installations; prepare.py checked early serial inventory, not finalized disk inventory.",
+      "legacy_observation": "Fresh overlay of unchanged approved administrator base also has the same 216-package inventory. No legacy image or pin changed.",
+      "missing_source_versions": 10,
+      "descriptor_policy": "Existing descriptor bytes and hash preserved as evidence, not silently corrected or admitted.",
+      "root_policy": "Locked root/learner passwords and existing guest-only sudo policy unchanged.",
+      "agent_observation": "Older administrator probe: qemu-guest-agent inactive/static, no agent process or channel. Controller launch graph unchanged and provides no guest-agent channel."
+    },
+    "remediation": "Fresh independent candidate; no migration, removal or in-place repair of old image/session bytes."
+  },
+  "matches_predeclared_204_package_inventory": true,
+  "matches_older_administrator_finalized_inventory": false,
+  "inventory_comparison": "Same 204 approved package/version rows; twelve unplanned late additions present in older/rejected images are deliberately absent. No existing image was modified.",
+  "final_acceptance": {
+    "evidence_root": "/home/drak/.local/state/omarchy-learning-lab/recovery/discovery-finalization-20261006T181307605758Z",
+    "report": "discovery-acceptance.md",
+    "learn_challenge_results": 16,
+    "regressions": 599,
+    "gnu_comparisons": 44,
+    "installed_wheel_sha256": "a30933cba11ec9eb8006f7980eb6bee041fbdb7d32c18682a7c680592a463058",
+    "installed_native_checks": {
+      "start": 17,
+      "resume": 20,
+      "reset": 22
+    },
+    "physical_keyboard_accessibility": "unverified",
+    "original_image_and_pins": "unchanged"
+  }
+}

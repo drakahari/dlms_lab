@@ -1,0 +1,58 @@
+{
+  "id": "real-linux-discovery-lifecycle",
+  "content_version": "1.0.0",
+  "title": "Install, upgrade, remove and purge offline",
+  "goal": "Execute a scoped two-package lifecycle and verify configuration retention.",
+  "challenge": "Using only the protected fixture archives, install and verify the report, upgrade it, retain a deliberate configuration customization through remove, then purge it. Preview every APT transaction and reject unrelated changes.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-discovery-7; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Create a fresh private workspace; stop on collision or insufficient space.",
+      "expected": "Exact learner path, no existing entry, at least64MiB free."
+    },
+    {
+      "command": "guard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-7 && test ! -L /home/learner/ll-discovery-7 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard",
+      "explanation": "Define a cooperative location/owner/link guard.",
+      "expected": "No path substitution; guest root can override guest safeguards."
+    },
+    {
+      "command": "unrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+      "explanation": "Retain unrelated package and learner/sudo evidence before any transaction.",
+      "expected": "Protected unrelated state captured; stop on mismatch."
+    },
+    {
+      "command": "apt_base=(apt-get --assume-yes --no-download --no-install-recommends -oDir::Cache::archives=\"$w/cache\" -oDir::Etc::sourcelist=\"$w/no-sources.list\" -oDir::Etc::sourceparts=\"$w/no-sources.d\"); plan() { guard && sha256sum -c cache.sha256 > cache-check.txt && sudo env LC_ALL=C \"${apt_base[@]}\" -s \"$@\" > plan.txt 2>&1 && awk '/^(Reading package lists|Building dependency tree|Reading state information|Correcting dependencies)\\.\\.\\.( Done)?$/ {next} /^Note, selecting .ll-discovery-(data|report). instead of .\\/opt\\/learning-lab\\/package-fixtures\\/archives\\/ll-discovery-(data_1[.]0-1|report_1[.][01]-1)_all[.]deb.$/ {next} /^The following (additional packages will be installed|NEW packages will be installed|packages will be upgraded|packages will be REMOVED):$/ {next} /^  / {for(i=1;i<=NF;i++){p=$i;sub(/\\*$/,\"\",p);if(p!=\"ll-discovery-data\" && p!=\"ll-discovery-report\")bad=1} next} /^[0-2] upgraded, [0-2] newly installed, ([0-2] reinstalled, )?[0-2] to remove and [0-9]+ not upgraded\\.$/ {summary++;next} /^[0-2] not fully installed or removed\\.$/ {next} $1==\"Inst\" || $1==\"Conf\" || $1==\"Remv\" || $1==\"Purg\" {n++;if(NF<2 || ($1!=\"Purg\" && NF<3) || ($2!=\"ll-discovery-data\" && $2!=\"ll-discovery-report\"))bad=1;next} /^[[:space:]]*$/ {next} {bad=1} END {exit (bad || summary!=1 || n>4)}' plan.txt && cat plan.txt; }; d=/opt/learning-lab/package-fixtures/archives/ll-discovery-data_1.0-1_all.deb; r1=/opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.0-1_all.deb; r2=/opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.1-1_all.deb; guard && mkdir -m 0700 cache no-sources.d && : > no-sources.list && cp -- \"$d\" \"$r1\" \"$r2\" cache/ && grep '  archives/' /opt/learning-lab/package-fixtures/SHA256SUMS | sed 's|  archives/|  cache/|' > cache.sha256 && sha256sum -c cache.sha256",
+      "explanation": "Define the same root-context APT configuration for preview/execution. Every plan may name only the two fixture identities; stop otherwise.",
+      "expected": "Protected archives, no acquisition; review the printed operation list even after its allowlist check."
+    },
+    {
+      "command": "plan install --no-remove \"$d\" \"$r1\" && scope_ok && sudo env LC_ALL=C \"${apt_base[@]}\" install --no-remove \"$d\" \"$r1\" && scope_ok && ll-discovery-report",
+      "explanation": "Use explicit local files; no-download alone would not bound solver changes.",
+      "expected": "Both fixtures installed, report1.0-1 and known data; unrelated package/policy checks match."
+    },
+    {
+      "command": "plan install --no-remove \"$r2\" && scope_ok && sudo env LC_ALL=C \"${apt_base[@]}\" install --no-remove \"$r2\" && scope_ok && ll-discovery-report",
+      "explanation": "Upgrade just the report; the dependency stays at1.0-1.",
+      "expected": "Report1.1-1; only the two allowed fixture names appear in plans."
+    },
+    {
+      "command": "guard && printf 'format=custom\\n' | sudo tee /etc/ll-discovery-report.conf && plan remove ll-discovery-report && scope_ok && sudo env LC_ALL=C \"${apt_base[@]}\" remove ll-discovery-report && scope_ok && cat /etc/ll-discovery-report.conf",
+      "explanation": "Removal retains a declared configuration file; do not assume all files are removed.",
+      "expected": "Executable absent, custom configuration retained, report in config-files state."
+    },
+    {
+      "command": "plan purge ll-discovery-report && scope_ok && sudo env LC_ALL=C \"${apt_base[@]}\" purge ll-discovery-report && plan purge ll-discovery-data && scope_ok && sudo env LC_ALL=C \"${apt_base[@]}\" purge ll-discovery-data && scope_ok && test ! -e /etc/ll-discovery-report.conf",
+      "explanation": "Purge the report before the dependency. No broad autoremove.",
+      "expected": "Both fixtures absent and configuration gone; unrelated packages unchanged."
+    }
+  ],
+  "hints": [
+    "Preview and execution must share identity, locale, arguments and configuration.",
+    "Installing a local archive can still involve dependency decisions; inspect names.",
+    "Remove and purge differ when the package declares configuration files."
+  ],
+  "review": [
+    "Actual versions/output, planned and completed actions, configuration retention/purge, unrelated state unchanged."
+  ],
+  "coverage": "LPIC-1 v5.0 102.4 partial actual install/upgrade/remove/purge. Self-reviewed, unscored; not complete objectives."
+}

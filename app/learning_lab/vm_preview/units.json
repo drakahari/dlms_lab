@@ -28,6 +28,10 @@
     {
       "id": "linux-backup-safe-recovery",
       "resource": "backup-unit.json"
+    },
+    {
+      "id": "linux-system-discovery-package-fundamentals",
+      "resource": "discovery-unit.json"
     }
   ]
 }

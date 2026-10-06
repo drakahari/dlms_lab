@@ -152,7 +152,7 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
     w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   for size in ((800,600),(1280,900)):
    w.resize(*size);QTest.qWait(100)
-   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment','real-linux-backup-damage','real-linux-backup-access','real-linux-backup-assessment'):
+   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment','real-linux-backup-damage','real-linux-backup-access','real-linux-backup-assessment','real-linux-discovery-identity','real-linux-discovery-kernel','real-linux-discovery-boot','real-linux-discovery-libraries','real-linux-discovery-ownership','real-linux-discovery-integrity','real-linux-discovery-lifecycle','real-linux-discovery-repair'):
     select(id);m=vm.manager
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      vm.reset('Learn',True);wait()

@@ -1,5 +1,9 @@
 # Services, Logs & Safe Recovery: implementation evidence
 
+## Inventory erratum (2026-10-06)
+
+Independent review found **216 actual installed packages**, not the early recorded 204. Twelve were added by a later Debian Installer hook; ten additional source versions are absent from the retained closure. Historical statements of complete package/source inventory below are superseded. Behavioral test results do not establish that closure. The existing administrator disk, descriptor, policy and pins are unchanged. See [provenance erratum](admin-image-provenance.json) and [finalization analysis](package-image-provenance.json). Separate remediation must preserve existing sessions; this task does not replace their image.
+
 Baseline `bbb19d7eb94d49bd70c49e117ec2ffd2b46b5972` was clean before editing.
 The 32-file batch was reviewed for the authorized local commit. Existing local
 commits are preserved; there was no push, working-installation update or

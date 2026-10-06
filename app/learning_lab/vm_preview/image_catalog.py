@@ -11,6 +11,8 @@ from . import registry
 STATES = {'active', 'resume-only', 'withdrawn'}
 HEX = re.compile(r'[0-9a-f]{64}')
 ROOT = Path(__file__).parent
+MAX_RETAINED_LESSONS = 68
+MAX_DEFAULT_LESSONS = 68
 
 
 def canonical(value):
@@ -61,7 +63,7 @@ class Catalog:
                 type(data['schema_version']) is int and data['schema_version'] == 1, 'Unsupported image catalog')
         self.images = {}; self.lessons = {}; self.releases = {}; self.keys = {}
         for field in ('images','lessons','releases','keys'):
-            require(isinstance(data[field],list) and len(data[field]) <= 64, 'Catalog count exceeds limit')
+            require(isinstance(data[field],list) and len(data[field]) <= (MAX_RETAINED_LESSONS if field == 'lessons' else 64), 'Catalog count exceeds limit')
         for item in data['images']:
             require(set(item)=={'descriptor','state','legacy','lessons'} and item['state'] in STATES and type(item['legacy']) is bool,
                     'Invalid catalog image')
@@ -85,6 +87,7 @@ class Catalog:
             self.lessons[key]=(copy.deepcopy(item),None)
         require(data['default_image'] in self.images,'Missing default image')
         require(isinstance(data['default_lessons'],dict) and data['default_lessons'] and
+                len(data['default_lessons']) <= MAX_DEFAULT_LESSONS and
                 all((k,v) in self.lessons for k,v in data['default_lessons'].items()),'Missing default lesson')
         # Old trusted catalogs retain their one-image behavior. An explicit map
         # must cover EVERY default; missing entries never fall back to a different
@@ -94,7 +97,7 @@ class Catalog:
         if 'default_images' in data:
             require(isinstance(self.default_images,dict) and
                     set(self.default_images)==set(data['default_lessons']) and
-                    len(self.default_images)<=64,'Incomplete per-lesson image defaults')
+                    len(self.default_images)<=MAX_DEFAULT_LESSONS,'Incomplete per-lesson image defaults')
             for lesson_id,image_id in self.default_images.items():
                 require(isinstance(image_id,str) and image_id in self.images,
                         'Unavailable per-lesson image descriptor')

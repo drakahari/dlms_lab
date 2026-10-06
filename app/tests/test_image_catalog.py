@@ -26,6 +26,11 @@ class CatalogTests(unittest.TestCase):
   return record
  def inventory(self):return {str(p.relative_to(self.root)):p.read_bytes() for p in (self.root/'vm').rglob('*') if p.is_file()}
  def add_revision(self):
+  # Smaller isolated rollback catalog leaves room for an added retained revision.
+  gone={l['id'] for l in self.data['lessons'] if l['id'].startswith('real-linux-discovery-')}
+  self.data['lessons']=[l for l in self.data['lessons'] if l['id'] not in gone]
+  self.data['images']=[i for i in self.data['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1']
+  for field in ('default_images','default_lessons'):self.data[field]={k:v for k,v in self.data[field].items() if k not in gone}
   lesson=load_lesson();lesson.update(title='Updated fixture title',content_version='1.0.1');self.resources['fixture-revision.json']=canonical(lesson)
   self.data['lessons'].append({'id':LEGACY_ID,'sha256':digest(lesson),'resource':'fixture-revision.json','state':'active'})
   self.data['default_lessons'][LEGACY_ID]=digest(lesson)
@@ -35,7 +40,7 @@ class CatalogTests(unittest.TestCase):
   cat=production_catalog();old=Manager(self.root/'unused','a'*64);m=self.manager(cat)
   self.assertEqual(old.pin,m.pin);self.assertEqual(m.profile,'a'*64);self.assertFalse(self.root.joinpath('unused').exists())
   cat.allow(m.pin,LEGACY_ID,'new');cat.allow(m.pin,LEGACY_ID,'reset');cat.allow(m.pin,LEGACY_ID,'resume')
-  self.assertEqual(len(cat.lessons),60);self.assertEqual(len(cat.images),2);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
+  self.assertEqual(len(cat.lessons),68);self.assertEqual(len(cat.images),4);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
  def test_catalog_edit_reopen_preserves_exact_learn_challenge_bytes(self):
   for mode,profile in (('Learn','a'*64),('Challenge','b'*64)):
    old=self.manager(profile=profile);self.record(old,mode)

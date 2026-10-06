@@ -4,19 +4,19 @@ Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.
 
 **Implemented** below means the stated subskills have exercises and evidence. **Partial** means significant objective skills still remain. **Reinforcement/preparation only** adds no complete-objective credit. **Missing** means there is no dedicated demonstrated exercise. **No complete official objective is claimed**. Simulated labs have objective grading within a bounded contract; VM completion is self-reviewed, not automatically assessed. Real guest execution evidence validates lesson feasibility, not every learner's mastery.
 
-The core simulated app remains usable without VM images/QEMU. The 60 trusted VM lessons are seven bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
+The core simulated app remains usable without VM images/QEMU. The 68 trusted VM lessons are eight bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
 
 ## LPIC-1 — every published objective
 
 | Objective | Status | Existing unit/evidence and essential gaps |
 |---|---|---|
-| 101.1 | Missing | —. No dedicated demonstrated hardware exercise. |
-| 101.2 | Reinforcement only | [Services & Recovery](vm-preview/admin-unit.md). Current-boot journal evidence; no boot-chain/loader exercise. |
+| 101.1 | Partial | [System Discovery & Packages](vm-preview/discovery-unit.md). Virtual CPU/PCI and /proc and /sys hardware observations. No USB tools, firmware/device configuration or physical-hardware control. |
+| 101.2 | Partial | [System Discovery & Packages](vm-preview/discovery-unit.md). Current-boot kernel/log evidence and kernel arguments; boot stages explained. No loader interaction, boot options or recovery. |
 | 101.3 | Partial | [Services & Recovery](vm-preview/admin-unit.md). Implemented clean reboot/service enabled-state observations; targets, runlevels and user notification missing. |
 | 102.1 | Missing | —. No dedicated demonstrated disk layout exercise. |
 | 102.2 | Missing | —. No dedicated demonstrated boot manager exercise. |
-| 102.3 | Missing | —. No dedicated demonstrated libraries exercise. |
-| 102.4 | Missing | —. No dedicated demonstrated Debian packages exercise. |
+| 102.3 | Partial | [System Discovery & Packages](vm-preview/discovery-unit.md). Trusted executable dependencies, loader cache/configuration and canonical package ownership. No library installation or runtime loader changes. |
+| 102.4 | Partial | [System Discovery & Packages](vm-preview/discovery-unit.md). Installed/archived ownership, versions, status and scoped verification; actual offline fixture installation, upgrade, dependency repair, reinstallation, remove/purge. No online repository administration or complete Debian workflow. |
 | 102.5 | Missing | —. No dedicated demonstrated RPM ecosystem exercise. |
 | 102.6 | Preparation only | [Processes & Jobs](vm-preview/processes-unit.md). Using an offline VM is not assessed image/cloud/container preparation. |
 | 103.1 | Partial | [Bash & Safe Changes](vm-preview/bash-unit.md). Implemented quoting, lookup, temporary PATH/env and statuses; history editing and broader command/environment mastery missing. |
@@ -62,7 +62,7 @@ The core simulated app remains usable without VM images/QEMU. The 60 trusted VM 
 | 200.2 | Partial | [Resource Evidence](vm-preview/resource-unit.md). Implemented synthetic trends, independently checked forecasts and insufficient-evidence decisions; production monitoring deployment missing. |
 | 201.1 | Missing | —. No dedicated demonstrated kernel components exercise. |
 | 201.2 | Missing | —. No dedicated demonstrated kernel builds exercise. |
-| 201.3 | Missing | —. No dedicated demonstrated kernel runtime exercise. |
+| 201.3 | Partial | [System Discovery & Packages](vm-preview/discovery-unit.md). Running kernel, loaded/built-in module and parameter queries. No module load/unload, sysctl mutation, udev administration or boot/runtime repair. |
 | 202.1 | Partial | [Services & Recovery](vm-preview/admin-unit.md), [Scheduling](vm-preview/scheduling-unit.md). Implemented systemd service enablement/overrides and boot evidence; targets, SysV/LSB and broader startup missing. |
 | 202.2 | Preparation only | [Services & Recovery](vm-preview/admin-unit.md). Service/file rollback is not bootloader, rescue/emergency or whole-system recovery. |
 | 202.3 | Missing | —. No dedicated demonstrated other bootloaders exercise. |
@@ -104,7 +104,7 @@ The core simulated app remains usable without VM images/QEMU. The 60 trusted VM 
 
 | Batch / proposed lessons | Outcomes and mapping | Existing capability vs approval needed |
 |---|---|---|
-| Local system discovery and package reasoning, 8 | Hardware/kernel/boot evidence, library lookup, dpkg ownership/integrity, FHS/links, environment/locales/time observations (101/102, 104.6/7, 107.3/108.1). Distinguish installed metadata from safe package transactions. | Read-only tools on existing guests can be probed first. Package install/remove fixtures, repository media, locale additions or clock changes need a separately approved image/capability scope; no host changes. RPM needs a separate approved distribution image. |
+| System discovery/package fundamentals — implemented, 8 | Virtual hardware/kernel/current-boot observations, trusted library lookup, installed/archive ownership and integrity, and actual scoped offline fixture package transactions (partial 101.1/101.2/102.3/102.4/201.3). No new locale/time/FHS coverage. | Implemented using the independently prepared package-administrator image and two trusted offline fixture packages. Locale/time/FHS breadth, repository administration and RPM remain future work requiring any absent packages/images to be approved. |
 | Storage and boot recovery, 10–12 | Disposable partition/fs/swap, mount/fstab faults, inode/space repair, LVM/RAID snapshots and rescue/bootloader recovery (104.1–3, 201–204). Verify after restart with a preserved good disk. | Guest-only administration already exists, but additional guest disks/boot media/controller block graph or packages require explicit architecture approval. Never raw host devices. No automatic approval inferred from existing sudo. |
 | Local operational completeness, 8 | Remaining priority/special-bit/link/shell/editor skills, user notices, at and scheduler policy, richer logging/backup plans (103/104/105/107/108, 206). | Content can use verified current tools; absent at, ACL, rsync or multiplexer tools require approved offline packages/image revision, exact pins and compatibility. No networking required. Avoid padding with chmod variations. |
 | Isolated networking and security, 8–10 | IPv4/IPv6 addressing, resolver/client routing, diagnosis, firewall/NAT, SSH and TLS identity (109/110, 205, 212). Verify from another guest, not mode bits or configuration alone. | Separate approval for isolated guest-only networking and often two guests, NIC/launch-policy changes, packages and disposable test credentials. Never host LAN/Internet exposure or shared personal folders. |
@@ -113,7 +113,7 @@ The core simulated app remains usable without VM images/QEMU. The 60 trusted VM 
 | Mail, transfer and service-security recovery, 8–10 | Local mail queues/delivery/mailbox access, FTP policy, VPN/firewall recovery and auditing (108.3, 211/212). | Additional packages and isolated multi-guest network; test credentials/keys and guest privilege scopes explicitly approved, no public mail/FTP/VPN services. |
 | Source builds and platform breadth, 8 | Trusted source configure/make/install/uninstall, kernel/module provenance, RPM packaging, graphics/printing/accessibility (102.5/106/108.4/201/206.1). | Approved offline inputs/build tooling and separate distro/GUI images; kernel/boot experiments need recoverable images. Accessibility requires actual assistive-technology/owner evidence, not metadata tests. |
 
-Current registry capacity is full at seven units/60 lessons; the retained catalog/default-image maps also have a 64-entry bound. The next eight-lesson unit therefore requires a separately approved bounded registry **and catalog-capacity** change, with byte-size and retained-revision tests; changing only the registry would fail. No such additional change is made here.
+Current registry capacity is full at eight units/68 lessons; retained lesson/default maps also have a68-entry bound. Image/key/release and per-image compatibility lists remain64; parser byte/depth/node bounds are unchanged. A further unit or retained revision requires an explicitly approved bounded capacity review, not removal of limits.
 
 Each future batch needs bounded registry capacity, pinned exact image/lesson revisions, failure and rollback fixtures, both modes, native lifecycle and installed-wheel tests. Preserve current image versions/session access; neither task authorization nor full guest root authorizes new host/security capabilities.
 
@@ -123,4 +123,4 @@ Recommend a clearly labelled **Linux operations foundations preview**, covering 
 
 For a usable foundations release, essential gates are: accepted unchanged lesson pins; complete repeatable installation and all eight new recovery outcomes; lifecycle/failure and backup-exclusion disclosure; remaining native keyboard/accessibility checks; clean public image provenance, authenticated release admission, source/notices and license compliance (unfinished Qt review and ICU signing-key warning); independent fresh-user installation; and honest curriculum gaps. Production trust stays empty until separately approved release preparation. No publication is authorized.
 
-For a broader administrator curriculum, prioritize local system/package discovery, then storage/boot recovery before network service troubleshooting. Networking, multi-VM orchestration and new image packages are substantive approvals, not routine content edits. Later enhancements: UI polish/shorter explanations, additional reinforcement, monitoring dashboards, more tooling and cross-domain expansion. Do not confuse interface polish with missing assessed skills.
+For a broader administrator curriculum, system/package discovery now supplies prerequisites; prioritize storage/boot recovery before network service troubleshooting. Networking, multi-VM orchestration and new image packages are substantive approvals, not routine content edits. Later enhancements: UI polish/shorter explanations, additional reinforcement, monitoring dashboards, more tooling and cross-domain expansion. Do not confuse interface polish with missing assessed skills.

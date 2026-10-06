@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-discovery-ownership",
+  "content_version": "1.0.0",
+  "title": "Separate installed packages from archives",
+  "goal": "Inspect installed ownership/status and dormant package metadata.",
+  "challenge": "Find the package owning /usr/bin/cat and record its installed version/status. Inspect the trusted report archive's files and dependencies without installing it.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-discovery-5; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Create a fresh private workspace; stop on collision or insufficient space.",
+      "expected": "Exact learner path, no existing entry, at least64MiB free."
+    },
+    {
+      "command": "guard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-5 && test ! -L /home/learner/ll-discovery-5 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard",
+      "explanation": "Define a cooperative location/owner/link guard.",
+      "expected": "No path substitution; guest root can override guest safeguards."
+    },
+    {
+      "command": "unrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+      "explanation": "Retain unrelated package and learner/sudo evidence before any transaction.",
+      "expected": "Protected unrelated state captured; stop on mismatch."
+    },
+    {
+      "command": "guard && { dpkg-query -S /usr/bin/cat; dpkg-query -W -f='${binary:Package} ${Version} ${db:Status-Status}\\n' coreutils; dpkg -L coreutils | head -n 8; } > package.txt && cat package.txt",
+      "explanation": "Package identity, executable name and installation status are distinct.",
+      "expected": "coreutils owns cat and is installed at the pinned version."
+    },
+    {
+      "command": "guard && dpkg-deb --info /opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.0-1_all.deb > archive.txt && cat archive.txt",
+      "explanation": "An archive is not installed just because it is present.",
+      "expected": "Report metadata and its data/dash/coreutils dependency declaration."
+    },
+    {
+      "command": "guard && dpkg-deb --contents /opt/learning-lab/package-fixtures/archives/ll-discovery-report_1.0-1_all.deb > members.txt && cat members.txt",
+      "explanation": "Read the declared payload before installing; only these reviewed packages are used.",
+      "expected": "Fixed regular files and directories; no maintainer scripts, links or services."
+    }
+  ],
+  "hints": [
+    "dpkg-query -S searches installed ownership.",
+    "dpkg-deb inspects the archive, not installed state.",
+    "A package's declared dependencies are not automatic proof of configuration."
+  ],
+  "review": [
+    "Owner/version/status plus archive payload/dependency report; fixture remains uninstalled."
+  ],
+  "coverage": "LPIC-1 v5.0 102.4 partial package information/ownership. Self-reviewed, unscored; not complete objectives."
+}

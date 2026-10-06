@@ -136,3 +136,9 @@ Registry bounds: six units, sixteen lessons each, fifty-two total.
 ## Backup practice unit
 
 The existing administrator image also supports [Backup & Safe File Recovery](backup-unit.md): eight self-reviewed lessons, no new image/packages/networking. Registry bounds are seven units, 60 total lessons and 16 per unit. Existing lesson/session pins are unchanged.
+
+## System discovery and package practice
+
+[System Discovery & Package Fundamentals](discovery-unit.md) requires its exact fresh package-administrator image. Eight units/68 lessons are bounded; existing image/session pins are unchanged. Missing images fail without substitution. Production admission remains disabled.
+
+**Package image revision:** the original candidate is retained withdrawn after its inventory discrepancy. New discovery lessons select the separately finalized version2 image; old records are preserved without substitution. See [finalization evidence](discovery-acceptance.md).

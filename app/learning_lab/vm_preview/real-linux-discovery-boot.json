@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-discovery-boot",
+  "content_version": "1.0.0",
+  "title": "Read this boot without changing it",
+  "goal": "Use scoped boot evidence and distinguish target configuration from health.",
+  "challenge": "Retain the running kernel command line, default target and a bounded current-boot event excerpt. Explain the boot sequence and what this evidence does not prove. Do not alter boot configuration.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-discovery-3; test \"$(id -un)\" = learner && test ! -e \"$w\" && test ! -L \"$w\" && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 65536",
+      "explanation": "Create a fresh private workspace; stop on collision or insufficient space.",
+      "expected": "Exact learner path, no existing entry, at least64MiB free."
+    },
+    {
+      "command": "guard() { local links; test \"$(pwd -P)\" = /home/learner/ll-discovery-3 && test ! -L /home/learner/ll-discovery-3 && test \"$(stat -c %U .)\" = learner && links=$(sudo find . -type l -print -quit) && test -z \"$links\"; }; guard",
+      "explanation": "Define a cooperative location/owner/link guard.",
+      "expected": "No path substitution; guest root can override guest safeguards."
+    },
+    {
+      "command": "unrelated() { dpkg-query -W -f='${binary:Package}\\t${Version}\\t${db:Status-Status}\\n' | awk '$1!=\"ll-discovery-data\" && $1!=\"ll-discovery-report\"'; }; unrelated > before.tsv; sudo sha256sum /etc/sudoers.d/learning-lab > sudo.before; id learner > learner.before; scope_ok() { guard && unrelated > after.tsv && cmp before.tsv after.tsv && sudo sha256sum -c sudo.before && id learner > learner.after && cmp learner.before learner.after; }; scope_ok",
+      "explanation": "Retain unrelated package and learner/sudo evidence before any transaction.",
+      "expected": "Protected unrelated state captured; stop on mismatch."
+    },
+    {
+      "command": "guard && { cat /proc/cmdline; systemctl get-default; systemctl is-system-running; } > boot.txt; cat boot.txt",
+      "explanation": "The default target is configuration, not a guarantee all units are healthy. Check each status.",
+      "expected": "Kernel command line, target and actual health text; degraded is evidence to interpret, not a fixed failure."
+    },
+    {
+      "command": "guard && sudo journalctl -b -k -n 10 --no-pager > kernel-log.txt && cat kernel-log.txt",
+      "explanation": "-b limits this observation to the current boot; guest sudo permits restricted log access.",
+      "expected": "Ten or fewer kernel journal entries, with boot context."
+    },
+    {
+      "command": "guard && sudo dmesg | head -n 8 > early.txt && cat early.txt",
+      "explanation": "The ring buffer and journal are different views; one warning does not establish root cause.",
+      "expected": "Early kernel observations to relate BIOS, loader, kernel and systemd stages."
+    }
+  ],
+  "hints": [
+    "Use -b rather than mixing boots.",
+    "The target name is not a success verdict.",
+    "Explain uncertainty rather than diagnosing from one line."
+  ],
+  "review": [
+    "Current-boot scope, target/health distinction, stages and limitations."
+  ],
+  "coverage": "LPIC-1 v5.0 101.2 partial boot logs; 101.3/LPIC-2 202.1 reinforcement only. Self-reviewed, unscored; not complete objectives."
+}
