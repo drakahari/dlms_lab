@@ -1,0 +1,43 @@
+{
+  "id": "real-linux-schedule-cron",
+  "content_version": "1.0.0",
+  "title": "Schedule a disposable user cron job",
+  "goal": "Observe and remove one named user cron job.",
+  "challenge": "Schedule only a fresh disposable user job. Prove actual cron execution/private output, then remove future scheduling without altering other crontabs.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-s3 && ! getent group ll-s3 && test ! -e /home/ll-s3 && sudo useradd -m -U -s /bin/bash ll-s3",
+      "explanation": "Dedicated account.",
+      "expected": "No unrelated crontab touched."
+    },
+    {
+      "command": "printf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' '[ \"$(id -un)\" = ll-s3 ] || exit 2' 'cd /home/ll-s3 || exit 3' 'printf \"user=%s\\n\" \"$(id -un)\" > report.txt &&' 'printf \"stamp=%s\\n\" \"$(date -Is)\" >> report.txt' | sudo tee /home/ll-s3/job.sh > /dev/null && sudo chown ll-s3:ll-s3 /home/ll-s3/job.sh && sudo chmod 0700 /home/ll-s3/job.sh",
+      "explanation": "Prepare finite job.",
+      "expected": "Private two-line report."
+    },
+    {
+      "command": "sudo test ! -e /var/spool/cron/crontabs/ll-s3 && printf '%s\\n' 'MAILTO=\"\"' 'SHELL=/bin/sh' 'PATH=/usr/bin:/bin' '* * * * * umask 077; /usr/bin/timeout -k 1s 5s /home/ll-s3/job.sh > /home/ll-s3/stdout.txt 2> /home/ll-s3/error.txt; echo $? > /home/ll-s3/status.txt' | sudo crontab -u ll-s3 -",
+      "explanation": "Fresh spool guard; five fields then command, no username column.",
+      "expected": "One explicit shell/PATH/timeout entry."
+    },
+    {
+      "command": "sudo crontab -u ll-s3 -l; end=$((SECONDS+85)); until sudo test -s /home/ll-s3/report.txt; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo runuser -u ll-s3 -- cat /home/ll-s3/report.txt; sudo stat -c \"%U:%G %a %s\" /home/ll-s3/report.txt",
+      "explanation": "Bounded85-second wait for a real minute boundary; no clock changes.",
+      "expected": "Actual account-owned report; absence is failure."
+    },
+    {
+      "command": "sudo crontab -u ll-s3 -r; sudo crontab -u ll-s3 -l",
+      "explanation": "Remove only this practice account crontab.",
+      "expected": "No entry; already-running work is not killed."
+    }
+  ],
+  "hints": [
+    "User crontab has no username column.",
+    "Raw unescaped percent in cron has special stdin semantics: keep formats in the script.",
+    "Cron does not universally serialize jobs; removal prevents future starts only."
+  ],
+  "review": [
+    "Exact entry, real report/ownership and removal."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}

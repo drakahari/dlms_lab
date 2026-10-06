@@ -1,0 +1,43 @@
+{
+  "id": "real-linux-schedule-calendar",
+  "content_version": "1.0.0",
+  "title": "Configure a calendar system timer",
+  "goal": "Schedule a system timer with an unprivileged job.",
+  "challenge": "Create named timer/service, run job only as its disposable account, prove loaded limits, real result/private report and exact cleanup.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-s6 && ! getent group ll-s6 && test ! -e /home/ll-s6 && sudo useradd -m -U -s /bin/bash ll-s6 && test ! -e /etc/systemd/system/ll-s6.service && test ! -e /etc/systemd/system/ll-s6.timer && test \"$(systemctl --no-pager show ll-s6.service -p LoadState --value)\" = not-found && test \"$(systemctl --no-pager show ll-s6.timer -p LoadState --value)\" = not-found",
+      "explanation": "Guard account and unit names.",
+      "expected": "No replacements."
+    },
+    {
+      "command": "printf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' '[ \"$(id -un)\" = ll-s6 ] || exit 2' 'cd /home/ll-s6 || exit 3' 'printf \"user=%s\\n\" \"$(id -un)\" > report.txt &&' 'printf \"stamp=%s\\n\" \"$(date -Is)\" >> report.txt' | sudo tee /home/ll-s6/job.sh > /dev/null && sudo chown ll-s6:ll-s6 /home/ll-s6/job.sh && sudo chmod 0700 /home/ll-s6/job.sh",
+      "explanation": "Finite report.",
+      "expected": "Private overwrite."
+    },
+    {
+      "command": "printf '%s\\n' '[Unit]' 'Description=Disposable scheduling practice' '[Service]' Type=exec User=ll-s6 Group=ll-s6 WorkingDirectory=/home/ll-s6 'ExecStart=/usr/bin/timeout -k 1s 5s /home/ll-s6/job.sh' UMask=0077 RuntimeMaxSec=6s MemoryMax=64M TasksMax=16 StandardOutput=null StandardError=journal | sudo tee /etc/systemd/system/ll-s6.service > /dev/null; printf '%s\\n' '[Unit]' 'Description=Disposable calendar practice' '[Timer]' 'OnCalendar=*-*-* *:*:0/10' AccuracySec=1us Persistent=false Unit=ll-s6.service '[Install]' WantedBy=timers.target | sudo tee /etc/systemd/system/ll-s6.timer > /dev/null",
+      "explanation": "Type=exec explicit User/Group and calendar timer.",
+      "expected": "RuntimeMax6s,64MiB,16tasks."
+    },
+    {
+      "command": "sudo systemd-analyze verify /etc/systemd/system/ll-s6.service /etc/systemd/system/ll-s6.timer; sudo systemctl --no-pager daemon-reload; sudo systemctl --no-pager enable --now ll-s6.timer",
+      "explanation": "Enable only named guest timer.",
+      "expected": "Every10seconds with explicit accuracy, not real-time guarantee."
+    },
+    {
+      "command": "end=$((SECONDS+85)); until sudo test -s /home/ll-s6/report.txt; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo runuser -u ll-s6 -- cat /home/ll-s6/report.txt; sudo stat -c \"%U:%G %a %s\" /home/ll-s6/report.txt; systemctl --no-pager show ll-s6.service -p LoadState -p User -p Group -p RuntimeMaxUSec -p MemoryMax -p TasksMax -p Result -p ExecMainStatus; systemctl --no-pager show ll-s6.timer -p LoadState -p LastTriggerUSec -p NextElapseUSecRealtime",
+      "explanation": "Trigger alone insufficient: inspect loaded config/result/file.",
+      "expected": "ll-s6 report, mode600, success/0."
+    }
+  ],
+  "hints": [
+    "Timer scope differs from job User.",
+    "Calendar uses guest clock, no clock adjustment.",
+    "Absolute paths and actual owner matter."
+  ],
+  "review": [
+    "Loaded bounds, trigger, status0, private ll-s6 report."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}

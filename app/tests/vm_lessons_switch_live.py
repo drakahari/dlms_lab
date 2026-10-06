@@ -2,7 +2,7 @@
 import argparse,hashlib,json,os,re,socket,subprocess,sys,tempfile,time,uuid
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--vm-home',type=Path,required=True)
-p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change','real-linux-bash-script','real-linux-users-ownership'), default='real-linux-background-job')
+p.add_argument('--lesson', choices=('real-linux-background-job','real-linux-capacity-baseline','real-linux-admin-change','real-linux-bash-script','real-linux-users-ownership','real-linux-schedule-report'), default='real-linux-background-job')
 p.add_argument('--installed',action='store_true',help='Use the isolated wheel package, never insert the checkout')
 p.add_argument('--smoke-phase',choices=('start','resume','reset'))
 p.add_argument('--profile',type=Path,help='Same disposable temporary profile for installed phases; TMPDIR is supported')
@@ -21,7 +21,13 @@ from learning_lab.vm_preview.process import same_process,verify_launch
 from learning_lab.vm_preview.sessions import Sessions
 from learning_lab.vm_preview.files import Refused
 out=a.profile if a.smoke_phase else Path(tempfile.mkdtemp(prefix='vm-lessons-switch-live-'))
-out.mkdir(exist_ok=True);evidence=out/('run-'+str(os.getpid())+'-'+uuid.uuid4().hex[:8]);evidence.mkdir();messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
+out.mkdir(exist_ok=True);evidence=out/('run-'+str(os.getpid())+'-'+uuid.uuid4().hex[:8]);evidence.mkdir();messages=[];checks=[];diagnostic_phase='live'
+def capture_qt_message(kind,context,message):
+ messages.append(message)
+ # Retain exact diagnostics even when a later assertion aborts the run.
+ with (evidence/'qt-messages.jsonl').open('a') as trace:
+  trace.write(json.dumps({'phase':diagnostic_phase,'at':time.monotonic_ns(),'type':str(kind),'message':message,'file':context.file or '', 'line':context.line, 'category':context.category or ''})+'\n')
+qInstallMessageHandler(capture_qt_message)
 app,engine,b,lock=build_application(out/'data',out/'config',a.vm_home);w=engine.rootObjects()[0];vm=b.vm_preview;ids=[e['id'] for e in catalog()['entries']]
 events=[]
 def event(kind,**details):
@@ -82,7 +88,7 @@ def installed_smoke():
  import learning_lab
  package=Path(learning_lab.__file__).resolve().parent
  check('isolated installed package',package.is_relative_to(Path(sys.prefix)) and 'site-packages' in package.parts)
- check('five installed units and forty-four lessons',len(units())==5 and len(entries())==44)
+ check('six installed units and fifty-two lessons',len(units())==6 and len(entries())==52)
  check('original unit still eight',len(catalog()['entries'])==8)
  check('accepted lesson bytes',hashlib.sha256((package/'vm_preview/lesson.json').read_bytes()).hexdigest()=='246f12b80f72fff3fae2a6484de185706c90dedf6ecd68f92417aea2ff6881da')
  check('native exposed',app.platformName()=='wayland' and QTest.qWaitForWindowExposed(w,5000))
@@ -172,7 +178,10 @@ def installed_smoke():
  if a.lesson=='real-linux-users-ownership':
   if a.smoke_phase=='start':commands=[': > ~/fixture-failures', 'sudo useradd -m -U -s /bin/bash ll-wheel', 'sudo runuser -u ll-wheel -- bash -c \'printf "wheel-smoke-marker\\n" > "$HOME/note.txt"\'', 'sudo runuser -u ll-wheel -- cat /home/ll-wheel/note.txt | grep -qx wheel-smoke-marker || echo IDENTITY_FAIL >> ~/fixture-failures']
   else:commands=[': > ~/fixture-failures', 'getent passwd ll-wheel && sudo runuser -u ll-wheel -- cat /home/ll-wheel/note.txt | grep -qx wheel-smoke-marker || echo SAME_DISK_FAIL >> ~/fixture-failures']
- if a.smoke_phase=='reset':commands=[': > ~/fixture-failures','test ! -e ~/installed-wheel-smoke.txt && test ! -e ~/installed-bash-workspace && ! getent passwd ll-wheel || echo RESET_FAIL >> ~/fixture-failures']
+ if a.lesson=='real-linux-schedule-report':
+  if a.smoke_phase=='start':commands=[': > ~/fixture-failures','! getent passwd ll-s2 && test ! -e /home/ll-s2 && sudo useradd -m -U -s /bin/bash ll-s2',"""printf '%s\\n' '#!/bin/bash' 'PATH=/usr/bin:/bin' 'umask 077' '[ "$(id -un)" = ll-s2 ] || exit 2' 'printf "user=%s\\n" "$(id -un)" > /home/ll-s2/report.txt' | sudo tee /home/ll-s2/job.sh > /dev/null""",'sudo chown ll-s2:ll-s2 /home/ll-s2/job.sh; sudo chmod 0700 /home/ll-s2/job.sh; sudo runuser -u ll-s2 -- timeout -k 1s 5s /home/ll-s2/job.sh; test $? -eq 0 && sudo runuser -u ll-s2 -- grep -qx user=ll-s2 /home/ll-s2/report.txt || echo JOB_FAIL >> ~/fixture-failures']
+  else:commands=[': > ~/fixture-failures','sudo runuser -u ll-s2 -- grep -qx user=ll-s2 /home/ll-s2/report.txt && test "$(sudo stat -c %a:%U /home/ll-s2/report.txt)" = 600:ll-s2 || echo SAME_DISK_FAIL >> ~/fixture-failures']
+ if a.smoke_phase=='reset':commands=[': > ~/fixture-failures','test ! -e ~/installed-wheel-smoke.txt && test ! -e ~/installed-bash-workspace && ! getent passwd ll-wheel && ! getent passwd ll-s2 || echo RESET_FAIL >> ~/fixture-failures']
  for c in commands:line(c)
  if a.lesson=='real-linux-admin-change':
   line('sudo -n id -u | grep -qx 0 || echo ADMIN_FAIL >> ~/fixture-failures')
@@ -188,14 +197,20 @@ def installed_smoke():
  if a.smoke_phase=='start':expected.write_text(json.dumps(vm.view['session'],indent=2))
  else:check('progress and pins retained',vm.view['session']==saved)
  w.grabWindow().save(str(evidence/(a.smoke_phase+'-app.png')))
- check('zero QML warnings',not messages)
- (evidence/(a.smoke_phase+'-report.json')).write_text(json.dumps({'checks':checks,'package':str(package),'session':vm.view['session'],'input':'Synthesized native input; physical keyboard/accessibility unverified'},indent=2))
+ # These two exact diagnostics reproduce on the unchanged baseline, including
+ # a no-VM open/close probe. Keep them visible; do not ignore other warnings.
+ baseline_messages={str((package/'qml/Main.qml').as_uri())+':'+str(n)+':5: QML Dialog: Binding loop detected for property "implicitHeight":\nqrc:/qt-project.org/imports/QtQuick/Controls/Basic/Dialog.qml:16:5' for n in (485,521)}
+ baseline_seen=[message for message in messages if message in baseline_messages]
+ for message in baseline_seen:print('Retained baseline Qt diagnostic: '+message,flush=True)
+ check('no additional live Qt warnings',not [message for message in messages if message not in baseline_messages])
+ (evidence/(a.smoke_phase+'-report.json')).write_text(json.dumps({'checks':checks,'package':str(package),'session':vm.view['session'],'baseline_qt_diagnostics':baseline_seen,'live_qt_messages':list(messages),'input':'Synthesized native input; physical keyboard/accessibility unverified'},indent=2))
  print(json.dumps({'phase':a.smoke_phase,'checks':len(checks),'evidence':str(evidence)}),flush=True)
 if a.smoke_phase:
  try:installed_smoke()
  except BaseException as exc:
   event('failure',error=repr(exc),view=vm.view);raise
  finally:
+  diagnostic_phase='cleanup'
   try:
    vm.refresh();wait(True)
    if vm.view['running_lesson_id']:vm.stop();wait()
@@ -216,6 +231,7 @@ try:
  vm.reset('Challenge',True);wait();check('Reset retained prior disk',hashlib.sha256(disk.read_bytes()).hexdigest()==digest);check('fresh Challenge no inherited self-review',vm.view['session']['mode']=='Challenge' and vm.view['session']['completion'] is None)
  w.grabWindow().save(str(out/'challenge-reset.png'));check('no QML warnings',not messages)
 finally:
+ diagnostic_phase='cleanup'
  try:
   vm.refresh();wait(True)
   if vm.view['running_lesson_id']:vm.stop();wait()

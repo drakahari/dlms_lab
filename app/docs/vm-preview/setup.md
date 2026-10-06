@@ -124,3 +124,11 @@ The fifth bundled unit is [Users, Groups & Access Administration](users-unit.md)
 eight guest-only exercises using the unchanged approved administrator image.
 See [verification and remaining native limits](users-acceptance.md). The bounded
 registry now permits five units, sixteen lessons per unit, forty-four total.
+
+## Scheduling unit
+
+The sixth bundled unit is
+[Scheduling & Operational Automation: Cron and systemd Timers](scheduling-unit.md).
+It uses the unchanged administrator image and named disposable guest fixtures.
+Completion remains self-reviewed/unscored; no at, clock or network changes.
+Registry bounds: six units, sixteen lessons each, fifty-two total.

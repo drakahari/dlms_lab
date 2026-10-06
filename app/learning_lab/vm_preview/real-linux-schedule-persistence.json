@@ -1,0 +1,50 @@
+{
+  "id": "real-linux-schedule-persistence",
+  "content_version": "1.0.0",
+  "title": "Investigate missed calendar runs and overlap",
+  "goal": "Prove one catch-up and active-service single-instance behavior.",
+  "challenge": "Use the bounded worker to show missed-calendar catch-up once and no second active instance. No clock changes or universal cron serialization claim.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-s7 && ! getent group ll-s7 && test ! -e /home/ll-s7 && sudo useradd -m -U -s /bin/bash ll-s7 && test ! -e /etc/systemd/system/ll-s7.service && test ! -e /etc/systemd/system/ll-s7.timer && test \"$(systemctl --no-pager show ll-s7.service -p LoadState --value)\" = not-found && test \"$(systemctl --no-pager show ll-s7.timer -p LoadState --value)\" = not-found && test ! -e /etc/systemd/system/ll-s7-overlap.timer",
+      "explanation": "Guard named fixtures.",
+      "expected": "No adoption."
+    },
+    {
+      "command": "printf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' '[ \"$(id -un)\" = ll-s7 ] || exit 2' 'cd /home/ll-s7 || exit 3' 'delay=$(cat delay); case \"$delay\" in 1|6) ;; *) exit 4 ;; esac' 'n=$(cat count 2>/dev/null || printf 0)' '[ \"$n\" -lt 4 ] || exit 0' 'n=$((n+1)); printf \"%s\\n\" \"$n\" > count' 'printf \"BEGIN %s %s\\n\" \"$n\" \"$BASHPID\" >> events' 'sleep \"$delay\"' 'printf \"END %s\\n\" \"$n\" >> events' | sudo tee /home/ll-s7/job.sh > /dev/null && sudo chown ll-s7:ll-s7 /home/ll-s7/job.sh && sudo chmod 0700 /home/ll-s7/job.sh; sudo runuser -u ll-s7 -- sh -c 'printf \"1\\n\" > /home/ll-s7/delay'",
+      "explanation": "Only1/6-second delay; four runs/eight short event lines maximum.",
+      "expected": "Finite work/output."
+    },
+    {
+      "command": "printf '%s\\n' '[Unit]' 'Description=Disposable scheduling practice' '[Service]' Type=exec User=ll-s7 Group=ll-s7 WorkingDirectory=/home/ll-s7 'ExecStart=/usr/bin/timeout -k 1s 10s /home/ll-s7/job.sh' UMask=0077 RuntimeMaxSec=8s MemoryMax=64M TasksMax=16 StandardOutput=null StandardError=journal | sudo tee /etc/systemd/system/ll-s7.service > /dev/null; printf '%s\\n' '[Unit]' 'Description=Disposable calendar practice' '[Timer]' 'OnCalendar=*-*-* *:*:0/10' AccuracySec=1us Persistent=true Unit=ll-s7.service '[Install]' WantedBy=timers.target | sudo tee /etc/systemd/system/ll-s7.timer > /dev/null; printf '%s\\n' '[Unit]' 'Description=Disposable calendar practice' '[Timer]' 'OnCalendar=*-*-* *:*:0/2' AccuracySec=1us Persistent=false Unit=ll-s7.service '[Install]' WantedBy=timers.target | sudo tee /etc/systemd/system/ll-s7-overlap.timer > /dev/null",
+      "explanation": "Persistent10second and nonpersistent2second timers share one service.",
+      "expected": "Type=exec,8s/64MiB/16tasks."
+    },
+    {
+      "command": "sudo systemctl --no-pager daemon-reload; sudo systemctl --no-pager start ll-s7.timer; end=$((SECONDS+15)); until sudo test -s /home/ll-s7/count; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo systemctl --no-pager stop ll-s7.timer; end=$((SECONDS+10)); while systemctl --no-pager is-active --quiet ll-s7.service; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; before=$(sudo cat /home/ll-s7/count); sleep 25; sudo cat /home/ll-s7/count",
+      "explanation": "Stop after a prior run, wait25 real seconds over multiple missed slots.",
+      "expected": "Stopped count unchanged."
+    },
+    {
+      "command": "end=$((SECONDS+12)); until test \"$(( $(date +%s) % 10 ))\" -eq 2; do test \"$SECONDS\" -lt \"$end\" || break; sleep 0.1; done; sudo systemctl --no-pager start ll-s7.timer; end=$((SECONDS+3)); until test $(sudo cat /home/ll-s7/count) -gt \"$before\"; do test \"$SECONDS\" -lt \"$end\" || break; sleep 0.1; done; sudo systemctl --no-pager stop ll-s7.timer; printf \"before=%s after=%s\\n\" \"$before\" \"$(sudo cat /home/ll-s7/count)\"; sudo cat /home/ll-s7/events",
+      "explanation": "Align away from next regular slot; reactivate briefly.",
+      "expected": "One catch-up increment, not each missed slot."
+    },
+    {
+      "command": "end=$((SECONDS+10)); while systemctl --no-pager is-active --quiet ll-s7.service; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo runuser -u ll-s7 -- sh -c 'printf \"0\\n\" > /home/ll-s7/count; : > /home/ll-s7/events; printf \"6\\n\" > /home/ll-s7/delay'; sudo systemctl --no-pager start ll-s7-overlap.timer; end=$((SECONDS+10)); until test \"$(systemctl --no-pager show ll-s7.service -p MainPID --value)\" -gt 0; do test \"$SECONDS\" -lt \"$end\" || break; sleep 0.1; done; worker=$(systemctl --no-pager show ll-s7.service -p MainPID --value); sleep 3; current_worker=$(systemctl --no-pager show ll-s7.service -p MainPID --value); active_count=$(sudo cat /home/ll-s7/count); printf \"worker=%s current=%s count=%s\\n\" \"$worker\" \"$(systemctl --no-pager show ll-s7.service -p MainPID --value)\" \"$(sudo cat /home/ll-s7/count)\"; sudo systemctl --no-pager stop ll-s7-overlap.timer; end=$((SECONDS+10)); while systemctl --no-pager is-active --quiet ll-s7.service; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo cat /home/ll-s7/events",
+      "explanation": "6second worker spans2second slots; capture live PID/count after3seconds then stop further scheduling.",
+      "expected": "Same active PID/count1; BEGIN1 then END1, no second instance."
+    }
+  ],
+  "hints": [
+    "Persistent applies to calendar timers only.",
+    "Use real elapsed intervals; do not move clocks.",
+    "An associated active service is left alone; independent services/cron are not universally serialized."
+  ],
+  "review": [
+    "Stopped count and single catch-up before regular slot.",
+    "Live same PID/count and ordered BEGIN/END.",
+    "Loaded bounds and capped events."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}

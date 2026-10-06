@@ -8,22 +8,22 @@ from learning_lab.vm_preview.policy import image_spec
 from learning_lab.vm_preview.sessions import Sessions
 from bash_guest_fixtures import COMMANDS,SCRIPT_ROWS,UNIT
 class BashUnitTests(unittest.TestCase):
- def test_exact_bounds_and_all_44_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(5,16,44))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8]);self.assertEqual(len(registry.entries()),44)
- def test_reject_45_before_reading_fifth_unit_lessons(self):
+ def test_exact_bounds_and_all_52_lessons(self):
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(6,16,52))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8]);self.assertEqual(len(registry.entries()),52)
+ def test_reject_53_before_reading_sixth_unit_lessons(self):
   original=registry._read;reads=[]
   def read(name):
    reads.append(name);d=original(name)
-   if name=='users-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
+   if name=='scheduling-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
    return d
   registry._bundle.cache_clear()
   try:
    with patch.object(registry,'_read',side_effect=read):
-    with self.assertRaisesRegex(ValueError,'44'):registry.units()
-   self.assertNotIn('real-linux-users-inspect.json',reads)
+    with self.assertRaisesRegex(ValueError,'52'):registry.units()
+   self.assertNotIn('real-linux-schedule-inspect.json',reads)
   finally:registry._bundle.cache_clear()
- def test_reject_sixth_unit_before_resources(self):
+ def test_reject_seventh_unit_before_resources(self):
   original=registry._read;reads=[]
   def read(name):
    reads.append(name);d=original(name)
@@ -38,7 +38,7 @@ class BashUnitTests(unittest.TestCase):
  def test_existing_controller_images_and_24_lessons_exact_bytes(self):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
  def test_exact_old_catalog_projection(self):
-  c=json.loads(resource('image-catalog.json'));new=set(COMMANDS)|{e['id'] for e in registry.catalog('linux-users-groups-access')['entries']}
+  c=json.loads(resource('image-catalog.json'));new=set(COMMANDS)|{e['id'] for e in registry.catalog('linux-users-groups-access')['entries']}|{e['id'] for e in registry.catalog('linux-scheduling-automation')['entries']}
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for i in c['images']:i['lessons']=[l for l in i['lessons'] if l['id'] not in new]
   for name in ('default_images','default_lessons'):c[name]={k:v for k,v in c[name].items() if k not in new}

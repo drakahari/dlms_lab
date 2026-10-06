@@ -1,0 +1,48 @@
+{
+  "id": "real-linux-schedule-diagnose",
+  "content_version": "1.0.0",
+  "title": "Diagnose cron environment and access faults",
+  "goal": "Repair lookup and executable access under cron environment.",
+  "challenge": "Use the supplied faulty fixture. Diagnose lookup and access, repair narrowly and prove actual cron success. Do not broaden world permissions or test only as root.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-s4 && ! getent group ll-s4 && test ! -e /home/ll-s4 && sudo useradd -m -U -s /bin/bash ll-s4",
+      "explanation": "Guard fixture.",
+      "expected": "Fresh ll-s4."
+    },
+    {
+      "command": "printf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' 'cd /home/ll-s4 || exit 3' 'report-helper > report.txt' | sudo tee /home/ll-s4/job.sh > /dev/null && sudo chown ll-s4:ll-s4 /home/ll-s4/job.sh && sudo chmod 0700 /home/ll-s4/job.sh",
+      "explanation": "Incorrect PATH assumption.",
+      "expected": "Faulty bounded job."
+    },
+    {
+      "command": "sudo runuser -u ll-s4 -- mkdir /home/ll-s4/bin; printf '%s\\n' '#!/bin/bash' 'printf \"user=%s\\n\" \"$(id -un)\"' | sudo tee /home/ll-s4/bin/report-helper > /dev/null && sudo chown ll-s4:ll-s4 /home/ll-s4/bin/report-helper && sudo chmod 0600 /home/ll-s4/bin/report-helper",
+      "explanation": "Private helper without execute.",
+      "expected": "Helper exists, mode600."
+    },
+    {
+      "command": "sudo test ! -e /var/spool/cron/crontabs/ll-s4 && printf '%s\\n' 'MAILTO=\"\"' 'SHELL=/bin/sh' 'PATH=/usr/bin:/bin' '* * * * * umask 077; /usr/bin/timeout -k 1s 5s /home/ll-s4/job.sh > /home/ll-s4/stdout.txt 2> /home/ll-s4/error.txt; echo $? > /home/ll-s4/status.txt' | sudo crontab -u ll-s4 -; end=$((SECONDS+85)); until sudo test -s /home/ll-s4/error.txt; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo cat /home/ll-s4/error.txt",
+      "explanation": "Observe real cron error.",
+      "expected": "Command not found,127; empty report is not success."
+    },
+    {
+      "command": "sudo sed -i.bak 's#^report-helper#/home/ll-s4/bin/report-helper#' /home/ll-s4/job.sh; sudo runuser -u ll-s4 -- env -i HOME=/home/ll-s4 PATH=/usr/bin:/bin /bin/bash /home/ll-s4/job.sh; printf 'status=%s\\n' \"$?\"",
+      "explanation": "Repair lookup then test minimal environment.",
+      "expected": "Permission denied,126; absolute path does not fix mode."
+    },
+    {
+      "command": "sudo chmod 0700 /home/ll-s4/bin/report-helper; end=$((SECONDS+85)); until sudo test -s /home/ll-s4/report.txt; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo runuser -u ll-s4 -- cat /home/ll-s4/report.txt; sudo stat -c \"%U:%G %a %s\" /home/ll-s4/report.txt",
+      "explanation": "Repair only owner execute; wait for actual cron.",
+      "expected": "Valid ll-s4 line, error overwritten empty."
+    }
+  ],
+  "hints": [
+    "Read error first.",
+    "Path and permission faults are separate.",
+    "Owner execute, not chmod777."
+  ],
+  "review": [
+    "Cron error, minimal-env127/126, final real cron report/empty error."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}

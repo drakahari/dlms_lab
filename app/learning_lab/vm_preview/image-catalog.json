@@ -210,6 +210,38 @@
         {
           "id": "real-linux-users-repair",
           "sha256": "0e5db569fe8136f0b9af0f06fa1ac98ff8106737c5c715e9d7ef68263fa3c8dd"
+        },
+        {
+          "id": "real-linux-schedule-inspect",
+          "sha256": "242eef893650db4612e4bc74b92d14aa1eff3b886e931482d8cd51939fbc4c7a"
+        },
+        {
+          "id": "real-linux-schedule-report",
+          "sha256": "e0354b247a9ceaaa2fab712ee40d54c813031749883e24331cf5c79cbafede48"
+        },
+        {
+          "id": "real-linux-schedule-cron",
+          "sha256": "827965f5a29c3258622c52853a65d820a80d17cf0d822a0a9e7e1f4478d42940"
+        },
+        {
+          "id": "real-linux-schedule-diagnose",
+          "sha256": "53f814911f977f0d36ee05e5b5acc01f7293cfc01c2260d96a95c8baff6c8074"
+        },
+        {
+          "id": "real-linux-schedule-monotonic",
+          "sha256": "461cc032f0624bf21a0c22bf7deceb5fda5b57068649fe8c6452180b0e5473af"
+        },
+        {
+          "id": "real-linux-schedule-calendar",
+          "sha256": "62e4c7b2e6f31c26d868a9c5bf2438b1bd1604e4fc22537a972620c11f5d5229"
+        },
+        {
+          "id": "real-linux-schedule-persistence",
+          "sha256": "4857022ec6923b15dfb517ecc88886214d2444f0a6e737b20c9b5534c9ae1e26"
+        },
+        {
+          "id": "real-linux-schedule-assessment",
+          "sha256": "2e6714cf6309f931d8cf463268400122a188a066424bfff9dfe191208bfcbf8d"
         }
       ]
     }
@@ -478,6 +510,54 @@
       "sha256": "0e5db569fe8136f0b9af0f06fa1ac98ff8106737c5c715e9d7ef68263fa3c8dd",
       "resource": "real-linux-users-repair.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-schedule-inspect",
+      "sha256": "242eef893650db4612e4bc74b92d14aa1eff3b886e931482d8cd51939fbc4c7a",
+      "state": "active",
+      "resource": "real-linux-schedule-inspect.json"
+    },
+    {
+      "id": "real-linux-schedule-report",
+      "sha256": "e0354b247a9ceaaa2fab712ee40d54c813031749883e24331cf5c79cbafede48",
+      "state": "active",
+      "resource": "real-linux-schedule-report.json"
+    },
+    {
+      "id": "real-linux-schedule-cron",
+      "sha256": "827965f5a29c3258622c52853a65d820a80d17cf0d822a0a9e7e1f4478d42940",
+      "state": "active",
+      "resource": "real-linux-schedule-cron.json"
+    },
+    {
+      "id": "real-linux-schedule-diagnose",
+      "sha256": "53f814911f977f0d36ee05e5b5acc01f7293cfc01c2260d96a95c8baff6c8074",
+      "state": "active",
+      "resource": "real-linux-schedule-diagnose.json"
+    },
+    {
+      "id": "real-linux-schedule-monotonic",
+      "sha256": "461cc032f0624bf21a0c22bf7deceb5fda5b57068649fe8c6452180b0e5473af",
+      "state": "active",
+      "resource": "real-linux-schedule-monotonic.json"
+    },
+    {
+      "id": "real-linux-schedule-calendar",
+      "sha256": "62e4c7b2e6f31c26d868a9c5bf2438b1bd1604e4fc22537a972620c11f5d5229",
+      "state": "active",
+      "resource": "real-linux-schedule-calendar.json"
+    },
+    {
+      "id": "real-linux-schedule-persistence",
+      "sha256": "4857022ec6923b15dfb517ecc88886214d2444f0a6e737b20c9b5534c9ae1e26",
+      "state": "active",
+      "resource": "real-linux-schedule-persistence.json"
+    },
+    {
+      "id": "real-linux-schedule-assessment",
+      "sha256": "2e6714cf6309f931d8cf463268400122a188a066424bfff9dfe191208bfcbf8d",
+      "state": "active",
+      "resource": "real-linux-schedule-assessment.json"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -525,7 +605,15 @@
     "real-linux-users-shared": "ce4ccd145f5f1f027d8ce5616fb3b409d4042abb6e5a85e465df0e9b031e8a84",
     "real-linux-users-umask": "554866c585c53e3ba2574f8b9e441003f21da83f330771311bee7716cd8341fc",
     "real-linux-users-restrictions": "8f1cadfa7b5be11e4281c4f3b599fdc6e08fab477b43b9fcd1c0ef4e5771adda",
-    "real-linux-users-repair": "0e5db569fe8136f0b9af0f06fa1ac98ff8106737c5c715e9d7ef68263fa3c8dd"
+    "real-linux-users-repair": "0e5db569fe8136f0b9af0f06fa1ac98ff8106737c5c715e9d7ef68263fa3c8dd",
+    "real-linux-schedule-inspect": "242eef893650db4612e4bc74b92d14aa1eff3b886e931482d8cd51939fbc4c7a",
+    "real-linux-schedule-report": "e0354b247a9ceaaa2fab712ee40d54c813031749883e24331cf5c79cbafede48",
+    "real-linux-schedule-cron": "827965f5a29c3258622c52853a65d820a80d17cf0d822a0a9e7e1f4478d42940",
+    "real-linux-schedule-diagnose": "53f814911f977f0d36ee05e5b5acc01f7293cfc01c2260d96a95c8baff6c8074",
+    "real-linux-schedule-monotonic": "461cc032f0624bf21a0c22bf7deceb5fda5b57068649fe8c6452180b0e5473af",
+    "real-linux-schedule-calendar": "62e4c7b2e6f31c26d868a9c5bf2438b1bd1604e4fc22537a972620c11f5d5229",
+    "real-linux-schedule-persistence": "4857022ec6923b15dfb517ecc88886214d2444f0a6e737b20c9b5534c9ae1e26",
+    "real-linux-schedule-assessment": "2e6714cf6309f931d8cf463268400122a188a066424bfff9dfe191208bfcbf8d"
   },
   "releases": [],
   "keys": [],
@@ -573,6 +661,14 @@
     "real-linux-users-shared": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-users-umask": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-users-restrictions": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
-    "real-linux-users-repair": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
+    "real-linux-users-repair": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-inspect": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-report": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-cron": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-diagnose": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-monotonic": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-calendar": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-persistence": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-schedule-assessment": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
   }
 }

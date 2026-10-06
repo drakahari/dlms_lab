@@ -20,6 +20,10 @@
     {
       "id": "linux-users-groups-access",
       "resource": "users-unit.json"
+    },
+    {
+      "id": "linux-scheduling-automation",
+      "resource": "scheduling-unit.json"
     }
   ]
 }

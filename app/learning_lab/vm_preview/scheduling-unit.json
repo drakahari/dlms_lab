@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "id": "linux-scheduling-automation",
+  "title": "Scheduling & Operational Automation: Cron and systemd Timers",
+  "purpose": "Eight connected offline scheduler exercises. Sequence guides practice, not a forced unlock.",
+  "prerequisites": "Earlier Bash, users/groups and service-unit skills; unchanged approved administrator image. No at, credentials, networking or clock changes.",
+  "coverage": "LPIC-1 v5.0 107.2 partial; 105.2/108.2 and LPIC-2 v4.5 202.1 reinforcement only. At/access policies and full coverage remain missing. Self-reviewed, unscored.",
+  "entries": [
+    {
+      "id": "real-linux-schedule-inspect",
+      "resource": "real-linux-schedule-inspect.json",
+      "description": "Separate schedule, clock, loaded limits and job identity.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed."
+      ],
+      "observations": [
+        "Retain date/timezone, tools, loaded state and actual ll-s1 id.",
+        "Distinguish trigger, process exit and valid report."
+      ],
+      "questions": [
+        "Who runs cron itself versus a user-crontab command?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "Inspect sudo crontab -u ll-s1 -l. If it contains only your practice entry, sudo crontab -u ll-s1 -r. This prevents future runs, not an already-running job.",
+        "Inspect pgrep -u ll-s1 -a; wait for your bounded job to finish. Only when no processes remain: sudo userdel -r ll-s1. Verify ! getent passwd ll-s1; test ! -e /home/ll-s1. Repeat cleanup conditionally; never remove learner."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    },
+    {
+      "id": "real-linux-schedule-report",
+      "resource": "real-linux-schedule-report.json",
+      "description": "Produce one private two-line report under its intended account.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed."
+      ],
+      "observations": [
+        "Two runs; private owner/mode; root status2."
+      ],
+      "questions": [
+        "Why overwrite rather than append forever?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "Inspect sudo crontab -u ll-s2 -l. If it contains only your practice entry, sudo crontab -u ll-s2 -r. This prevents future runs, not an already-running job.",
+        "Inspect pgrep -u ll-s2 -a; wait for your bounded job to finish. Only when no processes remain: sudo userdel -r ll-s2. Verify ! getent passwd ll-s2; test ! -e /home/ll-s2. Repeat cleanup conditionally; never remove learner."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    },
+    {
+      "id": "real-linux-schedule-cron",
+      "resource": "real-linux-schedule-cron.json",
+      "description": "Observe and remove one named user cron job.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed."
+      ],
+      "observations": [
+        "Exact entry, real report/ownership and removal."
+      ],
+      "questions": [
+        "How can piping into crontab replace unrelated jobs?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "Inspect sudo crontab -u ll-s3 -l. If it contains only your practice entry, sudo crontab -u ll-s3 -r. This prevents future runs, not an already-running job.",
+        "Inspect pgrep -u ll-s3 -a; wait for your bounded job to finish. Only when no processes remain: sudo userdel -r ll-s3. Verify ! getent passwd ll-s3; test ! -e /home/ll-s3. Repeat cleanup conditionally; never remove learner."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    },
+    {
+      "id": "real-linux-schedule-diagnose",
+      "resource": "real-linux-schedule-diagnose.json",
+      "description": "Repair lookup and executable access under cron environment.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed.",
+        "Challenge starting conditions only, not repairs:\n! getent passwd ll-s4 && ! getent group ll-s4 && test ! -e /home/ll-s4 && sudo useradd -m -U -s /bin/bash ll-s4\nprintf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' 'cd /home/ll-s4 || exit 3' 'report-helper > report.txt' | sudo tee /home/ll-s4/job.sh > /dev/null && sudo chown ll-s4:ll-s4 /home/ll-s4/job.sh && sudo chmod 0700 /home/ll-s4/job.sh\nsudo runuser -u ll-s4 -- mkdir /home/ll-s4/bin; printf '%s\\n' '#!/bin/bash' 'printf \"user=%s\\n\" \"$(id -un)\"' | sudo tee /home/ll-s4/bin/report-helper > /dev/null && sudo chown ll-s4:ll-s4 /home/ll-s4/bin/report-helper && sudo chmod 0600 /home/ll-s4/bin/report-helper\nsudo test ! -e /var/spool/cron/crontabs/ll-s4 && printf '%s\\n' 'MAILTO=\"\"' 'SHELL=/bin/sh' 'PATH=/usr/bin:/bin' '* * * * * umask 077; /usr/bin/timeout -k 1s 5s /home/ll-s4/job.sh > /home/ll-s4/stdout.txt 2> /home/ll-s4/error.txt; echo $? > /home/ll-s4/status.txt' | sudo crontab -u ll-s4 -; end=$((SECONDS+85)); until sudo test -s /home/ll-s4/error.txt; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo cat /home/ll-s4/error.txt"
+      ],
+      "observations": [
+        "Cron error, minimal-env127/126, final real cron report/empty error."
+      ],
+      "questions": [
+        "Why can root-only testing mislead?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "Inspect sudo crontab -u ll-s4 -l. If it contains only your practice entry, sudo crontab -u ll-s4 -r. This prevents future runs, not an already-running job.",
+        "Inspect pgrep -u ll-s4 -a; wait for your bounded job to finish. Only when no processes remain: sudo userdel -r ll-s4. Verify ! getent passwd ll-s4; test ! -e /home/ll-s4. Repeat cleanup conditionally; never remove learner."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    },
+    {
+      "id": "real-linux-schedule-monotonic",
+      "resource": "real-linux-schedule-monotonic.json",
+      "description": "Demonstrate a finite user timer and actual runtime limit.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed."
+      ],
+      "observations": [
+        "Learner report and loaded properties.",
+        "Actual timeout with configured2s and no child."
+      ],
+      "questions": [
+        "Why distrust properties read after collection?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "systemctl --no-pager --user stop ll-s5.timer ll-s5.service ll-s5-timeout.service; systemctl --no-pager --user reset-failed ll-s5-timeout.service; rm -- \"$HOME/ll-s5/job.sh\" \"$HOME/ll-s5/report.txt\"; rmdir \"$HOME/ll-s5\". Inspect named units; no linger/account edits."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    },
+    {
+      "id": "real-linux-schedule-calendar",
+      "resource": "real-linux-schedule-calendar.json",
+      "description": "Schedule a system timer with an unprivileged job.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed."
+      ],
+      "observations": [
+        "Loaded bounds, trigger, status0, private ll-s6 report."
+      ],
+      "questions": [
+        "What if a timer fires into a job without write access?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "sudo systemctl --no-pager disable --now ll-s6.timer; sudo systemctl --no-pager stop ll-s6.service. With timer inactive: sudo systemctl --no-pager clean --what=state ll-s6.timer; sudo rm -- /etc/systemd/system/ll-s6.timer /etc/systemd/system/ll-s6.service; sudo systemctl --no-pager daemon-reload. Inspect/reset only this service if failed.",
+        "Inspect sudo crontab -u ll-s6 -l. If it contains only your practice entry, sudo crontab -u ll-s6 -r. This prevents future runs, not an already-running job.",
+        "Inspect pgrep -u ll-s6 -a; wait for your bounded job to finish. Only when no processes remain: sudo userdel -r ll-s6. Verify ! getent passwd ll-s6; test ! -e /home/ll-s6. Repeat cleanup conditionally; never remove learner."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    },
+    {
+      "id": "real-linux-schedule-persistence",
+      "resource": "real-linux-schedule-persistence.json",
+      "description": "Prove one catch-up and active-service single-instance behavior.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed."
+      ],
+      "observations": [
+        "Stopped count and single catch-up before regular slot.",
+        "Live same PID/count and ordered BEGIN/END.",
+        "Loaded bounds and capped events."
+      ],
+      "questions": [
+        "Why is catch-up not replay?",
+        "Why does RemainAfterExit prevent automatic repeated activation?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "sudo systemctl --no-pager stop ll-s7.timer ll-s7-overlap.timer ll-s7.service; sudo systemctl --no-pager clean --what=state ll-s7.timer; sudo rm -- /etc/systemd/system/ll-s7.timer /etc/systemd/system/ll-s7-overlap.timer /etc/systemd/system/ll-s7.service; sudo systemctl --no-pager daemon-reload. Inspect pgrep -u ll-s7 -a then sudo userdel -r ll-s7. Repeat conditionally; retain observations first."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    },
+    {
+      "id": "real-linux-schedule-assessment",
+      "resource": "real-linux-schedule-assessment.json",
+      "description": "Repair identity/access and retain a concise operational handover.",
+      "objectives": [
+        "LPIC-1 v5.0 107.2 partial; 105.2/108.2 reinforcement"
+      ],
+      "materials": [
+        "Guest-only administration: sudo, never host administration. No learner/root credentials, sudoers, account-policy, networking or clock changes. Lessons are display-only; the app does not execute these instructions.",
+        "Begin on a fresh lesson disk. Stop on name/path/unit/crontab collisions. Inspect and clean only your exact disposable fixture before repeating; never adopt another account or replace an unrelated crontab.",
+        "Enter the short printf lines manually or use the installed vi. No clipboard sharing is assumed.",
+        "Challenge starting conditions only, not repairs:\n! getent passwd ll-s8 && ! getent group ll-s8 && test ! -e /home/ll-s8 && sudo useradd -m -U -s /bin/bash ll-s8 && test ! -e /etc/systemd/system/ll-s8.service && test ! -e /etc/systemd/system/ll-s8.timer && test \"$(systemctl --no-pager show ll-s8.service -p LoadState --value)\" = not-found && test \"$(systemctl --no-pager show ll-s8.timer -p LoadState --value)\" = not-found\nprintf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' '[ \"$(id -un)\" = ll-s8 ] || exit 2' 'cd /home/ll-s8 || exit 3' 'printf \"user=%s\\n\" \"$(id -un)\" > report.txt &&' 'printf \"stamp=%s\\n\" \"$(date -Is)\" >> report.txt' | sudo tee /home/ll-s8/job.sh > /dev/null && sudo chown ll-s8:ll-s8 /home/ll-s8/job.sh && sudo chmod 0700 /home/ll-s8/job.sh; sudo touch /home/ll-s8/report.txt; sudo chmod 0600 /home/ll-s8/report.txt\nprintf '%s\\n' '[Unit]' 'Description=Disposable scheduling practice' '[Service]' Type=exec User=root Group=root WorkingDirectory=/home/ll-s8 'ExecStart=/usr/bin/timeout -k 1s 5s /home/ll-s8/job.sh' UMask=0077 RuntimeMaxSec=6s MemoryMax=64M TasksMax=16 StandardOutput=null StandardError=journal | sudo tee /etc/systemd/system/ll-s8.service > /dev/null; printf '%s\\n' '[Unit]' 'Description=Disposable calendar practice' '[Timer]' 'OnCalendar=*-*-* *:*:0/10' AccuracySec=1us Persistent=false Unit=ll-s8.service '[Install]' WantedBy=timers.target | sudo tee /etc/systemd/system/ll-s8.timer > /dev/null; sudo systemctl --no-pager daemon-reload; sudo systemctl --no-pager start ll-s8.timer"
+      ],
+      "observations": [
+        "Failures2/1, actual calendar/cron success, narrow owner/mode.",
+        "Loaded limits and precise cleanup; trigger alone never sufficient."
+      ],
+      "questions": [
+        "Which evidence rules out a timer firing into failure?"
+      ],
+      "limitations": [
+        "Self-reviewed, unscored. A timer trigger is not proof of job success: inspect exit status, execution identity, output owner and contents.",
+        "Guest root can override guest-side limits. At is absent; no at, cron access-policy, mail delivery, DST or complete LPIC coverage.",
+        "Resume boots disk state, not RAM/jobs. VM disks/reports are excluded from profile backups; retain observations before confirmed Reset."
+      ],
+      "cleanup": [
+        "sudo systemctl --no-pager disable --now ll-s8.timer; sudo systemctl --no-pager stop ll-s8.service. With timer inactive: sudo systemctl --no-pager clean --what=state ll-s8.timer; sudo rm -- /etc/systemd/system/ll-s8.timer /etc/systemd/system/ll-s8.service; sudo systemctl --no-pager daemon-reload. Inspect/reset only this service if failed.",
+        "Inspect sudo crontab -u ll-s8 -l. If it contains only your practice entry, sudo crontab -u ll-s8 -r. This prevents future runs, not an already-running job.",
+        "Inspect pgrep -u ll-s8 -a; wait for your bounded job to finish. Only when no processes remain: sudo userdel -r ll-s8. Verify ! getent passwd ll-s8; test ! -e /home/ll-s8. Repeat cleanup conditionally; never remove learner."
+      ],
+      "troubleshooting": [
+        "Check LoadState=loaded before trusting configured properties. A collected transient unit can report defaults.",
+        "Check identity, absolute paths, environment and output access; root success is not job-account success.",
+        "On interruption stop only the named timer, inspect its exact service/process, wait for bounded work and perform exact cleanup. No broad process termination."
+      ]
+    }
+  ]
+}

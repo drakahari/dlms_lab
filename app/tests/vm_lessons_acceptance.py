@@ -135,10 +135,12 @@ with tempfile.TemporaryDirectory(prefix='vm-lessons-profile-') as d:
     w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   for size in ((800,600),(1280,900)):
    w.resize(*size);QTest.qWait(100)
-   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair'):
+   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment'):
     select(id);m=vm.manager
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      vm.reset('Learn',True);wait()
+    target=max(range(len(m.lesson['steps'])),key=lambda i:len(m.lesson['steps'][i]['command']))
+    for _ in range(target):vm.progress('next');wait()
     command=item('vmCommand');command.forceActiveFocus(Qt.TabFocusReason);QTest.qWait(100)
     check(id+' command focus '+str(size),command.hasActiveFocus())
     check(id+' command wraps without clipping '+str(size),command.property('contentWidth')<=command.width()+1 and command.property('contentHeight')<=command.height()+1)

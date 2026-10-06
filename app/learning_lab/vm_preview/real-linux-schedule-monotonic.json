@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-schedule-monotonic",
+  "content_version": "1.0.0",
+  "title": "Run a monotonic user timer",
+  "goal": "Demonstrate a finite user timer and actual runtime limit.",
+  "challenge": "Run delayed finite user work without account/linger changes. Prove identity/result and configured loaded limits, then an actual timeout. Explain why retained one-shot state is not a periodic pattern.",
+  "steps": [
+    {
+      "command": "test \"$(systemctl --no-pager --user show ll-s5.service -p LoadState --value)\" = not-found && test \"$(systemctl --no-pager --user show ll-s5.timer -p LoadState --value)\" = not-found && test \"$(systemctl --no-pager --user show ll-s5-timeout.service -p LoadState --value)\" = not-found && test ! -e \"$HOME/ll-s5\" && mkdir \"$HOME/ll-s5\"",
+      "explanation": "Private workspace, collision guard.",
+      "expected": "No account changes."
+    },
+    {
+      "command": "printf '%s\\n' '#!/bin/bash' 'PATH=/usr/bin:/bin' 'umask 077' 'printf \"user=%s\\n\" \"$(id -un)\" > /home/learner/ll-s5/report.txt' > \"$HOME/ll-s5/job.sh\" && chmod 0700 \"$HOME/ll-s5/job.sh\"",
+      "explanation": "Prepare finite private output.",
+      "expected": "One learner line."
+    },
+    {
+      "command": "systemd-run --user --property=Type=exec --unit=ll-s5 --on-active=3s --timer-property=AccuracySec=1us --timer-property=RemainAfterElapse=yes --property=RemainAfterExit=yes --property=RuntimeMaxSec=5s --property=MemoryMax=64M --property=TasksMax=16 --property=UMask=0077 /home/learner/ll-s5/job.sh",
+      "explanation": "Delay3seconds from activation; retain state for inspection.",
+      "expected": "Single-fire service active(exited)."
+    },
+    {
+      "command": "end=$((SECONDS+10)); until test -s \"$HOME/ll-s5/report.txt\"; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; cat \"$HOME/ll-s5/report.txt\"; systemctl --no-pager --user show ll-s5.service -p LoadState -p Type -p Result -p ExecMainStatus -p RuntimeMaxUSec -p MemoryMax -p TasksMax",
+      "explanation": "Inspect while loaded.",
+      "expected": "Success/0, RuntimeMax5s,64MiB,16tasks."
+    },
+    {
+      "command": "systemd-run --user --property=Type=exec --unit=ll-s5-timeout --property=RuntimeMaxSec=2s --property=MemoryMax=64M --property=TasksMax=16 /usr/bin/timeout -k 1s 10s /usr/bin/sleep 20; end=$((SECONDS+12)); until test \"$(systemctl --no-pager --user show ll-s5-timeout.service -p ActiveState --value)\" = failed; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; systemctl --no-pager --user show ll-s5-timeout.service -p LoadState -p Type -p Result -p RuntimeMaxUSec -p MemoryMax -p TasksMax -p MainPID",
+      "explanation": "Exercise2-second limit with independent10-second safety timeout.",
+      "expected": "Loaded failed Result=timeout around2seconds, MainPID0."
+    }
+  ],
+  "hints": [
+    "Monotonic delay needs no clock change.",
+    "RemainAfterExit retains this single-fire result, not repeating service behavior.",
+    "RuntimeMax does not limit Type=oneshot. These exercises explicitly set Type=exec; systemd-run otherwise defaults to Type=simple."
+  ],
+  "review": [
+    "Learner report and loaded properties.",
+    "Actual timeout with configured2s and no child."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}

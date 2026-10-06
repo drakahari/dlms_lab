@@ -1,0 +1,54 @@
+{
+  "id": "real-linux-schedule-assessment",
+  "content_version": "1.0.0",
+  "title": "Repair automation and hand over evidence",
+  "goal": "Repair identity/access and retain a concise operational handover.",
+  "challenge": "Use supplied faulty calendar fixture. Restore intended unprivileged identity/private output, prove timer result/loaded limits and cron execution, then exact cleanup. Retain fault/repair/evidence/limitations notes.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-s8 && ! getent group ll-s8 && test ! -e /home/ll-s8 && sudo useradd -m -U -s /bin/bash ll-s8 && test ! -e /etc/systemd/system/ll-s8.service && test ! -e /etc/systemd/system/ll-s8.timer && test \"$(systemctl --no-pager show ll-s8.service -p LoadState --value)\" = not-found && test \"$(systemctl --no-pager show ll-s8.timer -p LoadState --value)\" = not-found",
+      "explanation": "Guard account/unit names.",
+      "expected": "Fresh fixture."
+    },
+    {
+      "command": "printf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' '[ \"$(id -un)\" = ll-s8 ] || exit 2' 'cd /home/ll-s8 || exit 3' 'printf \"user=%s\\n\" \"$(id -un)\" > report.txt &&' 'printf \"stamp=%s\\n\" \"$(date -Is)\" >> report.txt' | sudo tee /home/ll-s8/job.sh > /dev/null && sudo chown ll-s8:ll-s8 /home/ll-s8/job.sh && sudo chmod 0700 /home/ll-s8/job.sh; sudo touch /home/ll-s8/report.txt; sudo chmod 0600 /home/ll-s8/report.txt",
+      "explanation": "Wrong root-owned output.",
+      "expected": "Root600 report, identity guard."
+    },
+    {
+      "command": "printf '%s\\n' '[Unit]' 'Description=Disposable scheduling practice' '[Service]' Type=exec User=root Group=root WorkingDirectory=/home/ll-s8 'ExecStart=/usr/bin/timeout -k 1s 5s /home/ll-s8/job.sh' UMask=0077 RuntimeMaxSec=6s MemoryMax=64M TasksMax=16 StandardOutput=null StandardError=journal | sudo tee /etc/systemd/system/ll-s8.service > /dev/null; printf '%s\\n' '[Unit]' 'Description=Disposable calendar practice' '[Timer]' 'OnCalendar=*-*-* *:*:0/10' AccuracySec=1us Persistent=false Unit=ll-s8.service '[Install]' WantedBy=timers.target | sudo tee /etc/systemd/system/ll-s8.timer > /dev/null; sudo systemctl --no-pager daemon-reload; sudo systemctl --no-pager start ll-s8.timer",
+      "explanation": "Start faulty timer.",
+      "expected": "Trigger but job exits2, not success."
+    },
+    {
+      "command": "sleep 12; systemctl --no-pager show ll-s8.service -p LoadState -p User -p Group -p RuntimeMaxUSec -p MemoryMax -p TasksMax -p Result -p ExecMainStatus; systemctl --no-pager show ll-s8.timer -p LoadState -p LastTriggerUSec -p NextElapseUSecRealtime; initial_status=$(systemctl --no-pager show ll-s8.service -p ExecMainStatus --value); sudo systemctl --no-pager stop ll-s8.timer; sudo sed -i 's/^User=root$/User=ll-s8/; s/^Group=root$/Group=ll-s8/' /etc/systemd/system/ll-s8.service; sudo systemctl --no-pager daemon-reload; sudo systemctl --no-pager start ll-s8.service; sleep 1; systemctl --no-pager show ll-s8.service -p LoadState -p User -p Group -p RuntimeMaxUSec -p MemoryMax -p TasksMax -p Result -p ExecMainStatus; systemctl --no-pager show ll-s8.timer -p LoadState -p LastTriggerUSec -p NextElapseUSecRealtime",
+      "explanation": "Repair identity; inspect remaining access failure.",
+      "expected": "Now status1: output root600 denies ll-s8."
+    },
+    {
+      "command": "sudo chown ll-s8:ll-s8 /home/ll-s8/report.txt; sudo chmod 0600 /home/ll-s8/report.txt; sudo systemctl --no-pager reset-failed ll-s8.service; sudo systemctl --no-pager start ll-s8.timer; end=$((SECONDS+85)); until sudo test -s /home/ll-s8/report.txt; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo runuser -u ll-s8 -- cat /home/ll-s8/report.txt; sudo stat -c \"%U:%G %a %s\" /home/ll-s8/report.txt; systemctl --no-pager show ll-s8.service -p LoadState -p User -p Group -p RuntimeMaxUSec -p MemoryMax -p TasksMax -p Result -p ExecMainStatus; systemctl --no-pager show ll-s8.timer -p LoadState -p LastTriggerUSec -p NextElapseUSecRealtime; sudo systemctl --no-pager stop ll-s8.timer",
+      "explanation": "Narrow ownership repair; observe real calendar run.",
+      "expected": "Private ll-s8 report, success/0."
+    },
+    {
+      "command": "sudo test ! -e /var/spool/cron/crontabs/ll-s8 && printf '%s\\n' 'MAILTO=\"\"' 'SHELL=/bin/sh' 'PATH=/usr/bin:/bin' '* * * * * umask 077; /usr/bin/timeout -k 1s 5s /home/ll-s8/job.sh > /home/ll-s8/stdout.txt 2> /home/ll-s8/error.txt; echo $? > /home/ll-s8/status.txt' | sudo crontab -u ll-s8 -; sudo runuser -u ll-s8 -- sh -c ': > /home/ll-s8/report.txt'; end=$((SECONDS+85)); until sudo test -s /home/ll-s8/report.txt; do test \"$SECONDS\" -lt \"$end\" || break; sleep 1; done; sudo runuser -u ll-s8 -- cat /home/ll-s8/report.txt; sudo stat -c \"%U:%G %a %s\" /home/ll-s8/report.txt; sudo crontab -u ll-s8 -r",
+      "explanation": "Timer stopped; test same job through cron without concurrent writers.",
+      "expected": "Actual report, own crontab removed."
+    },
+    {
+      "command": "printf '%s\\n' 'FAULT: identity/output owner' 'REPAIR: narrow User/Group/output ownership' 'EVIDENCE: loaded bounds, trigger, status0, report, cron' 'LIMIT: self-review, not universal overlap protection' 'CLEANUP: exact fixture only' > \"$HOME/ll-s8-handover.txt\"",
+      "explanation": "Replace outline with your actual observations.",
+      "expected": "Small handover, no verification score."
+    }
+  ],
+  "hints": [
+    "Inspect result and identity before repair.",
+    "Identity repair alone does not fix output ownership.",
+    "Stop timer before cron proof."
+  ],
+  "review": [
+    "Failures2/1, actual calendar/cron success, narrow owner/mode.",
+    "Loaded limits and precise cleanup; trigger alone never sufficient."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}

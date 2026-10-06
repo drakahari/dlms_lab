@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-schedule-inspect",
+  "content_version": "1.0.0",
+  "title": "Inspect schedulers, clocks and execution identities",
+  "goal": "Separate schedule, clock, loaded limits and job identity.",
+  "challenge": "Inspect cron/system and user timers without changing clocks or unrelated jobs. Prove a disposable execution identity and explain why LastTrigger alone is insufficient.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-s1 && ! getent group ll-s1 && test ! -e /home/ll-s1 && sudo useradd -m -U -s /bin/bash ll-s1",
+      "explanation": "Create a locked disposable account after collision guards.",
+      "expected": "Fresh ll-s1, no credentials."
+    },
+    {
+      "command": "date -Is; timedatectl status; systemctl --no-pager is-active cron; systemctl --no-pager list-timers --all; systemctl --no-pager --user list-timers --all",
+      "explanation": "Inspect scopes and clock without changing either.",
+      "expected": "Cron active; user manager available; lists can be empty."
+    },
+    {
+      "command": "command -v crontab systemctl systemd-run timeout; command -v at || true; sudo runuser -u ll-s1 -- id",
+      "explanation": "Check actual tools and identity.",
+      "expected": "At absent; id names ll-s1."
+    },
+    {
+      "command": "systemctl --no-pager show cron.service -p LoadState -p User -p Result; sudo crontab -u ll-s1 -l",
+      "explanation": "Inspect loaded metadata, not a collected transient service. Empty User means root for system services.",
+      "expected": "Loaded cron; no ll-s1 crontab."
+    }
+  ],
+  "hints": [
+    "Calendar and monotonic time differ.",
+    "Scheduler identity can differ from job identity.",
+    "Require loaded state before claiming configured limits."
+  ],
+  "review": [
+    "Retain date/timezone, tools, loaded state and actual ll-s1 id.",
+    "Distinguish trigger, process exit and valid report."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}

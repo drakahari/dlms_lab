@@ -1,0 +1,38 @@
+{
+  "id": "real-linux-schedule-report",
+  "content_version": "1.0.0",
+  "title": "Prepare a bounded, repeatable report job",
+  "goal": "Produce one private two-line report under its intended account.",
+  "challenge": "Create a repeatable finite job with explicit environment. Prove two valid runs and detect incorrect root invocation without damaging the report.",
+  "steps": [
+    {
+      "command": "! getent passwd ll-s2 && ! getent group ll-s2 && test ! -e /home/ll-s2 && sudo useradd -m -U -s /bin/bash ll-s2",
+      "explanation": "Guard fixture identity.",
+      "expected": "Locked ll-s2."
+    },
+    {
+      "command": "printf '%s\\n' '#!/bin/bash' PATH=/usr/bin:/bin 'umask 077' '[ \"$(id -un)\" = ll-s2 ] || exit 2' 'cd /home/ll-s2 || exit 3' 'printf \"user=%s\\n\" \"$(id -un)\" > report.txt &&' 'printf \"stamp=%s\\n\" \"$(date -Is)\" >> report.txt' | sudo tee /home/ll-s2/job.sh > /dev/null && sudo chown ll-s2:ll-s2 /home/ll-s2/job.sh && sudo chmod 0700 /home/ll-s2/job.sh",
+      "explanation": "Short script overwrites, uses deliberate PATH and refuses wrong identity.",
+      "expected": "Private two-line report, no unbounded append."
+    },
+    {
+      "command": "sudo runuser -u ll-s2 -- /usr/bin/timeout -k 1s 5s /home/ll-s2/job.sh; printf \"status=%s\\n\" \"$?\"; sudo runuser -u ll-s2 -- cat /home/ll-s2/report.txt; sudo stat -c \"%U:%G %a %s\" /home/ll-s2/report.txt",
+      "explanation": "Test actual account, not root.",
+      "expected": "Status0, owner ll-s2, mode600, under256 bytes."
+    },
+    {
+      "command": "sudo runuser -u ll-s2 -- /usr/bin/timeout -k 1s 5s /home/ll-s2/job.sh; sudo /home/ll-s2/job.sh; printf \"wrong identity status=%s\\n\" \"$?\"",
+      "explanation": "Repeat safely, deliberately try wrong root identity.",
+      "expected": "Root returns2 without replacing report."
+    }
+  ],
+  "hints": [
+    "Set PATH inside job.",
+    "Check contents/owner as well as status.",
+    "Root can bypass permissions; use ll-s2."
+  ],
+  "review": [
+    "Two runs; private owner/mode; root status2."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 partial cron/systemd timers; 105.2/108.2 reinforcement; self-reviewed, unscored. No at or full objective coverage."
+}
