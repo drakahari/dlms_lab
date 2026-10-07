@@ -32,6 +32,10 @@
     {
       "id": "linux-system-discovery-package-fundamentals",
       "resource": "discovery-unit.json"
+    },
+    {
+      "id": "linux-storage-filesystems-mounts-safe-maintenance",
+      "resource": "storage-unit.json"
     }
   ]
 }

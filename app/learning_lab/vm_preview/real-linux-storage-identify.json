@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-storage-identify",
+  "content_version": "1.0.0",
+  "title": "Identify storage and protected targets",
+  "goal": "Separate the boot disk and existing mounts from an approved regular-file practice image.",
+  "challenge": "Write a small inventory naming the system disk, current root mount, free space and the permitted practice scope. Demonstrate rejection of a system-disk and unrelated-loop argument. No storage mutation is needed.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-storage-1; test \"$(id -un)\" = learner && test \"$(readlink -e /home/learner)\" = /home/learner && test ! -e \"$w\" && test ! -L \"$w\" && test \"$(df -Pk /home/learner | awk 'NR==2 {print $4}')\" -ge 1638400 && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && mkdir -m 0700 mnt",
+      "explanation": "Create a new private practice area. Stop on collision; never reuse an unknown directory.",
+      "expected": "At least 1600 MiB initially free; keep 1 GiB free throughout."
+    },
+    {
+      "command": "guard() { test \"$(id -un)\" = learner && test \"$w\" = /home/learner/ll-storage-1 && test \"$(pwd -P)\" = \"$w\" && test \"$(readlink -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a .)\" = learner:700 && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 1048576 || return 19; local f b limit; for f in ./* ./.[!.]* ./..?*; do test -e \"$f\" || test -L \"$f\" || continue; b=${f#./}; case \"$b\" in mnt) test -d \"$f\" && test ! -L \"$f\" || return 19; continue;; disk.img|repair.img) limit=134217728;; command-output.tmp) limit=1048577;; partition.log|layout.log|mkfs.log|identity.log|expected.txt|expected.sha256|original.sha256|uuid.log|defect.log|check.log|repair.log|recheck.log|practice.fstab|live-fstab.sha256|mount.log|evidence.txt) limit=1048576;; *) return 19;; esac; test -f \"$f\" && test ! -L \"$f\" && test \"$(stat -c %h:%u \"$f\")\" = \"1:$(id -u)\" && test \"$(stat -c %s \"$f\")\" -le \"$limit\" || return 19; done; }; file_ok() { guard && case \"$1\" in disk.img|repair.img) test \"$(stat -c %s \"$1\")\" = 134217728;; *) return 19;; esac; }; run() { guard && test ! -e command-output.tmp && test ! -L command-output.tmp || return 19; (set -o noclobber; : > command-output.tmp) || return 19; local rc bytes; (set -o pipefail; sudo timeout -k 2s 30s bash -c 'ulimit -f 262144; exec \"$@\"' bash \"$@\" 2>&1 | head -c 1048577 > command-output.tmp); rc=$?; test ! -L command-output.tmp && test \"$(stat -c %h command-output.tmp)\" = 1 || return 19; bytes=$(stat -c %s command-output.tmp); head -c 1048576 command-output.tmp; rm -- command-output.tmp || return 19; test \"$bytes\" -le 1048576 || return 20; return \"$rc\"; }; guard",
+      "explanation": "Define file, space and bounded-operation guards. Guest root can override these accident-prevention checks.",
+      "expected": "Exact private workspace and allowed members only: two 128 MiB images;16 logs/notes <=1 MiB;30s plus2s worker grace;256 MiB regular-file limit;1 MiB captured output."
+    },
+    {
+      "command": "maps() { guard || return 19; case \"$1\" in disk.img|repair.img) sudo timeout -k 2s 15s losetup -n -O NAME -j \"$w/$1\";; *) return 19;; esac; }; nomap() { local v; v=$(maps \"$1\") || return 19; test -z \"$v\"; }; dev_ok() { file_ok \"$2\" && [[ \"$1\" =~ ^/dev/loop[0-9]+p1$ ]] || return 19; local l=${1%p1} v; v=$(maps \"$2\") || return 19; test \"$v\" = \"$l\" && test -b \"$1\" && test \"$(sudo timeout -k 2s 15s losetup -n -O BACK-FILE \"$l\")\" = \"$w/$2\" || return 19; v=$(sudo timeout -k 2s 15s losetup --raw -n -O BACK-INO,OFFSET,SIZELIMIT \"$l\") || return 19; test \"$v\" = \"$(stat -c %i \"$2\") 0 0\" && test \"$(timeout -k 2s 15s lsblk -nro PKNAME \"$1\")\" = \"${l#/dev/}\" && test \"$(cat /sys/class/block/${1#/dev/}/partition)\" = 1 && test \"$(cat /sys/class/block/${1#/dev/}/start)\" = 2048 && test \"$(sudo timeout -k 2s 15s blockdev --getsize64 \"$1\")\" = 125829120; }; mounted() { local mounts number; mounts=$(timeout -k 2s 15s findmnt -rn -o MAJ:MIN) || return 19; number=$(timeout -k 2s 15s lsblk -dnro MAJ:MIN \"$1\") || return 19; [[ \"$number\" =~ ^[0-9]+:[0-9]+$ ]] || return 19; grep -Fx \"$number\" <<< \"$mounts\" >/dev/null; }; off() { dev_ok \"$1\" \"$2\" || return 19; mounted \"$1\"; local rc=$?; test \"$rc\" = 1; }; target_ok() { guard && test -d mnt && test ! -L mnt && test \"$(readlink -e mnt)\" = \"$w/mnt\" || return 19; local targets contents; targets=$(timeout -k 2s 15s findmnt -rn -o TARGET) || return 19; if grep -Fx \"$w/mnt\" <<< \"$targets\" >/dev/null || grep -F \"$w/mnt/\" <<< \"$targets\" >/dev/null; then return 19; fi; contents=$(timeout -k 2s 15s find mnt -mindepth 1 -maxdepth 1 -print -quit) || return 19; test -z \"$contents\"; }; on() { dev_ok \"$1\" \"$2\" || return 19; local rows number; rows=$(timeout -k 2s 15s findmnt -rn -o MAJ:MIN,TARGET,FSROOT) || return 19; number=$(timeout -k 2s 15s lsblk -dnro MAJ:MIN \"$1\") || return 19; [[ \"$number\" =~ ^[0-9]+:[0-9]+$ ]] || return 19; test \"$(grep -E \"^$number \" <<< \"$rows\")\" = \"$number $w/mnt /\" && ! grep -F \" $w/mnt/\" <<< \"$rows\" >/dev/null; }; note_ok() { on \"$1\" \"$2\" && test -f mnt/note && test ! -L mnt/note && test \"$(stat -c %h mnt/note)\" = 1; }; true",
+      "explanation": "Bind each operation to a single backing-file mapping, zero offset, exact partition and exact mountpoint. Query errors refuse approval.",
+      "expected": "Wrong or duplicate mappings, substituted paths, occupied/nonempty mountpoints and mounted offline targets are refused."
+    },
+    {
+      "command": "guard && lsblk -o NAME,TYPE,SIZE,FSTYPE,MOUNTPOINTS && findmnt -n -o SOURCE,TARGET,FSTYPE,OPTIONS | head -n 12 && df -Pk .",
+      "explanation": "Read evidence; do not mutate the boot disk or any unrelated loop.",
+      "expected": "Guest system disk is protected; no raw disk target is authorized."
+    },
+    {
+      "command": "! dev_ok /dev/vda1 disk.img && ! dev_ok /dev/loop999p1 disk.img && printf \"Unapproved targets refused.\\n\"",
+      "explanation": "Prove refusal before invoking any destructive tool.",
+      "expected": "Both refusals succeed; these tests do not format either target."
+    }
+  ],
+  "hints": [
+    "A /dev name alone does not establish ownership.",
+    "Read lsblk and findmnt together.",
+    "Your permitted target is a regular file in this private workspace, not /dev/vda."
+  ],
+  "review": [
+    "Retain the listed observations and explain any failed checks. Completion is your self-review, not automatically verified assessment.",
+    "Separate the boot disk and existing mounts from an approved regular-file practice image.",
+    "Confirm exact cleanup and no unrelated target changes."
+  ],
+  "coverage": "LPIC-1 v5.0 / LPIC-2 v4.5: 102.1 introductory layout preparation; 104.3 / 203.1 partial device and mount inspection. Self-reviewed, unscored; no complete objective claim."
+}

@@ -9,7 +9,7 @@ from learning_lab.__main__ import build_application
 from learning_lab.vm_preview.bridge import VmBridge
 from learning_lab.vm_preview.registry import LEGACY_ID,catalog,entries,units
 from learning_lab.profile_backup import snapshot,write_backup,read_backup,restore
-p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add_argument('--native',action='store_true');p.add_argument('--evidence-root',type=Path,help='Existing owned directory for persistent screenshots/checks; profile fixtures stay temporary');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add_argument('--native',action='store_true');p.add_argument('--storage-only',action='store_true',help='Review changed storage resources plus shared lifecycle controls');p.add_argument('--evidence-root',type=Path,help='Existing owned directory for persistent screenshots/checks; profile fixtures stay temporary');a=p.parse_args()
 if a.evidence_root:
  assert a.evidence_root.is_absolute() and a.evidence_root.is_dir() and not a.evidence_root.is_symlink() and a.evidence_root.stat().st_uid==os.getuid()
 out=Path(tempfile.mkdtemp(prefix='vm-lessons-ui-',dir=a.evidence_root));sizes=[];messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
@@ -64,7 +64,7 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
   item('vmUnitChoice').forceActiveFocus(Qt.TabFocusReason)
   for key in (Qt.Key_Space,Qt.Key_Home,Qt.Key_Down,Qt.Key_Return):QTest.keyClick(w,key)
   QTest.qWait(100);wait();check('keyboard unit selection',vm.view['selected_lesson_id']==ids[8])
-  for id in ids:
+  for id in ([ids[0]]+[id for id in ids if id.startswith('real-linux-storage-')] if a.storage_only else ids):
    select(id);m=vm.manager
    check(id+' collection matches',vm.view['unit']['id']==next(u['id'] for u in units() if any(e['id']==id for e in u['entries'])))
    check(id+' unit selector visible',item('vmUnitChoice').width()>250)
@@ -125,7 +125,7 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
   # and reachable controls; no QML changes or native guest mocks-as-proof.
   for size in ((800,600),(1280,900)):
    w.resize(*size);QTest.qWait(100)
-   for id in ('real-linux-bash-guards','real-linux-bash-records','real-linux-bash-handover'):
+   for id in (() if a.storage_only else ('real-linux-bash-guards','real-linux-bash-records','real-linux-bash-handover')):
     select(id);m=vm.manager
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      m.reset('Learn',True);vm.refresh();wait()
@@ -152,7 +152,7 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
     w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   for size in ((800,600),(1280,900)):
    w.resize(*size);QTest.qWait(100)
-   for id in ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment','real-linux-backup-damage','real-linux-backup-access','real-linux-backup-assessment','real-linux-discovery-identity','real-linux-discovery-kernel','real-linux-discovery-boot','real-linux-discovery-libraries','real-linux-discovery-ownership','real-linux-discovery-integrity','real-linux-discovery-lifecycle','real-linux-discovery-repair'):
+   for id in ([id for id in ids if id.startswith('real-linux-storage-')] if a.storage_only else ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment','real-linux-backup-damage','real-linux-backup-access','real-linux-backup-assessment','real-linux-discovery-identity','real-linux-discovery-kernel','real-linux-discovery-boot','real-linux-discovery-libraries','real-linux-discovery-ownership','real-linux-discovery-integrity','real-linux-discovery-lifecycle','real-linux-discovery-repair',*[id for id in ids if id.startswith('real-linux-storage-')])):
     select(id);m=vm.manager
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      vm.reset('Learn',True);wait()

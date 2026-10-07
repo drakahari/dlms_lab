@@ -139,6 +139,10 @@ The existing administrator image also supports [Backup & Safe File Recovery](bac
 
 ## System discovery and package practice
 
-[System Discovery & Package Fundamentals](discovery-unit.md) requires its exact fresh package-administrator image. Eight units/68 lessons are bounded; existing image/session pins are unchanged. Missing images fail without substitution. Production admission remains disabled.
+[System Discovery & Package Fundamentals](discovery-unit.md) requires its exact fresh package-administrator image. Nine units/76 lessons are bounded; existing image/session pins are unchanged. Missing images fail without substitution. Production admission remains disabled.
 
 **Package image revision:** the original candidate is retained withdrawn after its inventory discrepancy. New discovery lessons select the separately finalized version2 image; old records are preserved without substitution. See [finalization evidence](discovery-acceptance.md).
+
+## Storage practice
+
+[Linux Storage: Filesystems, Mounts & Safe Maintenance](storage-unit.md) uses the existing administrator image. Only regular-file practice images inside the guest; no added QEMU disk or live-fstab edits. Read the strict target, UUID, reserve and offline-repair guards before writing. Completion remains self-reviewed/unscored.

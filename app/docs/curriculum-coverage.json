@@ -1,5 +1,5 @@
 {
-  "verified": "2026-10-06",
+  "verified": "2026-10-07",
   "sources": {
     "LPIC-1": {
       "version": "5.0",
@@ -51,9 +51,11 @@
     {
       "certification": "LPIC-1",
       "objective": "102.1",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated disk layout exercise."
+      "status": "Preparation only",
+      "units": [
+        "storage"
+      ],
+      "implemented_and_missing": "Bounded regular-file GPT sector/layout planning prepares for disk design. No system root/var/home/boot allocation, ESP, swap or LVM layout practice."
     },
     {
       "certification": "LPIC-1",
@@ -176,25 +178,30 @@
     {
       "certification": "LPIC-1",
       "objective": "104.1",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated partition/filesystem creation exercise."
+      "status": "Partial",
+      "units": [
+        "storage"
+      ],
+      "implemented_and_missing": "Regular-file GPT partition and ext4 creation with dynamic loop identity. No MBR, swap or other filesystem creation."
     },
     {
       "certification": "LPIC-1",
       "objective": "104.2",
-      "status": "Preparation only",
+      "status": "Partial",
       "units": [
-        "capacity"
+        "capacity",
+        "storage"
       ],
-      "implemented_and_missing": "Space/inode observations do not demonstrate filesystem checking or repair."
+      "implemented_and_missing": "Bounded ext4 offline check, copy-only controlled link-count repair, independent contents/metadata/access verification and reserve monitoring. No arbitrary corruption, XFS/Btrfs or exhaustion exercises."
     },
     {
       "certification": "LPIC-1",
       "objective": "104.3",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated mounting exercise."
+      "status": "Partial",
+      "units": [
+        "storage"
+      ],
+      "implemented_and_missing": "Explicit ext4 mount/unmount, ro/access diagnosis, unique UUID handling and separate private-fstab validation/explicit mount. No live fstab/boot mounting, removable user mounts or systemd mount units."
     },
     {
       "certification": "LPIC-1",
@@ -451,18 +458,21 @@
     {
       "certification": "LPIC-2",
       "objective": "203.1",
-      "status": "Preparation only",
+      "status": "Partial",
       "units": [
-        "capacity"
+        "capacity",
+        "storage"
       ],
-      "implemented_and_missing": "File space/inode observation; no filesystem mount/unmount administration."
+      "implemented_and_missing": "Ext4 mount/unmount, private-fstab validation and explicit mount, UUID ambiguity refusal and actual access verification. Swap and systemd mount units omitted."
     },
     {
       "certification": "LPIC-2",
       "objective": "203.2",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated filesystem maintenance exercise."
+      "status": "Partial",
+      "units": [
+        "storage"
+      ],
+      "implemented_and_missing": "Ext4 creation/superblock inspection, offline check and controlled repair copy with retained original and content/metadata/access expectations. No SMART, XFS, Btrfs or ZFS administration."
     },
     {
       "certification": "LPIC-2",

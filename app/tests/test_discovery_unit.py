@@ -8,12 +8,12 @@ from learning_lab.vm_preview.sessions import Sessions
 from discovery_guest_fixtures import COMMANDS,UNIT,CLEANUP,CHALLENGE_FAULTS
 class DiscoveryTests(unittest.TestCase):
  def test_capacity_and_unit_order(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(8,68,16))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8]);self.assertEqual(len(registry.entries()),68)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(9,76,16))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8]);self.assertEqual(len(registry.entries()),76)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def test_catalog_capacity_and_unrelated_bounds(self):
-  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(4,68,68));self.assertFalse(c.keys or c.releases)
-  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(68,68));self.assertLess(len(resource('image-catalog.json')),65536)
+  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(4,76,76));self.assertFalse(c.keys or c.releases)
+  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(76,76));self.assertLess(len(resource('image-catalog.json')),65536)
   data=json.loads(resource('image-catalog.json'))
   bad=copy.deepcopy(data);bad['lessons'].append(copy.deepcopy(bad['lessons'][0]))
   with self.assertRaisesRegex(ValueError,'count'):Catalog(bad)
@@ -35,6 +35,8 @@ class DiscoveryTests(unittest.TestCase):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
   c=json.loads(resource('image-catalog.json'));new=set(COMMANDS)
   c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1']
+  new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}
+  for image in c['images']:image['lessons']=[l for l in image['lessons'] if l['id'] not in new]
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for f in ('default_images','default_lessons'):c[f]={k:v for k,v in c[f].items() if k not in new}
   self.assertEqual(digest(c),OLD_CATALOG)

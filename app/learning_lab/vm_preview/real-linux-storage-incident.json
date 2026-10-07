@@ -1,0 +1,90 @@
+{
+  "id": "real-linux-storage-incident",
+  "content_version": "1.0.0",
+  "title": "Recover a bounded storage incident",
+  "goal": "Combine target validation, copy recovery, mount diagnosis and actual access verification.",
+  "challenge": "Diagnose and recover the bounded copy incident. Record target evidence, checker status, mount-option and permission failures, independent content/metadata comparison and actual learner access. Preserve the original and clean up only exact practice resources.",
+  "steps": [
+    {
+      "command": "w=/home/learner/ll-storage-8; test \"$(id -un)\" = learner && test \"$(readlink -e /home/learner)\" = /home/learner && test ! -e \"$w\" && test ! -L \"$w\" && test \"$(df -Pk /home/learner | awk 'NR==2 {print $4}')\" -ge 1638400 && mkdir -m 0700 -- \"$w\" && cd -- \"$w\" && mkdir -m 0700 mnt",
+      "explanation": "Create a new private practice area. Stop on collision; never reuse an unknown directory.",
+      "expected": "At least 1600 MiB initially free; keep 1 GiB free throughout."
+    },
+    {
+      "command": "guard() { test \"$(id -un)\" = learner && test \"$w\" = /home/learner/ll-storage-8 && test \"$(pwd -P)\" = \"$w\" && test \"$(readlink -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a .)\" = learner:700 && test \"$(df -Pk . | awk 'NR==2 {print $4}')\" -ge 1048576 || return 19; local f b limit; for f in ./* ./.[!.]* ./..?*; do test -e \"$f\" || test -L \"$f\" || continue; b=${f#./}; case \"$b\" in mnt) test -d \"$f\" && test ! -L \"$f\" || return 19; continue;; disk.img|repair.img) limit=134217728;; command-output.tmp) limit=1048577;; partition.log|layout.log|mkfs.log|identity.log|expected.txt|expected.sha256|original.sha256|uuid.log|defect.log|check.log|repair.log|recheck.log|practice.fstab|live-fstab.sha256|mount.log|evidence.txt) limit=1048576;; *) return 19;; esac; test -f \"$f\" && test ! -L \"$f\" && test \"$(stat -c %h:%u \"$f\")\" = \"1:$(id -u)\" && test \"$(stat -c %s \"$f\")\" -le \"$limit\" || return 19; done; }; file_ok() { guard && case \"$1\" in disk.img|repair.img) test \"$(stat -c %s \"$1\")\" = 134217728;; *) return 19;; esac; }; run() { guard && test ! -e command-output.tmp && test ! -L command-output.tmp || return 19; (set -o noclobber; : > command-output.tmp) || return 19; local rc bytes; (set -o pipefail; sudo timeout -k 2s 30s bash -c 'ulimit -f 262144; exec \"$@\"' bash \"$@\" 2>&1 | head -c 1048577 > command-output.tmp); rc=$?; test ! -L command-output.tmp && test \"$(stat -c %h command-output.tmp)\" = 1 || return 19; bytes=$(stat -c %s command-output.tmp); head -c 1048576 command-output.tmp; rm -- command-output.tmp || return 19; test \"$bytes\" -le 1048576 || return 20; return \"$rc\"; }; guard",
+      "explanation": "Define file, space and bounded-operation guards. Guest root can override these accident-prevention checks.",
+      "expected": "Exact private workspace and allowed members only: two 128 MiB images;16 logs/notes <=1 MiB;30s plus2s worker grace;256 MiB regular-file limit;1 MiB captured output."
+    },
+    {
+      "command": "maps() { guard || return 19; case \"$1\" in disk.img|repair.img) sudo timeout -k 2s 15s losetup -n -O NAME -j \"$w/$1\";; *) return 19;; esac; }; nomap() { local v; v=$(maps \"$1\") || return 19; test -z \"$v\"; }; dev_ok() { file_ok \"$2\" && [[ \"$1\" =~ ^/dev/loop[0-9]+p1$ ]] || return 19; local l=${1%p1} v; v=$(maps \"$2\") || return 19; test \"$v\" = \"$l\" && test -b \"$1\" && test \"$(sudo timeout -k 2s 15s losetup -n -O BACK-FILE \"$l\")\" = \"$w/$2\" || return 19; v=$(sudo timeout -k 2s 15s losetup --raw -n -O BACK-INO,OFFSET,SIZELIMIT \"$l\") || return 19; test \"$v\" = \"$(stat -c %i \"$2\") 0 0\" && test \"$(timeout -k 2s 15s lsblk -nro PKNAME \"$1\")\" = \"${l#/dev/}\" && test \"$(cat /sys/class/block/${1#/dev/}/partition)\" = 1 && test \"$(cat /sys/class/block/${1#/dev/}/start)\" = 2048 && test \"$(sudo timeout -k 2s 15s blockdev --getsize64 \"$1\")\" = 125829120; }; mounted() { local mounts number; mounts=$(timeout -k 2s 15s findmnt -rn -o MAJ:MIN) || return 19; number=$(timeout -k 2s 15s lsblk -dnro MAJ:MIN \"$1\") || return 19; [[ \"$number\" =~ ^[0-9]+:[0-9]+$ ]] || return 19; grep -Fx \"$number\" <<< \"$mounts\" >/dev/null; }; off() { dev_ok \"$1\" \"$2\" || return 19; mounted \"$1\"; local rc=$?; test \"$rc\" = 1; }; target_ok() { guard && test -d mnt && test ! -L mnt && test \"$(readlink -e mnt)\" = \"$w/mnt\" || return 19; local targets contents; targets=$(timeout -k 2s 15s findmnt -rn -o TARGET) || return 19; if grep -Fx \"$w/mnt\" <<< \"$targets\" >/dev/null || grep -F \"$w/mnt/\" <<< \"$targets\" >/dev/null; then return 19; fi; contents=$(timeout -k 2s 15s find mnt -mindepth 1 -maxdepth 1 -print -quit) || return 19; test -z \"$contents\"; }; on() { dev_ok \"$1\" \"$2\" || return 19; local rows number; rows=$(timeout -k 2s 15s findmnt -rn -o MAJ:MIN,TARGET,FSROOT) || return 19; number=$(timeout -k 2s 15s lsblk -dnro MAJ:MIN \"$1\") || return 19; [[ \"$number\" =~ ^[0-9]+:[0-9]+$ ]] || return 19; test \"$(grep -E \"^$number \" <<< \"$rows\")\" = \"$number $w/mnt /\" && ! grep -F \" $w/mnt/\" <<< \"$rows\" >/dev/null; }; note_ok() { on \"$1\" \"$2\" && test -f mnt/note && test ! -L mnt/note && test \"$(stat -c %h mnt/note)\" = 1; }; true",
+      "explanation": "Bind each operation to a single backing-file mapping, zero offset, exact partition and exact mountpoint. Query errors refuse approval.",
+      "expected": "Wrong or duplicate mappings, substituted paths, occupied/nonempty mountpoints and mounted offline targets are refused."
+    },
+    {
+      "command": "guard && test ! -e disk.img && test ! -L disk.img && (set -o noclobber; : > disk.img) && timeout -k 2s 15s truncate -s 128M disk.img && file_ok disk.img && printf \"label: gpt\\nstart=2048, size=245760, type=L\\n\" | run sfdisk disk.img > partition.log 2>&1 && run sfdisk --dump disk.img > layout.log 2>&1 && head -n 12 layout.log",
+      "explanation": "Create the bounded incident fixture.",
+      "expected": "No pre-existing file reused."
+    },
+    {
+      "command": "attach() { file_ok \"$1\" && nomap \"$1\" || return 19; local l; l=$(run losetup --find --show --partscan \"$w/$1\") || return; [[ \"$l\" =~ ^/dev/loop[0-9]+$ ]] || return 19; for n in $(seq 1 50); do test -b \"${l}p1\" && break; sleep 0.1; done; dev_ok \"${l}p1\" \"$1\" && printf \"%s\\n\" \"${l}p1\"; }; part=$(attach disk.img) && off \"$part\" disk.img && lsblk -o NAME,TYPE,SIZE,MOUNTPOINTS \"${part%p1}\"",
+      "explanation": "Verify partition.",
+      "expected": "Exact target."
+    },
+    {
+      "command": "off \"$part\" disk.img && signature=$(sudo timeout -k 2s 15s blkid -p -s TYPE -s PTTYPE -s USAGE -o value \"$part\"); rc=$?; { test \"$rc\" = 0 || test \"$rc\" = 2; } && test -z \"$signature\" && off \"$part\" disk.img && run mke2fs -t ext4 -L LL_STORAGE \"$part\" > mkfs.log 2>&1 && run blkid -p \"$part\" > identity.log 2>&1 && head -n 4 identity.log",
+      "explanation": "Create ext4.",
+      "expected": "Owned blank partition."
+    },
+    {
+      "command": "off \"$part\" disk.img && target_ok && run mount -o nodev,nosuid,noexec \"$part\" \"$w/mnt\" && on \"$part\" disk.img && on \"$part\" disk.img && test ! -e mnt/note && test ! -L mnt/note && run chown learner:learner \"$w/mnt\" && run chmod 0700 \"$w/mnt\" && printf \"Storage practice: known content.\\n\" > mnt/note && chmod 0600 mnt/note && printf \"Storage practice: known content.\\n\" > expected.txt && sha256sum mnt/note > expected.sha256 && cmp expected.txt mnt/note && stat -c \"%U:%G %a\" mnt/note",
+      "explanation": "Capture independent content and access expectations.",
+      "expected": "Original known good."
+    },
+    {
+      "command": "on \"$part\" disk.img && run umount \"$w/mnt\" && off \"$part\" disk.img",
+      "explanation": "Unmount before cloning.",
+      "expected": "No live repair."
+    },
+    {
+      "command": "off \"$part\" disk.img && run losetup -d \"${part%p1}\" && nomap disk.img && test ! -e repair.img && test ! -L repair.img && (set -o noclobber; : > repair.img) && timeout -k 2s 30s cp --reflink=never -- disk.img repair.img && file_ok repair.img && sha256sum disk.img > original.sha256 && cmp disk.img repair.img && part=$(attach disk.img) && copy=$(attach repair.img) && off \"$part\" disk.img && off \"$copy\" repair.img",
+      "explanation": "Retain original and repair copy.",
+      "expected": "At most two images."
+    },
+    {
+      "command": "unique_uuid() { local u; dev_ok \"$1\" \"$2\" || return 19; u=$(sudo timeout -k 2s 15s blkid -p -s UUID -o value \"$1\") || return 19; test -n \"$u\" || return 19; local hits; hits=$(sudo timeout -k 2s 15s blkid -c /dev/null -t UUID=\"$u\" -o device) || return 19; test \"$(printf \"%s\\n\" \"$hits\" | wc -l)\" = 1 && test \"$hits\" = \"$1\"; }; uuid=$(sudo timeout -k 2s 15s blkid -p -s UUID -o value \"$part\") && test -n \"$uuid\" && { unique_uuid \"$part\" disk.img; first_rc=$?; unique_uuid \"$copy\" repair.img; copy_rc=$?; test \"$first_rc\" = 1 && test \"$copy_rc\" = 1; } && printf \"Duplicate UUID: refuse UUID mount; use a verified exact device.\\n\" && off \"$copy\" repair.img && run tune2fs -U random \"$copy\" > uuid.log 2>&1 && unique_uuid \"$copy\" repair.img && unique_uuid \"$part\" disk.img",
+      "explanation": "Reject duplicate identity; disambiguate only the copy.",
+      "expected": "No UUID ambiguity."
+    },
+    {
+      "command": "off \"$copy\" repair.img && run debugfs -w -R \"set_inode_field /note links_count 2\" \"$copy\" > defect.log 2>&1 && off \"$copy\" repair.img && run e2fsck -fn \"$copy\" > check.log 2>&1; rc=$?; head -n 16 check.log; test \"$rc\" = 4",
+      "explanation": "Create the displayed copy-only metadata incident.",
+      "expected": "Status 4 and retained diagnosis."
+    },
+    {
+      "command": "off \"$copy\" repair.img && { run e2fsck -fy \"$copy\" > repair.log 2>&1; rc=$?; test \"$rc\" = 1 && off \"$copy\" repair.img && run e2fsck -fn \"$copy\" > recheck.log 2>&1 && head -n 12 repair.log; }",
+      "explanation": "Repair from evidence, not by recreating/formatting data.",
+      "expected": "Corrected copy checks clean."
+    },
+    {
+      "command": "off \"$copy\" repair.img && target_ok && run mount -o ro,nodev,nosuid,noexec \"$copy\" \"$w/mnt\" && on \"$copy\" repair.img && ! sh -c 'printf changed > mnt/note' && note_ok \"$copy\" repair.img && cmp expected.txt mnt/note && on \"$copy\" repair.img && run mount -o remount,rw,nodev,nosuid,noexec \"$copy\" \"$w/mnt\" && on \"$copy\" repair.img && note_ok \"$copy\" repair.img && run chmod 0000 mnt/note && ! cat mnt/note && note_ok \"$copy\" repair.img && run chmod 0600 mnt/note && note_ok \"$copy\" repair.img && cmp expected.txt mnt/note && sha256sum -c expected.sha256 && test \"$(stat -c %U:%G:%a mnt/note)\" = learner:learner:600 && cat mnt/note && on \"$copy\" repair.img && run umount \"$w/mnt\" && off \"$copy\" repair.img && sha256sum -c original.sha256",
+      "explanation": "Distinguish ro mount and permission fault, then verify data and intended identity.",
+      "expected": "Actual failed writes/reads, narrow repairs, expected recovered bytes and unchanged original."
+    },
+    {
+      "command": "clean_loop() { file_ok \"$2\" || return 19; nomap \"$2\"; local rc=$?; if test \"$rc\" = 0; then return 0; fi; test \"$rc\" = 1 && off \"$1\" \"$2\" && run losetup -d \"${1%p1}\" && nomap \"$2\"; }; guard && target_ok && clean_loop \"$part\" disk.img && { test ! -e repair.img || clean_loop \"${copy:-}\" repair.img; }",
+      "explanation": "Release only known practice mappings.",
+      "expected": "No leftover mounts or loops."
+    }
+  ],
+  "hints": [
+    "Do not reformat to hide the defect: that destroys recovery evidence.",
+    "A successful mount is not proof of correct contents or user access.",
+    "Keep the original and compare expected bytes before cleanup."
+  ],
+  "review": [
+    "Retain the listed observations and explain any failed checks. Completion is your self-review, not automatically verified assessment.",
+    "Combine target validation, copy recovery, mount diagnosis and actual access verification.",
+    "Confirm exact cleanup and no unrelated target changes."
+  ],
+  "coverage": "LPIC-1 v5.0 / LPIC-2 v4.5: 104.2 / 104.3 / 203.1 / 203.2 partial integrated ext4 recovery; access reinforcement. Self-reviewed, unscored; no complete objective claim."
+}

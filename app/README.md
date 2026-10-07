@@ -255,3 +255,8 @@ adapter. Pack JSON, the three labs' behavior, storage paths, and saved-record
 formats are unchanged. See [digest rules and version meanings](docs/scenario-identity.md)
 and [recovery snapshot, changed files, and checkpoint tests](docs/checkpoint-1.md).
 Legacy records have not been assigned content or engine provenance they did not record.
+
+### Linux Storage VM unit
+
+[Eight bounded filesystem/mount/maintenance lessons](docs/vm-preview/storage-unit.md) use the unchanged administrator image. Partial LPIC-1/2 coverage, self-reviewed and unscored. No new image, host disk access, networking or automatic assessment.
+See the [acceptance evidence and remaining limitations](docs/vm-preview/storage-acceptance.md).

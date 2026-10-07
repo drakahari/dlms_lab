@@ -274,6 +274,38 @@
         {
           "id": "real-linux-backup-assessment",
           "sha256": "e7394c3cb154db3719ffa62a33922a1b8500eb699989f8db80a32a618454de4e"
+        },
+        {
+          "id": "real-linux-storage-identify",
+          "sha256": "78634aa948cabf51a00272548392b5a20e679dd63328abf49ab3e598972894d7"
+        },
+        {
+          "id": "real-linux-storage-partition",
+          "sha256": "1fc9a470d77ca259f9dbab67f5b2db68bffb56c2af2d8af6a58259b521e74721"
+        },
+        {
+          "id": "real-linux-storage-filesystem",
+          "sha256": "f4d3297c49b7cfad0e6da5ec6a3d432a01607b3a38d4ac9f81e8f0edbd289111"
+        },
+        {
+          "id": "real-linux-storage-mount",
+          "sha256": "3cabf862660fca37e3039fdf00b718193505d20d67f686871127ec9b333f41ea"
+        },
+        {
+          "id": "real-linux-storage-faults",
+          "sha256": "47b7b3f73f7ca7511c3aff455ee422076f1066422e46b8d4d2506de0114db090"
+        },
+        {
+          "id": "real-linux-storage-fstab",
+          "sha256": "f333a21e7374ea9a5105a2b027c1cc9de29443b12888da700087a1f157a738ca"
+        },
+        {
+          "id": "real-linux-storage-repair",
+          "sha256": "cd620101b274a7d18d8e805826beded10129905a85c9ad8dd5db3ad0988e17a0"
+        },
+        {
+          "id": "real-linux-storage-incident",
+          "sha256": "015c67d32e3068efbcd52537e2a83f42e0059ba92333fce20fde6448147f9e76"
         }
       ]
     },
@@ -786,6 +818,54 @@
       "sha256": "e26b74bfdee3b1a86c76e75720a673fa8af0a02b8b18c1d8bb823a5b1696195e",
       "resource": "real-linux-discovery-repair.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-storage-identify",
+      "sha256": "78634aa948cabf51a00272548392b5a20e679dd63328abf49ab3e598972894d7",
+      "resource": "real-linux-storage-identify.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-storage-partition",
+      "sha256": "1fc9a470d77ca259f9dbab67f5b2db68bffb56c2af2d8af6a58259b521e74721",
+      "resource": "real-linux-storage-partition.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-storage-filesystem",
+      "sha256": "f4d3297c49b7cfad0e6da5ec6a3d432a01607b3a38d4ac9f81e8f0edbd289111",
+      "resource": "real-linux-storage-filesystem.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-storage-mount",
+      "sha256": "3cabf862660fca37e3039fdf00b718193505d20d67f686871127ec9b333f41ea",
+      "resource": "real-linux-storage-mount.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-storage-faults",
+      "sha256": "47b7b3f73f7ca7511c3aff455ee422076f1066422e46b8d4d2506de0114db090",
+      "resource": "real-linux-storage-faults.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-storage-fstab",
+      "sha256": "f333a21e7374ea9a5105a2b027c1cc9de29443b12888da700087a1f157a738ca",
+      "resource": "real-linux-storage-fstab.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-storage-repair",
+      "sha256": "cd620101b274a7d18d8e805826beded10129905a85c9ad8dd5db3ad0988e17a0",
+      "resource": "real-linux-storage-repair.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-storage-incident",
+      "sha256": "015c67d32e3068efbcd52537e2a83f42e0059ba92333fce20fde6448147f9e76",
+      "resource": "real-linux-storage-incident.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -857,7 +937,15 @@
     "real-linux-discovery-ownership": "cc1fd72318a675cde2a577a390b24dfed4f89b2d72aa1aa6fb09592af9aef0ef",
     "real-linux-discovery-integrity": "06073defa4ce204763ec04b9e8fe4d3a9b0518312427504274e21f8a6ad2386b",
     "real-linux-discovery-lifecycle": "b8aebc96a013f1b1abfabcb584c99990931ca5127941f90108f7f185a8141e3d",
-    "real-linux-discovery-repair": "e26b74bfdee3b1a86c76e75720a673fa8af0a02b8b18c1d8bb823a5b1696195e"
+    "real-linux-discovery-repair": "e26b74bfdee3b1a86c76e75720a673fa8af0a02b8b18c1d8bb823a5b1696195e",
+    "real-linux-storage-identify": "78634aa948cabf51a00272548392b5a20e679dd63328abf49ab3e598972894d7",
+    "real-linux-storage-partition": "1fc9a470d77ca259f9dbab67f5b2db68bffb56c2af2d8af6a58259b521e74721",
+    "real-linux-storage-filesystem": "f4d3297c49b7cfad0e6da5ec6a3d432a01607b3a38d4ac9f81e8f0edbd289111",
+    "real-linux-storage-mount": "3cabf862660fca37e3039fdf00b718193505d20d67f686871127ec9b333f41ea",
+    "real-linux-storage-faults": "47b7b3f73f7ca7511c3aff455ee422076f1066422e46b8d4d2506de0114db090",
+    "real-linux-storage-fstab": "f333a21e7374ea9a5105a2b027c1cc9de29443b12888da700087a1f157a738ca",
+    "real-linux-storage-repair": "cd620101b274a7d18d8e805826beded10129905a85c9ad8dd5db3ad0988e17a0",
+    "real-linux-storage-incident": "015c67d32e3068efbcd52537e2a83f42e0059ba92333fce20fde6448147f9e76"
   },
   "releases": [],
   "keys": [],
@@ -929,6 +1017,14 @@
     "real-linux-discovery-ownership": "88611b233352837ababf014d60653fb748263ccbad170c91fb1954527db06857",
     "real-linux-discovery-integrity": "88611b233352837ababf014d60653fb748263ccbad170c91fb1954527db06857",
     "real-linux-discovery-lifecycle": "88611b233352837ababf014d60653fb748263ccbad170c91fb1954527db06857",
-    "real-linux-discovery-repair": "88611b233352837ababf014d60653fb748263ccbad170c91fb1954527db06857"
+    "real-linux-discovery-repair": "88611b233352837ababf014d60653fb748263ccbad170c91fb1954527db06857",
+    "real-linux-storage-identify": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-storage-partition": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-storage-filesystem": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-storage-mount": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-storage-faults": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-storage-fstab": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-storage-repair": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-storage-incident": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
   }
 }
