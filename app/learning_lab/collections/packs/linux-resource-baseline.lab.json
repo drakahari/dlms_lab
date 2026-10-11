@@ -1,0 +1,159 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-resource-baseline",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Read a supplied resource baseline",
+    "topic": "Resource Evidence — Offline Snapshots (Simulator)",
+    "difficulty": "Intermediate",
+    "minutes": 6
+  },
+  "mission": {
+    "brief": "A colleague supplied a fictional cedar-01 sample. Save the first five records of snapshot.txt (context, interval, cpu, memory, io) in baseline.txt; omit the note. Display the original and final report with cat after writing. Self-review: what does this interval establish, and what additional evidence is needed?",
+    "constraints": [
+      "SIMULATOR: supplied synthetic snapshots of fictional hosts, not measurements of your computer or VM. No free, vmstat, df, processes, mounts, repairs or cleanup commands are simulated here.",
+      "Score checks factual report bytes, reading evidence and preserved sources only. Interpretation, uncertainty and recommended next checks require self-review; 100/100 is NOT proof of diagnostic mastery.",
+      "Type help for supported text commands. For this lab's context, worked interpretation and common mistakes, read HELP.txt with cat. This reference is available in both modes; it contains no repair command.",
+      "Only declared report files can be written. > truncates before reading; >> appends. Errors do not undo writes. Finish all report writes before reading sources and final reports: any actual write clears earlier reading evidence.",
+      "Keep source record spelling, units, order and final LF exactly in reports. Equivalent supported paths and filters count for report construction. Required reading evidence specifically uses cat on each source and final report after the last write; other tools do not satisfy cat inspections. Reasoning is self-reviewed. Reset preserves history."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "report-0",
+      "label": "Checked final report: baseline.txt",
+      "points": 50,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/baseline.txt",
+        "content": "context|host=cedar-01|2026-04-10T09:00:00Z|2 CPUs|synthetic\ninterval|vmstat second report|1 second|not since-boot average\ncpu|us=12%|sy=3%|id=80%|wa=5%|st=0%\nmemory|free=131072 KiB|buff=65536 KiB|cache=786432 KiB|swpd=0 KiB\nio|bi=64 KiB/s|bo=128 KiB/s\n"
+      }
+    },
+    {
+      "id": "source-0",
+      "label": "Checked action: cat Source/context inspection snapshot.txt",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/snapshot.txt",
+        "output": "context|host=cedar-01|2026-04-10T09:00:00Z|2 CPUs|synthetic\ninterval|vmstat second report|1 second|not since-boot average\ncpu|us=12%|sy=3%|id=80%|wa=5%|st=0%\nmemory|free=131072 KiB|buff=65536 KiB|cache=786432 KiB|swpd=0 KiB\nio|bi=64 KiB/s|bo=128 KiB/s\nnote|one interval cannot establish a persistent bottleneck\n"
+      }
+    },
+    {
+      "id": "read-0",
+      "label": "Checked action: cat Final report inspection baseline.txt",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/baseline.txt",
+        "output": "context|host=cedar-01|2026-04-10T09:00:00Z|2 CPUs|synthetic\ninterval|vmstat second report|1 second|not since-boot average\ncpu|us=12%|sy=3%|id=80%|wa=5%|st=0%\nmemory|free=131072 KiB|buff=65536 KiB|cache=786432 KiB|swpd=0 KiB\nio|bi=64 KiB/s|bo=128 KiB/s\n"
+      }
+    },
+    {
+      "id": "original-0",
+      "label": "Checked final state: preserve snapshot.txt",
+      "points": 10,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/home/learner/snapshot.txt"
+      }
+    }
+  ],
+  "hints": [
+    "Keep host, time and sampling interval alongside the observations. A snapshot is not a trend.",
+    "The required five records form the start of snapshot.txt; the final note is not part of baseline.txt. Finish writing before reading evidence.",
+    "Use head -n 5 snapshot.txt > baseline.txt, then cat snapshot.txt and cat baseline.txt. Read HELP.txt for the ungraded interpretation."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/snapshot.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|host=cedar-01|2026-04-10T09:00:00Z|2 CPUs|synthetic\ninterval|vmstat second report|1 second|not since-boot average\ncpu|us=12%|sy=3%|id=80%|wa=5%|st=0%\nmemory|free=131072 KiB|buff=65536 KiB|cache=786432 KiB|swpd=0 KiB\nio|bi=64 KiB/s|bo=128 KiB/s\nnote|one interval cannot establish a persistent bottleneck\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR HELP — resource baseline\nThese are original, synthetic annotated fields, not raw vmstat output.\nReference: procps vmstat, one-second second report. CPU fields are percentages; us+sy+id+wa+st here = 100. Memory uses KiB; bi/bo use KiB/s. The first vmstat CPU/I/O report normally averages since boot; do not mix it with later intervals. Process/memory fields are instantaneous.\nSelf-review questions: Is 80% idle proof of spare capacity all day? Does wa=5% establish a disk fault? What would you collect next?\nModel interpretation: this interval has 15% user+system CPU time, 80% idle and some I/O-wait time. It does not locate a disk fault or prove persistent load. Compare repeated intervals, workload timestamps and device-level observations before diagnosing. No measurement of your machine occurred.\nCommon mistakes: omitting the host/time or units; confusing rates with totals; assuming CPU percentage is per-core; interpreting one sample as a long-term bottleneck.\nAutomatically checked: five exact evidence records, source/report readings after the last write, unchanged source. Self-reviewed: explanations and next checks. Type help for the command subset.\nRequired checked reading actions use cat on each source and final report after the last write. Other text tools may construct reports but do not satisfy these cat actions.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/baseline.txt"
+    ],
+    "lesson": {
+      "goal": "Capture CPU, memory and I/O evidence with context and units.",
+      "steps": [
+        {
+          "objective": "report-0",
+          "command": "head -n 5 snapshot.txt > baseline.txt",
+          "explanation": "Keep context and units together. These annotated vmstat fields are supplied text; you are not running vmstat.",
+          "expected": "Only the required evidence records saved to baseline.txt. Interpretation is self-reviewed."
+        },
+        {
+          "objective": "source-0",
+          "command": "cat snapshot.txt",
+          "explanation": "Read the supplied context and original observations after the final write. Consider the questions in HELP.txt; their answers are not scored.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "read-0",
+          "command": "cat baseline.txt",
+          "explanation": "Read the final evidence report and check its values, units and missing-data markers. Submission checks facts, not your reasoning.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "original-0",
+          "command": "cat snapshot.txt",
+          "explanation": "Keep the original evidence unchanged. Review model interpretation in HELP.txt separately; the score cannot verify it.",
+          "expected": "Source remains byte-identical."
+        }
+      ]
+    }
+  }
+}

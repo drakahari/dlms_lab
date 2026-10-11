@@ -84,13 +84,13 @@ def phase(root, resume, require_icon):
     assert 'untrusted' in resource('guide.txt')
     assert 'contract 3' in resource('prompt.txt')
     if require_icon:assert (package/'icons/omarchy-learning-lab.svg').is_file()
-    collections = load_collections(); assert len(collections) == 4
+    collections = load_collections(); assert len(collections) == 5
     unit = next(c for c in collections if c['id']=='lpic-foundations')
     assert [e['scenario'].identity.scenario_id for e in unit['entries']] == [
         'linux-file-navigation', 'linux-file-permissions', 'linux-directory-permissions',
         'linux-private-note', 'linux-search-only-directory', 'linux-archive-access']
     entries = list({e['scenario'].key:e for c in collections for e in c['entries']}.values())
-    assert len(entries) == 22
+    assert len(entries) == 26
     from unittest.mock import patch
     with patch('learning_lab.vm_preview.bridge.os.access', return_value=False), patch('subprocess.Popen', side_effect=AssertionError('Core startup launched a process')):
         app, engine, bridge, lock = build_application(root/'data', root/'config', root/'vm')
@@ -112,7 +112,7 @@ def phase(root, resume, require_icon):
                 bridge.execute('pwd')
                 assert bridge.session.attempt['console']
                 bridge.setCommandDraft('help'); bridge.flush()
-            assert len(bridge.labs) == 25
+            assert len(bridge.labs) == 29
             # Both newly bundled pilots complete through the installed engine.
             for entry in unit['entries'][3:5]:
                 assert bridge.selectLab(entry['scenario'].key, True)
@@ -146,13 +146,25 @@ def phase(root, resume, require_icon):
                         bridge.execute(text_guide(bridge.pack,bridge.session.attempt['applied'])['command'])
                     bridge.submit();assert bridge.view['grade']['score']==100
                     if mode=='Challenge':assert bridge.view['guide']=={}
+            resource_unit=next(c for c in collections if c['id']=='lpic-resource-evidence')
+            assert len(resource_unit['entries'])==4
+            for entry in resource_unit['entries']:
+                assert bridge.selectLab(entry['scenario'].key,True)
+                for mode in ('Learn','Challenge'):
+                    if mode=='Challenge':bridge.restart(mode)
+                    for _ in range(64):
+                        if bridge.session.engine.grade()['complete']:break
+                        bridge.execute(text_guide(bridge.pack,bridge.session.attempt['applied'])['command'])
+                    bridge.submit();assert bridge.view['grade']['score']==100
+                    assert 'self-review' in entry['scenario'].value()['mission']['brief'].lower()
+                    if mode=='Challenge':assert bridge.view['guide']=={}
             source=root/'authored.lab.json';author=bridge.authoring
             assert author.prepareStarter(str(source)) and author.confirmStarter(True)
             value=json.loads(source.read_text());value['metadata']['title']='Installed authoring proof'
             value['domain']['filesystem']['/home/learner/notes.txt']['content']='Original disposable authored note.\n'
             source.write_text(json.dumps(value))
             before={str(p):p.read_bytes() for folder in (root/'data',root/'config') for p in folder.rglob('*') if p.is_file()}
-            assert author.validateLab(str(source)) and len(bridge.labs)==25
+            assert author.validateLab(str(source)) and len(bridge.labs)==29
             assert before=={str(p):p.read_bytes() for folder in (root/'data',root/'config') for p in folder.rglob('*') if p.is_file()}
             assert author.importValidated()
             scenario=load_portable(source.read_bytes());assert bridge.selectLab(scenario.key)
@@ -167,7 +179,7 @@ def phase(root, resume, require_icon):
                 'attempts': {k: lab.session.attempt for k, lab in bridge.labs.items()}}))
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
                 'package': str(package), 'platform': app.platformName(),
-                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'vm_lessons':76, 'vm_units':9, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
+                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'resource_evidence_packs':4, 'resource_evidence_both_modes':True, 'vm_lessons':76, 'vm_units':9, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
         window.close(); app.processEvents(); lock.unlock()
 

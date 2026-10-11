@@ -45,7 +45,7 @@ class LpicCollectionTests(unittest.TestCase):
 
     def test_exact_resources_order_digests_and_no_initial_install(self):
         collections = load_collections()
-        self.assertEqual([c['id'] for c in collections], ['fundamentals','lpic-foundations','lpic-file-management','lpic-text-streams'])
+        self.assertEqual([c['id'] for c in collections], ['fundamentals','lpic-foundations','lpic-file-management','lpic-text-streams','lpic-resource-evidence'])
         unit = collections[1]
         self.assertEqual(unit['title'], 'LPIC-1 Foundations: Files & Permissions')
         self.assertEqual([e['scenario'].identity.scenario_id for e in unit['entries']], IDS)
@@ -55,10 +55,10 @@ class LpicCollectionTests(unittest.TestCase):
             self.assertEqual(s.original_bytes, accepted.original_bytes)
             self.assertEqual(s.pin, accepted.pin)
         b = self.build(); self.assertEqual(len(b.labs),3)
-        self.assertFalse(b.repository.root.exists()); self.assertEqual(len(b.curated),22)
+        self.assertFalse(b.repository.root.exists()); self.assertEqual(len(b.curated),26)
         for c in b.view['collections']:
             self.assertEqual(c['completed'], {'Learn':0,'Challenge':0})
-            self.assertEqual(len(c['rows']),8 if c['id']=='lpic-text-streams' else 6); self.assertTrue(c['progressKnown'])
+            self.assertEqual(len(c['rows']),{'lpic-text-streams':8,'lpic-resource-evidence':4}.get(c['id'],6)); self.assertTrue(c['progressKnown'])
 
     def test_shared_progress_bidirectional_modes_and_reset(self):
         b = self.build(); key = b.view['fundamentals'][2]['labKey']
@@ -168,7 +168,7 @@ class LpicCollectionTests(unittest.TestCase):
         self.assertEqual(restored.view['commandDraft'],'cat message.txt')
         self.assertTrue(restored.restoreAndResume(scenario.key,restored.session.attempt['id']))
         restored.execute('cat message.txt'); restored.submit(); self.assertEqual(restored.view['grade']['score'],100)
-        self.assertEqual([c['inactiveCount'] for c in restored.view['collections']],[1,2,0,0])
+        self.assertEqual([c['inactiveCount'] for c in restored.view['collections']],[1,2,0,0,0])
 
     def test_corrupt_progress_omits_totals_and_visibility_validation(self):
         b=self.build(); key=self.unit(b)['rows'][0]['labKey']; b.selectLab(key)

@@ -31,6 +31,14 @@
       "sequence": "Recommended: samples, literal selection, counts, duplicates, fields, pipelines, redirection, then final assessment. Start any lab; nothing is locked.",
       "prerequisites": "Organize and Find Files, or familiarity with virtual paths, cat and directory access.",
       "coverage": "LPIC-1 objectives v5.0: partial 103.2 text-filter and 103.4 stdout-pipeline/redirection coverage; fixed-string preparation for 103.7, without regex coverage. No full Bash, stdin/stderr redirects, xargs, tee or full LPIC-1 preparation. Original content; no LPI affiliation."
+    },
+    {
+      "id": "lpic-resource-evidence",
+      "file": "lpic-resource-evidence.json",
+      "purpose": "Interpret supplied synthetic CPU, memory and filesystem evidence; save factual reports. Not live measurements.",
+      "sequence": "Recommended: baseline, memory/cache, space/inodes, then trend handover. Start any lab; no unlocks.",
+      "prerequisites": "Text, Filters & Reports, or familiarity with bounded cat, head/tail, grep -F, sort and report redirection.",
+      "coverage": "LPIC-2 v4.5.0: limited reinforcement of 200.1 snapshot interpretation and 200.2 trend interpretation, not measurement, monitoring, forecast assessment or full exam coverage. Report facts are checked; reasoning is self-reviewed. Real practice remains in the separate VM resource and storage units. No LPI affiliation."
     }
   ]
 }

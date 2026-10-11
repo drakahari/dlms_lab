@@ -1,0 +1,159 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-memory-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Separate available memory from cache",
+    "topic": "Resource Evidence — Offline Snapshots (Simulator)",
+    "difficulty": "Intermediate",
+    "minutes": 6
+  },
+  "mission": {
+    "brief": "On fictional elm-02, low free memory triggered an alert. Save the eight data records at the end of memory.txt in memory-report.txt, retaining all seven meminfo fields and the swap interval. Display source and report with cat after writing. Self-review whether this evidence establishes current pressure; do not add an ungraded diagnosis to the factual report.",
+    "constraints": [
+      "SIMULATOR: supplied synthetic snapshots of fictional hosts, not measurements of your computer or VM. No free, vmstat, df, processes, mounts, repairs or cleanup commands are simulated here.",
+      "Score checks factual report bytes, reading evidence and preserved sources only. Interpretation, uncertainty and recommended next checks require self-review; 100/100 is NOT proof of diagnostic mastery.",
+      "Type help for supported text commands. For this lab's context, worked interpretation and common mistakes, read HELP.txt with cat. This reference is available in both modes; it contains no repair command.",
+      "Only declared report files can be written. > truncates before reading; >> appends. Errors do not undo writes. Finish all report writes before reading sources and final reports: any actual write clears earlier reading evidence.",
+      "Keep source record spelling, units, order and final LF exactly in reports. Equivalent supported paths and filters count for report construction. Required reading evidence specifically uses cat on each source and final report after the last write; other tools do not satisfy cat inspections. Reasoning is self-reviewed. Reset preserves history."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "report-0",
+      "label": "Checked final report: memory-report.txt",
+      "points": 50,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/memory-report.txt",
+        "content": "MemTotal: 2097152 kB\nMemFree: 65536 kB\nMemAvailable: 1048576 kB\nCached: 786432 kB\nSReclaimable: 131072 kB\nSwapTotal: 524288 kB\nSwapFree: 458752 kB\nswap-interval|si=0 KiB/s|so=0 KiB/s\n"
+      }
+    },
+    {
+      "id": "source-0",
+      "label": "Checked action: cat Source/context inspection memory.txt",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/memory.txt",
+        "output": "context|host=elm-02|2026-04-10T09:00:00Z|synthetic\nsource|selected /proc/meminfo fields; kB means KiB here\nsource|swap rates from one-second vmstat interval; not cumulative\nMemTotal: 2097152 kB\nMemFree: 65536 kB\nMemAvailable: 1048576 kB\nCached: 786432 kB\nSReclaimable: 131072 kB\nSwapTotal: 524288 kB\nSwapFree: 458752 kB\nswap-interval|si=0 KiB/s|so=0 KiB/s\n"
+      }
+    },
+    {
+      "id": "read-0",
+      "label": "Checked action: cat Final report inspection memory-report.txt",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/memory-report.txt",
+        "output": "MemTotal: 2097152 kB\nMemFree: 65536 kB\nMemAvailable: 1048576 kB\nCached: 786432 kB\nSReclaimable: 131072 kB\nSwapTotal: 524288 kB\nSwapFree: 458752 kB\nswap-interval|si=0 KiB/s|so=0 KiB/s\n"
+      }
+    },
+    {
+      "id": "original-0",
+      "label": "Checked final state: preserve memory.txt",
+      "points": 10,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/home/learner/memory.txt"
+      }
+    }
+  ],
+  "hints": [
+    "Low free memory is only one field. Compare available memory with cache and distinguish occupied swap from swap activity.",
+    "All eight data records follow the three context records. Do not drop the zero-rate interval or change units.",
+    "Use tail -n 8 memory.txt > memory-report.txt; finish with cat memory.txt and cat memory-report.txt. Read HELP.txt for model reasoning."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/memory.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|host=elm-02|2026-04-10T09:00:00Z|synthetic\nsource|selected /proc/meminfo fields; kB means KiB here\nsource|swap rates from one-second vmstat interval; not cumulative\nMemTotal: 2097152 kB\nMemFree: 65536 kB\nMemAvailable: 1048576 kB\nCached: 786432 kB\nSReclaimable: 131072 kB\nSwapTotal: 524288 kB\nSwapFree: 458752 kB\nswap-interval|si=0 KiB/s|so=0 KiB/s\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR HELP — memory interpretation\nSupplied subset of Linux /proc/meminfo; not live output. kB in meminfo represents KiB. MemAvailable is an estimate accounting for reclaimable cache/slab and watermarks; it is not MemFree plus all Cached. Fields overlap and must not be added as independent categories.\nSelf-review: does 65536 KiB free alone establish pressure? Why retain both swap totals and swap rates?\nModel interpretation: about half the 2 GiB is estimated available. Low MemFree alone is insufficient evidence of pressure. Swap occupancy is 65536 KiB (total minus free), but the supplied interval has no swap-in/out. Occupancy can reflect earlier activity; one quiet interval cannot rule out intermittent pressure. Collect repeated samples and application latency/reclaim evidence.\nCommon mistakes: treating cache as permanently unavailable; equating occupied swap with current thrashing; interpreting si/so as totals; equating MemAvailable with guaranteed capacity.\nAutomatically checked: unchanged source, exact eight data records and source/report readings. Understanding, subtraction and pressure diagnosis are self-reviewed, not graded. Type help for commands.\nRequired checked reading actions use cat on each source and final report after the last write. Other text tools may construct reports but do not satisfy these cat actions.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/memory-report.txt"
+    ],
+    "lesson": {
+      "goal": "Distinguish free, available, cache and swap evidence.",
+      "steps": [
+        {
+          "objective": "report-0",
+          "command": "tail -n 8 memory.txt > memory-report.txt",
+          "explanation": "MemAvailable estimates memory for new applications without swapping; Cached is not all memory available. Preserve the swap occupancy AND interval evidence.",
+          "expected": "Only the required evidence records saved to memory-report.txt. Interpretation is self-reviewed."
+        },
+        {
+          "objective": "source-0",
+          "command": "cat memory.txt",
+          "explanation": "Read the supplied context and original observations after the final write. Consider the questions in HELP.txt; their answers are not scored.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "read-0",
+          "command": "cat memory-report.txt",
+          "explanation": "Read the final evidence report and check its values, units and missing-data markers. Submission checks facts, not your reasoning.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "original-0",
+          "command": "cat memory.txt",
+          "explanation": "Keep the original evidence unchanged. Review model interpretation in HELP.txt separately; the score cannot verify it.",
+          "expected": "Source remains byte-identical."
+        }
+      ]
+    }
+  }
+}

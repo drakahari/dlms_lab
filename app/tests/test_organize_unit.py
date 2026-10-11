@@ -54,7 +54,7 @@ class OrganizeUnitTests(unittest.TestCase):
     def test_order_resources_titles_contracts_and_fresh_lazy_profile(self):
         self.assertEqual([e['scenario'].identity.scenario_id for e in ENTRIES],IDS)
         self.assertEqual([e['scenario'].pin['engine']['contract_version'] for e in ENTRIES],[1,4,4,4,4,4])
-        b=self.build();self.assertEqual(len(b.view['collections']),4);self.assertEqual(len(b.labs),3)
+        b=self.build();self.assertEqual(len(b.view['collections']),5);self.assertEqual(len(b.labs),3)
         self.assertFalse(b.repository.root.exists());rows=b.view['collections'][2]['rows']
         self.assertEqual([r['action'] for r in rows],['Start']*6);self.assertEqual(b.view['collections'][2]['completed'],{'Learn':0,'Challenge':0})
 

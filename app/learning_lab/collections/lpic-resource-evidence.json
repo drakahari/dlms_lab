@@ -1,0 +1,21 @@
+{
+  "title": "LPIC-2 Resource Evidence — Offline Snapshots (Simulator)",
+  "items": [
+    {
+      "file": "linux-resource-baseline.lab.json",
+      "skill": "Capture CPU, memory and I/O evidence with context and units."
+    },
+    {
+      "file": "linux-memory-evidence.lab.json",
+      "skill": "Distinguish free, available, cache and swap evidence."
+    },
+    {
+      "file": "linux-space-inodes.lab.json",
+      "skill": "Compare block-space and inode evidence without destructive cleanup."
+    },
+    {
+      "file": "linux-trend-handover.lab.json",
+      "skill": "Retain a dated trend and missing evidence in a cautious handover."
+    }
+  ]
+}

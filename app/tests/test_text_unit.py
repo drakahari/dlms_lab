@@ -48,7 +48,7 @@ class TextUnitTests(unittest.TestCase):
         root=self.root/name;(root/'config').mkdir(parents=True,exist_ok=True)
         b=CatalogBridge(load_bundled_scenarios()[0],root/'data',root/'config');self.bridges.append(b);return b
     def test_order_identity_lazy_profile_and_contract(self):
-        b=self.build();self.assertFalse(b.repository.root.exists());self.assertEqual(len(b.curated),22)
+        b=self.build();self.assertFalse(b.repository.root.exists());self.assertEqual(len(b.curated),26)
         self.assertEqual([e['scenario'].identity.scenario_id for e in ENTRIES],IDS)
         self.assertEqual(b.view['collections'][3]['total'],8);self.assertEqual(b.view['collections'][3]['completed'],{'Learn':0,'Challenge':0})
         for e in ENTRIES:self.assertEqual(e['scenario'].pin['engine']['contract_version'],5)

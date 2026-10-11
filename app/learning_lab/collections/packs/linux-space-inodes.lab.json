@@ -1,0 +1,232 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-space-inodes",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Compare space and inode evidence",
+    "topic": "Resource Evidence — Offline Snapshots (Simulator)",
+    "difficulty": "Intermediate",
+    "minutes": 6
+  },
+  "mission": {
+    "brief": "Two fictional filesystems cannot accept new files. Save the two data rows of space.txt in space-report.txt and the two data rows of inodes.txt in inode-report.txt, without headers. Match by filesystem and mount, not row position. Display both sources and both final reports with cat after all writes. Self-review the constrained resource and safe next investigation for each; do not perform cleanup.",
+    "constraints": [
+      "SIMULATOR: supplied synthetic snapshots of fictional hosts, not measurements of your computer or VM. No free, vmstat, df, processes, mounts, repairs or cleanup commands are simulated here.",
+      "Score checks factual report bytes, reading evidence and preserved sources only. Interpretation, uncertainty and recommended next checks require self-review; 100/100 is NOT proof of diagnostic mastery.",
+      "Type help for supported text commands. For this lab's context, worked interpretation and common mistakes, read HELP.txt with cat. This reference is available in both modes; it contains no repair command.",
+      "Only declared report files can be written. > truncates before reading; >> appends. Errors do not undo writes. Finish all report writes before reading sources and final reports: any actual write clears earlier reading evidence.",
+      "Keep source record spelling, units, order and final LF exactly in reports. Equivalent supported paths and filters count for report construction. Required reading evidence specifically uses cat on each source and final report after the last write; other tools do not satisfy cat inspections. Reasoning is self-reviewed. Reset preserves history."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "report-0",
+      "label": "Checked final report: space-report.txt",
+      "points": 25,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/space-report.txt",
+        "content": "/dev/mock-a 1048576 1048576 0 100% /srv/archive\n/dev/mock-b 1048576 262144 786432 25% /srv/spool\n"
+      }
+    },
+    {
+      "id": "report-1",
+      "label": "Checked final report: inode-report.txt",
+      "points": 25,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/inode-report.txt",
+        "content": "/dev/mock-a 65536 16384 49152 25% /srv/archive\n/dev/mock-b 65536 65536 0 100% /srv/spool\n"
+      }
+    },
+    {
+      "id": "source-0",
+      "label": "Checked action: cat Source/context inspection space.txt",
+      "points": 10,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/space.txt",
+        "output": "context|synthetic df -P -k subset|2026-04-10T09:00:00Z\nFilesystem 1024-blocks Used Available Capacity Mounted-on\n/dev/mock-a 1048576 1048576 0 100% /srv/archive\n/dev/mock-b 1048576 262144 786432 25% /srv/spool\n"
+      }
+    },
+    {
+      "id": "read-0",
+      "label": "Checked action: cat Final report inspection space-report.txt",
+      "points": 10,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/space-report.txt",
+        "output": "/dev/mock-a 1048576 1048576 0 100% /srv/archive\n/dev/mock-b 1048576 262144 786432 25% /srv/spool\n"
+      }
+    },
+    {
+      "id": "source-1",
+      "label": "Checked action: cat Source/context inspection inodes.txt",
+      "points": 10,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/inodes.txt",
+        "output": "context|synthetic df -P -i subset|same hosts, mounts and time\nFilesystem Inodes IUsed IFree IUse% Mounted-on\n/dev/mock-a 65536 16384 49152 25% /srv/archive\n/dev/mock-b 65536 65536 0 100% /srv/spool\n"
+      }
+    },
+    {
+      "id": "read-1",
+      "label": "Checked action: cat Final report inspection inode-report.txt",
+      "points": 10,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/inode-report.txt",
+        "output": "/dev/mock-a 65536 16384 49152 25% /srv/archive\n/dev/mock-b 65536 65536 0 100% /srv/spool\n"
+      }
+    },
+    {
+      "id": "original-0",
+      "label": "Checked final state: preserve space.txt",
+      "points": 5,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/home/learner/space.txt"
+      }
+    },
+    {
+      "id": "original-1",
+      "label": "Checked final state: preserve inodes.txt",
+      "points": 5,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/home/learner/inodes.txt"
+      }
+    }
+  ],
+  "hints": [
+    "Compare two different resources on the same filesystem. Plenty of blocks does not guarantee free inodes.",
+    "Retain the two data rows from EACH table, omit the context/header, and finish both report writes before reading all four files.",
+    "Use tail -n 2 space.txt > space-report.txt and tail -n 2 inodes.txt > inode-report.txt, then cat both sources and both reports. Interpretation remains self-reviewed."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/space.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|synthetic df -P -k subset|2026-04-10T09:00:00Z\nFilesystem 1024-blocks Used Available Capacity Mounted-on\n/dev/mock-a 1048576 1048576 0 100% /srv/archive\n/dev/mock-b 1048576 262144 786432 25% /srv/spool\n"
+      },
+      "/home/learner/inodes.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|synthetic df -P -i subset|same hosts, mounts and time\nFilesystem Inodes IUsed IFree IUse% Mounted-on\n/dev/mock-a 65536 16384 49152 25% /srv/archive\n/dev/mock-b 65536 65536 0 100% /srv/spool\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR HELP — space versus inodes\nThese are supplied synthetic df -P -k and df -P -i subsets. 1024-blocks/Used/Available are block-space fields; Inodes/IUsed/IFree count inode resources. Two tables refer to the same fictional filesystems at the same time. These names are NOT devices available for commands.\nSelf-review: identify the limiting resource in each filesystem. What would you inspect before choosing cleanup or capacity expansion?\nModel interpretation: archive has zero available blocks but many free inodes; spool has many available blocks but zero free inodes. A new ordinary file usually needs both. Confirm actual errors, filesystem type, reserved capacity and workload before acting. This fixture simplifies allocation/reservation details and does not model real exhaustion or recovery.\nCommon mistakes: using space percent as inode percent; mismatching mount rows; deleting arbitrary files; assuming a successful mount proves write capacity.\nAutomatically checked: two accurate reports, their readings and both original readings after final writes, preservation. Diagnosis/recommendations are self-reviewed. No rm, df, mount or repair is implemented in this contract. Type help for supported text tools.\nRequired checked reading actions use cat on each source and final report after the last write. Other text tools may construct reports but do not satisfy these cat actions.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/space-report.txt",
+      "/home/learner/inode-report.txt"
+    ],
+    "lesson": {
+      "goal": "Compare block-space and inode evidence without destructive cleanup.",
+      "steps": [
+        {
+          "objective": "report-0",
+          "command": "tail -n 2 space.txt > space-report.txt",
+          "explanation": "df -P -k reports 1024-byte blocks, not inode counts. Keep both filesystems and their mount paths.",
+          "expected": "Only the required evidence records saved to space-report.txt. Interpretation is self-reviewed."
+        },
+        {
+          "objective": "report-1",
+          "command": "tail -n 2 inodes.txt > inode-report.txt",
+          "explanation": "df -P -i counts inodes. A filesystem can have free blocks yet no free inodes. Finish both writes before inspection.",
+          "expected": "Only the required evidence records saved to inode-report.txt. Interpretation is self-reviewed."
+        },
+        {
+          "objective": "source-0",
+          "command": "cat space.txt",
+          "explanation": "Read the supplied context and original observations after the final write. Consider the questions in HELP.txt; their answers are not scored.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "read-0",
+          "command": "cat space-report.txt",
+          "explanation": "Read the final evidence report and check its values, units and missing-data markers. Submission checks facts, not your reasoning.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "source-1",
+          "command": "cat inodes.txt",
+          "explanation": "Read the supplied context and original observations after the final write. Consider the questions in HELP.txt; their answers are not scored.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "read-1",
+          "command": "cat inode-report.txt",
+          "explanation": "Read the final evidence report and check its values, units and missing-data markers. Submission checks facts, not your reasoning.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "original-0",
+          "command": "cat space.txt",
+          "explanation": "Keep the original evidence unchanged. Review model interpretation in HELP.txt separately; the score cannot verify it.",
+          "expected": "Source remains byte-identical."
+        },
+        {
+          "objective": "original-1",
+          "command": "cat inodes.txt",
+          "explanation": "Keep the original evidence unchanged. Review model interpretation in HELP.txt separately; the score cannot verify it.",
+          "expected": "Source remains byte-identical."
+        }
+      ]
+    }
+  }
+}

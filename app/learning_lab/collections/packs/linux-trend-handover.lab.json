@@ -1,0 +1,159 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-trend-handover",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Prepare a cautious trend handover",
+    "topic": "Resource Evidence — Offline Snapshots (Simulator)",
+    "difficulty": "Intermediate",
+    "minutes": 6
+  },
+  "mission": {
+    "brief": "Prepare a factual handover for fictional ash-03: put all four dated records from history.txt into handover.txt in chronological order, including the missing sample and capacity/units. Omit the context header. Display the original and final report with cat after writing. Self-review the observed growth, uncertainty and recommended next checks; your prose and forecast are not automatically assessed.",
+    "constraints": [
+      "SIMULATOR: supplied synthetic snapshots of fictional hosts, not measurements of your computer or VM. No free, vmstat, df, processes, mounts, repairs or cleanup commands are simulated here.",
+      "Score checks factual report bytes, reading evidence and preserved sources only. Interpretation, uncertainty and recommended next checks require self-review; 100/100 is NOT proof of diagnostic mastery.",
+      "Type help for supported text commands. For this lab's context, worked interpretation and common mistakes, read HELP.txt with cat. This reference is available in both modes; it contains no repair command.",
+      "Only declared report files can be written. > truncates before reading; >> appends. Errors do not undo writes. Finish all report writes before reading sources and final reports: any actual write clears earlier reading evidence.",
+      "Keep source record spelling, units, order and final LF exactly in reports. Equivalent supported paths and filters count for report construction. Required reading evidence specifically uses cat on each source and final report after the last write; other tools do not satisfy cat inspections. Reasoning is self-reviewed. Reset preserves history."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "report-0",
+      "label": "Checked final report: handover.txt",
+      "points": 50,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/handover.txt",
+        "content": "2026-04-01|used=640 GiB|capacity=1024 GiB|observed\n2026-04-02|used=672 GiB|capacity=1024 GiB|observed\n2026-04-03|used=missing|capacity=1024 GiB|no-sample\n2026-04-04|used=736 GiB|capacity=1024 GiB|observed\n"
+      }
+    },
+    {
+      "id": "source-0",
+      "label": "Checked action: cat Source/context inspection history.txt",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/history.txt",
+        "output": "context|synthetic history|host=ash-03|/srv/data|capacity stable|UTC\n2026-04-04|used=736 GiB|capacity=1024 GiB|observed\n2026-04-02|used=672 GiB|capacity=1024 GiB|observed\n2026-04-01|used=640 GiB|capacity=1024 GiB|observed\n2026-04-03|used=missing|capacity=1024 GiB|no-sample\n"
+      }
+    },
+    {
+      "id": "read-0",
+      "label": "Checked action: cat Final report inspection handover.txt",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/handover.txt",
+        "output": "2026-04-01|used=640 GiB|capacity=1024 GiB|observed\n2026-04-02|used=672 GiB|capacity=1024 GiB|observed\n2026-04-03|used=missing|capacity=1024 GiB|no-sample\n2026-04-04|used=736 GiB|capacity=1024 GiB|observed\n"
+      }
+    },
+    {
+      "id": "original-0",
+      "label": "Checked final state: preserve history.txt",
+      "points": 10,
+      "predicate": "original_preserved",
+      "params": {
+        "path": "/home/learner/history.txt"
+      }
+    }
+  ],
+  "hints": [
+    "A missing measurement is useful evidence. Do not replace it with zero or silently discard it.",
+    "Select all dated records and sort by their fixed-width date prefix. No numeric sort or calculation is needed for the checked report.",
+    "Use grep -F \"2026-\" history.txt | sort > handover.txt, then cat history.txt and cat handover.txt. Compare your ungraded explanation with HELP.txt."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/history.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|synthetic history|host=ash-03|/srv/data|capacity stable|UTC\n2026-04-04|used=736 GiB|capacity=1024 GiB|observed\n2026-04-02|used=672 GiB|capacity=1024 GiB|observed\n2026-04-01|used=640 GiB|capacity=1024 GiB|observed\n2026-04-03|used=missing|capacity=1024 GiB|no-sample\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR HELP — trend handover\nThis is synthetic historical data, not monitoring. All timestamps use fixed-width ISO dates in UTC and capacity is fixed. The missing row means no measurement, not zero usage.\nSelf-review: what changed across observed dates? Is the apparent rate stable enough for a forecast? Which checks should the next operator make?\nModel interpretation: observed usage rose 640 to 736 GiB over three days. The endpoint average is 32 GiB/day, but this arithmetic is NOT checked and the missing interior sample prevents assuming uniform daily growth. Four records, including one absent observation, are insufficient for a reliable exhaustion date. Gather a longer comparable series, check workload/retention changes, capacity and inode trends, and confirm alert policy. Retain the gap in any handover.\nCommon mistakes: dropping a missing sample; treating it as zero; assuming lexical sort is numeric sort for arbitrary values; extrapolating a stable growth rate from too few points.\nAutomatically checked: exact four sorted records, original/report reading and preservation. Handover reasoning, forecast and operational recommendation are self-reviewed; no semantic grader exists. Type help for commands.\nRequired checked reading actions use cat on each source and final report after the last write. Other text tools may construct reports but do not satisfy these cat actions.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/handover.txt"
+    ],
+    "lesson": {
+      "goal": "Retain a dated trend and missing evidence in a cautious handover.",
+      "steps": [
+        {
+          "objective": "report-0",
+          "command": "grep -F \"2026-\" history.txt | sort > handover.txt",
+          "explanation": "Fixed-width ISO dates sort chronologically here under bytewise order. Keep the missing sample; sort is not a numeric calculator.",
+          "expected": "Only the required evidence records saved to handover.txt. Interpretation is self-reviewed."
+        },
+        {
+          "objective": "source-0",
+          "command": "cat history.txt",
+          "explanation": "Read the supplied context and original observations after the final write. Consider the questions in HELP.txt; their answers are not scored.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "read-0",
+          "command": "cat handover.txt",
+          "explanation": "Read the final evidence report and check its values, units and missing-data markers. Submission checks facts, not your reasoning.",
+          "expected": "Exact supplied text displayed. Compare it with the stated report requirements."
+        },
+        {
+          "objective": "original-0",
+          "command": "cat history.txt",
+          "explanation": "Keep the original evidence unchanged. Review model interpretation in HELP.txt separately; the score cannot verify it.",
+          "expected": "Source remains byte-identical."
+        }
+      ]
+    }
+  }
+}

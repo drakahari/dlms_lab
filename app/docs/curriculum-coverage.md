@@ -4,7 +4,7 @@ Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.
 
 **Implemented** below means the stated subskills have exercises and evidence. **Partial** means significant objective skills still remain. **Reinforcement/preparation only** adds no complete-objective credit. **Missing** means there is no dedicated demonstrated exercise. **No complete official objective is claimed**. Simulated labs have objective grading within a bounded contract; VM completion is self-reviewed, not automatically assessed. Real guest execution evidence validates lesson feasibility, not every learner's mastery.
 
-The core simulated app remains usable without VM images/QEMU. The 76 trusted VM lessons are nine bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
+The core simulated app remains usable without VM images/QEMU. [Resource Evidence — Offline Snapshots](lpic-2-resource-simulator.md) adds four factual-report activities with self-reviewed interpretation; it adds no live measurement or diagnosis checker. The 76 trusted VM lessons are nine bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
 
 ## LPIC-1 — every published objective
 
@@ -58,8 +58,8 @@ The core simulated app remains usable without VM images/QEMU. The 76 trusted VM 
 
 | Objective | Status | Existing unit/evidence and essential gaps |
 |---|---|---|
-| 200.1 | Partial | [Resource Evidence](vm-preview/resource-unit.md), [Processes & Jobs](vm-preview/processes-unit.md). Implemented actual CPU/memory/file-I/O observations plus supplied space/inode fault interpretation; advanced/network throughput and missing monitoring tools omitted. |
-| 200.2 | Partial | [Resource Evidence](vm-preview/resource-unit.md). Implemented synthetic trends, independently checked forecasts and insufficient-evidence decisions; production monitoring deployment missing. |
+| 200.1 | Partial | [Resource Evidence](vm-preview/resource-unit.md), [Processes & Jobs](vm-preview/processes-unit.md). Implemented actual CPU/memory/file-I/O observations plus supplied space/inode fault interpretation; [Simulator snapshots](lpic-2-resource-simulator.md) reinforce interpretation only; advanced/network throughput and missing monitoring tools omitted. |
+| 200.2 | Partial | [Resource Evidence](vm-preview/resource-unit.md). Implemented synthetic trends, independently checked forecasts and insufficient-evidence decisions; [Simulator handover](lpic-2-resource-simulator.md) checks factual trend records, not reasoning or forecasts; production monitoring deployment missing. |
 | 201.1 | Missing | —. No dedicated demonstrated kernel components exercise. |
 | 201.2 | Missing | —. No dedicated demonstrated kernel builds exercise. |
 | 201.3 | Partial | [System Discovery & Packages](vm-preview/discovery-unit.md). Running kernel, loaded/built-in module and parameter queries. No module load/unload, sysctl mutation, udev administration or boot/runtime repair. |
