@@ -7,8 +7,8 @@
     "simulator_collection_appearances": 42,
     "unique_linux_simulator_labs": 38,
     "original_network_simulator_labs": 3,
-    "vm_units": 9,
-    "vm_lessons": 76
+    "vm_units": 10,
+    "vm_lessons": 86
   },
   "method": {
     "complete": "All substantive objective skills taught, independently practiced at appropriate fidelity, with positive/negative evidence and clearly stated assessment. No current objective meets this gate.",
@@ -31,10 +31,10 @@
       "active_objectives": 23,
       "official_weight_total": 60,
       "complete_objectives": 0,
-      "partial_objectives": 18,
-      "missing_objectives": 5,
+      "partial_objectives": 19,
+      "missing_objectives": 4,
       "objectives_with_bounded_simulator_evidence": 6,
-      "objectives_with_vm_practice_evidence": 18,
+      "objectives_with_vm_practice_evidence": 19,
       "objectives_with_some_automatic_subskill_checks": 6,
       "fully_automatically_assessed_objectives": 0,
       "objectives_with_guidance_evidence": 2,
@@ -862,9 +862,18 @@
         {
           "official_kka_number": 3,
           "skill": "History retrieval/editing",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-local-history"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Isolated history insertion/edit/write/reopen, not credential or parent-history changes."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         },
         {
           "official_kka_number": 4,
@@ -889,7 +898,8 @@
         "linux-file-navigation",
         "real-linux-bash-environment",
         "real-linux-bash-quoting",
-        "real-linux-bash-script"
+        "real-linux-bash-script",
+        "real-linux-local-history"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -909,12 +919,13 @@
         "Quoting"
       ],
       "terms_with_bounded_practice": [
+        "Quoting",
         "bash",
         "export",
+        "history",
         "pwd",
-        "unset",
         "type",
-        "Quoting"
+        "unset"
       ],
       "term_limitations": "A term below is an official scope pointer, not proof of practice. Only explicitly listed bounded-practice terms and concrete subtopic evidence earn any credit; other terms have no demonstrated dedicated practice. Combined labels do not imply every component is exercised.",
       "remaining_breadth": "Missing rows and the unpracticed official tool/file breadth remain; evidence rows are partial, never a complete-objective claim."
@@ -1052,6 +1063,14 @@
               "scope": "simulator",
               "automatic": true,
               "note": "Declared regular-file lifecycle and limited find; no recursive management."
+            },
+            {
+              "lessons": [
+                "real-linux-local-copies"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Independent regular copy and protected before-copy; no recursive management."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -1112,6 +1131,14 @@
               "scope": "simulator",
               "automatic": true,
               "note": "Declared regular-file lifecycle and limited find; no recursive management."
+            },
+            {
+              "lessons": [
+                "real-linux-local-search"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Quoted name/type/byte-size and completed-day/minute find criteria; no destructive find actions."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -1145,7 +1172,9 @@
         "real-linux-backup-checksum",
         "real-linux-backup-restore",
         "real-linux-bash-files",
-        "real-linux-bash-quoting"
+        "real-linux-bash-quoting",
+        "real-linux-local-copies",
+        "real-linux-local-search"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -1505,12 +1534,21 @@
               "scope": "vm",
               "automatic": false,
               "note": "Unprivileged positive niceness and denied increases with actual-value checks; privileged priority recovery omitted."
+            },
+            {
+              "lessons": [
+                "real-linux-local-priority"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Actual owned task niceness 5, denied reversal and scoped approved guest-root return to0; no CPU-share guarantee."
             }
           ],
           "reasoning_assessment": "self-review only"
         }
       ],
       "lesson_ids": [
+        "real-linux-local-priority",
         "real-linux-process-priorities"
       ],
       "related_preparation": [],
@@ -1722,15 +1760,25 @@
         {
           "official_kka_number": 5,
           "skill": "Default editor configuration",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-local-editor"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Temporary VISUAL/EDITOR consumed by sensible-editor and actual Vim Tiny save. No global/persistent alternatives change."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         }
       ],
       "lesson_ids": [
         "real-linux-bash-rollback",
         "real-linux-bash-script",
-        "real-linux-bash-vi"
+        "real-linux-bash-vi",
+        "real-linux-local-editor"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -1747,7 +1795,7 @@
         "h,j,k,l"
       ],
       "term_limitations": "A term below is an official scope pointer, not proof of practice. Only explicitly listed bounded-practice terms and concrete subtopic evidence earn any credit; other terms have no demonstrated dedicated practice. Combined labels do not imply every component is exercised.",
-      "remaining_breadth": "Vim Tiny supports the accepted vi cases; Emacs awareness and default EDITOR configuration are not dedicated practice."
+      "remaining_breadth": "Temporary consuming-editor selection added; persistent/editor-platform configuration, Emacs and swap/power-loss breadth remain."
     },
     {
       "id": "104.1",
@@ -2094,6 +2142,15 @@
               "scope": "vm",
               "automatic": false,
               "note": "Actual disposable identities, group ownership/setgid directories and umask; special files/setuid/sticky breadth omitted."
+            },
+            {
+              "lessons": [
+                "real-linux-local-sticky",
+                "real-linux-local-priority"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Actual two existing identities separate writable content from sticky unlink refusal and owner exceptions; privileged bits audited read-only, no setuid helper execution."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -2146,6 +2203,8 @@
         "linux-private-note",
         "linux-search-only-directory",
         "real-linux-backup-access",
+        "real-linux-local-priority",
+        "real-linux-local-sticky",
         "real-linux-users-ownership",
         "real-linux-users-repair",
         "real-linux-users-shared",
@@ -2175,48 +2234,93 @@
       "weight": 2,
       "official_title": "Create and change hard and symbolic links",
       "focus": "Hard and symbolic link creation/Link identification",
-      "status": "missing",
+      "status": "partial",
       "official_url": "https://www.lpi.org/our-certifications/exam-101-102-objectives/",
       "accessed": "2026-10-11",
       "subtopics": [
         {
           "official_kka_number": 1,
           "skill": "Hard and symbolic link creation",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-local-hardlinks",
+                "real-linux-local-symlinks"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Real regular hard links and relative/dangling symlink repair, originals/before-copies preserved."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         },
         {
           "official_kka_number": 2,
           "skill": "Link identification",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-local-hardlinks",
+                "real-linux-local-symlinks"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Device/inode/link count plus lstat-style identity and dereferenced reading."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         },
         {
           "official_kka_number": 3,
           "skill": "Copy versus link semantics",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-local-copies"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Independent cp-p versus shared hard link, cp-P versus dereference; no ACL/xattr completeness."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         },
         {
           "official_kka_number": 4,
           "skill": "Administration through links",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-local-handover"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Scoped independent link/copy handover repair and preserved source metadata; broader administrative use missing."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         }
       ],
-      "lesson_ids": [],
+      "lesson_ids": [
+        "real-linux-local-copies",
+        "real-linux-local-handover",
+        "real-linux-local-hardlinks",
+        "real-linux-local-symlinks"
+      ],
       "related_preparation": [],
       "official_terms": [
         "ln",
         "ls"
       ],
-      "terms_with_bounded_practice": [],
+      "terms_with_bounded_practice": [
+        "ln"
+      ],
       "term_limitations": "A term below is an official scope pointer, not proof of practice. Only explicitly listed bounded-practice terms and concrete subtopic evidence earn any credit; other terms have no demonstrated dedicated practice. Combined labels do not imply every component is exercised.",
-      "remaining_breadth": "Missing rows and the unpracticed official tool/file breadth remain; evidence rows are partial, never a complete-objective claim."
+      "remaining_breadth": "Scoped regular-file links/copies and independent handover now practiced. Cross-filesystem limitations, broader administrative link use, directory semantics and full transfer remain partial."
     },
     {
       "id": "104.7",
@@ -2243,6 +2347,14 @@
               "scope": "simulator",
               "automatic": true,
               "note": "Representative locations/find and declared reports; not complete FHS or locating-tool breadth."
+            },
+            {
+              "lessons": [
+                "real-linux-local-search"
+              ],
+              "scope": "guidance",
+              "automatic": false,
+              "note": "Model-tree placement explanation, not system relocation."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -2269,6 +2381,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "Bounded find/command lookup only."
+            },
+            {
+              "lessons": [
+                "real-linux-local-search"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Scoped real find only; locate/updatedb/whereis breadth missing."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -2286,6 +2406,14 @@
               "scope": "simulator",
               "automatic": true,
               "note": "Representative locations/find and declared reports; not complete FHS or locating-tool breadth."
+            },
+            {
+              "lessons": [
+                "real-linux-local-search"
+              ],
+              "scope": "guidance",
+              "automatic": false,
+              "note": "Model etc,var/log,usr/local/share purpose; full hierarchy breadth missing."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -2295,7 +2423,8 @@
         "linux-file-locations",
         "linux-find-handover",
         "real-linux-bash-environment",
-        "real-linux-bash-files"
+        "real-linux-bash-files",
+        "real-linux-local-search"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -2338,6 +2467,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "Temporary environment/search path; no login profile persistence or skeleton maintenance."
+            },
+            {
+              "lessons": [
+                "real-linux-local-startup"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Isolated HOME login/non-login/child startup, flags and profile/rc selection; no real-account persistent settings."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -2384,7 +2521,8 @@
       ],
       "lesson_ids": [
         "real-linux-bash-environment",
-        "real-linux-bash-records"
+        "real-linux-bash-records",
+        "real-linux-local-startup"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -3738,9 +3876,18 @@
         {
           "official_kka_number": 1,
           "skill": "Privileged-bit audit",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-local-priority"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Read-only bounded /usr/bin privileged-bit audit; permission bits alone do not prove effective privilege."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         },
         {
           "official_kka_number": 2,
@@ -3800,6 +3947,7 @@
       ],
       "lesson_ids": [
         "real-linux-admin-change",
+        "real-linux-local-priority",
         "real-linux-users-restrictions"
       ],
       "related_preparation": [],
@@ -3820,8 +3968,9 @@
       ],
       "terms_with_bounded_practice": [
         "chage",
-        "sudo",
+        "find",
         "su",
+        "sudo",
         "usermod"
       ],
       "term_limitations": "A term below is an official scope pointer, not proof of practice. Only explicitly listed bounded-practice terms and concrete subtopic evidence earn any credit; other terms have no demonstrated dedicated practice. Combined labels do not imply every component is exercised.",
@@ -8309,7 +8458,7 @@
     },
     "real-linux-bash-guards": {
       "id": "real-linux-bash-guards",
-      "title": "Guard a script’s inputs",
+      "title": "Guard a script\u2019s inputs",
       "kind": "vm",
       "content": "app/learning_lab/vm_preview/real-linux-bash-guards.json",
       "sha256": "b8e0ed564b7450a51ebc8d3131a8441ef384cec989a65f34ed70b24b4b637fb7",
@@ -10046,7 +10195,7 @@
     },
     "linux-directory-permissions": {
       "id": "linux-directory-permissions",
-      "title": "Why can’t I enter this directory?",
+      "title": "Why can\u2019t I enter this directory?",
       "kind": "simulator",
       "content": "app/learning_lab/collections/packs/linux-directory-permissions.lab.json",
       "sha256": "2018104917dda1ac00ab9339ddb25bbed5d2d05e08cf0ba551dabbcaacbbaa25",
@@ -12626,6 +12775,176 @@
       },
       "guide_sha256": "5341ab2c1a021937927aa52254c8103f927d71724122f5448a58af10dc568885",
       "acceptance_sha256": "b838c42ec9ff364733146c3cf61d36905f5efc81d08ca077e01c3ba01c86436b"
+    },
+    "real-linux-local-startup": {
+      "id": "real-linux-local-startup",
+      "title": "Trace shell startup without changing your account",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-startup.json",
+      "sha256": "c839e2be4e6fe701d535d1f5226d02ba8a80f8b28674c44c055711aa6626724b",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-history": {
+      "id": "real-linux-local-history",
+      "title": "Edit isolated history and verify persistence",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-history.json",
+      "sha256": "b0dee5ecba053e90ea7dfd612c45d9e428c26368a69c55f296622024208a18f7",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-editor": {
+      "id": "real-linux-local-editor",
+      "title": "Choose an editor through a real consumer",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-editor.json",
+      "sha256": "cb4d0fb4d565b3a7948ac93a0b6fa2c30c585b63fcd697ddf946f326c04708d1",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-hardlinks": {
+      "id": "real-linux-local-hardlinks",
+      "title": "Prove hard-link identity and deletion semantics",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-hardlinks.json",
+      "sha256": "42fc006389572b5711c90519b0668cd0a68e0ce1617c8cb2828aa74ea4d00e07",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-symlinks": {
+      "id": "real-linux-local-symlinks",
+      "title": "Repair a relative dangling link",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-symlinks.json",
+      "sha256": "141f9ab4a07ce180d163daa520a2000ff19ad5155fc7da81e78482d5f2b8ab6c",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-copies": {
+      "id": "real-linux-local-copies",
+      "title": "Choose independent copies instead of shared names",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-copies.json",
+      "sha256": "e9d9b6807656d850152bc3570d57c6f1c5efc38d63d3a03f4d00feb259577ec6",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-search": {
+      "id": "real-linux-local-search",
+      "title": "Find files and justify filesystem placement",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-search.json",
+      "sha256": "1adc9bd81e6c3f02d45918bb16bcb20cec294f3d457737b32990a15d1acf844a",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-sticky": {
+      "id": "real-linux-local-sticky",
+      "title": "Separate shared-directory writing from deletion",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-sticky.json",
+      "sha256": "dde509adeb683f5e7d89b3bf9b2a5032f0dec82f9e2de315b916365eef818408",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-priority": {
+      "id": "real-linux-local-priority",
+      "title": "Audit special bits and verify a scoped priority change",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-priority.json",
+      "sha256": "28ff935f007cc81febe38b7b1f67240025af264c614c71beaac05c445cc619d3",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-local-handover": {
+      "id": "real-linux-local-handover",
+      "title": "Repair links and deliver an independent handover",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-local-handover.json",
+      "sha256": "09d7595cda9713449aa03db486edaa1b206ef70bdbcbccdf912a420947a900c2",
+      "guide": "app/docs/vm-preview/local-shell-unit.md",
+      "acceptance": "app/docs/vm-preview/local-shell-acceptance.md",
+      "tests": [
+        "app/tests/test_local_shell_unit.py",
+        "app/tests/local_shell_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real guest developer assertions verify feasibility, not learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
+      "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
+      "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
     }
   },
   "removed": [
@@ -12677,5 +12996,6 @@
       "bytes": 3802710,
       "accessed": "2026-10-11T16:05:40.334894+00:00"
     }
-  }
+  },
+  "implementation_baseline": "30acccebfdb0419e9ed9e4244029d604e4ddbc8a"
 }

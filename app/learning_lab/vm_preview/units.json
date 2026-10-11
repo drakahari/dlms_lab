@@ -36,6 +36,10 @@
     {
       "id": "linux-storage-filesystems-mounts-safe-maintenance",
       "resource": "storage-unit.json"
+    },
+    {
+      "id": "lpic-local-shell-filesystem",
+      "resource": "local-shell-unit.json"
     }
   ]
 }

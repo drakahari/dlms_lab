@@ -11,8 +11,8 @@ from . import registry
 STATES = {'active', 'resume-only', 'withdrawn'}
 HEX = re.compile(r'[0-9a-f]{64}')
 ROOT = Path(__file__).parent
-MAX_RETAINED_LESSONS = 76
-MAX_DEFAULT_LESSONS = 76
+MAX_RETAINED_LESSONS = 86
+MAX_DEFAULT_LESSONS = 86
 
 
 def canonical(value):

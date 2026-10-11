@@ -5,4 +5,4 @@ controller edits. Historical preservation tests pin these exact reviewed bytes
 instead of requiring the superseded UI. Any further UI edit must be reviewed and
 validated before changing this pin; all other source checks remain unchanged.
 """
-MAIN_SHA256 = '24cf5a7d1a54540cd23e6626532b484c6ae2f20be5d83cad6858151e0e217bb2'
+MAIN_SHA256 = 'c54daabbc3ade06728ff13a21fef8b9b37c21ba60f775ee3634c30e46d1c07be'

@@ -1,11 +1,13 @@
 # Toward comprehensive LPIC-1 and LPIC-2 preparation support
 
-Planning only, 2026-10-11. Read with the [complete objective/subtopic matrix](lpic-comprehensive-audit.md)
+Original planning checkpoint, 2026-10-11. Read with the [complete objective/subtopic matrix](lpic-comprehensive-audit.md)
 and [machine evidence inventory](lpic-comprehensive-audit.json). No new lessons,
 contracts, images, guest launches or runtime fixes are part of this assessment.
 Original exercises only; no exam dumps or reproduced protected exam questions.
 
-## Four exam summaries
+## Four exam summaries — historical assessment checkpoint
+
+This table preserves the pre-family assessment. After the delivered Local Shell family, exam 101 is **0 complete /19 partial /4 missing**; the other three rollups are unchanged. Use the updated comprehensive matrix for current subtopic evidence.
 
 All four active exams have official weight 60. Counts refer to **whole objective
 breadth**, not lesson counts or a readiness percentage. “Partial” includes a
@@ -183,3 +185,7 @@ versus finalized future LPIC-2 target when LPI announces it; separately authoriz
 any new environment, guest credentials/network/controller/assessment capability.
 Public distribution/signing/hosting and runtime-warning remediation remain
 separate decisions. No routine owner walkthrough is a completion gate.
+
+## First authorized family delivered
+
+[Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md) implements ten of the proposed 10–12 exercises using the unchanged guests. The exact approved capacity is ten units /86 total/16 per unit, with retained/default maps86 and unchanged parser/image limits. It widens partial history, startup/editor, find/FHS, special-bit/priority coverage and adds partial link coverage; no full objective is claimed. The original family estimate and historical 9/76 constraint above describe the pre-approval plan. No later family is authorized by this delivery. [Acceptance](vm-preview/local-shell-acceptance.md) records the frozen-content evidence and remaining platform/release gaps.

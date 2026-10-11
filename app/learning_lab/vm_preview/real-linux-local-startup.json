@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-local-startup",
+  "content_version": "1.0.0",
+  "title": "Trace shell startup without changing your account",
+  "goal": "Distinguish login, interactive non-login and noninteractive child startup using an isolated HOME.",
+  "challenge": "In an isolated HOME, prove which startup marker each shell reads and record login_shell plus interactive flags. Show first-readable profile precedence; do not change real learner dotfiles.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-startup.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-startup.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && fresh .bash_profile .profile .bashrc && { printf 'echo PROFILE\\n' > .bash_profile; printf 'echo FALLBACK\\n' > .profile; printf 'echo RC\\n' > .bashrc; }",
+      "explanation": "Use harmless markers. Bash reads the first available user login profile, not every profile. This profile deliberately does not source .bashrc.",
+      "expected": "Three small files inside this workspace."
+    },
+    {
+      "command": "here && { env -i HOME=\"$w\" PATH=/usr/bin:/bin bash --login -c 'echo \"HOME=$HOME flags=$-\"; shopt login_shell' > login.txt; cat login.txt; }",
+      "explanation": "A login shell reads /etc/profile and then its first readable user profile. Verify HOME remains the isolated path; stop if the system profile changes it.",
+      "expected": "PROFILE, login_shell on, and no FALLBACK or RC."
+    },
+    {
+      "command": "here && { env -i HOME=\"$w\" PATH=/usr/bin:/bin TERM=linux bash --noprofile --rcfile \"$w/.bashrc\" -ic 'echo \"HOME=$HOME flags=$-\"; shopt login_shell; :' > interactive.txt; cat interactive.txt; }",
+      "explanation": "Explicitly use this rc file for the interactive non-login child. -i appears in shell flags; login_shell is off.",
+      "expected": "RC only; no profile marker."
+    },
+    {
+      "command": "here && { env -i HOME=\"$w\" PATH=/usr/bin:/bin bash -c 'echo \"HOME=$HOME flags=$-\"; shopt login_shell; :' > child.txt; cat child.txt; }",
+      "explanation": "A noninteractive child does not automatically read .bashrc. BASH_ENV is intentionally absent from this clean environment.",
+      "expected": "No user startup marker; no interactive i flag."
+    }
+  ],
+  "hints": [
+    "Which user login file wins?",
+    "Compare the i flag with login_shell; they are separate.",
+    "Do not edit ~/.bashrc or ~/.profile outside the workspace."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 105.1. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-local-editor",
+  "content_version": "1.0.0",
+  "title": "Choose an editor through a real consumer",
+  "goal": "Verify temporary editor selection with sensible-editor, preserving a copy before editing.",
+  "challenge": "Use a real editor-selecting command with temporary environment settings. Demonstrate VISUAL precedence over EDITOR on this guest, save one deliberate edit and preserve the original. Do not change system alternatives.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-editor.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-editor.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && fresh note.txt original.txt && { printf 'original\\n' > note.txt; cp -p note.txt original.txt; command -v sensible-editor vi nano; vi --version | head -n 2; }",
+      "explanation": "Inspect actual tools rather than assuming full Vim. The guest vi is Vim Tiny.",
+      "expected": "A private original copy and installed tool paths."
+    },
+    {
+      "command": "here && { VISUAL=vi EDITOR=nano sensible-editor note.txt; }",
+      "explanation": "This guest consumer chooses VISUAL before EDITOR. Inside vi: i, type edited-, Escape, :wq, Enter. These are editor keys, not shell commands. Environment assignments affect only this invocation.",
+      "expected": "note.txt contains edited-original; nano was not selected."
+    },
+    {
+      "command": "here && { cat note.txt original.txt; cmp -s note.txt original.txt; printf \"comparison status=%s\\n\" \"$?\"; }",
+      "explanation": "Verify bytes and the preserved copy. Not every application follows sensible-editor precedence.",
+      "expected": "Changed note, unchanged original, comparison status 1."
+    }
+  ],
+  "hints": [
+    "Confirm which editor actually opened.",
+    "VISUAL takes precedence here; the variables are temporary.",
+    "Compare bytes, not just a zero editor exit status."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.8 /105.1. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-local-handover",
+  "content_version": "1.0.0",
+  "title": "Repair links and deliver an independent handover",
+  "goal": "Transfer startup, link and search skills to an incident while preserving the source.",
+  "challenge": "Repair the relative current link, make an independent readable handover copy with mode 0640, find the supplied stale reference and explain isolated startup versus persistent disk state. Preserve source bytes/mode and record facts separately from hypotheses. Use any valid scoped approach.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-handover.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-handover.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && fresh records links original.sha256 original.meta unsafe-copy.txt stale.txt && { mkdir records links; printf 'approved handover\\n' > records/source.txt; chmod 0640 records/source.txt; sha256sum records/source.txt > original.sha256; stat -c '%a %h' records/source.txt > original.meta; ln -s ../missing.txt links/current; ln records/source.txt unsafe-copy.txt; printf 'obsolete path: missing.txt\\n' > stale.txt; }",
+      "explanation": "Initial wrong link and incorrectly shared copy. The independent checks describe the original. Do not edit source or unsafe-copy contents.",
+      "expected": "Source, wrong relative link, shared inode and stale reference."
+    },
+    {
+      "command": "here && { readlink links/current; stat -c \"%d:%i %h %a %n\" records/source.txt unsafe-copy.txt; find -P . -maxdepth 2 -type f -name \"*.txt\" -print; }",
+      "explanation": "Investigate before mutation. Challenge supplies only the first fixture step plus outcomes; these following commands are Learn suggestions, not a required transcript.",
+      "expected": "Evidence identifies the wrong target and shared copy."
+    },
+    {
+      "command": "here && { test -L links/current && rm -- links/current && ln -s ../records/source.txt links/current && rm -- unsafe-copy.txt && cp -p records/source.txt handover.txt; }",
+      "explanation": "Remove only verified faulty names, then make an independent copy. Removing unsafe-copy restores the source link count to the initial reference before that link was created.",
+      "expected": "Correct link and independent copy; source preserved."
+    },
+    {
+      "command": "here && { cat links/current handover.txt; sha256sum -c original.sha256; test \"$(stat -c '%a %h' records/source.txt)\" = \"$(cat original.meta)\"; stat -c \"%d:%i %a %n\" records/source.txt handover.txt; }",
+      "explanation": "Verify bytes, original metadata and independent inode. A successful ln/cp alone is not enough.",
+      "expected": "Correct contents, mode 640 and different copy inode."
+    },
+    {
+      "command": "here && { printf '%s\\n' 'FACT: current resolves to preserved source' 'FACT: handover has independent inode and mode 640' 'FACT: stale reference still retained for review' 'LIMIT: shell variables and jobs do not survive disk Resume' 'NEXT: review consumers before removing stale reference' > report.txt; cat report.txt; }",
+      "explanation": "Your report may use different words. Review factual accuracy against actual output; the app records self-review only, not a keyword score.",
+      "expected": "Concise factual handover and uncertainty, with original retained."
+    }
+  ],
+  "hints": [
+    "Find which names share an inode before editing.",
+    "Repair only the wrong link; preserve the independent expectations.",
+    "Separate demonstrated facts from causal hypotheses."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 104.6 /104.7 /105.1 reinforcement. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

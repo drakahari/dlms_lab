@@ -3,6 +3,7 @@ Metadata mocks here are not substitutes for the separate real guest access proof
 """
 import copy,hashlib,json,os,subprocess,tempfile,unittest
 from pathlib import Path
+from local_shell_preservation import projection
 from unittest.mock import patch
 from learning_lab.vm_preview import registry
 from learning_lab.vm_preview.image_catalog import production_catalog,Catalog,digest,resource
@@ -11,9 +12,9 @@ from backup_guest_fixtures import COMMANDS,UNIT
 
 class BackupUnitTests(unittest.TestCase):
  def test_exact_limits_nine_units_and_76_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(9,16,76))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8])
-  self.assertEqual(len(registry.entries()),76)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(10,16,86))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10])
+  self.assertEqual(len(registry.entries()),86)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def malformed(self,mutate,pattern):
   original=registry._read;reads=[]
@@ -25,10 +26,10 @@ class BackupUnitTests(unittest.TestCase):
   finally:registry._bundle.cache_clear()
   return reads
  def test_reject_77_before_last_unit_lesson_read(self):
-  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='storage-unit.json' else None,'76')
-  self.assertNotIn('real-linux-storage-identify.json',reads)
+  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='local-shell-unit.json' else None,'86')
+  self.assertNotIn('real-linux-local-startup.json',reads)
  def test_reject_tenth_unit_before_resource_reads(self):
-  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–9')
+  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–10')
   self.assertEqual(reads,['units.json'])
  def test_reject_17_per_unit_and_oversized_guidance(self):
   self.malformed(lambda n,v:v['entries'].extend(v['entries']+[v['entries'][0]]) if n=='discovery-unit.json' else None,'1–16')
@@ -47,12 +48,13 @@ class BackupUnitTests(unittest.TestCase):
    with patch.object(registry,'_read',side_effect=read):self.assertEqual([len(u['entries']) for u in registry.units()],[8,16])
   finally:registry._bundle.cache_clear()
  def test_original_52_lesson_controller_image_bytes(self):
-  for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
+  for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256(projection(name,(registry.ROOT/name).read_bytes())).hexdigest(),h,name)
  def test_exact_catalog_projection(self):
   c=json.loads(resource('image-catalog.json'));c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1'];new=set(COMMANDS)
   new |= {e['id'] for e in registry.catalog('linux-backup-safe-recovery')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-system-discovery-package-fundamentals')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}
+  new |= {e['id'] for e in registry.catalog('lpic-local-shell-filesystem')['entries']}
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for i in c['images']:i['lessons']=[l for l in i['lessons'] if l['id'] not in new]
   for name in ('default_lessons','default_images'):c[name]={k:v for k,v in c[name].items() if k not in new}

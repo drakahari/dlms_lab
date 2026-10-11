@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-local-copies",
+  "content_version": "1.0.0",
+  "title": "Choose independent copies instead of shared names",
+  "goal": "Compare copies, hard links and symbolic links by type, inode, contents and metadata.",
+  "challenge": "Preserve an independent before-copy; the teaching original is deliberately changed through its hard link. Create an independent metadata-preserving copy, a hard link and a symlink; demonstrate which objects change when editing the copy and when editing through the hard link. Explain why none replaces versioned backup policy.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-copies.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-copies.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && fresh original.txt before.txt copy.txt alias.txt pointer && { printf 'baseline\\n' > original.txt; chmod 0640 original.txt; cp -p original.txt before.txt; cp -p original.txt copy.txt; ln original.txt alias.txt; ln -s original.txt pointer; }",
+      "explanation": "Small known regular file; cp -p preserves relevant mode and timestamps, not all possible Linux metadata.",
+      "expected": "Independent copy versus shared inode versus link text."
+    },
+    {
+      "command": "here && { stat -c '%F %d:%i %h %a %n' original.txt copy.txt alias.txt pointer; stat -Lc '%d:%i %n' pointer; readlink pointer; }",
+      "explanation": "stat without -L inspects the symlink itself; -L follows it. Do not confuse the two types.",
+      "expected": "Copy inode differs; alias shares; pointer is a symbolic link."
+    },
+    {
+      "command": "here && { printf 'copy-only\\n' >> copy.txt; cmp original.txt before.txt; printf 'shared\\n' >> alias.txt; cat original.txt pointer copy.txt before.txt; }",
+      "explanation": "First change only the copy; then deliberately demonstrate a shared write. Keep the independent before-copy.",
+      "expected": "Original and pointer show baseline/shared; copy shows baseline/copy-only; before stays baseline."
+    },
+    {
+      "command": "here && { cp -P pointer pointer-copy; test -L pointer-copy; readlink pointer-copy; test \"$(stat -c %a copy.txt)\" = 640; }",
+      "explanation": "GNU cp -P copies the symlink object; ordinary cp of a command-line symlink normally follows it. This fixture uses -P explicitly.",
+      "expected": "Two symlinks with target original.txt; copy mode retained."
+    }
+  ],
+  "hints": [
+    "Inspect file type before interpreting inode output.",
+    "Which bytes changed through which name?",
+    "Keep a separate before-copy."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.3 /104.6. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

@@ -128,6 +128,38 @@
         {
           "id": "real-linux-bash-handover",
           "sha256": "819feb713abaf260748bc47c6e342a7ebea3572694b6b85dcd572731a869ef9a"
+        },
+        {
+          "id": "real-linux-local-startup",
+          "sha256": "0112472ceee50cd86d14308588f54b628c02f5ad9bf5ea0c56912560fd67dd57"
+        },
+        {
+          "id": "real-linux-local-history",
+          "sha256": "b4c7eb0353a57e830d719b864b344a9b06c1a7601c5b4b6efa1e25249396e0f6"
+        },
+        {
+          "id": "real-linux-local-editor",
+          "sha256": "12cf6c43b1977c74691fe9f2be867dd5fd291882bdc3fe3c1b47eb186cedb484"
+        },
+        {
+          "id": "real-linux-local-hardlinks",
+          "sha256": "a1336cf99e9bf2bccec2039a4e17b47318fc37459cbab0ec86311a984b8f1301"
+        },
+        {
+          "id": "real-linux-local-symlinks",
+          "sha256": "fd555a2a2bd80ed348c6016ac8962c0c4deda0940dca9449c3c6960d91211714"
+        },
+        {
+          "id": "real-linux-local-copies",
+          "sha256": "434bc0765974496014ad33f8efa0345bd6dcee7813147dbf62ca24b91b6600c9"
+        },
+        {
+          "id": "real-linux-local-search",
+          "sha256": "ab5dba9912d77154552553912bb3abd9cd5e0a135683fc19f20cacebb55d29fe"
+        },
+        {
+          "id": "real-linux-local-handover",
+          "sha256": "71f926c1f0bedae3d4e694b15d660a664e100255c401a174dbe027ac2cd40c9f"
         }
       ]
     },
@@ -306,6 +338,14 @@
         {
           "id": "real-linux-storage-incident",
           "sha256": "015c67d32e3068efbcd52537e2a83f42e0059ba92333fce20fde6448147f9e76"
+        },
+        {
+          "id": "real-linux-local-sticky",
+          "sha256": "dd589ec062ce67e8758a25877ea93abdf4c9acb79ec18620b4bdd6bb9e6ca6b3"
+        },
+        {
+          "id": "real-linux-local-priority",
+          "sha256": "a13d3c921cd50f5021b580ef18af5345de6a408eea4c4e51a8729df825788738"
         }
       ]
     },
@@ -866,6 +906,66 @@
       "sha256": "015c67d32e3068efbcd52537e2a83f42e0059ba92333fce20fde6448147f9e76",
       "resource": "real-linux-storage-incident.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-local-startup",
+      "sha256": "0112472ceee50cd86d14308588f54b628c02f5ad9bf5ea0c56912560fd67dd57",
+      "resource": "real-linux-local-startup.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-history",
+      "sha256": "b4c7eb0353a57e830d719b864b344a9b06c1a7601c5b4b6efa1e25249396e0f6",
+      "resource": "real-linux-local-history.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-editor",
+      "sha256": "12cf6c43b1977c74691fe9f2be867dd5fd291882bdc3fe3c1b47eb186cedb484",
+      "resource": "real-linux-local-editor.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-hardlinks",
+      "sha256": "a1336cf99e9bf2bccec2039a4e17b47318fc37459cbab0ec86311a984b8f1301",
+      "resource": "real-linux-local-hardlinks.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-symlinks",
+      "sha256": "fd555a2a2bd80ed348c6016ac8962c0c4deda0940dca9449c3c6960d91211714",
+      "resource": "real-linux-local-symlinks.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-copies",
+      "sha256": "434bc0765974496014ad33f8efa0345bd6dcee7813147dbf62ca24b91b6600c9",
+      "resource": "real-linux-local-copies.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-search",
+      "sha256": "ab5dba9912d77154552553912bb3abd9cd5e0a135683fc19f20cacebb55d29fe",
+      "resource": "real-linux-local-search.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-sticky",
+      "sha256": "dd589ec062ce67e8758a25877ea93abdf4c9acb79ec18620b4bdd6bb9e6ca6b3",
+      "resource": "real-linux-local-sticky.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-priority",
+      "sha256": "a13d3c921cd50f5021b580ef18af5345de6a408eea4c4e51a8729df825788738",
+      "resource": "real-linux-local-priority.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-local-handover",
+      "sha256": "71f926c1f0bedae3d4e694b15d660a664e100255c401a174dbe027ac2cd40c9f",
+      "resource": "real-linux-local-handover.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -945,7 +1045,17 @@
     "real-linux-storage-faults": "47b7b3f73f7ca7511c3aff455ee422076f1066422e46b8d4d2506de0114db090",
     "real-linux-storage-fstab": "f333a21e7374ea9a5105a2b027c1cc9de29443b12888da700087a1f157a738ca",
     "real-linux-storage-repair": "cd620101b274a7d18d8e805826beded10129905a85c9ad8dd5db3ad0988e17a0",
-    "real-linux-storage-incident": "015c67d32e3068efbcd52537e2a83f42e0059ba92333fce20fde6448147f9e76"
+    "real-linux-storage-incident": "015c67d32e3068efbcd52537e2a83f42e0059ba92333fce20fde6448147f9e76",
+    "real-linux-local-startup": "0112472ceee50cd86d14308588f54b628c02f5ad9bf5ea0c56912560fd67dd57",
+    "real-linux-local-history": "b4c7eb0353a57e830d719b864b344a9b06c1a7601c5b4b6efa1e25249396e0f6",
+    "real-linux-local-editor": "12cf6c43b1977c74691fe9f2be867dd5fd291882bdc3fe3c1b47eb186cedb484",
+    "real-linux-local-hardlinks": "a1336cf99e9bf2bccec2039a4e17b47318fc37459cbab0ec86311a984b8f1301",
+    "real-linux-local-symlinks": "fd555a2a2bd80ed348c6016ac8962c0c4deda0940dca9449c3c6960d91211714",
+    "real-linux-local-copies": "434bc0765974496014ad33f8efa0345bd6dcee7813147dbf62ca24b91b6600c9",
+    "real-linux-local-search": "ab5dba9912d77154552553912bb3abd9cd5e0a135683fc19f20cacebb55d29fe",
+    "real-linux-local-sticky": "dd589ec062ce67e8758a25877ea93abdf4c9acb79ec18620b4bdd6bb9e6ca6b3",
+    "real-linux-local-priority": "a13d3c921cd50f5021b580ef18af5345de6a408eea4c4e51a8729df825788738",
+    "real-linux-local-handover": "71f926c1f0bedae3d4e694b15d660a664e100255c401a174dbe027ac2cd40c9f"
   },
   "releases": [],
   "keys": [],
@@ -1025,6 +1135,16 @@
     "real-linux-storage-faults": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-storage-fstab": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-storage-repair": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
-    "real-linux-storage-incident": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
+    "real-linux-storage-incident": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-local-startup": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-local-history": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-local-editor": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-local-hardlinks": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-local-symlinks": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-local-copies": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-local-search": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-local-sticky": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-local-priority": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-local-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548"
   }
 }

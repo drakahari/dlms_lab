@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-local-symlinks",
+  "content_version": "1.0.0",
+  "title": "Repair a relative dangling link",
+  "goal": "Resolve a relative link from its containing directory and repair only the link.",
+  "challenge": "Repair a dangling link in a nested directory while preserving the original bytes and metadata. Verify access from two different current directories and retain the relative target string.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-symlinks.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-symlinks.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && fresh docs links before.sha256 before.meta && { mkdir docs links; printf 'handover\\n' > docs/note.txt; chmod 0640 docs/note.txt; sha256sum docs/note.txt > before.sha256; stat -c '%a %h' docs/note.txt > before.meta; ln -s ../missing/note.txt links/current; }",
+      "explanation": "The fault is a wrong relative target. A dangling link exists even when test -e is false.",
+      "expected": "test -L succeeds; dereferenced access fails."
+    },
+    {
+      "command": "here && { readlink links/current; test -L links/current && test ! -e links/current; cat links/current; printf \"read status=%s\\n\" \"$?\"; }",
+      "explanation": "Relative targets resolve from links/, not the current shell directory. Capture the failed read without claiming the original is missing.",
+      "expected": "Known wrong target and a failed read."
+    },
+    {
+      "command": "here && { test -L links/current && rm -- links/current && ln -s ../docs/note.txt links/current; }",
+      "explanation": "Replace only the verified link. Do not overwrite docs/note.txt or use ln -sf on an ambiguous path.",
+      "expected": "Correct relative target; original preserved."
+    },
+    {
+      "command": "here && { readlink links/current; cat links/current; (cd links && cat current); sha256sum -c before.sha256; test \"$(stat -c '%a %h' docs/note.txt)\" = \"$(cat before.meta)\"; }",
+      "explanation": "Verify resolution from both directories, independent bytes and metadata.",
+      "expected": "Both reads handover; unchanged original bytes/mode/link count."
+    }
+  ],
+  "hints": [
+    "Where is the link stored?",
+    "Read the link before changing it.",
+    "Change the link, then verify the original independently."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 104.6. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

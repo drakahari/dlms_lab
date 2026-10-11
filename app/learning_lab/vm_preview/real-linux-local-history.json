@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-local-history",
+  "content_version": "1.0.0",
+  "title": "Edit isolated history and verify persistence",
+  "goal": "Separate in-memory command history from its on-disk record without touching learner history.",
+  "challenge": "Create an isolated history containing two harmless commands, remove only the obsolete entry, persist the result and reopen it in a separate child. Demonstrate that clearing memory alone does not clear disk.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-history.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-history.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && fresh history.txt && { env -i HOME=\"$w\" PATH=/usr/bin:/bin HISTFILE=\"$w/history.txt\" HISTSIZE=20 HISTFILESIZE=20 bash --noprofile --norc -c 'set -o history; history -c; history -s \"printf obsolete\"; history -s \"printf retained\"; history -w; unset HISTFILE; history' ; }",
+      "explanation": "These are inserted history strings, not executed commands. History is enabled explicitly in a noninteractive child for a reproducible demonstration. After the explicit save, unset HISTFILE only inside this child so its exit cannot save the list again.",
+      "expected": "Two entries persisted; parent history unchanged."
+    },
+    {
+      "command": "here && { env -i HOME=\"$w\" PATH=/usr/bin:/bin HISTFILE=\"$w/history.txt\" bash --noprofile --norc -c 'history -c; history -r; history -d 1; history -w; unset HISTFILE; history' ; }",
+      "explanation": "Read the isolated file, inspect indexes, delete the observed obsolete entry and write the revised list. Real interactive indexes need inspection; do not assume a global history number.",
+      "expected": "Only printf retained remains in this fixture."
+    },
+    {
+      "command": "here && { env -i HOME=\"$w\" PATH=/usr/bin:/bin HISTFILE=\"$w/history.txt\" bash --noprofile --norc -c 'history -c; history -r; history; history -c; test -s \"$HISTFILE\"' && cat history.txt; }",
+      "explanation": "Reopen in a new process. history -c affects memory; history -w is what rewrites the file. Default interactive exit behavior is separate from this explicitly written example.",
+      "expected": "Disk still contains the retained command after memory clear."
+    }
+  ],
+  "hints": [
+    "Inspect before choosing an index.",
+    "Writing and appending history differ; this lesson uses -w deliberately.",
+    "Disk Resume does not restore a shell history list in RAM."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 103.1. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

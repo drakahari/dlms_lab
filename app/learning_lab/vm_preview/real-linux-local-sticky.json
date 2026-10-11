@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-local-sticky",
+  "content_version": "1.0.0",
+  "title": "Separate shared-directory writing from deletion",
+  "goal": "Prove sticky-bit deletion restrictions with two existing locked guest identities.",
+  "challenge": "Use the existing ll-service and nobody identities only for files in a unique shared practice directory. Demonstrate cross-user writing to a deliberately writable file but refusal to unlink it; demonstrate owner and directory-owner exceptions. Do not change accounts.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-sticky.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-sticky.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && s=$(mktemp -d /tmp/ll-sticky.XXXXXX) && chmod 1777 \"$s\" && sg() { case \"$s\" in /tmp/ll-sticky.??????) ;; *) return 19;; esac; test \"${s%/*}\" = /tmp && test -d \"$s\" && test ! -L \"$s\" && test \"$(realpath -e \"$s\")\" = \"$s\" && test \"$(stat -c %U:%a \"$s\")\" = learner:1777 || return 19; for n in a b; do if test -e \"$s/$n\" || test -L \"$s/$n\"; then test ! -L \"$s/$n\" && test -f \"$s/$n\" && test \"$(stat -c %h \"$s/$n\")\" = 1 && test \"$(stat -c %s \"$s/$n\")\" -le 1024 || return 19; fi; done; members=$(find -P \"$s\" -mindepth 1 -maxdepth 1 ! -name a ! -name b -print) || return 19; test -z \"$members\"; }; here && sg && getent passwd ll-service nobody",
+      "explanation": "Existing locked/non-login identities are invoked by approved guest sudo, not authenticated with credentials. Retain this exact generated path. Refuse setup failure.",
+      "expected": "A unique directory owned by learner, mode 1777."
+    },
+    {
+      "command": "here && sg && fresh \"$s/a\" \"$s/b\" && { sudo runuser -u ll-service -- sh -c 'printf \"service\\n\" > \"$1/a\" && chmod 0666 \"$1/a\"' sh \"$s\" && sudo runuser -u nobody -- sh -c 'printf \"nobody\\n\" > \"$1/b\"' sh \"$s\"; }",
+      "explanation": "Create files as the actual identities. The writable a file separates content permissions from directory deletion restrictions.",
+      "expected": "a owned ll-service, b owned nobody."
+    },
+    {
+      "command": "here && sg && { sudo runuser -u nobody -- sh -c 'printf \"append\\n\" | dd of=\"$1/a\" oflag=append,nofollow conv=notrunc,nocreat status=none' sh \"$s\" && printf 'service\\nappend\\n' | cmp - \"$s/a\" && test \"$(stat -c %U:%a \"$s/a\")\" = ll-service:666 && { sudo runuser -u nobody -- rm -f -- \"$s/a\"; unlink_rc=$?; test \"$unlink_rc\" -ne 0 && test -f \"$s/a\" && printf 'service\\nappend\\n' | cmp - \"$s/a\" && test \"$(stat -c %U \"$s/b\")\" = nobody && stat -c '%U %a %n' \"$s\" \"$s/a\" \"$s/b\"; }; }",
+      "explanation": "Sticky restricts unlink/rename, not ordinary writes to an existing writable file. This guest also has protected_regular=2: shell >> uses O_CREAT and can be refused independently. The bounded GNU dd command opens only the known existing file: nocreat refuses a missing target, nofollow refuses a final symlink, notrunc preserves bytes, and append writes at the end. Do not change kernel policy. -f avoids an rm prompt; it cannot bypass sticky permission checks.",
+      "expected": "Append succeeds, cross-owner unlink fails and a remains."
+    },
+    {
+      "command": "here && sg && { sudo runuser -u ll-service -- rm -f -- \"$s/a\" && rm -f -- \"$s/b\" && rmdir -- \"$s\"; }",
+      "explanation": "File owner may unlink a; learner, as directory owner, may unlink b. Root is also an exception, but using root alone would not test ordinary-user restrictions.",
+      "expected": "Both exact files and shared directory removed."
+    }
+  ],
+  "hints": [
+    "Use actual identities and immediate status.",
+    "Compare file writing with directory entry removal.",
+    "Directory owner and file owner are exceptions."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 104.5. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

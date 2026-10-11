@@ -54,7 +54,7 @@ class ResourceEvidenceTests(unittest.TestCase):
   self.assertEqual(len(load_collections()),8);b=self.build();self.assertEqual(len(b.curated),38)
   self.assertFalse(b.repository.root.exists());self.assertEqual(b.view['collections'][4]['completed'],{'Learn':0,'Challenge':0})
   from learning_lab.vm_preview.registry import units,entries
-  self.assertEqual((len(units()),len(entries())),(9,76))
+  self.assertEqual((len(units()),len(entries())),(10,86))
   for e in ENTRIES:
    v=e['scenario'].value();self.assertEqual(v['engine']['contract_version'],5)
    self.assertTrue(all(o['predicate'] in ('file_content','stream_observed','original_preserved') for o in v['objectives']))
@@ -153,6 +153,7 @@ print('Separate-process resume PASS')
   value=ENTRIES[0]['scenario'].value();value['domain']['filesystem']['/home/learner/snapshot.txt']['content']='x'*8193
   with self.assertRaises(ValidationError):load_portable(json.dumps(value).encode())
  def test_original_pack_engine_controller_and_vm_resources_byte_preservation(self):
+  from local_shell_preservation import projection
   baseline='7638b284bd2f4cabb676f50d6da7d064ddae69c2'
   names=subprocess.check_output(['git','ls-tree','-r','--name-only',baseline,'app/learning_lab'],cwd=ROOT.parent).decode().splitlines()
   for name in names:
@@ -161,4 +162,4 @@ print('Separate-process resume PASS')
    if name=='app/learning_lab/qml/Main.qml':
     from presentation_revision import MAIN_SHA256
     self.assertEqual(hashlib.sha256((ROOT.parent/name).read_bytes()).hexdigest(),MAIN_SHA256,name)
-   else:self.assertEqual((ROOT.parent/name).read_bytes(),old,name)
+   else:self.assertEqual(projection(name,(ROOT.parent/name).read_bytes()),projection(name,old),name)

@@ -87,8 +87,8 @@ For details use [Resource guidance](lpic-2-resource-simulator.md),
 ## Separate optional real-Linux path
 
 **Real Linux VM preview…** opens a separate selector, not a simulator lab.
-Nine units / 76 lessons cover Processes; Resources; Services & Recovery; Bash;
-Users & Access; Scheduling; Backup; Discovery & Packages; and Storage. Use each
+Ten units / 86 lessons cover Processes; Resources; Services & Recovery; Bash;
+Users & Access; Scheduling; Backup; Discovery & Packages; Storage; and [Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md). Use each
 unit's stated prerequisites and exact approved image. Missing images fail clearly;
 there is no privileged-image fallback or automatic software installation.
 

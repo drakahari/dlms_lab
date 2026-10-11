@@ -126,11 +126,13 @@
       "objective": "103.1",
       "status": "Partial",
       "units": [
-        "bash"
+        "bash",
+        "local-shell"
       ],
-      "implemented_and_missing": "Bash & Safe Changes. Implemented quoting, lookup, temporary PATH/env and statuses; history editing and broader command/environment mastery missing.",
+      "implemented_and_missing": "Bash & Safe Changes. Implemented quoting, lookup, temporary PATH/env and statuses; broader command/environment mastery remains partial. Local Shell & Filesystem Administration. Isolated history insertion, inspection, entry deletion, explicit write and clean shell reopening; memory clear differs from disk history. Other command/tool breadth remains partial.",
       "evidence": [
-        "vm-preview/bash-unit.md"
+        "vm-preview/bash-unit.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {
@@ -156,13 +158,15 @@
       "units": [
         "organize",
         "bash",
-        "backup"
+        "backup",
+        "local-shell"
       ],
-      "implemented_and_missing": "Organize & Find, Bash & Safe Changes, Backup & Recovery. Implemented scoped file operations, quoted paths and tar/gzip recovery; recursive management, richer find, cpio and other compression missing.",
+      "implemented_and_missing": "Organize & Find, Bash & Safe Changes, Backup & Recovery. Implemented scoped file operations, quoted paths and tar/gzip recovery; recursive management, richer find, cpio and other compression missing. Local Shell & Filesystem Administration. Independent regular copies and bounded quoted type/name/byte-size/time find criteria. No recursive file-management or general archive breadth.",
       "evidence": [
         "lpic-unit-2.md",
         "vm-preview/bash-unit.md",
-        "vm-preview/backup-unit.md"
+        "vm-preview/backup-unit.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {
@@ -196,11 +200,13 @@
       "objective": "103.6",
       "status": "Partial",
       "units": [
-        "jobs"
+        "jobs",
+        "local-shell"
       ],
-      "implemented_and_missing": "Processes & Jobs. Implemented unprivileged nice/renice, refusal and actual values; privileged priority recovery missing.",
+      "implemented_and_missing": "Processes & Jobs. Implemented unprivileged nice/renice, refusal and actual values; the original unit is unprivileged; scoped guest-root recovery is added below. Local Shell & Filesystem Administration. Actual existing-process niceness, denied unprivileged reversal and approved scoped guest-root reversal on one owned sleep. No scheduler/CPU-share guarantee.",
       "evidence": [
-        "vm-preview/processes-unit.md"
+        "vm-preview/processes-unit.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {
@@ -220,11 +226,13 @@
       "objective": "103.8",
       "status": "Partial",
       "units": [
-        "bash"
+        "bash",
+        "local-shell"
       ],
-      "implemented_and_missing": "Bash & Safe Changes. Implemented actual vi modes, navigation, edits, search and rollback; broader editor awareness/default-editor practice missing.",
+      "implemented_and_missing": "Bash & Safe Changes. Implemented actual vi modes, navigation, edits, search and rollback; persistent editor configuration and broader editor awareness remain missing. Local Shell & Filesystem Administration. Temporary VISUAL/EDITOR through sensible-editor with actual Vim Tiny editing and preserved before-copy. No global alternatives, persistent editor configuration or Emacs completeness.",
       "evidence": [
-        "vm-preview/bash-unit.md"
+        "vm-preview/bash-unit.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {
@@ -279,33 +287,41 @@
       "units": [
         "files",
         "users",
-        "backup"
+        "backup",
+        "local-shell"
       ],
-      "implemented_and_missing": "Files & Permissions, Users & Access, Backup & Recovery. Implemented file/directory permissions, actual identities, owner/group, setgid and umask; remaining special-bit workflows and broader cases missing. No ACL claim.",
+      "implemented_and_missing": "Files & Permissions, Users & Access, Backup & Recovery. Implemented file/directory permissions, actual identities, owner/group, setgid and umask; remaining special-bit workflows and broader cases missing. No ACL claim. Local Shell & Filesystem Administration. Actual sticky write-versus-unlink restrictions and owner exceptions; read-only privileged-bit audit. No executable setuid helper, ACLs or comprehensive special-file handling.",
       "evidence": [
         "lpic-unit-1.md",
         "vm-preview/users-unit.md",
-        "vm-preview/backup-unit.md"
+        "vm-preview/backup-unit.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {
       "certification": "LPIC-1",
       "objective": "104.6",
-      "status": "Missing",
-      "units": [],
-      "implemented_and_missing": "No dedicated demonstrated links exercise.",
-      "evidence": []
+      "status": "Partial",
+      "units": [
+        "local-shell"
+      ],
+      "implemented_and_missing": "Previously no dedicated links exercise; the new bounded practice is described below. Local Shell & Filesystem Administration. Real hard-link device/inode/count/shared changes/unlink and relative/dangling symlink repair; independent copy and dereference distinction. Cross-filesystem/directory-link breadth remains.",
+      "evidence": [
+        "vm-preview/local-shell-unit.md"
+      ]
     },
     {
       "certification": "LPIC-1",
       "objective": "104.7",
       "status": "Partial",
       "units": [
-        "organize"
+        "organize",
+        "local-shell"
       ],
-      "implemented_and_missing": "Organize & Find. Implemented representative home/etc/var path reasoning and bounded locating; complete hierarchy and locating utilities missing.",
+      "implemented_and_missing": "Organize & Find. Implemented representative home/etc/var path reasoning and bounded locating; complete hierarchy and locating utilities missing. Local Shell & Filesystem Administration. Bounded real find and FHS interpretation in a model tree. No actual relocation of system configuration, locate/updatedb or full FHS breadth.",
       "evidence": [
-        "lpic-unit-2.md"
+        "lpic-unit-2.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {
@@ -313,11 +329,13 @@
       "objective": "105.1",
       "status": "Partial",
       "units": [
-        "bash"
+        "bash",
+        "local-shell"
       ],
-      "implemented_and_missing": "Bash & Safe Changes. Implemented temporary environment/functions; persistent startup-file customization and full scope missing.",
+      "implemented_and_missing": "Bash & Safe Changes. Implemented temporary environment/functions; persistent startup-file customization and full scope missing. Local Shell & Filesystem Administration. Isolated login, interactive non-login and clean child startup, actual flags/HOME/marker evidence. No persistent account skeleton or owner startup changes.",
       "evidence": [
-        "vm-preview/bash-unit.md"
+        "vm-preview/bash-unit.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {
@@ -471,13 +489,15 @@
     {
       "certification": "LPIC-1",
       "objective": "110.1",
-      "status": "Reinforcement only",
+      "status": "Partial",
       "units": [
-        "users"
+        "users",
+        "local-shell"
       ],
-      "implemented_and_missing": "Users & Access. Least privilege/locked disposable identities; no security audit/sudo-policy administration claim.",
+      "implemented_and_missing": "Users & Access. Least privilege/locked disposable identities; no security audit/sudo-policy administration claim. Local Shell & Filesystem Administration. Read-only /usr/bin special-bit audit and careful interpretation. No comprehensive host security/port/login-history policy practice.",
       "evidence": [
-        "vm-preview/users-unit.md"
+        "vm-preview/users-unit.md",
+        "vm-preview/local-shell-unit.md"
       ]
     },
     {

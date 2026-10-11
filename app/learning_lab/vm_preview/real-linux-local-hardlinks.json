@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-local-hardlinks",
+  "content_version": "1.0.0",
+  "title": "Prove hard-link identity and deletion semantics",
+  "goal": "Identify shared inode content and metadata, then remove an extra name without losing the remaining file.",
+  "challenge": "Create a hard link to a small original, prove device/inode/link-count identity, demonstrate shared edits and permissions, remove one name and verify the remaining contents. Preserve an independent before-copy.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-hardlinks.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-hardlinks.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && fresh original.txt before.txt alias.txt && { printf 'known\\n' > original.txt; chmod 0640 original.txt; cp -p original.txt before.txt; ln -- original.txt alias.txt; }",
+      "explanation": "A hard link is a second directory entry for the same inode; before.txt is an independent copy. No directory or cross-filesystem hard linking is attempted.",
+      "expected": "Two names share one inode; independent before-copy."
+    },
+    {
+      "command": "here && { stat -c '%d:%i %h %a %n' original.txt alias.txt before.txt; cmp original.txt alias.txt; }",
+      "explanation": "Equal bytes alone are insufficient: compare device plus inode and link count.",
+      "expected": "original and alias have identical device/inode and link count 2; before differs."
+    },
+    {
+      "command": "here && { printf 'added\\n' >> alias.txt; chmod 0600 alias.txt; cat original.txt; stat -c '%a' original.txt; cat before.txt; }",
+      "explanation": "Writes and chmod act on the shared inode. This intentionally changes the teaching original; the independent before-copy retains its earlier state.",
+      "expected": "Both names show known plus added and mode 600; before remains known."
+    },
+    {
+      "command": "here && { rm -- alias.txt; stat -c \"%h\" original.txt; cat original.txt; cmp -s before.txt original.txt; printf \"comparison status=%s\\n\" \"$?\"; }",
+      "explanation": "Unlink one name, not an independently copied file. The data remains reachable through original.txt.",
+      "expected": "Link count 1; modified data survives; before differs."
+    }
+  ],
+  "hints": [
+    "Check device:inode and nlink.",
+    "Which operation changes shared metadata?",
+    "Preserve an independent copy before deliberate shared edits."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 104.6. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

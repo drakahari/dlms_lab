@@ -167,8 +167,8 @@ class BundleTests(unittest.TestCase):
   self.assertTrue(parents);self.assertTrue((self.target()/'receipt.json').exists())
  def test_local_header_ranges_and_truncation(self):
   self.signer.write(self.path,self.members);original=self.path.read_bytes();central=original.index(b'PK\x01\x02')
-  for offset,value in ((30,ord('x')),(14,255),(22,255),(central+42,255)):
-   raw=bytearray(original);raw[offset]=value;self.path.write_bytes(raw)
+  for offset in (30,14,22,central+42):
+   raw=bytearray(original);raw[offset]^=1;self.assertNotEqual(raw,original);self.path.write_bytes(raw)
    with self.assertRaises(ValueError):self.install()
   for raw in (original[:-1],b'prefix'+original,original+b'trailer'):
    self.path.write_bytes(raw)

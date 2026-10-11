@@ -1,0 +1,54 @@
+{
+  "id": "real-linux-local-priority",
+  "content_version": "1.0.0",
+  "title": "Audit special bits and verify a scoped priority change",
+  "goal": "Inspect privileged bits read-only, then change niceness only for your bounded owned task.",
+  "challenge": "Record a bounded read-only special-bit audit and explain why mode alone does not prove safety. On an owned sleep task raise niceness, demonstrate an unprivileged decrease is denied, then use approved guest sudo to restore it. Retain actual PID/UID/start time and niceness.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/local-priority.XXXXXX\") && cd \"$w\" && pwd && here() { case \"$w\" in \"$HOME\"/local-priority.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here",
+      "explanation": "Create a unique learner-owned guest workspace; stop on error and record its absolute path. Reopening boots the disk, not these shell variables. Never use the host terminal.",
+      "expected": "A new private directory; no pre-existing files are changed."
+    },
+    {
+      "command": "here && { find /usr/bin -maxdepth 1 -type f -perm /6000 -printf '%m %u %g %f\\n' | head -n 10; }",
+      "explanation": "Read-only audit of setuid/setgid bits on this image. Do not create or execute a new setuid helper. This is neither a security verdict nor a full recursive system audit.",
+      "expected": "At most ten rows; ownership/mode require context."
+    },
+    {
+      "command": "here && { sleep 120 & task=$!; task_start=$(awk '{print $22}' /proc/\"$task\"/stat); owned() { test -n \"$task\" && test -f /proc/\"$task\"/stat && test \"$(awk '{print $22}' /proc/\"$task\"/stat)\" = \"$task_start\" && test \"$(ps -o user= -p \"$task\" | xargs)\" = learner && test \"$(ps -o comm= -p \"$task\" | xargs)\" = sleep; }; owned && ps -o pid=,user=,ni=,args= -p \"$task\"; }",
+      "explanation": "One negligible-load task exits on its own within 120 seconds. Record PID/start time/owner, not a fixed PID. If it expires before testing, begin again; never control a reused PID.",
+      "expected": "Owned learner sleep task and actual niceness."
+    },
+    {
+      "command": "here && owned && renice 5 -p \"$task\" && test \"$(ps -o ni= -p \"$task\" | xargs)\" = 5 && ps -o pid=,ni= -p \"$task\"",
+      "explanation": "This verified util-linux renice form sets absolute niceness. Higher niceness lowers scheduling preference; it is not a guaranteed CPU percentage.",
+      "expected": "Actual niceness 5."
+    },
+    {
+      "command": "here && owned && { renice 0 -p \"$task\"; denied_rc=$?; printf \"unprivileged status=%s\\n\" \"$denied_rc\"; test \"$denied_rc\" -ne 0 && test \"$(ps -o ni= -p \"$task\" | xargs)\" = 5; }",
+      "explanation": "An ordinary user cannot normally decrease niceness. A failure message must be followed by actual state inspection.",
+      "expected": "Denied request; task remains at 5."
+    },
+    {
+      "command": "here && owned && sudo renice 0 -p \"$task\" && test \"$(ps -o ni= -p \"$task\" | xargs)\" = 0 && ps -o pid=,ni= -p \"$task\"",
+      "explanation": "Guest-only approved administrator privilege. Recheck the exact owned task immediately before requesting a change. No host priority is touched.",
+      "expected": "Actual niceness returns to 0."
+    },
+    {
+      "command": "here && { if test -e /proc/\"$task\"/stat; then owned && kill -TERM \"$task\"; fi; wait \"$task\"; test ! -e /proc/\"$task\"; }",
+      "explanation": "Signal only this matching owned bounded task. wait may return a signal status; final absence is the intended result. No broad kill command.",
+      "expected": "Task has exited; no leftover workload."
+    }
+  ],
+  "hints": [
+    "Inspect state after denied renice.",
+    "Use only your recorded task and recheck owner/start.",
+    "Do not create special-bit executables or alter other processes."
+  ],
+  "review": [
+    "I retained actual output and checked the required contents, metadata or identity, not just command success.",
+    "I can explain the stated limitations, demonstrate the incorrect case, preserve originals and clean up only my recorded workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 104.5 /103.6 /110.1. Self-reviewed and unscored: the application does not inspect guest results. No full-objective or exam-readiness claim."
+}

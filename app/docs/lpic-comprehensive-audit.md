@@ -1,8 +1,8 @@
 # LPIC-1 / LPIC-2 comprehensive evidence audit
 
-Verified **2026-10-11**, clean baseline `67337af47561d6bccbb49cbba708bd1e1a4bb59e`. Analysis only; no new course content or runtime change.
+Verified **2026-10-11**, clean baseline `67337af47561d6bccbb49cbba708bd1e1a4bb59e`. Original analysis checkpoint; the approved first-family implementation update is recorded below.
 
-Sources: [active LPIC-1 objectives](https://www.lpi.org/our-certifications/exam-101-102-objectives/), [LPIC-1 overview](https://www.lpi.org/our-certifications/lpic-1-overview/), [active LPIC-2 objectives](https://www.lpi.org/our-certifications/exam-201-202-objectives/), [LPIC-2 overview](https://www.lpi.org/our-certifications/lpic-2-overview/). LPIC-1 is 5.0 (101-500/102-500); LPIC-2 is 4.5.0 (201-450/202-450). Access dates, source-copy hashes, every KKA mapping and 117 concrete lesson records are in [machine-readable audit](lpic-comprehensive-audit.json).
+Sources: [active LPIC-1 objectives](https://www.lpi.org/our-certifications/exam-101-102-objectives/), [LPIC-1 overview](https://www.lpi.org/our-certifications/lpic-1-overview/), [active LPIC-2 objectives](https://www.lpi.org/our-certifications/exam-201-202-objectives/), [LPIC-2 overview](https://www.lpi.org/our-certifications/lpic-2-overview/). LPIC-1 is 5.0 (101-500/102-500); LPIC-2 is 4.5.0 (201-450/202-450). Access dates, source-copy hashes, every KKA mapping and 127 concrete lesson records are in [machine-readable audit](lpic-comprehensive-audit.json).
 
 **Transition:** [LPI annual review 2025](https://www.lpi.org/wp-content/uploads/2026/03/2025_LPI-AnnualReview.pdf) plans LPIC-2 changes for 2026. The [published 5.0.0 objectives](https://wiki.lpi.org/wiki/LPIC-2_Objectives_V5.0) remain explicitly draft. No confirmed launch/retirement date was found. Do not merge draft IDs into the active inventory; recheck before a large curriculum build.
 
@@ -16,7 +16,7 @@ There are 83 active objectives (23/19/20/21), not 84. Historical 104.4 is a remo
 
 | Exam / identifier / version | Covered | Partial | Missing | Any S | Any V | Any A |
 |---|---:|---:|---:|---:|---:|---:|
-| 101 / 101-500 / 5.0 | 0 | 18 | 5 | 6 | 18 | 6 |
+| 101 / 101-500 / 5.0 | 0 | 19 | 4 | 6 | 19 | 6 |
 | 102 / 102-500 / 5.0 | 0 | 10 | 9 | 3 | 6 | 3 |
 | 201 / 201-450 / 4.5.0 | 0 | 9 | 11 | 4 | 7 | 4 |
 | 202 / 202-450 / 4.5.0 | 0 | 6 | 15 | 5 | 0 | 5 |
@@ -25,7 +25,7 @@ Any A means **some checked subskill only**; fully assessed objectives: 0 in ever
 
 ## Current inventory and evidence quality
 
-Eight simulator collections have 42 appearances representing 38 unique Linux packs plus 3 original networking labs: 41 distinct simulator activities. Nine real-VM units have 76 lessons. Sharing a pack across collections does not add another skill or progress record. Collection limits are full (8 simulator collections; 9 VM units/76 lessons, 16 per unit); capacity/default/retained-map changes need separate authorization.
+Eight simulator collections have 42 appearances representing 38 unique Linux packs plus 3 original networking labs: 41 distinct simulator activities. Ten real-VM units have 86 lessons. Sharing a pack across collections does not add another skill or progress record. Collection limits are full (8 simulator collections; 10 VM units/86 lessons, 16 per unit); capacity/default/retained-map changes need separate authorization.
 
 Positive/negative simulator evidence: permissions test wrong/broad modes and stale verification; navigation checks activity and final location; file-management/text cases check wrong files/content/order, errors and final state; snapshot cases reject missing/wrong reports and require post-write display. Exact record spelling/order/LF is part of current report grading. That is narrower than semantic reasoning. HELP models remain readable in Challenge; hiding steps/hints is not proof of independent mastery. Resource snapshots award 10 points for an engine-enforced immutable-source invariant: this is preservation, not another demonstrated learner skill.
 
@@ -178,16 +178,17 @@ Explicit bounded-practice terms: none individually credited. Tool presence, a fi
 
 | KKA | Skill | Evidence / scope |
 |---|---|---|
-| 1 | Individual commands and command sequences | V+R: [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json), [real-linux-bash-script](../learning_lab/vm_preview/real-linux-bash-script.json). Partial subset; see remaining breadth. S+A+R: [linux-file-navigation](../learning_lab/collections/packs/linux-file-navigation.lab.json). Recorded pwd/list/entry/read evidence and final directory; no real shell semantics. |
+| 1 | Individual commands and command sequences | V+R: [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json), [real-linux-bash-script](../learning_lab/vm_preview/real-linux-bash-script.json). Partial subset; see remaining breadth.<br>S+A: [linux-file-navigation](../learning_lab/collections/packs/linux-file-navigation.lab.json). Recorded pwd/list/entry/read evidence and final directory; no real shell semantics. |
 | 2 | Local/exported shell variables | V+R: [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json), [real-linux-bash-script](../learning_lab/vm_preview/real-linux-bash-script.json). Partial subset; see remaining breadth. |
-| 3 | History retrieval/editing | **Missing**: no demonstrated dedicated subskill. |
+| 3 | History retrieval/editing | V+R: [real-linux-local-history](../learning_lab/vm_preview/real-linux-local-history.json). Isolated history insertion/edit/write/reopen, not credential or parent-history changes. |
 | 4 | PATH and explicit executable lookup | V+R: [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json), [real-linux-bash-script](../learning_lab/vm_preview/real-linux-bash-script.json). Partial subset; see remaining breadth. |
 
 **Breadth still to verify/teach:** Missing rows and the unpracticed official tool/file breadth remain; evidence rows are partial, never a complete-objective claim.
 
 Official non-exhaustive tools/files/terms: `bash`, `echo`, `env`, `export`, `pwd`, `set`, `unset`, `type`, `which`, `man`, `uname`, `history`, `.bash_history`, `Quoting`.
 
-Explicit bounded-practice terms: `bash`, `export`, `pwd`, `unset`, `type`, `Quoting`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `Quoting`, `bash`, `export`, `history`, `pwd`, `type`, `unset`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 103.2 — Process text streams using filters (exam 101, weight 2; partial)
 
@@ -205,18 +206,19 @@ Explicit bounded-practice terms: `cat`, `cut`, `head`, `sed`, `sha256sum`, `sort
 
 | KKA | Skill | Evidence / scope |
 |---|---|---|
-| 1 | Individual file/directory lifecycle | V+R: [real-linux-bash-files](../learning_lab/vm_preview/real-linux-bash-files.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json). Small quoted names/globs and constrained find; no advanced size/time/action breadth. S+A+R: [linux-prepare-workspace](../learning_lab/collections/packs/linux-prepare-workspace.lab.json), [linux-copy-reference](../learning_lab/collections/packs/linux-copy-reference.lab.json), [linux-organize-report](../learning_lab/collections/packs/linux-organize-report.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json), [linux-deliver-workspace](../learning_lab/collections/packs/linux-deliver-workspace.lab.json). Declared regular-file lifecycle and limited find; no recursive management. |
+| 1 | Individual file/directory lifecycle | V+R: [real-linux-bash-files](../learning_lab/vm_preview/real-linux-bash-files.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json). Small quoted names/globs and constrained find; no advanced size/time/action breadth.<br>S+A: [linux-prepare-workspace](../learning_lab/collections/packs/linux-prepare-workspace.lab.json), [linux-copy-reference](../learning_lab/collections/packs/linux-copy-reference.lab.json), [linux-organize-report](../learning_lab/collections/packs/linux-organize-report.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json), [linux-deliver-workspace](../learning_lab/collections/packs/linux-deliver-workspace.lab.json). Declared regular-file lifecycle and limited find; no recursive management.<br>V+R: [real-linux-local-copies](../learning_lab/vm_preview/real-linux-local-copies.json). Independent regular copy and protected before-copy; no recursive management. |
 | 2 | Recursive copying | **Missing**: no demonstrated dedicated subskill. |
 | 3 | Recursive deletion | **Missing**: no demonstrated dedicated subskill. |
 | 4 | Shell glob patterns | V+R: [real-linux-bash-files](../learning_lab/vm_preview/real-linux-bash-files.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json). Small quoted names/globs and constrained find; no advanced size/time/action breadth. |
-| 5 | find criteria and actions | V+R: [real-linux-bash-files](../learning_lab/vm_preview/real-linux-bash-files.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json). Small quoted names/globs and constrained find; no advanced size/time/action breadth. S+A+R: [linux-prepare-workspace](../learning_lab/collections/packs/linux-prepare-workspace.lab.json), [linux-copy-reference](../learning_lab/collections/packs/linux-copy-reference.lab.json), [linux-organize-report](../learning_lab/collections/packs/linux-organize-report.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json), [linux-deliver-workspace](../learning_lab/collections/packs/linux-deliver-workspace.lab.json). Declared regular-file lifecycle and limited find; no recursive management. |
+| 5 | find criteria and actions | V+R: [real-linux-bash-files](../learning_lab/vm_preview/real-linux-bash-files.json), [real-linux-bash-quoting](../learning_lab/vm_preview/real-linux-bash-quoting.json). Small quoted names/globs and constrained find; no advanced size/time/action breadth.<br>S+A: [linux-prepare-workspace](../learning_lab/collections/packs/linux-prepare-workspace.lab.json), [linux-copy-reference](../learning_lab/collections/packs/linux-copy-reference.lab.json), [linux-organize-report](../learning_lab/collections/packs/linux-organize-report.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json), [linux-deliver-workspace](../learning_lab/collections/packs/linux-deliver-workspace.lab.json). Declared regular-file lifecycle and limited find; no recursive management.<br>V+R: [real-linux-local-search](../learning_lab/vm_preview/real-linux-local-search.json). Quoted name/type/byte-size and completed-day/minute find criteria; no destructive find actions. |
 | 6 | Archive/cpio/dd workflows | V+R: [real-linux-backup-archive](../learning_lab/vm_preview/real-linux-backup-archive.json), [real-linux-backup-checksum](../learning_lab/vm_preview/real-linux-backup-checksum.json), [real-linux-backup-restore](../learning_lab/vm_preview/real-linux-backup-restore.json). tar/gzip only; no cpio or general dd file management. |
 
 **Breadth still to verify/teach:** No recursive simulator operations or links. Live tar/gzip is scoped; no cpio, full dd transfer or alternate-compression workflow.
 
 Official non-exhaustive tools/files/terms: `cp`, `find`, `mkdir`, `mv`, `ls`, `rm`, `rmdir`, `touch`, `tar`, `cpio`, `dd`, `file`, `gzip`, `gunzip`, `bzip2`, `bunzip2`, `xz`, `unxz`, `file globbing`.
 
-Explicit bounded-practice terms: `cp`, `find`, `mkdir`, `mv`, `ls`, `rm`, `rmdir`, `touch`, `tar`, `gzip`, `file globbing`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `cp`, `find`, `mkdir`, `mv`, `ls`, `rm`, `rmdir`, `touch`, `tar`, `gzip`, `file globbing`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 103.4 — Use streams, pipes and redirects (exam 101, weight 4; partial)
 
@@ -255,13 +257,14 @@ Explicit bounded-practice terms: `&`, `bg`, `fg`, `jobs`, `kill`, `nohup`, `ps`,
 |---|---|---|
 | 1 | Default niceness | V+R: [real-linux-process-priorities](../learning_lab/vm_preview/real-linux-process-priorities.json). Unprivileged positive niceness and denied increases with actual-value checks; privileged priority recovery omitted. |
 | 2 | Increasing and decreasing new-job priority | V+R: [real-linux-process-priorities](../learning_lab/vm_preview/real-linux-process-priorities.json). Unprivileged positive niceness and denied increases with actual-value checks; privileged priority recovery omitted. |
-| 3 | Changing an existing process priority | V+R: [real-linux-process-priorities](../learning_lab/vm_preview/real-linux-process-priorities.json). Unprivileged positive niceness and denied increases with actual-value checks; privileged priority recovery omitted. |
+| 3 | Changing an existing process priority | V+R: [real-linux-process-priorities](../learning_lab/vm_preview/real-linux-process-priorities.json). Unprivileged positive niceness and denied increases with actual-value checks; privileged priority recovery omitted.<br>V+R: [real-linux-local-priority](../learning_lab/vm_preview/real-linux-local-priority.json). Actual owned task niceness 5, denied reversal and scoped approved guest-root return to0; no CPU-share guarantee. |
 
 **Breadth still to verify/teach:** Missing rows and the unpracticed official tool/file breadth remain; evidence rows are partial, never a complete-objective claim.
 
 Official non-exhaustive tools/files/terms: `nice`, `ps`, `renice`, `top`.
 
-Explicit bounded-practice terms: `nice`, `ps`, `renice`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `nice`, `ps`, `renice`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 103.7 — Search text files using regular expressions (exam 101, weight 3; partial)
 
@@ -287,13 +290,14 @@ Explicit bounded-practice terms: `grep`, `sed`. Tool presence, a filename mentio
 | 2 | vi modes | V+R: [real-linux-bash-vi](../learning_lab/vm_preview/real-linux-bash-vi.json), [real-linux-bash-rollback](../learning_lab/vm_preview/real-linux-bash-rollback.json). Vim Tiny vi exercises and preserved-file rollback; editor/swap/power-loss breadth omitted. |
 | 3 | vi insertion/change/deletion/copy/search | V+R: [real-linux-bash-vi](../learning_lab/vm_preview/real-linux-bash-vi.json), [real-linux-bash-rollback](../learning_lab/vm_preview/real-linux-bash-rollback.json). Vim Tiny vi exercises and preserved-file rollback; editor/swap/power-loss breadth omitted. |
 | 4 | Alternative editor awareness | G+R: [real-linux-bash-script](../learning_lab/vm_preview/real-linux-bash-script.json). nano used for short scripts; no Emacs/comparative editor lesson. |
-| 5 | Default editor configuration | **Missing**: no demonstrated dedicated subskill. |
+| 5 | Default editor configuration | V+R: [real-linux-local-editor](../learning_lab/vm_preview/real-linux-local-editor.json). Temporary VISUAL/EDITOR consumed by sensible-editor and actual Vim Tiny save. No global/persistent alternatives change. |
 
-**Breadth still to verify/teach:** Vim Tiny supports the accepted vi cases; Emacs awareness and default EDITOR configuration are not dedicated practice.
+**Breadth still to verify/teach:** Temporary consuming-editor selection added; persistent/editor-platform configuration, Emacs and swap/power-loss breadth remain.
 
 Official non-exhaustive tools/files/terms: `vi`, `/, ?`, `h,j,k,l`, `i, o, a`, `d, p, y, dd, yy`, `ZZ, :w!, :q!`, `EDITOR`.
 
-Explicit bounded-practice terms: `vi`, `h,j,k,l`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `vi`, `h,j,k,l`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 104.1 — Create partitions and filesystems (exam 101, weight 2; partial)
 
@@ -346,8 +350,8 @@ Explicit bounded-practice terms: `mount`, `umount`, `blkid`, `lsblk`. Tool prese
 
 | KKA | Skill | Evidence / scope |
 |---|---|---|
-| 1 | File/special-file/directory access | V+R: [real-linux-users-ownership](../learning_lab/vm_preview/real-linux-users-ownership.json), [real-linux-users-shared](../learning_lab/vm_preview/real-linux-users-shared.json), [real-linux-users-umask](../learning_lab/vm_preview/real-linux-users-umask.json), [real-linux-users-repair](../learning_lab/vm_preview/real-linux-users-repair.json), [real-linux-backup-access](../learning_lab/vm_preview/real-linux-backup-access.json). Actual disposable identities, group ownership/setgid directories and umask; special files/setuid/sticky breadth omitted. S+A+R: [linux-file-permissions](../learning_lab/collections/packs/linux-file-permissions.lab.json), [linux-directory-permissions](../learning_lab/collections/packs/linux-directory-permissions.lab.json), [linux-private-note](../learning_lab/collections/packs/linux-private-note.lab.json), [linux-search-only-directory](../learning_lab/collections/packs/linux-search-only-directory.lab.json), [linux-archive-access](../learning_lab/collections/packs/linux-archive-access.lab.json). Ordinary owner bits, directory read/search and post-change evidence; no real multiuser/group mutation/special bits. |
-| 2 | setuid/setgid/sticky semantics | V+R: [real-linux-users-ownership](../learning_lab/vm_preview/real-linux-users-ownership.json), [real-linux-users-shared](../learning_lab/vm_preview/real-linux-users-shared.json), [real-linux-users-umask](../learning_lab/vm_preview/real-linux-users-umask.json), [real-linux-users-repair](../learning_lab/vm_preview/real-linux-users-repair.json), [real-linux-backup-access](../learning_lab/vm_preview/real-linux-backup-access.json). Actual disposable identities, group ownership/setgid directories and umask; special files/setuid/sticky breadth omitted. |
+| 1 | File/special-file/directory access | V+R: [real-linux-users-ownership](../learning_lab/vm_preview/real-linux-users-ownership.json), [real-linux-users-shared](../learning_lab/vm_preview/real-linux-users-shared.json), [real-linux-users-umask](../learning_lab/vm_preview/real-linux-users-umask.json), [real-linux-users-repair](../learning_lab/vm_preview/real-linux-users-repair.json), [real-linux-backup-access](../learning_lab/vm_preview/real-linux-backup-access.json). Actual disposable identities, group ownership/setgid directories and umask; special files/setuid/sticky breadth omitted.<br>S+A: [linux-file-permissions](../learning_lab/collections/packs/linux-file-permissions.lab.json), [linux-directory-permissions](../learning_lab/collections/packs/linux-directory-permissions.lab.json), [linux-private-note](../learning_lab/collections/packs/linux-private-note.lab.json), [linux-search-only-directory](../learning_lab/collections/packs/linux-search-only-directory.lab.json), [linux-archive-access](../learning_lab/collections/packs/linux-archive-access.lab.json). Ordinary owner bits, directory read/search and post-change evidence; no real multiuser/group mutation/special bits. |
+| 2 | setuid/setgid/sticky semantics | V+R: [real-linux-users-ownership](../learning_lab/vm_preview/real-linux-users-ownership.json), [real-linux-users-shared](../learning_lab/vm_preview/real-linux-users-shared.json), [real-linux-users-umask](../learning_lab/vm_preview/real-linux-users-umask.json), [real-linux-users-repair](../learning_lab/vm_preview/real-linux-users-repair.json), [real-linux-backup-access](../learning_lab/vm_preview/real-linux-backup-access.json). Actual disposable identities, group ownership/setgid directories and umask; special files/setuid/sticky breadth omitted.<br>V+R: [real-linux-local-sticky](../learning_lab/vm_preview/real-linux-local-sticky.json), [real-linux-local-priority](../learning_lab/vm_preview/real-linux-local-priority.json). Actual two existing identities separate writable content from sticky unlink refusal and owner exceptions; privileged bits audited read-only, no setuid helper execution. |
 | 3 | Creation masks | V+R: [real-linux-users-ownership](../learning_lab/vm_preview/real-linux-users-ownership.json), [real-linux-users-shared](../learning_lab/vm_preview/real-linux-users-shared.json), [real-linux-users-umask](../learning_lab/vm_preview/real-linux-users-umask.json), [real-linux-users-repair](../learning_lab/vm_preview/real-linux-users-repair.json), [real-linux-backup-access](../learning_lab/vm_preview/real-linux-backup-access.json). Actual disposable identities, group ownership/setgid directories and umask; special files/setuid/sticky breadth omitted. |
 | 4 | Group-based access | V+R: [real-linux-users-ownership](../learning_lab/vm_preview/real-linux-users-ownership.json), [real-linux-users-shared](../learning_lab/vm_preview/real-linux-users-shared.json), [real-linux-users-umask](../learning_lab/vm_preview/real-linux-users-umask.json), [real-linux-users-repair](../learning_lab/vm_preview/real-linux-users-repair.json), [real-linux-backup-access](../learning_lab/vm_preview/real-linux-backup-access.json). Actual disposable identities, group ownership/setgid directories and umask; special files/setuid/sticky breadth omitted. |
 
@@ -355,42 +359,45 @@ Explicit bounded-practice terms: `mount`, `umount`, `blkid`, `lsblk`. Tool prese
 
 Official non-exhaustive tools/files/terms: `chmod`, `umask`, `chown`, `chgrp`.
 
-Explicit bounded-practice terms: `chmod`, `umask`, `chown`, `chgrp`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `chmod`, `umask`, `chown`, `chgrp`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
 
-### 104.6 — Create and change hard and symbolic links (exam 101, weight 2; missing)
+
+### 104.6 — Create and change hard and symbolic links (exam 101, weight 2; partial)
 
 | KKA | Skill | Evidence / scope |
 |---|---|---|
-| 1 | Hard and symbolic link creation | **Missing**: no demonstrated dedicated subskill. |
-| 2 | Link identification | **Missing**: no demonstrated dedicated subskill. |
-| 3 | Copy versus link semantics | **Missing**: no demonstrated dedicated subskill. |
-| 4 | Administration through links | **Missing**: no demonstrated dedicated subskill. |
+| 1 | Hard and symbolic link creation | V+R: [real-linux-local-hardlinks](../learning_lab/vm_preview/real-linux-local-hardlinks.json), [real-linux-local-symlinks](../learning_lab/vm_preview/real-linux-local-symlinks.json). Real regular hard links and relative/dangling symlink repair, originals/before-copies preserved. |
+| 2 | Link identification | V+R: [real-linux-local-hardlinks](../learning_lab/vm_preview/real-linux-local-hardlinks.json), [real-linux-local-symlinks](../learning_lab/vm_preview/real-linux-local-symlinks.json). Device/inode/link count plus lstat-style identity and dereferenced reading. |
+| 3 | Copy versus link semantics | V+R: [real-linux-local-copies](../learning_lab/vm_preview/real-linux-local-copies.json). Independent cp-p versus shared hard link, cp-P versus dereference; no ACL/xattr completeness. |
+| 4 | Administration through links | V+R: [real-linux-local-handover](../learning_lab/vm_preview/real-linux-local-handover.json). Scoped independent link/copy handover repair and preserved source metadata; broader administrative use missing. |
 
-**Breadth still to verify/teach:** Missing rows and the unpracticed official tool/file breadth remain; evidence rows are partial, never a complete-objective claim.
+**Breadth still to verify/teach:** Scoped regular-file links/copies and independent handover now practiced. Cross-filesystem limitations, broader administrative link use, directory semantics and full transfer remain partial.
 
 Official non-exhaustive tools/files/terms: `ln`, `ls`.
 
-Explicit bounded-practice terms: none individually credited. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `ln`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 104.7 — Find system files and place files in the correct location (exam 101, weight 2; partial)
 
 | KKA | Skill | Evidence / scope |
 |---|---|---|
-| 1 | FHS placement rules | S+A+R: [linux-file-locations](../learning_lab/collections/packs/linux-file-locations.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json). Representative locations/find and declared reports; not complete FHS or locating-tool breadth. |
-| 2 | Locate files and commands | S+A+R: [linux-file-locations](../learning_lab/collections/packs/linux-file-locations.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json). Representative locations/find and declared reports; not complete FHS or locating-tool breadth. V+R: [real-linux-bash-files](../learning_lab/vm_preview/real-linux-bash-files.json), [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json). Bounded find/command lookup only. |
-| 3 | Purpose of key hierarchy locations | S+A+R: [linux-file-locations](../learning_lab/collections/packs/linux-file-locations.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json). Representative locations/find and declared reports; not complete FHS or locating-tool breadth. |
+| 1 | FHS placement rules | S+A: [linux-file-locations](../learning_lab/collections/packs/linux-file-locations.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json). Representative locations/find and declared reports; not complete FHS or locating-tool breadth.<br>G+R: [real-linux-local-search](../learning_lab/vm_preview/real-linux-local-search.json). Model-tree placement explanation, not system relocation. |
+| 2 | Locate files and commands | S+A: [linux-file-locations](../learning_lab/collections/packs/linux-file-locations.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json). Representative locations/find and declared reports; not complete FHS or locating-tool breadth.<br>V+R: [real-linux-bash-files](../learning_lab/vm_preview/real-linux-bash-files.json), [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json). Bounded find/command lookup only.<br>V+R: [real-linux-local-search](../learning_lab/vm_preview/real-linux-local-search.json). Scoped real find only; locate/updatedb/whereis breadth missing. |
+| 3 | Purpose of key hierarchy locations | S+A: [linux-file-locations](../learning_lab/collections/packs/linux-file-locations.lab.json), [linux-find-handover](../learning_lab/collections/packs/linux-find-handover.lab.json). Representative locations/find and declared reports; not complete FHS or locating-tool breadth.<br>G+R: [real-linux-local-search](../learning_lab/vm_preview/real-linux-local-search.json). Model etc,var/log,usr/local/share purpose; full hierarchy breadth missing. |
 
 **Breadth still to verify/teach:** Missing rows and the unpracticed official tool/file breadth remain; evidence rows are partial, never a complete-objective claim.
 
 Official non-exhaustive tools/files/terms: `find`, `locate`, `updatedb`, `whereis`, `which`, `type`, `/etc/updatedb.conf`.
 
-Explicit bounded-practice terms: `find`, `type`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `find`, `type`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 105.1 — Customize and use the shell environment (exam 102, weight 4; partial)
 
 | KKA | Skill | Evidence / scope |
 |---|---|---|
-| 1 | Login/child-shell environment configuration | V+R: [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json). Temporary environment/search path; no login profile persistence or skeleton maintenance. |
+| 1 | Login/child-shell environment configuration | V+R: [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json). Temporary environment/search path; no login profile persistence or skeleton maintenance.<br>V+R: [real-linux-local-startup](../learning_lab/vm_preview/real-linux-local-startup.json). Isolated HOME login/non-login/child startup, flags and profile/rc selection; no real-account persistent settings. |
 | 2 | Reusable Bash functions | V+R: [real-linux-bash-records](../learning_lab/vm_preview/real-linux-bash-records.json). Partial subset; see remaining breadth. |
 | 3 | Account skeleton maintenance | **Missing**: no demonstrated dedicated subskill. |
 | 4 | Safe command search paths | V+R: [real-linux-bash-environment](../learning_lab/vm_preview/real-linux-bash-environment.json). Temporary environment/search path; no login profile persistence or skeleton maintenance. |
@@ -399,7 +406,8 @@ Explicit bounded-practice terms: `find`, `type`. Tool presence, a filename menti
 
 Official non-exhaustive tools/files/terms: `.`, `source`, `/etc/bash.bashrc`, `/etc/profile`, `env`, `export`, `set`, `unset`, `~/.bash_profile`, `~/.bash_login`, `~/.profile`, `~/.bashrc`, `~/.bash_logout`, `function`, `alias`.
 
-Explicit bounded-practice terms: `env`, `export`, `unset`, `function`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `env`, `export`, `unset`, `function`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 105.2 — Customize or write simple scripts (exam 102, weight 4; partial)
 
@@ -636,7 +644,7 @@ Explicit bounded-practice terms: none individually credited. Tool presence, a fi
 
 | KKA | Skill | Evidence / scope |
 |---|---|---|
-| 1 | Privileged-bit audit | **Missing**: no demonstrated dedicated subskill. |
+| 1 | Privileged-bit audit | V+R: [real-linux-local-priority](../learning_lab/vm_preview/real-linux-local-priority.json). Read-only bounded /usr/bin privileged-bit audit; permission bits alone do not prove effective privilege. |
 | 2 | Passwords and aging | V+R: [real-linux-users-restrictions](../learning_lab/vm_preview/real-linux-users-restrictions.json), [real-linux-admin-change](../learning_lab/vm_preview/real-linux-admin-change.json). Aging/locking observation and approved guest sudo use only; no password creation or sudo-policy repair. |
 | 3 | Port discovery | **Missing**: no demonstrated dedicated subskill. |
 | 4 | Login/process/memory constraints | **Missing**: no demonstrated dedicated subskill. |
@@ -647,7 +655,8 @@ Explicit bounded-practice terms: none individually credited. Tool presence, a fi
 
 Official non-exhaustive tools/files/terms: `find`, `passwd`, `fuser`, `lsof`, `nmap`, `chage`, `netstat`, `sudo`, `/etc/sudoers`, `su`, `usermod`, `ulimit`, `who, w, last`.
 
-Explicit bounded-practice terms: `chage`, `sudo`, `su`, `usermod`. Tool presence, a filename mention or reading saved command output is not executed practice. The JSON links each mapped lesson to its guide, acceptance report, tests and exact SHA-256.
+Explicit bounded-practice terms: `chage`, `find`, `su`, `sudo`, `usermod`. Tool presence or a title is not executed practice. Exact resources/guide/acceptance references remain in the JSON evidence inventory.
+
 
 ### 110.2 — Setup host security (exam 102, weight 3; partial)
 
@@ -1357,3 +1366,7 @@ GNU comparison rerun, guest launch or native lesson rerun was performed. Existin
 accepted native/installed lesson evidence is referenced at its original scope.
 Physical keyboard, assistive technology and exhaustive native acceptance remain
 outstanding. No warning suppression or claim of runtime repair is made.
+
+## First completion-family evidence update
+
+Ten Local Shell & Filesystem Administration lessons add partial link coverage and widen history, temporary editor/startup, find/FHS, sticky and scoped priority/audit skills. Exam101 remains **0 complete /19 partial /4 missing**; the other exams remain0/10/9,0/9/11 and0/6/15. No full objective or automatic guest assessment is claimed. [Unit guide](vm-preview/local-shell-unit.md) and [acceptance](vm-preview/local-shell-acceptance.md) separate new evidence from the original assessment-only checkpoint.
