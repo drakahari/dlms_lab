@@ -40,6 +40,15 @@ Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can for
 
 ## Use
 
+### Offline evidence collections
+
+Library includes **Network Diagnosis**, **DNS Operations** and **Web-Service
+Diagnosis — Offline Evidence (Simulator / Offline snapshots)**: four activities
+each, requiring no VM. Select facts from supplied fictional records and inspect
+your saved report. Scores check report facts and final reading; explanations and
+proposed next checks remain self-reviewed. These do not run networking or service
+utilities. Read each lab's virtual `HELP.txt`, or the [twelve-lab guide](docs/lpic-2-offline-evidence.md).
+
 ### Create your own lab
 
 **Library → Create a lab…** offers a permissions starter, a complete worked

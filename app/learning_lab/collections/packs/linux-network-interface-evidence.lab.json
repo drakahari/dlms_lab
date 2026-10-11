@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-network-interface-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Read interface and address evidence",
+    "topic": "Network Diagnosis — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Separate interface state and assigned addressing from missing connectivity evidence. Retain context, interface, address and missing records; omit inventory. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "context|host=willow-client|2026-05-12T10:00:00Z|synthetic\ninterface|eth0|admin=UP|oper=UP|carrier=LOWER_UP\naddress|eth0|inet=192.0.2.20/24|scope=global\nmissing|routes=not supplied|DNS=not supplied|remote test=not supplied\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "context|host=willow-client|2026-05-12T10:00:00Z|synthetic\ninterface|eth0|admin=UP|oper=UP|carrier=LOWER_UP\naddress|eth0|inet=192.0.2.20/24|scope=global\nmissing|routes=not supplied|DNS=not supplied|remote test=not supplied\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. What does UP establish, and which observations are absent?",
+    "Read reference.txt and HELP.txt. The interface is administratively and operationally up and has an IPv4 address/prefix. This does not establish a default route, correct DNS or internet/service access. Request route, resolver and scoped connection evidence next. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: head -n 4 evidence.txt > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|host=willow-client|2026-05-12T10:00:00Z|synthetic\ninterface|eth0|admin=UP|oper=UP|carrier=LOWER_UP\naddress|eth0|inet=192.0.2.20/24|scope=global\nmissing|routes=not supplied|DNS=not supplied|remote test=not supplied\ninventory|lo|inet=127.0.0.1/8\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic source excerpts at 2026-05-12T10:00:00Z on willow-client\nip -br link: eth0 UP <BROADCAST,MULTICAST,UP,LOWER_UP>\nip -br -4 address: eth0 UP 192.0.2.20/24\nNo route table, resolver configuration or remote connection tests were supplied.\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Read interface and address evidence\nGoal: Separate interface state and assigned addressing from missing connectivity evidence.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Retain context, interface, address and missing records; omit inventory.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: What does UP establish, and which observations are absent?\nModel interpretation: The interface is administratively and operationally up and has an IPv4 address/prefix. This does not establish a default route, correct DNS or internet/service access. Request route, resolver and scoped connection evidence next.\nCommon mistakes: Treating UP or scope global as proof of internet access; guessing the gateway from an address; treating missing evidence as a failed test.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Separate interface state and assigned addressing from missing connectivity evidence.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "head -n 4 evidence.txt > report.txt",
+          "explanation": "Retain context, interface, address and missing records; omit inventory. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-web-vhost-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Correlate virtual hosts and request names",
+    "topic": "Web-Service Diagnosis — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Explain a default virtual-host response using matching address/port and Host evidence. Keep the first five records: context, first vhost, second vhost, named request and unmatched request. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "context|server=maple-web|2026-05-14T10:10:00Z|address=198.51.100.40:80|synthetic\nvhost-first|198.51.100.40:80|ServerName=landing.example.test|DocumentRoot=/srv/www/landing\nvhost-second|198.51.100.40:80|ServerName=portal.example.test|DocumentRoot=/srv/www/portal\nnamed-request|Host=portal.example.test|HTTP=200|body=Portal home\nunmatched-request|Host=unknown.example.test|HTTP=200|body=Landing home\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "context|server=maple-web|2026-05-14T10:10:00Z|address=198.51.100.40:80|synthetic\nvhost-first|198.51.100.40:80|ServerName=landing.example.test|DocumentRoot=/srv/www/landing\nvhost-second|198.51.100.40:80|ServerName=portal.example.test|DocumentRoot=/srv/www/portal\nnamed-request|Host=portal.example.test|HTTP=200|body=Portal home\nunmatched-request|Host=unknown.example.test|HTTP=200|body=Landing home\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. Why did both requests return 200 but different content, and which host was selected?",
+    "Read reference.txt and HELP.txt. After selecting the matching address/port vhost set, Apache uses a matching ServerName/ServerAlias; an unmatched name falls to the first vhost in that set. The named request matches portal; the unknown name receives landing. These tests explicitly set Host and do not establish DNS correctness. This plain HTTP example does not assess SNI or TLS. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: head -n 5 evidence.txt > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|server=maple-web|2026-05-14T10:10:00Z|address=198.51.100.40:80|synthetic\nvhost-first|198.51.100.40:80|ServerName=landing.example.test|DocumentRoot=/srv/www/landing\nvhost-second|198.51.100.40:80|ServerName=portal.example.test|DocumentRoot=/srv/www/portal\nnamed-request|Host=portal.example.test|HTTP=200|body=Portal home\nunmatched-request|Host=unknown.example.test|HTTP=200|body=Landing home\nother|DNS addresses for names=not supplied\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic Apache configuration excerpts, in loaded order:\n<VirtualHost 198.51.100.40:80>\n ServerName landing.example.test\n DocumentRoot /srv/www/landing\n</VirtualHost>\n<VirtualHost 198.51.100.40:80>\n ServerName portal.example.test\n DocumentRoot /srv/www/portal\n</VirtualHost>\nSynthetic request excerpts at 10:10 UTC (both to same IP/port):\ncurl -i -H \"Host: portal.example.test\" http://198.51.100.40/: HTTP/1.1 200 OK; body Portal home\ncurl -i -H \"Host: unknown.example.test\" http://198.51.100.40/: HTTP/1.1 200 OK; body Landing home\nNo ServerAlias or other vhosts in this selected address/port set.\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Correlate virtual hosts and request names\nGoal: Explain a default virtual-host response using matching address/port and Host evidence.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Keep the first five records: context, first vhost, second vhost, named request and unmatched request.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: Why did both requests return 200 but different content, and which host was selected?\nModel interpretation: After selecting the matching address/port vhost set, Apache uses a matching ServerName/ServerAlias; an unmatched name falls to the first vhost in that set. The named request matches portal; the unknown name receives landing. These tests explicitly set Host and do not establish DNS correctness. This plain HTTP example does not assess SNI or TLS.\nCommon mistakes: Assuming the second vhost is default; using DNS alone to explain a Host mismatch; claiming 200 means the intended site was served; generalizing this address/port order to every listener.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Explain a default virtual-host response using matching address/port and Host evidence.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "head -n 5 evidence.txt > report.txt",
+          "explanation": "Keep the first five records: context, first vhost, second vhost, named request and unmatched request. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Network Diagnosis — Offline Evidence (Simulator / Offline snapshots)",
+  "items": [
+    {
+      "file": "linux-network-interface-evidence.lab.json",
+      "skill": "Separate interface state and assigned addressing from missing connectivity evidence."
+    },
+    {
+      "file": "linux-network-route-evidence.lab.json",
+      "skill": "Distinguish a local missing route from a separately observed remote service response."
+    },
+    {
+      "file": "linux-network-name-evidence.lab.json",
+      "skill": "Compare numeric-address success with a hostname-resolution failure at one client."
+    },
+    {
+      "file": "linux-network-incident-evidence.lab.json",
+      "skill": "Build a factual chronology without converting correlation into a confirmed cause."
+    }
+  ]
+}

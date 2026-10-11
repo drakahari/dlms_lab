@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-dns-response-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Distinguish resolver and authoritative responses",
+    "topic": "DNS Operations — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Separate DNS answers, negative responses and transport silence. Keep the first six records: context and five query outcomes, including flags and authority evidence. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "context|client=willow-client|2026-05-13T09:00:00Z|synthetic\nresolver|server=192.0.2.53|portal.example.test A|NOERROR|flags=qr rd ra|ANSWER=1|A=198.51.100.40\nnodata|server=192.0.2.54|portal.example.test AAAA|NOERROR|flags=qr aa|ANSWER=0|authority=example.test SOA\nnxdomain|server=192.0.2.54|absent.example.test A|NXDOMAIN|flags=qr aa|ANSWER=0|authority=example.test SOA\nfailure|server=192.0.2.53|broken.example.test A|SERVFAIL|flags=qr rd ra|ANSWER=0\ntimeout|server=192.0.2.55|portal.example.test A|no response|RCODE=unavailable\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "context|client=willow-client|2026-05-13T09:00:00Z|synthetic\nresolver|server=192.0.2.53|portal.example.test A|NOERROR|flags=qr rd ra|ANSWER=1|A=198.51.100.40\nnodata|server=192.0.2.54|portal.example.test AAAA|NOERROR|flags=qr aa|ANSWER=0|authority=example.test SOA\nnxdomain|server=192.0.2.54|absent.example.test A|NXDOMAIN|flags=qr aa|ANSWER=0|authority=example.test SOA\nfailure|server=192.0.2.53|broken.example.test A|SERVFAIL|flags=qr rd ra|ANSWER=0\ntimeout|server=192.0.2.55|portal.example.test A|no response|RCODE=unavailable\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. Which responses deny a name, deny only the requested type, or contain no received response?",
+    "Read reference.txt and HELP.txt. RA advertises recursion availability; RD requests recursion, and AA marks an authoritative answer. The NOERROR/empty AAAA answer with authoritative SOA is negative type data (NODATA), not a nonexistent name. NXDOMAIN denies the queried name; SERVFAIL reports server failure without establishing its cause. A timeout has no received RCODE. A recursive non-AA response alone does not prove it came from cache. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: head -n 6 evidence.txt > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|client=willow-client|2026-05-13T09:00:00Z|synthetic\nresolver|server=192.0.2.53|portal.example.test A|NOERROR|flags=qr rd ra|ANSWER=1|A=198.51.100.40\nnodata|server=192.0.2.54|portal.example.test AAAA|NOERROR|flags=qr aa|ANSWER=0|authority=example.test SOA\nnxdomain|server=192.0.2.54|absent.example.test A|NXDOMAIN|flags=qr aa|ANSWER=0|authority=example.test SOA\nfailure|server=192.0.2.53|broken.example.test A|SERVFAIL|flags=qr rd ra|ANSWER=0\ntimeout|server=192.0.2.55|portal.example.test A|no response|RCODE=unavailable\nother|server=192.0.2.53|unrelated.example.test A|not part of report\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic dig response excerpts at 09:00 UTC; query names/types and server accompany each normalized record.\nRecursive query: status: NOERROR; flags: qr rd ra; ANSWER: 1; portal.example.test. 300 IN A 198.51.100.40\nAuthoritative +norecurse AAAA query: status: NOERROR; flags: qr aa; ANSWER: 0; AUTHORITY: 1; example.test. 300 IN SOA ns1.example.test. hostmaster.example.test. 2026051301 3600 600 86400 300\nAuthoritative +norecurse absent-name query: status: NXDOMAIN; flags: qr aa; ANSWER: 0; same SOA in authority.\nRecursive broken-name query: status: SERVFAIL; flags: qr rd ra; ANSWER: 0\nOther server: communications error: timed out; no DNS response received.\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Distinguish resolver and authoritative responses\nGoal: Separate DNS answers, negative responses and transport silence.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Keep the first six records: context and five query outcomes, including flags and authority evidence.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: Which responses deny a name, deny only the requested type, or contain no received response?\nModel interpretation: RA advertises recursion availability; RD requests recursion, and AA marks an authoritative answer. The NOERROR/empty AAAA answer with authoritative SOA is negative type data (NODATA), not a nonexistent name. NXDOMAIN denies the queried name; SERVFAIL reports server failure without establishing its cause. A timeout has no received RCODE. A recursive non-AA response alone does not prove it came from cache.\nCommon mistakes: Calling every empty answer NXDOMAIN; treating timeout as SERVFAIL; reading RA as proof of authority or cached origin; blaming a network path from a DNS status alone.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Separate DNS answers, negative responses and transport silence.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "head -n 6 evidence.txt > report.txt",
+          "explanation": "Keep the first six records: context and five query outcomes, including flags and authority evidence. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

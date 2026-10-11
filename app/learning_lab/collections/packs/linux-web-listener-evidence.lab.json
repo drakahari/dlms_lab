@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-web-listener-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Compare listener and request evidence",
+    "topic": "Web-Service Diagnosis — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Distinguish a local HTTP response from a remote connection failure. Keep the first five records: context, listener, local request, remote request and log. Omit unrelated SSH. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "context|server=maple-web|2026-05-14T10:00:00Z|synthetic\nlistener|maple-web IPv4 TCP port 80 table|127.0.0.1:80 LISTEN|no other port 80 listener\nlocal-request|maple-web to 127.0.0.1:80/health|HTTP=503|curl -i without --fail exit=0\nremote-request|willow-client to 198.51.100.40:80/health|connection refused|curl exit=7\nlog|maple-web|10:00:00Z|127.0.0.1 GET /health|status=503\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "context|server=maple-web|2026-05-14T10:00:00Z|synthetic\nlistener|maple-web IPv4 TCP port 80 table|127.0.0.1:80 LISTEN|no other port 80 listener\nlocal-request|maple-web to 127.0.0.1:80/health|HTTP=503|curl -i without --fail exit=0\nremote-request|willow-client to 198.51.100.40:80/health|connection refused|curl exit=7\nlog|maple-web|10:00:00Z|127.0.0.1 GET /health|status=503\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. Which request reached HTTP, and what evidence is missing before changing a service?",
+    "Read reference.txt and HELP.txt. The supplied port80 listener binds loopback only. A local request reached an HTTP endpoint and got 503; the remote test did not establish an HTTP exchange. A local listener does not prove remote access, and 503 alone does not prove a specific application fault. Confirm intended binding, full listener state and remote path separately; do not invent a repair. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: head -n 5 evidence.txt > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|server=maple-web|2026-05-14T10:00:00Z|synthetic\nlistener|maple-web IPv4 TCP port 80 table|127.0.0.1:80 LISTEN|no other port 80 listener\nlocal-request|maple-web to 127.0.0.1:80/health|HTTP=503|curl -i without --fail exit=0\nremote-request|willow-client to 198.51.100.40:80/health|connection refused|curl exit=7\nlog|maple-web|10:00:00Z|127.0.0.1 GET /health|status=503\nother|maple-web|0.0.0.0:22 LISTEN|outside report\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic source excerpts at 10:00 UTC.\nmaple-web ss -ltn IPv4 TCP port80 selection: LISTEN 0 128 127.0.0.1:80 0.0.0.0:*\nmaple-web curl -i http://127.0.0.1/health: HTTP/1.1 503 Service Unavailable; exit 0 (no --fail)\nwillow-client curl -i http://198.51.100.40/health: curl (7) Failed to connect: Connection refused; exit 7\nAccess-log excerpt: 127.0.0.1 - - [14/May/2026:10:00:00 +0000] \"GET /health HTTP/1.1\" 503 0\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Compare listener and request evidence\nGoal: Distinguish a local HTTP response from a remote connection failure.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Keep the first five records: context, listener, local request, remote request and log. Omit unrelated SSH.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: Which request reached HTTP, and what evidence is missing before changing a service?\nModel interpretation: The supplied port80 listener binds loopback only. A local request reached an HTTP endpoint and got 503; the remote test did not establish an HTTP exchange. A local listener does not prove remote access, and 503 alone does not prove a specific application fault. Confirm intended binding, full listener state and remote path separately; do not invent a repair.\nCommon mistakes: Equating LISTEN with remote availability; calling an HTTP 503 a TCP connection failure; interpreting curl exit zero without --fail as a healthy application; assuming the refusal uniquely proves firewall or process cause.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Distinguish a local HTTP response from a remote connection failure.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "head -n 5 evidence.txt > report.txt",
+          "explanation": "Keep the first five records: context, listener, local request, remote request and log. Omit unrelated SSH. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

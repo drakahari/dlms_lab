@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-web-tls-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Separate TLS name and validity evidence",
+    "topic": "Web-Service Diagnosis — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Identify a supported hostname mismatch without assuming every certificate check failed. Retain the first six records: context, request, SAN, dates, hostname check and curl result. Omit untested revocation. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "context|client=willow-client|2026-05-14T10:20:00Z|endpoint=198.51.100.40:443|synthetic\nrequest|SNI=portal.example.test|verified hostname=portal.example.test\nsan|DNS:api.example.test|portal name=absent\ndates|notBefore=2026-05-01T00:00:00Z|notAfter=2026-06-01T00:00:00Z\nhostname-check|s_client -verify_return_error|error=62 hostname mismatch|handshake aborted\ncurl-result|https://portal.example.test/|exit=60|certificate name does not match target\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "context|client=willow-client|2026-05-14T10:20:00Z|endpoint=198.51.100.40:443|synthetic\nrequest|SNI=portal.example.test|verified hostname=portal.example.test\nsan|DNS:api.example.test|portal name=absent\ndates|notBefore=2026-05-01T00:00:00Z|notAfter=2026-06-01T00:00:00Z\nhostname-check|s_client -verify_return_error|error=62 hostname mismatch|handshake aborted\ncurl-result|https://portal.example.test/|exit=60|certificate name does not match target\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. Which verification check failed, which evidence is independently supplied, and what is untested?",
+    "Read reference.txt and HELP.txt. At the supplied time the displayed validity interval includes the snapshot. The supplied SAN lacks the requested hostname, and the explicit hostname check failed. s_client uses -verify_return_error here, so verification failure aborts rather than merely printing a warning. Chain-only success does not establish hostname correctness or revocation status; the saved text is not a cryptographic verification performed by this simulator. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: head -n 6 evidence.txt > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|client=willow-client|2026-05-14T10:20:00Z|endpoint=198.51.100.40:443|synthetic\nrequest|SNI=portal.example.test|verified hostname=portal.example.test\nsan|DNS:api.example.test|portal name=absent\ndates|notBefore=2026-05-01T00:00:00Z|notAfter=2026-06-01T00:00:00Z\nhostname-check|s_client -verify_return_error|error=62 hostname mismatch|handshake aborted\ncurl-result|https://portal.example.test/|exit=60|certificate name does not match target\nuntested|revocation=not supplied|HTTP response=not reached\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic certificate/handshake excerpts; fictional test CA, no PEM, private keys or credentials. Client trust store is stated to contain this fictional CA.\nSubject: CN=api.example.test; issuer: Fictional Example CA\nX509v3 Subject Alternative Name: DNS:api.example.test\nnotBefore=May 1 00:00:00 2026 GMT; notAfter=Jun 1 00:00:00 2026 GMT\nopenssl s_client -connect 198.51.100.40:443 -servername portal.example.test -verify_hostname portal.example.test -verify_return_error: verify error:num=62:hostname mismatch; fatal verification failure aborts handshake.\nSeparate supplied chain-only check succeeded against the declared test trust store; revocation untested.\ncurl --resolve portal.example.test:443:198.51.100.40 -i https://portal.example.test/: curl (60) certificate subject name does not match target hostname.\nNo HTTP response reached.\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Separate TLS name and validity evidence\nGoal: Identify a supported hostname mismatch without assuming every certificate check failed.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Retain the first six records: context, request, SAN, dates, hostname check and curl result. Omit untested revocation.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: Which verification check failed, which evidence is independently supplied, and what is untested?\nModel interpretation: At the supplied time the displayed validity interval includes the snapshot. The supplied SAN lacks the requested hostname, and the explicit hostname check failed. s_client uses -verify_return_error here, so verification failure aborts rather than merely printing a warning. Chain-only success does not establish hostname correctness or revocation status; the saved text is not a cryptographic verification performed by this simulator.\nCommon mistakes: Treating dates or a trusted chain as proof of hostname identity; calling this a DNS or HTTP status failure; disabling verification as a repair; confusing SNI selection with hostname verification.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Identify a supported hostname mismatch without assuming every certificate check failed.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "head -n 6 evidence.txt > report.txt",
+          "explanation": "Retain the first six records: context, request, SAN, dates, hostname check and curl result. Omit untested revocation. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

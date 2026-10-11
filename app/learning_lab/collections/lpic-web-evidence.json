@@ -1,0 +1,21 @@
+{
+  "title": "Web-Service Diagnosis — Offline Evidence (Simulator / Offline snapshots)",
+  "items": [
+    {
+      "file": "linux-web-listener-evidence.lab.json",
+      "skill": "Distinguish a local HTTP response from a remote connection failure."
+    },
+    {
+      "file": "linux-web-vhost-evidence.lab.json",
+      "skill": "Explain a default virtual-host response using matching address/port and Host evidence."
+    },
+    {
+      "file": "linux-web-tls-evidence.lab.json",
+      "skill": "Identify a supported hostname mismatch without assuming every certificate check failed."
+    },
+    {
+      "file": "linux-web-proxy-evidence.lab.json",
+      "skill": "Correlate a proxy failure with a scoped upstream connection result without asserting an unproved cause."
+    }
+  ]
+}

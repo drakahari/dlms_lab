@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-network-incident-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Write a timestamped network incident handover",
+    "topic": "Network Diagnosis — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Build a factual chronology without converting correlation into a confirmed cause. Select the four incident=NET-7 records and sort ascending by their UTC timestamp. Exclude other incidents. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "2026-05-12T10:00:00Z|incident=NET-7|willow-client|default route=absent\n2026-05-12T10:05:00Z|incident=NET-7|birch-client|numeric HTTP=503\n2026-05-12T10:10:00Z|incident=NET-7|willow-client|numeric HTTP=200|hostname curl exit=6\n2026-05-12T10:15:00Z|incident=NET-7|willow-client|hostname HTTP=200|change record=not supplied\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "2026-05-12T10:00:00Z|incident=NET-7|willow-client|default route=absent\n2026-05-12T10:05:00Z|incident=NET-7|birch-client|numeric HTTP=503\n2026-05-12T10:10:00Z|incident=NET-7|willow-client|numeric HTTP=200|hostname curl exit=6\n2026-05-12T10:15:00Z|incident=NET-7|willow-client|hostname HTTP=200|change record=not supplied\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. What is confirmed, what is a hypothesis, and what change evidence is missing?",
+    "Read reference.txt and HELP.txt. The chronology shows different failures at different clients and eventual named HTTP success at willow. It supports observed recovery at 10:15, not a confirmed root cause or permanent recovery. Request change/audit records and repeated checks; keep vantage points distinct. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: grep -F 'incident=NET-7' evidence.txt | sort > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "2026-05-12T09:59:00Z|incident=NET-8|other-client|HTTP=404\n2026-05-12T10:15:00Z|incident=NET-7|willow-client|hostname HTTP=200|change record=not supplied\n2026-05-12T10:10:00Z|incident=NET-7|willow-client|numeric HTTP=200|hostname curl exit=6\n2026-05-12T10:05:00Z|incident=NET-7|birch-client|numeric HTTP=503\n2026-05-12T10:00:00Z|incident=NET-7|willow-client|default route=absent\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic incident NET-7 excerpts (different vantage points)\n10:00 willow route lookup: Network is unreachable\n10:05 birch request: HTTP/1.1 503 Service Unavailable\n10:10 willow numeric request: HTTP/1.1 200 OK; named request: curl (6) Could not resolve host\n10:15 willow named request: HTTP/1.1 200 OK\nNo change audit, DNS response history or continuous monitoring supplied.\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Write a timestamped network incident handover\nGoal: Build a factual chronology without converting correlation into a confirmed cause.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Select the four incident=NET-7 records and sort ascending by their UTC timestamp. Exclude other incidents.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: What is confirmed, what is a hypothesis, and what change evidence is missing?\nModel interpretation: The chronology shows different failures at different clients and eventual named HTTP success at willow. It supports observed recovery at 10:15, not a confirmed root cause or permanent recovery. Request change/audit records and repeated checks; keep vantage points distinct.\nCommon mistakes: Merging two clients into one route history; claiming a DNS repair was performed; treating later success as proof of a specific fix or continuous availability.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Build a factual chronology without converting correlation into a confirmed cause.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "grep -F 'incident=NET-7' evidence.txt | sort > report.txt",
+          "explanation": "Select the four incident=NET-7 records and sort ascending by their UTC timestamp. Exclude other incidents. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

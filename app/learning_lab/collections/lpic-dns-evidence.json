@@ -1,0 +1,21 @@
+{
+  "title": "DNS Operations — Offline Evidence (Simulator / Offline snapshots)",
+  "items": [
+    {
+      "file": "linux-dns-response-evidence.lab.json",
+      "skill": "Separate DNS answers, negative responses and transport silence."
+    },
+    {
+      "file": "linux-dns-zone-evidence.lab.json",
+      "skill": "Read zone identity, records and a concrete CNAME conflict without pretending to validate or reload it."
+    },
+    {
+      "file": "linux-dns-consistency-evidence.lab.json",
+      "skill": "Correlate a parent delegation with inconsistent authoritative SOA and A responses."
+    },
+    {
+      "file": "linux-dns-handover-evidence.lab.json",
+      "skill": "Separate a cached observation from direct authoritative evidence in time order."
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-dns-zone-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Inspect a zone and a supplied validation finding",
+    "topic": "DNS Operations — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Read zone identity, records and a concrete CNAME conflict without pretending to validate or reload it. Retain the first seven records: context, origin, SOA, NS, both portal records and validation. Omit the unrelated host. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "context|file=example.test.zone|2026-05-13T09:10:00Z|synthetic\norigin|example.test.|default TTL=300 seconds\nsoa|serial=2026051301|primary=ns1.example.test.|contact=hostmaster.example.test.\nns|example.test.|NS=ns1.example.test.|ns1 A=192.0.2.54\nportal|portal.example.test.|CNAME=web.example.test.\nportal|portal.example.test.|A=198.51.100.40\nvalidation|named-checkzone supplied exit=1|portal.example.test: CNAME and other data\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "context|file=example.test.zone|2026-05-13T09:10:00Z|synthetic\norigin|example.test.|default TTL=300 seconds\nsoa|serial=2026051301|primary=ns1.example.test.|contact=hostmaster.example.test.\nns|example.test.|NS=ns1.example.test.|ns1 A=192.0.2.54\nportal|portal.example.test.|CNAME=web.example.test.\nportal|portal.example.test.|A=198.51.100.40\nvalidation|named-checkzone supplied exit=1|portal.example.test: CNAME and other data\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. What conflict is actually reported, and what intended-design information is missing?",
+    "Read reference.txt and HELP.txt. The portal owner has both CNAME and A data, which is not permitted for these ordinary records. Decide which intended record should exist before proposing a correction. This supplied validator finding does not assess intended addresses, delegation, running server configuration or a successful reload. Serial is a zone version, not automatically a timestamp or proof of publication. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: head -n 7 evidence.txt > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "context|file=example.test.zone|2026-05-13T09:10:00Z|synthetic\norigin|example.test.|default TTL=300 seconds\nsoa|serial=2026051301|primary=ns1.example.test.|contact=hostmaster.example.test.\nns|example.test.|NS=ns1.example.test.|ns1 A=192.0.2.54\nportal|portal.example.test.|CNAME=web.example.test.\nportal|portal.example.test.|A=198.51.100.40\nvalidation|named-checkzone supplied exit=1|portal.example.test: CNAME and other data\nother|web.example.test.|A=198.51.100.41\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic source example.test.zone (not executed here):\n$ORIGIN example.test.\n$TTL 300\n@ IN SOA ns1.example.test. hostmaster.example.test. ( 2026051301 3600 600 86400 300 )\n@ IN NS ns1.example.test.\nns1 IN A 192.0.2.54\nweb IN A 198.51.100.41\nportal IN CNAME web.example.test.\nportal IN A 198.51.100.40\nSupplied named-checkzone example.test example.test.zone finding: portal.example.test: CNAME and other data; exit 1.\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Inspect a zone and a supplied validation finding\nGoal: Read zone identity, records and a concrete CNAME conflict without pretending to validate or reload it.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Retain the first seven records: context, origin, SOA, NS, both portal records and validation. Omit the unrelated host.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: What conflict is actually reported, and what intended-design information is missing?\nModel interpretation: The portal owner has both CNAME and A data, which is not permitted for these ordinary records. Decide which intended record should exist before proposing a correction. This supplied validator finding does not assess intended addresses, delegation, running server configuration or a successful reload. Serial is a zone version, not automatically a timestamp or proof of publication.\nCommon mistakes: Treating a CNAME target as another address; removing an arbitrary record without requirements; assuming a serial or successful syntax check proves live service correctness.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Read zone identity, records and a concrete CNAME conflict without pretending to validate or reload it.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "head -n 7 evidence.txt > report.txt",
+          "explanation": "Retain the first seven records: context, origin, SOA, NS, both portal records and validation. Omit the unrelated host. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

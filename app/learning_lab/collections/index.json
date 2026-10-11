@@ -39,6 +39,30 @@
       "sequence": "Recommended: baseline, memory/cache, space/inodes, then trend handover. Start any lab; no unlocks.",
       "prerequisites": "Text, Filters & Reports, or familiarity with bounded cat, head/tail, grep -F, sort and report redirection.",
       "coverage": "LPIC-2 v4.5.0: limited reinforcement of 200.1 snapshot interpretation and 200.2 trend interpretation, not measurement, monitoring, forecast assessment or full exam coverage. Report facts are checked; reasoning is self-reviewed. Real practice remains in the separate VM resource and storage units. No LPI affiliation."
+    },
+    {
+      "id": "lpic-network-evidence",
+      "file": "lpic-network-evidence.json",
+      "purpose": "Correlate saved interface, route, name-resolution and incident evidence. No live diagnostics or repair.",
+      "sequence": "Recommended order follows the four evidence tasks. Start anywhere; no unlocks.",
+      "prerequisites": "Text, Filters & Reports, or familiarity with cat, head/tail, grep -F, sort and report redirection.",
+      "coverage": "LPIC-2 v4.5.0: limited interpretation reinforcement for 205.3; not live configuration, operational troubleshooting or full objective coverage. Factual records checked; reasoning self-reviewed. No LPI affiliation."
+    },
+    {
+      "id": "lpic-dns-evidence",
+      "file": "lpic-dns-evidence.json",
+      "purpose": "Interpret saved DNS responses, zone findings and consistency evidence. No lookups, reloads or zone changes.",
+      "sequence": "Recommended order follows the four evidence tasks. Start anywhere; no unlocks.",
+      "prerequisites": "Text, Filters & Reports, or familiarity with cat, head/tail, grep -F, sort and report redirection.",
+      "coverage": "LPIC-2 v4.5.0: limited interpretation reinforcement for 207.1/207.2; not live configuration, operational troubleshooting or full objective coverage. Factual records checked; reasoning self-reviewed. No LPI affiliation."
+    },
+    {
+      "id": "lpic-web-evidence",
+      "file": "lpic-web-evidence.json",
+      "purpose": "Correlate saved listeners, requests, virtual hosts, TLS metadata and proxy logs. No live services or secrets.",
+      "sequence": "Recommended order follows the four evidence tasks. Start anywhere; no unlocks.",
+      "prerequisites": "Text, Filters & Reports, or familiarity with cat, head/tail, grep -F, sort and report redirection.",
+      "coverage": "LPIC-2 v4.5.0: limited interpretation reinforcement for 208.1/208.2/208.4; not live configuration, operational troubleshooting or full objective coverage. Factual records checked; reasoning self-reviewed. No LPI affiliation."
     }
   ]
 }

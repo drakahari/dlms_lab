@@ -1,0 +1,133 @@
+{
+  "format": "learning-lab.scenario",
+  "schema_version": 1,
+  "identity": {
+    "id": "linux-dns-handover-evidence",
+    "content_version": "1.0.0"
+  },
+  "engine": {
+    "id": "linux-navigation",
+    "contract_version": 5,
+    "supported_behavior_versions": [
+      "linux-text-streams-1"
+    ],
+    "required_capabilities": [
+      "virtual-filesystem",
+      "file-navigation",
+      "activity-evidence",
+      "bounded-text-streams"
+    ]
+  },
+  "metadata": {
+    "title": "Prepare a DNS incident handover",
+    "topic": "DNS Operations — Offline Evidence (Simulator / Offline snapshots)",
+    "difficulty": "Intermediate",
+    "minutes": 7
+  },
+  "mission": {
+    "brief": "Separate a cached observation from direct authoritative evidence in time order. Select the four incident=DNS-9 records and sort their fixed-width UTC timestamps. Exclude the other incident. Save the required factual records in report.txt and display the final report with cat. Self-review the interpretation and next checks in HELP.txt.",
+    "constraints": [
+      "SIMULATOR / OFFLINE SNAPSHOTS: fictional supplied evidence, not live measurements of your computer or VM. Read reference.txt for source excerpts and HELP.txt for context/model interpretation.",
+      "Automatic score checks exact factual report bytes (80) and final cat report.txt (20). Free-form reasoning, diagnoses and next checks are self-reviewed; 100/100 is not mastery.",
+      "Keep record spelling, order and final LF exactly; equivalent supported paths/filters are accepted, arbitrary report formatting is not normalized. Only report.txt is writable. > truncates first; failures do not undo writes. Finish all writes before the checked reading; any write clears prior reading evidence.",
+      "Challenge states the same factual requirements without a repair command. No service changes, live lookups, certificate validation, shell or network execution. Type help for supported commands; cat HELP.txt for this lesson reference."
+    ]
+  },
+  "objectives": [
+    {
+      "id": "facts",
+      "label": "Checked: required factual report, including context",
+      "points": 80,
+      "predicate": "file_content",
+      "params": {
+        "path": "/home/learner/report.txt",
+        "content": "2026-05-13T09:30:00Z|incident=DNS-9|resolver 192.0.2.53|portal.example.test A=198.51.100.40|remaining TTL=300 seconds|cache origin=supplied trace\n2026-05-13T09:31:00Z|incident=DNS-9|ns1 192.0.2.54 direct|AA=yes|serial=2026051302|portal A=198.51.100.41\n2026-05-13T09:32:00Z|incident=DNS-9|ns2 192.0.2.55 direct|AA=yes|serial=2026051302|portal A=198.51.100.41\n2026-05-13T09:33:00Z|incident=DNS-9|resolver 192.0.2.53|portal A=198.51.100.40|remaining TTL=120 seconds\n"
+      }
+    },
+    {
+      "id": "inspect",
+      "label": "Checked action: read final report with cat after last write",
+      "points": 20,
+      "predicate": "stream_observed",
+      "params": {
+        "tool": "cat",
+        "source": "/home/learner/report.txt",
+        "output": "2026-05-13T09:30:00Z|incident=DNS-9|resolver 192.0.2.53|portal.example.test A=198.51.100.40|remaining TTL=300 seconds|cache origin=supplied trace\n2026-05-13T09:31:00Z|incident=DNS-9|ns1 192.0.2.54 direct|AA=yes|serial=2026051302|portal A=198.51.100.41\n2026-05-13T09:32:00Z|incident=DNS-9|ns2 192.0.2.55 direct|AA=yes|serial=2026051302|portal A=198.51.100.41\n2026-05-13T09:33:00Z|incident=DNS-9|resolver 192.0.2.53|portal A=198.51.100.40|remaining TTL=120 seconds\n"
+      }
+    }
+  ],
+  "hints": [
+    "Compare the question with the supplied vantage points, timestamps and fields. What is observed now, and what remains unknown after the final timestamp?",
+    "Read reference.txt and HELP.txt. The supplied cache trace and decreasing TTL explain why a resolver may temporarily differ from direct authoritative answers. Both authorities match in these separate observations. Do not claim future convergence, correct deployment, DNSSEC validity or that flushing caches is necessary. Obtain intended changes and a later scoped check; a TTL is a bounded caching lifetime, not proof of a broken authority. Select only the required records; do not add a causal conclusion to the scored factual report.",
+    "A supported construction is: grep -F 'incident=DNS-9' evidence.txt | sort > report.txt. Then cat report.txt. Interpret the result separately; this score checks facts and inspection only."
+  ],
+  "assets": [],
+  "domain": {
+    "schema_version": 3,
+    "filesystem": {
+      "/": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home": {
+        "kind": "directory",
+        "owner": "root",
+        "group": "root",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner": {
+        "kind": "directory",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0755",
+        "content": ""
+      },
+      "/home/learner/evidence.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "2026-05-13T09:29:00Z|incident=DNS-10|other resolver|NXDOMAIN\n2026-05-13T09:33:00Z|incident=DNS-9|resolver 192.0.2.53|portal A=198.51.100.40|remaining TTL=120 seconds\n2026-05-13T09:32:00Z|incident=DNS-9|ns2 192.0.2.55 direct|AA=yes|serial=2026051302|portal A=198.51.100.41\n2026-05-13T09:31:00Z|incident=DNS-9|ns1 192.0.2.54 direct|AA=yes|serial=2026051302|portal A=198.51.100.41\n2026-05-13T09:30:00Z|incident=DNS-9|resolver 192.0.2.53|portal.example.test A=198.51.100.40|remaining TTL=300 seconds|cache origin=supplied trace\n"
+      },
+      "/home/learner/reference.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "Synthetic supplied DNS-9 trace; all clients are willow-client.\n09:30 resolver non-AA NOERROR answer portal.example.test. 300 IN A 198.51.100.40; separate trace establishes cached origin.\n09:31 ns1 direct +norecurse NOERROR/qr aa SOA serial 2026051302, portal.example.test. 300 IN A 198.51.100.41\n09:32 ns2 same authoritative serial/address.\n09:33 resolver non-AA NOERROR answer portal.example.test. 120 IN A 198.51.100.40\nNo answer after cache expiry or deployment audit was supplied.\n"
+      },
+      "/home/learner/HELP.txt": {
+        "kind": "file",
+        "owner": "learner",
+        "group": "learner",
+        "mode": "0444",
+        "content": "SIMULATOR / OFFLINE SNAPSHOTS — Prepare a DNS incident handover\nGoal: Separate a cached observation from direct authoritative evidence in time order.\nThese original synthetic annotated records describe fictional hosts, not your computer or a VM. reference.txt gives realistic source excerpts; evidence.txt contains normalized records for extraction, not literal tool output. No ip, ping, ss, dig, named-checkzone, curl, openssl, Apache or nginx command executes here.\nTask: Select the four incident=DNS-9 records and sort their fixed-width UTC timestamps. Exclude the other incident.\nReport format: preserve the selected record spelling, order and final LF exactly. Equivalent supported filters and paths are accepted; alternative prose/formatting is not normalized. Only report.txt is writable. Finish every write before cat report.txt; a later write invalidates reading evidence. Type help for the bounded text-command syntax.\nAutomatically checked: report facts (80 points) and displaying that final report with cat (20 points). No points for reading every source. A 100/100 score is NOT verified diagnostic reasoning or operational mastery.\nSelf-review questions: What is observed now, and what remains unknown after the final timestamp?\nModel interpretation: The supplied cache trace and decreasing TTL explain why a resolver may temporarily differ from direct authoritative answers. Both authorities match in these separate observations. Do not claim future convergence, correct deployment, DNSSEC validity or that flushing caches is necessary. Obtain intended changes and a later scoped check; a TTL is a bounded caching lifetime, not proof of a broken authority.\nCommon mistakes: Inferring cached origin solely from lack of AA; calling the resolver faulty because its unexpired cache differs; promising all clients update at one time; confusing TTL seconds with a serial.\nReasoning, proposed next checks and causal claims are self-reviewed, not keyword graded. Challenge hides guided commands and hints; this conceptual reference remains available.\nReset restores sources/reports and starts a new attempt, preserving history. Resume retains report, pending input, mode and exact scenario identity. This complements real practice; no live configuration or network effect occurs.\n"
+      }
+    },
+    "cwd": "/home/learner",
+    "output_files": [
+      "/home/learner/report.txt"
+    ],
+    "lesson": {
+      "goal": "Separate a cached observation from direct authoritative evidence in time order.",
+      "steps": [
+        {
+          "objective": "facts",
+          "command": "grep -F 'incident=DNS-9' evidence.txt | sort > report.txt",
+          "explanation": "Select the four incident=DNS-9 records and sort their fixed-width UTC timestamps. Exclude the other incident. These are saved annotated records, not execution of the named diagnostic utilities.",
+          "expected": "Required factual records in report.txt, including context. Interpretation remains self-reviewed."
+        },
+        {
+          "objective": "inspect",
+          "command": "cat report.txt",
+          "explanation": "Read your final factual report after all writes. Compare the model and common mistakes in HELP.txt; reasoning is not scored.",
+          "expected": "Final report displayed. Submit checks facts and this reading, not a verified diagnosis."
+        }
+      ]
+    }
+  }
+}

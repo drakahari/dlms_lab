@@ -4,7 +4,7 @@ Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.
 
 **Implemented** below means the stated subskills have exercises and evidence. **Partial** means significant objective skills still remain. **Reinforcement/preparation only** adds no complete-objective credit. **Missing** means there is no dedicated demonstrated exercise. **No complete official objective is claimed**. Simulated labs have objective grading within a bounded contract; VM completion is self-reviewed, not automatically assessed. Real guest execution evidence validates lesson feasibility, not every learner's mastery.
 
-The core simulated app remains usable without VM images/QEMU. [Resource Evidence — Offline Snapshots](lpic-2-resource-simulator.md) adds four factual-report activities with self-reviewed interpretation; it adds no live measurement or diagnosis checker. The 76 trusted VM lessons are nine bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
+The core simulated app remains usable without VM images/QEMU. [Resource Evidence — Offline Snapshots](lpic-2-resource-simulator.md) adds four factual-report activities with self-reviewed interpretation; it adds no live measurement or diagnosis checker. [Network/DNS/Web offline evidence](lpic-2-offline-evidence.md) adds twelve factual-report activities; interpretation remains self-reviewed, with no live service operations. Eight simulator collections fit unchanged bounds. The 76 trusted VM lessons are nine bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
 
 ## LPIC-1 — every published objective
 
@@ -74,17 +74,17 @@ The core simulated app remains usable without VM images/QEMU. [Resource Evidence
 | 204.3 | Missing | —. No dedicated demonstrated LVM exercise. |
 | 205.1 | Missing | —. No dedicated demonstrated network configuration exercise. |
 | 205.2 | Missing | —. No dedicated demonstrated advanced networking exercise. |
-| 205.3 | Preparation only | [Original networking](native-acceptance.md). Simulated network diagnosis does not demonstrate advanced real Linux troubleshooting. |
+| 205.3 | Reinforcement only | [Original networking](native-acceptance.md) exercises bounded simulated repairs; [Network evidence simulator](lpic-2-offline-evidence.md) reinforces interface/route/name evidence and cautious handover. Neither establishes advanced real Linux troubleshooting or live network correction. |
 | 206.1 | Reinforcement only | [Backup & Recovery](vm-preview/backup-unit.md). Archive skills alone do not demonstrate configure/make/install or source-build management. |
 | 206.2 | Partial | [Backup & Recovery](vm-preview/backup-unit.md). Implemented manual scoped archives, independent references, damage/completeness/version checks, separate restore and actual-user access; system directory selection, media/tape, rsync and backup suites omitted. |
 | 206.3 | Missing | —. No dedicated demonstrated user notices exercise. |
-| 207.1 | Missing | —. No dedicated demonstrated DNS configuration exercise. |
-| 207.2 | Missing | —. No dedicated demonstrated DNS zones exercise. |
+| 207.1 | Reinforcement only | [DNS evidence simulator](lpic-2-offline-evidence.md): response roles/status/cache interpretation only; no BIND installation/configuration/reload. |
+| 207.2 | Reinforcement only | [DNS evidence simulator](lpic-2-offline-evidence.md): supplied records, validator finding, delegation and consistency interpretation; no live zone maintenance. |
 | 207.3 | Missing | —. No dedicated demonstrated DNS security exercise. |
-| 208.1 | Missing | —. No dedicated demonstrated Apache exercise. |
-| 208.2 | Missing | —. No dedicated demonstrated HTTPS exercise. |
+| 208.1 | Reinforcement only | [Web evidence simulator](lpic-2-offline-evidence.md): listener/request, logs and Apache Host selection interpretation; no server configuration or operational assessment. |
+| 208.2 | Reinforcement only | [Web evidence simulator](lpic-2-offline-evidence.md): supplied SAN/date/hostname-check interpretation; no certificate/key generation, installation or live verification. |
 | 208.3 | Missing | —. No dedicated demonstrated Squid exercise. |
-| 208.4 | Missing | —. No dedicated demonstrated Nginx exercise. |
+| 208.4 | Reinforcement only | [Web evidence simulator](lpic-2-offline-evidence.md): nginx upstream/config/log interpretation; no proxy deployment or repair. |
 | 209.1 | Missing | —. No dedicated demonstrated Samba exercise. |
 | 209.2 | Missing | —. No dedicated demonstrated NFS exercise. |
 | 210.1 | Missing | —. No dedicated demonstrated DHCP exercise. |

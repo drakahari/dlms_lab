@@ -51,7 +51,7 @@ class ResourceEvidenceTests(unittest.TestCase):
   b=CatalogBridge(load_bundled_scenarios()[0],r/'data',r/'config');self.bridges.append(b);return b
  def test_registration_separate_vm_bounds_and_truthful_labels(self):
   self.assertEqual(UNIT['id'],'lpic-resource-evidence');self.assertEqual([e['scenario'].identity.scenario_id for e in ENTRIES],IDS)
-  self.assertEqual(len(load_collections()),5);b=self.build();self.assertEqual(len(b.curated),26)
+  self.assertEqual(len(load_collections()),8);b=self.build();self.assertEqual(len(b.curated),38)
   self.assertFalse(b.repository.root.exists());self.assertEqual(b.view['collections'][4]['completed'],{'Learn':0,'Challenge':0})
   from learning_lab.vm_preview.registry import units,entries
   self.assertEqual((len(units()),len(entries())),(9,76))
@@ -143,7 +143,7 @@ print('Separate-process resume PASS')
   b.setLibraryState(ENTRIES[-1]['scenario'].key,'hidden');before={k:deepcopy(l.session.attempt) for k,l in b.labs.items()};path=self.root/'snapshot.llbackup';self.assertTrue(b.backupProfile(str(path)),b.transfer_message)
   pb.restore(pb.read_backup(path),self.root/'restored',confirmed=True);restored=self.build('restored');self.assertEqual({k:l.session.attempt for k,l in restored.labs.items()},before);self.assertEqual(restored.visibility.entries,b.visibility.entries)
  def test_collection_capacity_and_content_limits(self):
-  resources=self.root/'resources';shutil.copytree(ROOT/'learning_lab/collections',resources/'collections');p=resources/'collections/index.json';base=json.loads(p.read_text())
+  resources=self.root/'resources';shutil.copytree(ROOT/'learning_lab/collections',resources/'collections');p=resources/'collections/index.json';base=json.loads(p.read_text());base['collections']=base['collections'][:5]
   with patch('learning_lab.collections.files',return_value=resources):
    eight=deepcopy(base)
    for i in range(3):e=deepcopy(base['collections'][4]);e['id']='test-'+str(i);eight['collections'].append(e)
