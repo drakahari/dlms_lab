@@ -10,10 +10,18 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 from importlib.metadata import distribution, version
+
+# The full 38-pack / 76-VM-metadata Start phase was measured at 58.3 seconds
+# serially. Keep finite budgets and every assertion; these are developer smoke
+# deadlines, not application, guest, QMP or resource-policy limits.
+START_PHASE_TIMEOUT = 120
+RESUME_PHASE_TIMEOUT = 45
 
 
 def phase(root, resume, require_icon):
+    started = time.monotonic()
     import learning_lab
     from PySide6.QtTest import QTest
     from learning_lab.__main__ import build_application
@@ -191,6 +199,7 @@ def phase(root, resume, require_icon):
                 'selected': bridge.view['labKey'],
                 'attempts': {k: lab.session.attempt for k, lab in bridge.labs.items()}}))
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
+                'elapsed_seconds': time.monotonic() - started,
                 'package': str(package), 'platform': app.platformName(),
                 'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'resource_evidence_packs':4, 'resource_evidence_both_modes':True, 'offline_evidence_packs':12, 'offline_evidence_both_modes':True, 'vm_lessons':76, 'vm_units':9, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
@@ -216,9 +225,10 @@ def main():
             cmd = [sys.executable, '-I', '-B', str(Path(__file__).resolve()), '--profile', str(root)]
             if resume: cmd.append('--resume')
             if args.require_icon: cmd.append('--require-icon')
-            result = subprocess.run(cmd, cwd=root, env=env, capture_output=True, text=True, timeout=45)
+            budget = RESUME_PHASE_TIMEOUT if resume else START_PHASE_TIMEOUT
+            result = subprocess.run(cmd, cwd=root, env=env, capture_output=True, text=True, timeout=budget)
             if result.returncode:raise RuntimeError(result.stdout + result.stderr)
-            results.append(json.loads(result.stdout))
+            results.append({**json.loads(result.stdout), 'timeout_seconds': budget})
         print(json.dumps({'result': 'PASS', 'phases': results,
                           'scope': 'Offscreen resource/start/resume smoke; not complete lab or native-dialog acceptance.'}, indent=2))
 

@@ -1,6 +1,6 @@
 """Content-only factual reports; no assessment of free-form reasoning."""
 from copy import deepcopy
-import json,subprocess,sys,tempfile,unittest,shutil
+import hashlib,json,subprocess,sys,tempfile,unittest,shutil
 from pathlib import Path
 from unittest.mock import patch
 from PySide6.QtCore import QCoreApplication
@@ -103,10 +103,13 @@ print('Exact pinned incomplete Challenge resume PASS')
   v=ENTRIES[0]['scenario'].value();v['identity']['content_version']='0.9.0';old,_=b.repository.install(json.dumps(v).encode());b._add_portable(old);b.selectLab(old.key,True);b.execute('pwd');b.flush()
   b.setLibraryState(ENTRIES[-1]['scenario'].key,'hidden');expected={k:deepcopy(l.session.attempt) for k,l in b.labs.items()};p=self.root/'profile.llbackup';self.assertTrue(b.backupProfile(str(p)),b.transfer_message)
   pb.restore(pb.read_backup(p),self.root/'restored',confirmed=True);restored=self.build('restored');self.assertEqual({k:l.session.attempt for k,l in restored.labs.items()},expected);self.assertEqual(restored.visibility.entries,b.visibility.entries)
- def test_prior_application_bytes_unchanged_except_collection_index(self):
+ def test_prior_application_bytes_or_exact_authorized_presentation(self):
   base='1201aaa69d409f765d54e81cf8ce0b42e35560ca'
   for name in subprocess.check_output(['git','ls-tree','-r','--name-only',base,'app/learning_lab'],cwd=ROOT.parent).decode().splitlines():
-   if name!='app/learning_lab/collections/index.json':self.assertEqual((ROOT.parent/name).read_bytes(),subprocess.check_output(['git','show',base+':'+name],cwd=ROOT.parent),name)
+   if name=='app/learning_lab/qml/Main.qml':
+    from presentation_revision import MAIN_SHA256
+    self.assertEqual(hashlib.sha256((ROOT.parent/name).read_bytes()).hexdigest(),MAIN_SHA256,name)
+   elif name!='app/learning_lab/collections/index.json':self.assertEqual((ROOT.parent/name).read_bytes(),subprocess.check_output(['git','show',base+':'+name],cwd=ROOT.parent),name)
 
  def test_exact_approved_registration_bounds_and_reserved_evidence(self):
   expected=['linux-network-interface-evidence','linux-network-route-evidence','linux-network-name-evidence','linux-network-incident-evidence','linux-dns-response-evidence','linux-dns-zone-evidence','linux-dns-consistency-evidence','linux-dns-handover-evidence','linux-web-listener-evidence','linux-web-vhost-evidence','linux-web-tls-evidence','linux-web-proxy-evidence']

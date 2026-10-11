@@ -1,6 +1,6 @@
 # Omarchy Learning Lab — native workspace and portable scenarios
 
-Three networking labs and a six-lab Linux Fundamentals collection in a standalone, offline Qt Quick window.
+A standalone, offline Qt Quick learning workspace: **41 distinct simulator activities** (38 Linux scenarios in eight collections plus three networking labs), and an optional **nine-unit / 76-lesson real-Linux VM preview**.
 
 ## License
 
@@ -39,6 +39,8 @@ Installed and verified: Python 3.14.7, PySide6 6.11.2, Shiboken6 6.11.2, Qt 6.11
 Minimum supported window: **800 × 600 logical pixels**. Hyprland tiling can force a smaller allocation despite Qt's minimum. Use the existing **Super+T** floating toggle or **Super+Alt+F** maximize binding when needed; the app does not install window rules.
 
 ## Use
+
+Start with the collapsible **Learning guide** in Library, or the [current learner guide](docs/learning-guide.md). It explains prerequisites, modes, report scoring and the separate real-VM path. See the [completion checklist](docs/completion-checklist.md) for finished commitments and remaining boundaries.
 
 ### Offline evidence collections
 
@@ -229,7 +231,7 @@ The theme adapter reads only the installed `~/.local/state/omarchy/current/theme
 python3 -m unittest discover -s tests -v
 ```
 
-See [current framework acceptance](docs/framework-acceptance.md), [unit results](evidence/framework-unit-tests.txt), and [portable format and architecture](docs/framework.md). Earlier native reports describe the previous UI; the framework scripts supersede those UI probes.
+See [current completion acceptance](docs/completion-acceptance.md), [offline evidence acceptance](docs/offline-evidence-acceptance.md), and [portable format and architecture](docs/framework.md). [Framework acceptance](docs/framework-acceptance.md) is historical checkpoint evidence, not the final current test count. Earlier native reports describe earlier UI revisions.
 
 Native screenshots are QQuickWindow captures from real Wayland windows. Keyboard acceptance uses QtTest key events sent to those windows, without mouse events. Physical keyboard input through the compositor and assistive-technology behavior require the included manual checklist.
 
@@ -244,7 +246,7 @@ Native screenshots are QQuickWindow captures from real Wayland windows. Keyboard
 - `qml/`: native library, topology, settings, console, feedback, history and dialogs.
 - `packs/gateway-dns.json`, `packs/subnet-boundary.json`, `packs/service-firewall.json`: validated data-only scenarios.
 
-All three specified labs are bundled. This is original learning content with no CompTIA affiliation. Packaging, integration and distribution remain deferred.
+All three specified networking labs are bundled. This is original learning content with no CompTIA affiliation. User-local packaging and the optional isolated VM preview are implemented. Public distribution remains deferred; dependency/source obligations and production image admission are not cleared.
 
 ## Portable scenarios and workspace
 
@@ -255,7 +257,7 @@ The workspace preserves pending settings, firewall edits and console input. Diag
 See [architecture, format, limits, pinning and rollback](docs/framework.md).
 The Linux service lab exercises a second trusted domain; this is a bounded
 two-domain implementation, not evidence that arbitrary future domains need no
-framework changes. Its current visual tests are offscreen, not native acceptance.
+framework changes. Native QtTest evidence now covers the Linux workspace; physical-keyboard and accessibility acceptance remain outstanding.
 
 ## Checkpoint 1: scenario identity (historical)
 

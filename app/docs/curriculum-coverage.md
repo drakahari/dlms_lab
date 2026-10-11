@@ -1,6 +1,6 @@
-# Curriculum coverage and release target — 6 October 2026
+# Curriculum coverage and release target — 11 October 2026
 
-Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.org/our-certifications/exam-101-102-objectives/) and [LPIC-2 v4.5 (4.5.0), 201-450/202-450](https://www.lpi.org/our-certifications/exam-201-202-objectives/), verified 2026-10-06. This is a repository/lesson/evidence audit, not LPI endorsement or an exam-readiness guarantee. Supersedes the historical pre-VM gap table in Unit 3; accepted scenario content is unchanged.
+Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.org/our-certifications/exam-101-102-objectives/) and [LPIC-2 v4.5 (4.5.0), 201-450/202-450](https://www.lpi.org/our-certifications/exam-201-202-objectives/), verified 2026-10-11. This is a repository/lesson/evidence audit, not LPI endorsement or an exam-readiness guarantee. Supersedes the historical pre-VM gap table in Unit 3; accepted scenario content is unchanged.
 
 **Implemented** below means the stated subskills have exercises and evidence. **Partial** means significant objective skills still remain. **Reinforcement/preparation only** adds no complete-objective credit. **Missing** means there is no dedicated demonstrated exercise. **No complete official objective is claimed**. Simulated labs have objective grading within a bounded contract; VM completion is self-reviewed, not automatically assessed. Real guest execution evidence validates lesson feasibility, not every learner's mastery.
 

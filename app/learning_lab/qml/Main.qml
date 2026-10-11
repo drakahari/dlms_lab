@@ -26,6 +26,7 @@ ApplicationWindow {
     property var resumeChoices: []
     property int resumeIndex: -1
     property bool showHidden: false
+    property bool learningGuideOpen: false
     property var collapsedCollections: ({})
     property string restoreArchive: ""
     property string exportAttemptId: ""
@@ -98,6 +99,22 @@ ApplicationWindow {
                 id: library; objectName: "libraryPage"
                 LabText { objectName: "pageHeading"; text: "Lab library"; font.pixelSize: 27; font.bold: true; Layout.fillWidth: true }
                 LabText { text: window.showHidden ? "Showing hidden built-ins and removed imports. Uncheck Show hidden / removed to return to the active Library." : "Original, offline learning simulations. Choose a scenario to begin or resume."; color: colors.muted; Layout.fillWidth: true }
+                LabButton {
+                    objectName: "learningGuideButton"
+                    text: "Learning guide " + (window.learningGuideOpen ? "▴" : "▾")
+                    Accessible.name: "Learning guide, " + (window.learningGuideOpen ? "expanded" : "collapsed")
+                    onClicked: window.learningGuideOpen=!window.learningGuideOpen
+                    onActiveFocusChanged: if(activeFocus) library.ensureVisible(this)
+                }
+                ColumnLayout {
+                    objectName: "learningGuideContent"; visible: window.learningGuideOpen
+                    Layout.fillWidth: true; spacing: 12
+                    LabText { objectName: "learningPathHelp"; text: "New to Linux? Begin with Linux Fundamentals, then Files & Permissions, Organize and Find Files, and Text, Filters & Reports. The Resource, Network, DNS and Web offline-evidence collections assume paths, cat, filters and report redirection. This is a suggested path, not an unlock system."; Layout.fillWidth: true }
+                    LabText { objectName: "simulationHelp"; text: "Simulator: commands use virtual state and files only. Type help for the supported subset. In offline-evidence labs, cat HELP.txt explains the supplied fictional snapshots, report format, model interpretation and common mistakes. Reading an ip, dig or curl snapshot does not run that utility or inspect your computer."; Layout.fillWidth: true }
+                    LabText { objectName: "scoringHelp"; text: "Learn guides one step at a time and offers hints without a score penalty. Challenge hides guided commands and hints. Changing mode or Reset starts a fresh attempt and retains previous attempts. Scores check only the listed objectives; diagnostic reasoning, forecasts and real-system competence are not automatically verified. Review the lab's model and reasoning questions separately."; Layout.fillWidth: true }
+                    LabText { objectName: "reportHelp"; text: "Reports: read Lab details for required records, units and format. Equivalent supported paths and filters count when they produce the required report. Write the report before its final inspection: later writes invalidate earlier reading evidence. Use Submit for assessment, then Continue working to correct and retry. Closing and reopening the same profile preserves progress and pending work."; Layout.fillWidth: true }
+                    LabText { objectName: "vmLearningHelp"; text: "Real Linux is separate: the optional VM preview offers nine units / 76 lessons in a guest console, with self-reviewed completion and no verification score. QEMU and an approved image are required only for those lessons. VM disks and sessions are excluded from profile backups. Resume boots the saved disk; it does not restore RAM or shell jobs."; Layout.fillWidth: true }
+                }
                 RowLayout {
                     Layout.fillWidth: true
                     CheckBox {
@@ -125,7 +142,7 @@ ApplicationWindow {
                 RowLayout {
                     Layout.fillWidth: true
                     LabButton { objectName: "vmPreviewButton"; text: "Real Linux VM preview…"; onClicked: { vmPanel.returnFocus=this; vmPanel.open() } onActiveFocusChanged: if(activeFocus) library.ensureVisible(this) }
-                    LabText { text: "Optional · Manage a background job · separate guest window · self-review only"; color: colors.muted; Layout.fillWidth: true }
+                    LabText { objectName: "vmLibraryDescription"; text: "Optional · nine units / 76 lessons · separate guest window · self-review only"; color: colors.muted; Layout.fillWidth: true }
                 }
                 LabText { visible: !window.showHidden; text: "Shared labs use the same progress in every collection. Hiding or restoring a lab applies everywhere it appears. Use Show hidden / removed to find inactive entries."; color: colors.muted; Layout.fillWidth: true }
                 LabText { visible: !window.showHidden && !v.collections.length; text: "Built-in collections are unavailable. Existing labs remain below."; Layout.fillWidth: true }
@@ -306,6 +323,7 @@ ApplicationWindow {
                                 width: review.availableWidth; spacing: 14
                                 LabText { objectName: "gradeHeading"; text: v.hasGrade ? "Submission review · " + v.grade.score + "/100" : "No submission for this applied revision"; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
                                 LabText { text: "Submission records the applied final state. Diagnostic runs do not submit an assessment. Hints have no score penalty."; color: colors.muted; Layout.fillWidth: true }
+                                LabText { objectName: "scoreBoundary"; text: "Only the listed objectives are checked automatically. A score does not verify diagnostic reasoning, forecasts or real-system competence. Use the lab's self-review guidance where provided."; Layout.fillWidth: true }
                                 Repeater {
                                     model: v.hasGrade ? v.grade.objectives : []
                                     LabText { required property var modelData; text: (modelData.ok?"PASS":"FAIL") + " · " + modelData.earned + "/" + modelData.possible + " · " + modelData.label + "\n" + modelData.evidence; color: modelData.ok?colors.success:colors.danger; Layout.fillWidth: true }

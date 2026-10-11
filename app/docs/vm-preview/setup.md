@@ -1,5 +1,11 @@
 # Local image preparation and preview launch
 
+**Current curriculum:** nine units / 76 lessons, at the enforced capacity limit.
+The unit sections below retain the earlier expansion figures as historical
+checkpoints; they are not the current aggregate limit. Use the [current learner
+guide](../learning-guide.md) and [coverage inventory](../curriculum-coverage.md)
+for the complete delivered curriculum.
+
 The separate [Services, Logs & Safe Recovery unit](admin-unit.md) uses its own
 administrator image and explicit lesson/image mappings. The original image and
 unprivileged recipe below remain unchanged.
@@ -122,8 +128,8 @@ unprivileged lessons using the same original image. See [verification](bash-acce
 
 The fifth bundled unit is [Users, Groups & Access Administration](users-unit.md),
 eight guest-only exercises using the unchanged approved administrator image.
-See [verification and remaining native limits](users-acceptance.md). The bounded
-registry now permits five units, sixteen lessons per unit, forty-four total.
+See [verification and remaining native limits](users-acceptance.md). At that historical checkpoint the bounded
+registry permitted five units, sixteen lessons per unit, forty-four total.
 
 ## Scheduling unit
 
@@ -131,11 +137,11 @@ The sixth bundled unit is
 [Scheduling & Operational Automation: Cron and systemd Timers](scheduling-unit.md).
 It uses the unchanged administrator image and named disposable guest fixtures.
 Completion remains self-reviewed/unscored; no at, clock or network changes.
-Registry bounds: six units, sixteen lessons each, fifty-two total.
+Historical expansion: six units, sixteen lessons each, fifty-two total.
 
 ## Backup practice unit
 
-The existing administrator image also supports [Backup & Safe File Recovery](backup-unit.md): eight self-reviewed lessons, no new image/packages/networking. Registry bounds are seven units, 60 total lessons and 16 per unit. Existing lesson/session pins are unchanged.
+The existing administrator image also supports [Backup & Safe File Recovery](backup-unit.md): eight self-reviewed lessons, no new image/packages/networking. Historical expansion was seven units, 60 total lessons and 16 per unit. Existing lesson/session pins are unchanged.
 
 ## System discovery and package practice
 

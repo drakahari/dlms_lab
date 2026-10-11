@@ -96,7 +96,8 @@ Preparation must pass all of:
 1. Wheel build (or read the supplied wheel), including the packaged icon.
 2. Installation into a fresh venv without system site packages.
 3. `pip check`.
-4. Packaged QML/resources, all four collections (22 unique packs, including both six-lab LPIC units and the eight-lab text unit), and start/resume smoke checks in new
+4. Packaged QML/resources, all eight collections (38 unique Linux packs, plus three networking labs),
+   and start/resume smoke checks in new
    disposable profiles and fresh Python processes.
 
 An atomic `current` symlink replacement is the final activation step. Previous
@@ -164,14 +165,23 @@ After a successful install, the standalone harness is retained with each release
 
 The harness can also be copied to any temporary directory and run by a dedicated
 wheel-installed venv. It requires wheel metadata and package files inside that
-venv, creates temporary data/config, loads packaged QML and all four collections
-(22 unique packs), starts each lab, runs simulated `pwd`, and saves pending
+venv, creates temporary data/config, loads packaged QML and all eight collections
+(38 unique Linux packs plus three networking labs), starts each lab, runs simulated `pwd`, and saves pending
 commands. It completes both original LPIC pilots, all six file-management labs in both modes,
-all eight text labs in both modes, and an authored Learn/Challenge pack,
+all eight text labs, four resource-evidence labs and twelve Network/DNS/Web
+evidence labs in both modes, and an authored Learn/Challenge pack,
 then verifies all saved attempts and the selected draft in a fresh process. It uses
 offscreen Qt; it does not require the source checkout or examples directory.
 
-## Evidence and acceptance limits
+The current smoke has finite per-phase budgets: 120 seconds for the full Start
+workload and 45 seconds for Resume. It records actual elapsed times. These are
+developer verification limits, not changed application or VM safety limits.
+
+## Historical installer evidence and current acceptance limits
+
+For the current candidate, use the [completion acceptance report](completion-acceptance.md).
+The counts and owner reports below describe the original installer checkpoint;
+they are retained evidence, not claims about every later installed build.
 
 Baseline was clean at `1baca2fdfdabff270db8791e3b9f67d60ce23b5b`.
 The owner reports building/installing the committed collection wheel in separate

@@ -158,4 +158,7 @@ print('Separate-process resume PASS')
   for name in names:
    if name=='app/learning_lab/collections/index.json':continue
    old=subprocess.check_output(['git','show',baseline+':'+name],cwd=ROOT.parent)
-   self.assertEqual((ROOT.parent/name).read_bytes(),old,name)
+   if name=='app/learning_lab/qml/Main.qml':
+    from presentation_revision import MAIN_SHA256
+    self.assertEqual(hashlib.sha256((ROOT.parent/name).read_bytes()).hexdigest(),MAIN_SHA256,name)
+   else:self.assertEqual((ROOT.parent/name).read_bytes(),old,name)
