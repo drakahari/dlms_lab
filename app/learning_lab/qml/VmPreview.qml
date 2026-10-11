@@ -10,7 +10,38 @@ Dialog {
     property bool running: ["running","paused","io-error","prelaunch"].indexOf(info.state)>=0
     property string chosenMode: session ? session.mode : "Learn"
     property string selectedLessonId: info.selected_lesson_id
-    onSelectedLessonIdChanged: Qt.callLater(function() { if(contents.contentItem) contents.contentItem.contentY=0; supportToggle.checked=false })
+    // QVariant views are rebuilt on every status poll. Only replace navigation
+    // models when their actual IDs/titles change, preserving popup highlight.
+    property string unitOptionsKey: JSON.stringify(info.units || [])
+    property string lessonOptionsKey: JSON.stringify(info.choices || [])
+    property var unitOptions: JSON.parse(unitOptionsKey)
+    property var lessonOptions: JSON.parse(lessonOptionsKey)
+    readonly property bool navigationEnabled: !info.busy || info.refreshing === true
+    readonly property bool vmSelectionValid: {
+        if(!info.lesson || info.lesson.id!==info.selected_lesson_id) return false
+        for(var i=0;i<lessonOptions.length;i++)
+            if(lessonOptions[i].id===info.selected_lesson_id) return true
+        return false
+    }
+    function chooseUnit(index) {
+        if(!navigationEnabled || index<0 || index>=unitOptions.length) return
+        var id=unitOptions[index].id
+        for(var i=0;i<(info.units || []).length;i++)
+            if(info.units[i].id===id) { backend.selectUnit(id); return }
+    }
+    function chooseLesson(index) {
+        if(!navigationEnabled || index<0 || index>=lessonOptions.length) return
+        var id=lessonOptions[index].id
+        for(var i=0;i<(info.choices || []).length;i++)
+            if(info.choices[i].id===id) { backend.selectLesson(id); return }
+    }
+    onSelectedLessonIdChanged: Qt.callLater(function() {
+        // A delayed top reset must not scroll newly focused navigation away.
+        var choice=unitChoice.activeFocus ? unitChoice : lessonChoice.activeFocus ? lessonChoice : modeChoice.activeFocus ? modeChoice : null
+        if(choice) contents.ensureVisible(choice)
+        else if(contents.contentItem) contents.contentItem.contentY=0
+        supportToggle.checked=false
+    })
     property bool anyRunning: !!info.running_lesson_id || info.other_profile_running
     onSessionChanged: chosenMode=session ? session.mode : "Learn"
     property var returnFocus: null
@@ -23,27 +54,29 @@ Dialog {
     Timer { interval: 5000; repeat: true; running: panel.opened; onTriggered: if(!info.busy) backend.refresh() }
     contentItem: InsetScrollView {
         id: contents; objectName: "vmContents"
-        Label { text: "Choose a real-Linux collection" }
-        ComboBox {
-            objectName: "vmUnitChoice"; Layout.fillWidth: true; model: info.units; textRole: "title"
-            currentIndex: { for(var i=0;i<info.units.length;i++) if(info.units[i].id===info.unit.id) return i; return -1 }
-            enabled: !info.busy; Accessible.name: "Choose a real-Linux collection"
-            onActivated: function(index) { backend.selectUnit(info.units[index].id) }
+        LabText { text: "Choose a collection, then a lesson and mode. Start opens the separate real-Linux guest console. Selecting a lesson does not start a VM. Simulator activities remain in the Library."; Layout.fillWidth: true }
+        Label { text: "1. Collection · a group of real-VM lessons"; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        LabChoice {
+            id: unitChoice; objectName: "vmUnitChoice"; Layout.fillWidth: true; model: panel.unitOptions; textRole: "title"
+            currentIndex: { for(var i=0;i<panel.unitOptions.length;i++) if(panel.unitOptions[i].id===info.unit.id) return i; return -1 }
+            enabled: panel.navigationEnabled && count>0; Accessible.name: "Choose a real-Linux collection"
+            onActiveFocusChanged: if(activeFocus && focusReason!==Qt.MouseFocusReason) contents.ensureVisible(this)
+            onActivated: function(index) { panel.chooseUnit(index) }
         }
         LabText { text: info.unit.title; font.bold: true; Layout.fillWidth: true }
         LabText { text: info.unit.purpose; Layout.fillWidth: true }
-        Label { text: "Choose a real-Linux lesson" }
-        ComboBox {
-            objectName: "vmLessonChoice"; Layout.fillWidth: true; model: info.choices; textRole: "title"
-            currentIndex: { for(var i=0;i<info.unit.entries.length;i++) if(info.unit.entries[i].id===info.selected_lesson_id) return i; return -1 }
-            enabled: !info.busy; Accessible.name: "Choose a real-Linux lesson"
-            onActivated: function(index) { backend.selectLesson(info.unit.entries[index].id) }
+        Label { text: "2. Lesson in this collection ("+panel.lessonOptions.length+")"; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        LabChoice {
+            id: lessonChoice; objectName: "vmLessonChoice"; Layout.fillWidth: true; model: panel.lessonOptions; textRole: "title"
+            currentIndex: { for(var i=0;i<panel.lessonOptions.length;i++) if(panel.lessonOptions[i].id===info.selected_lesson_id) return i; return -1 }
+            enabled: panel.navigationEnabled && count>0; Accessible.name: "Choose a real-Linux lesson"
+            onActiveFocusChanged: if(activeFocus && focusReason!==Qt.MouseFocusReason) contents.ensureVisible(this)
+            onActivated: function(index) { panel.chooseLesson(index) }
         }
         LabText { objectName: "vmRunningLesson"; visible: !!info.running_lesson_id; text: "Running lesson: "+info.running_title+" · "+info.running_state+". Stop below controls this guest, even when another lesson is selected."; Layout.fillWidth: true; font.bold: true }
         LabButton { objectName: "vmReturnRunning"; visible: !!info.running_lesson_id && info.running_lesson_id!==info.selected_lesson_id; text: "Return to running lesson"; enabled: !info.busy; onClicked: backend.selectLesson(info.running_lesson_id) }
         LabText { visible: info.other_profile_running; text: "A VM belonging to another application profile/store is running. Stop it from that profile before starting this lesson."; Layout.fillWidth: true }
         LabText { visible: !!info.running_error; text: info.running_error; Layout.fillWidth: true }
-        LabText { text: info.lesson.title; font.pixelSize: 24; font.bold: true; Layout.fillWidth: true }
         LabText { text: info.lesson.goal; Layout.fillWidth: true }
         LabText { visible: !!info.support.materials; text: "Practice setup and supplied data · available in both modes"; font.bold: true; Layout.fillWidth: true }
         Repeater { model: info.support.materials || []; TextArea { objectName: "vmPracticeMaterial"; required property string modelData; Layout.fillWidth: true; readOnly: true; selectByMouse: true; wrapMode: TextEdit.Wrap; font.family: "monospace"; text: modelData; Accessible.name: "Guest-local practice setup and data"; onActiveFocusChanged: if(activeFocus) contents.ensureVisible(this) } }
@@ -54,8 +87,8 @@ Dialog {
         LabText { text: info.error || info.message || info.notice; visible: text.length>0; Layout.fillWidth: true; color: info.error ? "#ff9a9a" : palette.text }
         LabText { visible: !info.prerequisites; text: "Preview prerequisites are unavailable: QEMU x86, qemu-img and writable KVM access are required. All simulated labs remain usable. No software will be installed automatically."; Layout.fillWidth: true }
         RowLayout {
-            Label { text: "Mode" }
-            ComboBox { objectName: "vmMode"; model: ["Learn","Challenge"]; currentIndex: panel.chosenMode==="Learn" ? 0 : 1; enabled: !info.busy && !session; onActivated: panel.chosenMode=currentText }
+            Label { text: "3. Mode" }
+            LabChoice { id: modeChoice; objectName: "vmMode"; model: ["Learn","Challenge"]; currentIndex: panel.chosenMode==="Learn" ? 0 : 1; enabled: panel.navigationEnabled && !session; onActiveFocusChanged: if(activeFocus && focusReason!==Qt.MouseFocusReason) contents.ensureVisible(this); onActivated: panel.chosenMode=currentText }
             LabText { text: session ? "Changing mode starts a new session through Reset." : "Learn offers guidance; Challenge hides it."; Layout.fillWidth: true }
         }
         ColumnLayout {
@@ -97,11 +130,13 @@ Dialog {
     }
     footer: ColumnLayout {
         spacing: 8
+        LabText { objectName: "vmSelectedSummary"; text: vmSelectionValid ? "Selected real-VM lesson: "+info.lesson.title+"\n"+info.unit.title+" · "+panel.chosenMode+" · self-reviewed, unscored" : "Choose an available lesson before starting."; Layout.fillWidth: true; Layout.leftMargin: 12; Layout.rightMargin: 12; font.bold: true }
+        LabText { text: "4. Start or resume the selected lesson"; Layout.fillWidth: true; Layout.leftMargin: 12; Layout.rightMargin: 12 }
         RowLayout {
             Layout.margins: 12; Layout.fillWidth: true
-            LabButton { objectName: "vmStart"; text: session ? "Resume disk" : "Start"; enabled: !info.busy && !anyRunning && info.prerequisites && info.state!=="disk-missing" && info.state!=="unclean" && info.state!=="session-unavailable" && info.state!=="control-unavailable"; onClicked: backend.start(panel.chosenMode) }
+            LabButton { objectName: "vmStart"; text: session ? "Resume disk" : "Start"; enabled: panel.vmSelectionValid && !info.busy && !anyRunning && info.prerequisites && info.state!=="disk-missing" && info.state!=="unclean" && info.state!=="session-unavailable" && info.state!=="control-unavailable"; onClicked: backend.start(panel.chosenMode) }
             LabButton { objectName: "vmStop"; text: "Stop running"; enabled: !info.busy && !!info.running_lesson_id; onClicked: backend.stop() }
-            LabButton { objectName: "vmReset"; text: "Reset…"; enabled: !info.busy && !anyRunning && info.state!=="control-unavailable"; onClicked: resetDialog.open() }
+            LabButton { objectName: "vmReset"; text: "Reset…"; enabled: panel.vmSelectionValid && !info.busy && !anyRunning && info.state!=="control-unavailable"; onClicked: resetDialog.open() }
             LabButton { text: "Force stop…"; enabled: !info.busy && !!info.running_lesson_id; onClicked: forceDialog.open() }
             Item { Layout.fillWidth: true }
             LabButton { objectName: "vmClose"; text: "Close panel"; enabled: !info.busy; onClicked: panel.close() }
@@ -112,7 +147,7 @@ Dialog {
         width: Math.min(panel.width-40,540); height: 340; standardButtons: Dialog.Ok | Dialog.Cancel
         contentItem: ColumnLayout {
             LabText { text: "Reset applies to the selected lesson only. Stop the VM first. Reset retains the old disk and session for recovery, then creates a fresh disk. Old shell jobs and files will not appear in the new guest. No automatic repair or deletion. VM disks are excluded from profile backups."; Layout.fillWidth: true }
-            ComboBox { id: resetMode; model: ["Learn","Challenge"]; Accessible.name: "New session mode" }
+            LabChoice { id: resetMode; model: ["Learn","Challenge"]; Accessible.name: "New session mode" }
         }
         onAccepted: backend.reset(resetMode.currentText,true)
     }

@@ -31,7 +31,7 @@ class VmBridge(QObject):
     def view(self):
         available=os.getuid()!=0 and all(os.access(p,os.X_OK) for p in (QEMU,QEMU_IMG)) and os.access('/dev/kvm',os.R_OK|os.W_OK)
         unit=unit_for_lesson(self._selected)
-        return {**self._state,'busy':self._busy,'error':self._error,'notice':self._notice,
+        return {**self._state,'busy':self._busy,'refreshing':self._refreshing,'error':self._error,'notice':self._notice,
                 'selected_lesson_id':self._selected,'unit':unit,'units':[{'id':u['id'],'title':u['title']} for u in units()], 'support':entry(self._selected),
                 'choices':[{'id':e['id'],'title':load_lesson(e['id'])['title']} for e in unit['entries']],
                 'lesson':self.manager.lesson,'image':self.manager.spec,'prerequisites':available,'home':str(self.manager.home)}
