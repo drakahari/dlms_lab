@@ -2,8 +2,10 @@
 Other application bytes and every old lesson/descriptor/default remain exact.
 """
 import json
+from foundation_preservation import projection as foundation_projection
 
 def projection(name, raw):
+    raw=foundation_projection(name,raw)
     if name.endswith('image_catalog.py'):
         return raw.replace(b'MAX_RETAINED_LESSONS = 86', b'MAX_RETAINED_LESSONS = 76').replace(b'MAX_DEFAULT_LESSONS = 86', b'MAX_DEFAULT_LESSONS = 76')
     if name.endswith('registry.py'):

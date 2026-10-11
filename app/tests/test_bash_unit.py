@@ -1,3 +1,4 @@
+from foundation_preservation import NEW_IDS
 """Trusted Bash unit bounds, explicit image routing and pinned-record preservation."""
 import copy,hashlib,json,os,tempfile,unittest
 from pathlib import Path
@@ -10,19 +11,19 @@ from learning_lab.vm_preview.sessions import Sessions
 from bash_guest_fixtures import COMMANDS,SCRIPT_ROWS,UNIT
 class BashUnitTests(unittest.TestCase):
  def test_exact_bounds_and_all_76_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(10,16,86))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10]);self.assertEqual(len(registry.entries()),86)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(11,16,94))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8]);self.assertEqual(len(registry.entries()),94)
  def test_reject_77_before_reading_eighth_unit_lessons(self):
   original=registry._read;reads=[]
   def read(name):
    reads.append(name);d=original(name)
-   if name=='local-shell-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
+   if name=='text-archive-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
    return d
   registry._bundle.cache_clear()
   try:
    with patch.object(registry,'_read',side_effect=read):
-    with self.assertRaisesRegex(ValueError,'86'):registry.units()
-   self.assertNotIn('real-linux-local-startup.json',reads)
+    with self.assertRaisesRegex(ValueError,'94'):registry.units()
+   self.assertNotIn('real-linux-textarchive-streams.json',reads)
   finally:registry._bundle.cache_clear()
  def test_reject_tenth_unit_before_resources(self):
   original=registry._read;reads=[]
@@ -44,6 +45,7 @@ class BashUnitTests(unittest.TestCase):
   new |= {e['id'] for e in registry.catalog('linux-system-discovery-package-fundamentals')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}
   new |= {e['id'] for e in registry.catalog('lpic-local-shell-filesystem')['entries']}
+  new |= NEW_IDS
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for i in c['images']:i['lessons']=[l for l in i['lessons'] if l['id'] not in new]
   for name in ('default_images','default_lessons'):c[name]={k:v for k,v in c[name].items() if k not in new}

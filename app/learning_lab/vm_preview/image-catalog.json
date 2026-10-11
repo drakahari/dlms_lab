@@ -160,6 +160,38 @@
         {
           "id": "real-linux-local-handover",
           "sha256": "71f926c1f0bedae3d4e694b15d660a664e100255c401a174dbe027ac2cd40c9f"
+        },
+        {
+          "id": "real-linux-textarchive-streams",
+          "sha256": "010bc2cd6a0fdb9ed29d0ec41e995941976fd8cfbbb96a61f5f6c3e0283fc71f"
+        },
+        {
+          "id": "real-linux-textarchive-tee",
+          "sha256": "d9abe066daaa670057757bd037e3c799762a9da9ffafab24932759982f090b91"
+        },
+        {
+          "id": "real-linux-textarchive-xargs",
+          "sha256": "9447eaa5c6911efa929b997e8f7c785a4c9370a8e5ad916c7a15a5792d5fe7af"
+        },
+        {
+          "id": "real-linux-textarchive-join",
+          "sha256": "d9a1583d533a2486447c32d82d547e4b972f9fe8c980261b16c2cc9b0f8feb73"
+        },
+        {
+          "id": "real-linux-textarchive-find",
+          "sha256": "cc5c1bbddbc54c84774e3adf1e2f9b88620c5b19f46ccb13b93e613feba0c91d"
+        },
+        {
+          "id": "real-linux-textarchive-cpio",
+          "sha256": "342bcd9f609c80cfa4d0d4dcbb202263292c9a31cc7725a2c24afeea23d3c626"
+        },
+        {
+          "id": "real-linux-textarchive-composition",
+          "sha256": "415a83d97090c9d3a094fd5a8f82c54927eb3dcfc44e192759aebce4e392a82c"
+        },
+        {
+          "id": "real-linux-textarchive-handover",
+          "sha256": "e08571536bb5247107c66968f3293e6c71fa522c0978d9273fd58e086f1270fa"
         }
       ]
     },
@@ -966,6 +998,54 @@
       "sha256": "71f926c1f0bedae3d4e694b15d660a664e100255c401a174dbe027ac2cd40c9f",
       "resource": "real-linux-local-handover.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-streams",
+      "sha256": "010bc2cd6a0fdb9ed29d0ec41e995941976fd8cfbbb96a61f5f6c3e0283fc71f",
+      "resource": "real-linux-textarchive-streams.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-tee",
+      "sha256": "d9abe066daaa670057757bd037e3c799762a9da9ffafab24932759982f090b91",
+      "resource": "real-linux-textarchive-tee.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-xargs",
+      "sha256": "9447eaa5c6911efa929b997e8f7c785a4c9370a8e5ad916c7a15a5792d5fe7af",
+      "resource": "real-linux-textarchive-xargs.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-join",
+      "sha256": "d9a1583d533a2486447c32d82d547e4b972f9fe8c980261b16c2cc9b0f8feb73",
+      "resource": "real-linux-textarchive-join.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-find",
+      "sha256": "cc5c1bbddbc54c84774e3adf1e2f9b88620c5b19f46ccb13b93e613feba0c91d",
+      "resource": "real-linux-textarchive-find.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-cpio",
+      "sha256": "342bcd9f609c80cfa4d0d4dcbb202263292c9a31cc7725a2c24afeea23d3c626",
+      "resource": "real-linux-textarchive-cpio.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-composition",
+      "sha256": "415a83d97090c9d3a094fd5a8f82c54927eb3dcfc44e192759aebce4e392a82c",
+      "resource": "real-linux-textarchive-composition.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-textarchive-handover",
+      "sha256": "e08571536bb5247107c66968f3293e6c71fa522c0978d9273fd58e086f1270fa",
+      "resource": "real-linux-textarchive-handover.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -1055,7 +1135,15 @@
     "real-linux-local-search": "ab5dba9912d77154552553912bb3abd9cd5e0a135683fc19f20cacebb55d29fe",
     "real-linux-local-sticky": "dd589ec062ce67e8758a25877ea93abdf4c9acb79ec18620b4bdd6bb9e6ca6b3",
     "real-linux-local-priority": "a13d3c921cd50f5021b580ef18af5345de6a408eea4c4e51a8729df825788738",
-    "real-linux-local-handover": "71f926c1f0bedae3d4e694b15d660a664e100255c401a174dbe027ac2cd40c9f"
+    "real-linux-local-handover": "71f926c1f0bedae3d4e694b15d660a664e100255c401a174dbe027ac2cd40c9f",
+    "real-linux-textarchive-streams": "010bc2cd6a0fdb9ed29d0ec41e995941976fd8cfbbb96a61f5f6c3e0283fc71f",
+    "real-linux-textarchive-tee": "d9abe066daaa670057757bd037e3c799762a9da9ffafab24932759982f090b91",
+    "real-linux-textarchive-xargs": "9447eaa5c6911efa929b997e8f7c785a4c9370a8e5ad916c7a15a5792d5fe7af",
+    "real-linux-textarchive-join": "d9a1583d533a2486447c32d82d547e4b972f9fe8c980261b16c2cc9b0f8feb73",
+    "real-linux-textarchive-find": "cc5c1bbddbc54c84774e3adf1e2f9b88620c5b19f46ccb13b93e613feba0c91d",
+    "real-linux-textarchive-cpio": "342bcd9f609c80cfa4d0d4dcbb202263292c9a31cc7725a2c24afeea23d3c626",
+    "real-linux-textarchive-composition": "415a83d97090c9d3a094fd5a8f82c54927eb3dcfc44e192759aebce4e392a82c",
+    "real-linux-textarchive-handover": "e08571536bb5247107c66968f3293e6c71fa522c0978d9273fd58e086f1270fa"
   },
   "releases": [],
   "keys": [],
@@ -1145,6 +1233,14 @@
     "real-linux-local-search": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
     "real-linux-local-sticky": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
     "real-linux-local-priority": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
-    "real-linux-local-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548"
+    "real-linux-local-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-streams": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-tee": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-xargs": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-join": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-find": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-cpio": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-composition": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-textarchive-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548"
   }
 }

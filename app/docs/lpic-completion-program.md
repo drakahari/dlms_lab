@@ -189,3 +189,7 @@ separate decisions. No routine owner walkthrough is a completion gate.
 ## First authorized family delivered
 
 [Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md) implements ten of the proposed 10–12 exercises using the unchanged guests. The exact approved capacity is ten units /86 total/16 per unit, with retained/default maps86 and unchanged parser/image limits. It widens partial history, startup/editor, find/FHS, special-bit/priority coverage and adds partial link coverage; no full objective is claimed. The original family estimate and historical 9/76 constraint above describe the pre-approval plan. No later family is authorized by this delivery. [Acceptance](vm-preview/local-shell-acceptance.md) records the frozen-content evidence and remaining platform/release gaps.
+
+## Second completion-family evidence update
+
+[Text & Archive Tools](vm-preview/text-archive-unit.md) adds eight lessons, for eleven units / 94 lessons. See [acceptance](vm-preview/text-operations-acceptance.md) for exact evidence. Active objective versions and whole-objective rollups remain unchanged: new practice widens partial 103.2/103.3/103.4; 105.2 and recovery are reinforcement. No automatic guest assessment, full coverage, xz or at claim. Earlier counts above are retained historical context.

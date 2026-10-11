@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-textarchive-composition",
+  "content_version": "1.0.0",
+  "title": "Reject a valid compressed partial backup",
+  "goal": "Diagnose tar-to-gzip pipeline failure, retaining the real partial candidate and creating a separate verified retry.",
+  "challenge": "Demonstrate a failed archive producer followed by successful compression. Prove the first gzip stream is valid but incomplete; retain it, then build and restore a different complete candidate without changing sources.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/textarchive-composition.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-composition.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh source original.sha partial.tar.gz stages.txt complete.tar.gz complete.sha members.txt restore && mkdir source && printf 'alpha\\n' > source/alpha.txt && printf 'beta\\n' > source/beta.txt && sha256sum source/alpha.txt source/beta.txt > original.sha",
+      "explanation": "A missing requested member will cause the producer to fail, but downstream gzip can still write a valid stream. Keep originals and the failed candidate.",
+      "expected": "Two originals; no output reused."
+    },
+    {
+      "command": "here && dir_ok source && { timeout -k 1s 8s tar -cf - -C source -- alpha.txt absent.txt 2>/dev/null | timeout -k 1s 8s gzip -n > partial.tar.gz; ps=(\"${PIPESTATUS[@]}\"); printf '%s\\n' \"${ps[*]}\" > stages.txt; test \"${ps[0]}\" != 0 && test \"${ps[1]}\" = 0; } && gzip -t partial.tar.gz && tar -tzf partial.tar.gz",
+      "explanation": "Redirection and compression are not transactional. gzip CRC validates that stream, not completeness or expected source data. Save every stage status immediately.",
+      "expected": "Partial archive exists and gzip testing passes, despite a failing tar stage."
+    },
+    {
+      "command": "here && dir_ok source && { timeout -k 1s 8s tar -cf - -C source -- alpha.txt beta.txt | timeout -k 1s 8s gzip -n > complete.tar.gz; ps=(\"${PIPESTATUS[@]}\"); test \"${ps[*]}\" = '0 0'; } && test \"$(stat -c %s complete.tar.gz)\" -le 65536 && sha256sum complete.tar.gz > complete.sha && tar -tzf complete.tar.gz > members.txt && cmp members.txt <(printf 'alpha.txt\\nbeta.txt\\n') && fresh restore && mkdir restore && dir_ok restore && timeout -k 1s 8s tar -xzf complete.tar.gz -C restore --no-same-owner --same-permissions && cmp source/alpha.txt restore/alpha.txt && cmp source/beta.txt restore/beta.txt && sha256sum -c original.sha complete.sha",
+      "explanation": "The retry gets a new filename and destination. Compare declared members and independent content expectations; never accept an earlier failed output merely because it decompresses.",
+      "expected": "Both complete restored files match, failed candidate remains and originals are unchanged."
+    }
+  ],
+  "hints": [
+    "Inspect the producer status, not just gzip -t.",
+    "A retry should preserve the failed candidate and use a fresh destination."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0: partial 103.4 pipeline/error evidence; 103.3/105.2 reinforcement. LPIC-2 v4.5.0: related 206.2 recovery reinforcement only. Self-reviewed and unscored; no full coverage."
+}

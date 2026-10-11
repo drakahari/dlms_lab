@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "id": "lpic-text-archive-tools",
+  "title": "Text & Archive Tools",
+  "purpose": "Extend real shell practice with descriptor routing, pipeline failures, safe filename arguments, sorted reconciliation, find batching and trusted archive recovery. Sequence is guidance, not an unlock system.",
+  "prerequisites": "Earlier Bash, quoting, statuses, files/permissions, local-shell searches and backup basics. Tiny private guest fixtures only; no live system or arbitrary archive extraction.",
+  "coverage": "LPIC-1 v5.0: limited 103.2/103.3/103.4 practice and 105.2 reinforcement. LPIC-2 v4.5.0: related 206.2 recovery reinforcement only. Self-reviewed and unscored, not full objective coverage.",
+  "entries": [
+    {
+      "id": "real-linux-textarchive-streams",
+      "resource": "real-linux-textarchive-streams.json",
+      "description": "Distinguish standard output, standard error and descriptor-order effects while retaining a failing command\u2019s actual status.",
+      "objectives": [
+        "partial103.4 streams/redirection"
+      ],
+      "troubleshooting": [
+        "A later cat returning0 does not prove the producer succeeded.",
+        "Reversing the two redirections is observably different."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './out.txt' -o -path './err.txt' -o -path './status.txt' -o -path './combined.txt' -o -path './only-data.txt' -o -path './earlier-stdout.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'out.txt' && test ! -L 'out.txt' || return 19; test -f 'err.txt' && test ! -L 'err.txt' || return 19; test -f 'status.txt' && test ! -L 'status.txt' || return 19; test -f 'combined.txt' && test ! -L 'combined.txt' || return 19; test -f 'only-data.txt' && test ! -L 'only-data.txt' || return 19; test -f 'earlier-stdout.txt' && test ! -L 'earlier-stdout.txt' || return 19; rm -- 'out.txt' 'err.txt' 'status.txt' 'combined.txt' 'only-data.txt' 'earlier-stdout.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-streams.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-streams.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Producer: bash -c 'printf \"data\\n\"; printf \"problem\\n\" >&2; exit 7'. It deliberately fails; output filenames are declared above. No repair command is required by the Challenge."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    },
+    {
+      "id": "real-linux-textarchive-tee",
+      "resource": "real-linux-textarchive-tee.json",
+      "description": "Use tee and immediate PIPESTATUS to distinguish useful partial output from a successful pipeline.",
+      "objectives": [
+        "partial103.4 pipelines/tee",
+        "105.2 error-handling reinforcement"
+      ],
+      "troubleshooting": [
+        "tee is not rollback: partial bytes remain.",
+        "Treating grep1 and grep2 as the same error loses evidence."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './capture.txt' -o -path './sorted.txt' -o -path './stages.txt' -o -path './pipefail.txt' -o -path './policy.txt' -o -path './codes.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'capture.txt' && test ! -L 'capture.txt' || return 19; test -f 'sorted.txt' && test ! -L 'sorted.txt' || return 19; test -f 'stages.txt' && test ! -L 'stages.txt' || return 19; test -f 'pipefail.txt' && test ! -L 'pipefail.txt' || return 19; test -f 'policy.txt' && test ! -L 'policy.txt' || return 19; test -f 'codes.txt' && test ! -L 'codes.txt' || return 19; rm -- 'capture.txt' 'sorted.txt' 'stages.txt' 'pipefail.txt' 'policy.txt' 'codes.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-tee.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-tee.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Producer emits beta then alpha and exits7. Required observations: every stage status, byte order before/after sort, parent pipefail result, grep no-match and missing-input statuses."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    },
+    {
+      "id": "real-linux-textarchive-xargs",
+      "resource": "real-linux-textarchive-xargs.json",
+      "description": "Use NUL-delimited bounded xargs, including spaces, backslashes and empty input, without treating names as shell code.",
+      "objectives": [
+        "partial103.3 safe names/xargs",
+        "partial103.4 command composition"
+      ],
+      "troubleshooting": [
+        "Plain xargs is not safe filename handling.",
+        "Without GNU -r an empty input may still invoke the command once."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './source/space name.txt' -o -path './source/back\\\\slash.txt' -o -path './names.bin' -o -path './hashes.txt' -o -path './empty.bin' -o -path './empty.txt' -o -path './broken.txt' -o -path './source' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'source/space name.txt' && test ! -L 'source/space name.txt' || return 19; test -f 'source/back\\slash.txt' && test ! -L 'source/back\\slash.txt' || return 19; test -f 'names.bin' && test ! -L 'names.bin' || return 19; test -f 'hashes.txt' && test ! -L 'hashes.txt' || return 19; test -f 'empty.bin' && test ! -L 'empty.bin' || return 19; test -f 'empty.txt' && test ! -L 'empty.txt' || return 19; test -f 'broken.txt' && test ! -L 'broken.txt' || return 19; test -d 'source' && test ! -L 'source' || return 19; rm -- 'source/space name.txt' 'source/back\\slash.txt' 'names.bin' 'hashes.txt' 'empty.bin' 'empty.txt' 'broken.txt' || return 19; rmdir -- 'source' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-xargs.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-xargs.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Create only source/space name.txt containing one newline-terminated line \"one\", and source/back\\slash.txt containing \"two\". Preserve both. Use harmless printf for the wrong-parser comparison."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    },
+    {
+      "id": "real-linux-textarchive-join",
+      "resource": "real-linux-textarchive-join.json",
+      "description": "Join two small key tables and use comm to retain unmatched evidence, with a consistent locale and checked ordering.",
+      "objectives": [
+        "partial103.2 join/comm/filter composition"
+      ],
+      "troubleshooting": [
+        "Unmatched is not equivalent to zero.",
+        "Duplicate keys need a policy; join does not invent uniqueness."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './left.txt' -o -path './right.txt' -o -path './joined.txt' -o -path './left.keys' -o -path './right.keys' -o -path './left-only.txt' -o -path './right-only.txt' -o -path './unsorted.txt' -o -path './rejected.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'left.txt' && test ! -L 'left.txt' || return 19; test -f 'right.txt' && test ! -L 'right.txt' || return 19; test -f 'joined.txt' && test ! -L 'joined.txt' || return 19; test -f 'left.keys' && test ! -L 'left.keys' || return 19; test -f 'right.keys' && test ! -L 'right.keys' || return 19; test -f 'left-only.txt' && test ! -L 'left-only.txt' || return 19; test -f 'right-only.txt' && test ! -L 'right-only.txt' || return 19; test -f 'unsorted.txt' && test ! -L 'unsorted.txt' || return 19; test -f 'rejected.txt' && test ! -L 'rejected.txt' || return 19; rm -- 'left.txt' 'right.txt' 'joined.txt' 'left.keys' 'right.keys' 'left-only.txt' 'right-only.txt' 'unsorted.txt' 'rejected.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-join.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-join.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Tables: left = alpha 2; beta 5. Right = alpha healthy; gamma stale. Bad-order table = zeta 9; alpha 2. Retain all three."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    },
+    {
+      "id": "real-linux-textarchive-find",
+      "resource": "real-linux-textarchive-find.json",
+      "description": "Combine find pruning and grouped alternatives, then batch read-only inspection of the resulting regular files.",
+      "objectives": [
+        "partial103.3 find combinations",
+        "partial103.4 batched command composition"
+      ],
+      "troubleshooting": [
+        "Suffix matching can include directories.",
+        "find does not make shell interpolation safe."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './tree/space name.txt' -o -path './tree/current.log' -o -path './tree/old/stale.txt' -o -path './selected.txt' -o -path './wrong.txt' -o -path './original.sha' -o -path './tree/old' -o -path './tree/dir.log' -o -path './tree' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'tree/space name.txt' && test ! -L 'tree/space name.txt' || return 19; test -f 'tree/current.log' && test ! -L 'tree/current.log' || return 19; test -f 'tree/old/stale.txt' && test ! -L 'tree/old/stale.txt' || return 19; test -f 'selected.txt' && test ! -L 'selected.txt' || return 19; test -f 'wrong.txt' && test ! -L 'wrong.txt' || return 19; test -f 'original.sha' && test ! -L 'original.sha' || return 19; test -d 'tree/old' && test ! -L 'tree/old' || return 19; test -d 'tree/dir.log' && test ! -L 'tree/dir.log' || return 19; test -d 'tree' && test ! -L 'tree' || return 19; rm -- 'tree/space name.txt' 'tree/current.log' 'tree/old/stale.txt' 'selected.txt' 'wrong.txt' 'original.sha' || return 19; rmdir -- 'tree/old' 'tree/dir.log' 'tree' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-find.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-find.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Create tree/space name.txt = new newline; tree/current.log = event newline; tree/old/stale.txt = old newline; empty tree/dir.log. The old subtree must be pruned."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    },
+    {
+      "id": "real-linux-textarchive-cpio",
+      "resource": "real-linux-textarchive-cpio.json",
+      "description": "Create, inspect and restore a small newc cpio archive of known regular files without replacing originals.",
+      "objectives": [
+        "partial103.3 cpio archive management"
+      ],
+      "troubleshooting": [
+        "--no-absolute-filenames does not reject every dangerous link or parent-path archive.",
+        "A correct cpio exit status alone does not prove intended bytes."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './source/note.txt' -o -path './source/space name.txt' -o -path './members.bin' -o -path './expected.txt' -o -path './original.sha' -o -path './copy.cpio' -o -path './archive.sha' -o -path './listed.txt' -o -path './restore/note.txt' -o -path './restore/space name.txt' -o -path './source' -o -path './restore' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'source/note.txt' && test ! -L 'source/note.txt' || return 19; test -f 'source/space name.txt' && test ! -L 'source/space name.txt' || return 19; test -f 'members.bin' && test ! -L 'members.bin' || return 19; test -f 'expected.txt' && test ! -L 'expected.txt' || return 19; test -f 'original.sha' && test ! -L 'original.sha' || return 19; test -f 'copy.cpio' && test ! -L 'copy.cpio' || return 19; test -f 'archive.sha' && test ! -L 'archive.sha' || return 19; test -f 'listed.txt' && test ! -L 'listed.txt' || return 19; test -f 'restore/note.txt' && test ! -L 'restore/note.txt' || return 19; test -f 'restore/space name.txt' && test ! -L 'restore/space name.txt' || return 19; test -d 'source' && test ! -L 'source' || return 19; test -d 'restore' && test ! -L 'restore' || return 19; rm -- 'source/note.txt' 'source/space name.txt' 'members.bin' 'expected.txt' 'original.sha' 'copy.cpio' 'archive.sha' 'listed.txt' 'restore/note.txt' 'restore/space name.txt' || return 19; rmdir -- 'source' 'restore' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-cpio.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-cpio.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Two known regular files: note.txt=note newline; space name.txt=spaced newline; both0600. Preserve their independent hashes and archive hash. No arbitrary imported archives."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    },
+    {
+      "id": "real-linux-textarchive-composition",
+      "resource": "real-linux-textarchive-composition.json",
+      "description": "Diagnose tar-to-gzip pipeline failure, retaining the real partial candidate and creating a separate verified retry.",
+      "objectives": [
+        "partial103.4 pipelines/error evidence",
+        "103.3/105.2/206.2 reinforcement"
+      ],
+      "troubleshooting": [
+        "pipefail reports failure but does not remove partial output.",
+        "An empty/missing-member archive may still be syntactically valid."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './source/alpha.txt' -o -path './source/beta.txt' -o -path './original.sha' -o -path './partial.tar.gz' -o -path './stages.txt' -o -path './complete.tar.gz' -o -path './complete.sha' -o -path './members.txt' -o -path './restore/alpha.txt' -o -path './restore/beta.txt' -o -path './source' -o -path './restore' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'source/alpha.txt' && test ! -L 'source/alpha.txt' || return 19; test -f 'source/beta.txt' && test ! -L 'source/beta.txt' || return 19; test -f 'original.sha' && test ! -L 'original.sha' || return 19; test -f 'partial.tar.gz' && test ! -L 'partial.tar.gz' || return 19; test -f 'stages.txt' && test ! -L 'stages.txt' || return 19; test -f 'complete.tar.gz' && test ! -L 'complete.tar.gz' || return 19; test -f 'complete.sha' && test ! -L 'complete.sha' || return 19; test -f 'members.txt' && test ! -L 'members.txt' || return 19; test -f 'restore/alpha.txt' && test ! -L 'restore/alpha.txt' || return 19; test -f 'restore/beta.txt' && test ! -L 'restore/beta.txt' || return 19; test -d 'source' && test ! -L 'source' || return 19; test -d 'restore' && test ! -L 'restore' || return 19; rm -- 'source/alpha.txt' 'source/beta.txt' 'original.sha' 'partial.tar.gz' 'stages.txt' 'complete.tar.gz' 'complete.sha' 'members.txt' 'restore/alpha.txt' 'restore/beta.txt' || return 19; rmdir -- 'source' 'restore' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-composition.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-composition.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Originals alpha.txt=alpha newline and beta.txt=beta newline. Deliberately request absent.txt only in the failed candidate. Use two different backup names and retain both."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    },
+    {
+      "id": "real-linux-textarchive-handover",
+      "resource": "real-linux-textarchive-handover.json",
+      "description": "Independently restore the right report version and reconcile factual records while preserving a wrong-but-valid backup.",
+      "objectives": [
+        "103.2/103.3/103.4/105.2 reinforcement; independent transfer"
+      ],
+      "troubleshooting": [
+        "A recent filename is not proof of the right payload.",
+        "The error line does not prove why the input was missing."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './current.txt' -o -path './expected.sha' -o -path './old.txt' -o -path './old.gz' -o -path './accepted.gz' -o -path './accepted.sha' -o -path './restore.txt' -o -path './evidence.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'current.txt' && test ! -L 'current.txt' || return 19; test -f 'expected.sha' && test ! -L 'expected.sha' || return 19; test -f 'old.txt' && test ! -L 'old.txt' || return 19; test -f 'old.gz' && test ! -L 'old.gz' || return 19; test -f 'accepted.gz' && test ! -L 'accepted.gz' || return 19; test -f 'accepted.sha' && test ! -L 'accepted.sha' || return 19; test -f 'restore.txt' && test ! -L 'restore.txt' || return 19; test -f 'evidence.txt' && test ! -L 'evidence.txt' || return 19; rm -- 'current.txt' 'expected.sha' 'old.txt' 'old.gz' 'accepted.gz' 'accepted.sha' 'restore.txt' 'evidence.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/textarchive-handover.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-handover.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Initial fixture, not repair: here && fresh current.txt expected.sha old.txt old.gz accepted.gz accepted.sha restore.txt evidence.txt && printf '2026-10-11T12:00Z host-a INFO ready\\n2026-10-11T12:01Z host-a ERROR input-missing\\n' > current.txt && printf '2026-10-10T12:00Z host-a INFO ready\\n' > old.txt && sha256sum current.txt > expected.sha && gzip -n -c old.txt > old.gz && gzip -n -c current.txt > accepted.gz && sha256sum accepted.gz > accepted.sha",
+        "In Challenge select by expected bytes/hash, not filename alone. Report fields: timestamp, host, observed event, rejected candidate, uncertainty and next check."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits."
+      ]
+    }
+  ]
+}

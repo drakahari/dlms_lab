@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-textarchive-join",
+  "content_version": "1.0.0",
+  "title": "Reconcile sorted records without hiding missing keys",
+  "goal": "Join two small key tables and use comm to retain unmatched evidence, with a consistent locale and checked ordering.",
+  "challenge": "Reconcile the supplied independent tables, retaining unmatched keys explicitly. Produce left-only/right-only key lists. Demonstrate unsorted-input rejection and explain duplicate-key ambiguity.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/textarchive-join.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-join.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh left.txt right.txt joined.txt left.keys right.keys left-only.txt right-only.txt unsorted.txt rejected.txt && printf 'alpha 2\\nbeta 5\\n' > left.txt && printf 'alpha healthy\\ngamma stale\\n' > right.txt && printf 'zeta 9\\nalpha 2\\n' > unsorted.txt",
+      "explanation": "These are whitespace-separated keys without embedded blanks, not CSV. alpha matches; beta and gamma represent missing evidence, not zero values.",
+      "expected": "Two independent tables and a separate deliberately unsorted input."
+    },
+    {
+      "command": "here && LC_ALL=C join --check-order -a 1 -a 2 -e UNKNOWN -o 0,1.2,2.2 left.txt right.txt > joined.txt && cut -d ' ' -f1 left.txt > left.keys && cut -d ' ' -f1 right.txt > right.keys && LC_ALL=C comm --check-order -23 left.keys right.keys > left-only.txt && LC_ALL=C comm --check-order -13 left.keys right.keys > right-only.txt && cat joined.txt left-only.txt right-only.txt",
+      "explanation": "Both producers and consumers must agree on sort order. Outer join preserves unmatched keys; UNKNOWN prevents false numeric conclusions. comm compares already sorted complete lines.",
+      "expected": "alpha 2 healthy; beta 5 UNKNOWN; gamma UNKNOWN stale; beta left-only and gamma right-only."
+    },
+    {
+      "command": "here && { LC_ALL=C join --check-order unsorted.txt right.txt > rejected.txt 2>/dev/null; rc=$?; test \"$rc\" != 0; }",
+      "explanation": "Rejected input can leave partial output. Retain it as failed evidence, not a valid reconciliation. Duplicate keys can yield multiple matched pairs, not a unique entity record.",
+      "expected": "Nonzero status for unsorted input; source tables unchanged."
+    }
+  ],
+  "hints": [
+    "Which keys would an inner join silently omit?",
+    "LC_ALL=C must apply consistently, not just to the final consumer."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial103.2 join/comm/filter composition. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

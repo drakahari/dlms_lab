@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-textarchive-cpio",
+  "content_version": "1.0.0",
+  "title": "Restore a trusted relative newc archive separately",
+  "goal": "Create, inspect and restore a small newc cpio archive of known regular files without replacing originals.",
+  "challenge": "Archive the two supplied regular files with literal NUL names. Verify exact members and retained hash, restore to a new empty destination, then compare contents and modes. Explain why this does not admit arbitrary archives safely.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/textarchive-cpio.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-cpio.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh source members.bin expected.txt original.sha copy.cpio archive.sha listed.txt restore && mkdir source && printf 'note\\n' > source/note.txt && printf 'spaced\\n' > source/'space name.txt' && chmod 0600 source/note.txt source/'space name.txt' && printf '%s\\0' note.txt 'space name.txt' > members.bin && printf '%s\\n' note.txt 'space name.txt' > expected.txt && sha256sum source/note.txt source/'space name.txt' > original.sha",
+      "explanation": "Only these two relative regular files are trusted inputs; no links, devices, absolute paths or parent members. This is practice, not a hostile-archive importer.",
+      "expected": "Separate small source/reference/member files."
+    },
+    {
+      "command": "here && dir_ok source && test -f source/note.txt && test ! -L source/note.txt && test -f source/'space name.txt' && test ! -L source/'space name.txt' && ( cd \"$w/source\" && test \"$(pwd -P)\" = \"$w/source\" && timeout -k 1s 8s cpio -0 -o -H newc --quiet < ../members.bin > ../copy.cpio ) && test \"$(stat -c %s copy.cpio)\" -le 65536 && sha256sum copy.cpio > archive.sha",
+      "explanation": "newc is explicitly selected. NUL input preserves the space name. The timeout and measured size bound this trusted fixture, not arbitrary input.",
+      "expected": "A private bounded archive; original hashes retained separately."
+    },
+    {
+      "command": "here && dir_ok source && sha256sum -c archive.sha && timeout -k 1s 8s cpio -it --quiet < copy.cpio > listed.txt && cmp expected.txt listed.txt && fresh restore && mkdir restore && dir_ok restore && ( cd \"$w/restore\" && test \"$(pwd -P)\" = \"$w/restore\" && timeout -k 1s 8s cpio -id --no-absolute-filenames --quiet < ../copy.cpio ) && cmp source/note.txt restore/note.txt && cmp source/'space name.txt' restore/'space name.txt' && test \"$(stat -c %a restore/note.txt)\" = 600 && test \"$(stat -c %a restore/'space name.txt')\" = 600 && sha256sum -c original.sha",
+      "explanation": "Inspect before extraction, and use a fresh empty separate target. --no-absolute-filenames alone is not a general archive safety guarantee. Hashes detect change against a trusted retained reference; they do not establish authenticity.",
+      "expected": "Exact members, contents and mode; original source unchanged."
+    }
+  ],
+  "hints": [
+    "A listing is not a contents comparison.",
+    "Use exact known relative names and a fresh destination."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial103.3 cpio archive management. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

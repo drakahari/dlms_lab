@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-textarchive-find",
+  "content_version": "1.0.0",
+  "title": "Group a bounded search and batch safe inspections",
+  "goal": "Combine find pruning and grouped alternatives, then batch read-only inspection of the resulting regular files.",
+  "challenge": "Within the supplied tree, inspect current .txt or .log regular files, pruning the old directory. Retain source checksums and show the mistaken precedence case. Never delete through find.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/textarchive-find.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-find.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh tree selected.txt wrong.txt original.sha && mkdir tree tree/old tree/dir.log && printf 'new\\n' > tree/'space name.txt' && printf 'event\\n' > tree/current.log && printf 'old\\n' > tree/old/stale.txt && sha256sum tree/'space name.txt' tree/current.log tree/old/stale.txt > original.sha",
+      "explanation": "All targets are a tiny declared tree. dir.log is deliberately a directory, so a suffix alone is insufficient.",
+      "expected": "Three original files and one misleading directory name."
+    },
+    {
+      "command": "here && dir_ok tree && dir_ok tree/old && timeout -k 1s 8s find -P tree -path tree/old -prune -o -type f \\( -name '*.txt' -o -name '*.log' \\) -exec sh -c 'for f; do printf \"%s \" \"$f\"; wc -c < \"$f\"; done' sh {} + > selected.txt && cat selected.txt",
+      "explanation": "-prune belongs before the alternative; grouped suffixes both require -type f. {} + batches pathname arguments without turning them into shell source. This inspection is read-only.",
+      "expected": "Only space name.txt(4 bytes) and current.log(6 bytes); old subtree and dir.log excluded."
+    },
+    {
+      "command": "here && dir_ok tree && dir_ok tree/old && timeout -k 1s 8s find -P tree -type f -name '*.txt' -o -name '*.log' > wrong.txt && grep -qx tree/dir.log wrong.txt && sha256sum -c original.sha",
+      "explanation": "Without grouping, the .log alternative does not inherit -type f. This wrong query prints only; it does not mutate targets.",
+      "expected": "Wrong query includes dir.log, while every original checksum still matches."
+    }
+  ],
+  "hints": [
+    "Parentheses change predicate precedence.",
+    "Use -P and restrict the root; do not add destructive actions."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial103.3 find combinations, partial103.4 batched command composition. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

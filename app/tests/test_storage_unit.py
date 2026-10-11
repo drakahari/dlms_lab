@@ -1,3 +1,4 @@
+from foundation_preservation import NEW_IDS
 """Bounded storage content and exact legacy pins; real guest proof is separate."""
 import copy,hashlib,json,os,subprocess,tempfile,unittest
 from pathlib import Path
@@ -38,22 +39,23 @@ class StorageTests(unittest.TestCase):
   command=COMMANDS['real-linux-storage-repair'][11]
   self.shell_refusal('', 'calls=0; off() { calls=$((calls+1)); test "$calls" -gt 1; }; run() { printf EXECUTOR_CALLED; }; head() { printf STALE_LOG; }',command,1)
  def test_exact_capacity_and_catalog_bounds(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(10,86,16))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10])
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(11,94,16))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8])
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
-  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(86,86))
-  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(4,86,86))
+  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(94,94))
+  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(4,94,94))
   self.assertFalse(c.keys or c.releases);self.assertLess(len(resource('image-catalog.json')),65536)
  def test_only_approved_application_bound_edits(self):
-  text=(registry.ROOT/'image_catalog.py').read_text().replace('MAX_RETAINED_LESSONS = 86','MAX_RETAINED_LESSONS = 68').replace('MAX_DEFAULT_LESSONS = 86','MAX_DEFAULT_LESSONS = 68')
+  text=(registry.ROOT/'image_catalog.py').read_text().replace('MAX_RETAINED_LESSONS = 94','MAX_RETAINED_LESSONS = 68').replace('MAX_DEFAULT_LESSONS = 94','MAX_DEFAULT_LESSONS = 68')
   self.assertEqual(hashlib.sha256(text.encode()).hexdigest(),BASELINE_IMAGE_CATALOG_CODE)
-  text=(registry.ROOT/'registry.py').read_text().replace('MAX_UNITS = 10','MAX_UNITS = 8').replace('MAX_TOTAL_LESSONS = 86','MAX_TOTAL_LESSONS = 68').replace('1–10 bundled','1–8 bundled').replace('at most 86 total','at most 68 total')
+  text=(registry.ROOT/'registry.py').read_text().replace('MAX_UNITS = 11','MAX_UNITS = 8').replace('MAX_TOTAL_LESSONS = 94','MAX_TOTAL_LESSONS = 68').replace('1–11 bundled','1–8 bundled').replace('at most 94 total','at most 68 total')
   self.assertEqual(hashlib.sha256(text.encode()).hexdigest(),BASELINE_REGISTRY_CODE)
  def test_protected_bytes(self):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
  def test_catalog_projection(self):
   c=json.loads(resource('image-catalog.json'));new=set(COMMANDS) | {e["id"] for e in registry.entries() if e["id"].startswith("real-linux-local-")}
   new |= {e['id'] for e in registry.catalog('lpic-local-shell-filesystem')['entries']}
+  new |= NEW_IDS
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for image in c['images']:image['lessons']=[l for l in image['lessons'] if l['id'] not in new]
   for f in ('default_images','default_lessons'):c[f]={k:v for k,v in c[f].items() if k not in new}
@@ -111,7 +113,7 @@ class StorageTests(unittest.TestCase):
  def test_parser_and_catalog_overflow(self):
   data=json.loads(resource('image-catalog.json'))
   for field in ('lessons','images','keys','releases'):
-   bad=copy.deepcopy(data);bad[field]=[data['lessons'][0]]*(87 if field=='lessons' else 65)
+   bad=copy.deepcopy(data);bad[field]=[data['lessons'][0]]*(95 if field=='lessons' else 65)
    with self.assertRaisesRegex(ValueError,'count'):Catalog(bad)
   for field in ('default_images','default_lessons'):
    bad=copy.deepcopy(data);bad[field]['extra']='0'*64

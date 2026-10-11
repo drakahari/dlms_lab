@@ -40,6 +40,10 @@
     {
       "id": "lpic-local-shell-filesystem",
       "resource": "local-shell-unit.json"
+    },
+    {
+      "id": "lpic-text-archive-tools",
+      "resource": "text-archive-unit.json"
     }
   ]
 }

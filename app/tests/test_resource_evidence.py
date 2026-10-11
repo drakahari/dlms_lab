@@ -54,7 +54,7 @@ class ResourceEvidenceTests(unittest.TestCase):
   self.assertEqual(len(load_collections()),8);b=self.build();self.assertEqual(len(b.curated),38)
   self.assertFalse(b.repository.root.exists());self.assertEqual(b.view['collections'][4]['completed'],{'Learn':0,'Challenge':0})
   from learning_lab.vm_preview.registry import units,entries
-  self.assertEqual((len(units()),len(entries())),(10,86))
+  self.assertEqual((len(units()),len(entries())),(11,94))
   for e in ENTRIES:
    v=e['scenario'].value();self.assertEqual(v['engine']['contract_version'],5)
    self.assertTrue(all(o['predicate'] in ('file_content','stream_observed','original_preserved') for o in v['objectives']))

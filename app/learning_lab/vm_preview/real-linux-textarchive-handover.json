@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-textarchive-handover",
+  "content_version": "1.0.0",
+  "title": "Recover text evidence and hand over uncertainty",
+  "goal": "Independently restore the right report version and reconcile factual records while preserving a wrong-but-valid backup.",
+  "challenge": "Two known compressed reports are both valid; only one matches the independently retained expected hash. Restore it separately, select the confirmed ERROR records, retain timestamp/context and explain what the report cannot prove. Preserve both candidates and all originals.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/textarchive-handover.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/textarchive-handover.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh current.txt expected.sha old.txt old.gz accepted.gz accepted.sha restore.txt evidence.txt && printf '2026-10-11T12:00Z host-a INFO ready\\n2026-10-11T12:01Z host-a ERROR input-missing\\n' > current.txt && printf '2026-10-10T12:00Z host-a INFO ready\\n' > old.txt && sha256sum current.txt > expected.sha && gzip -n -c old.txt > old.gz && gzip -n -c current.txt > accepted.gz && sha256sum accepted.gz > accepted.sha",
+      "explanation": "These are original fictional guest-local records, not live system diagnosis. The expected hash is retained independently of the two compressed candidates.",
+      "expected": "A current report, older valid report, two distinct compressed candidates and references."
+    },
+    {
+      "command": "here && gzip -t old.gz accepted.gz && { gzip -dc old.gz | cmp -s - current.txt; ps=(\"${PIPESTATUS[@]}\"); test \"${ps[0]}\" = 0 && test \"${ps[1]}\" = 1; }",
+      "explanation": "Both streams pass compression checks, but the older payload fails expected contents. Do not overwrite a reference to make the wrong candidate appear correct.",
+      "expected": "Wrong selection is demonstrably rejected without altering either candidate."
+    },
+    {
+      "command": "here && sha256sum -c accepted.sha expected.sha && gzip -dc accepted.gz > restore.txt && cmp current.txt restore.txt && grep -E '^[0-9T:Z-]+ host-a ERROR ' restore.txt > evidence.txt && cat evidence.txt",
+      "explanation": "Choose an equivalent supported filter and verify the exact retained timestamp/host/event. Your interpretation of cause, urgency and next checks is self-reviewed, not keyword-scored.",
+      "expected": "Only the 12:01 input-missing event, with original context and copies preserved."
+    }
+  ],
+  "hints": [
+    "Format validity does not select the correct recovery point.",
+    "Separate reported error evidence from a causal conclusion."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 103.2/103.3/103.4/105.2 reinforcement; independent transfer. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

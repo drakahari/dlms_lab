@@ -7,8 +7,8 @@
     "simulator_collection_appearances": 42,
     "unique_linux_simulator_labs": 38,
     "original_network_simulator_labs": 3,
-    "vm_units": 10,
-    "vm_lessons": 86
+    "vm_units": 11,
+    "vm_lessons": 94
   },
   "method": {
     "complete": "All substantive objective skills taught, independently practiced at appropriate fidelity, with positive/negative evidence and clearly stated assessment. No current objective meets this gate.",
@@ -971,6 +971,14 @@
               "scope": "simulator",
               "automatic": true,
               "note": "Bounded head/tail/grep-F/wc/sort/uniq/cut, final files and action evidence; no regex or general shell."
+            },
+            {
+              "lessons": [
+                "real-linux-textarchive-join"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -987,7 +995,8 @@
         "linux-text-report",
         "real-linux-backup-checksum",
         "real-linux-bash-streams",
-        "real-linux-bash-transform"
+        "real-linux-bash-transform",
+        "real-linux-textarchive-join"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -1139,6 +1148,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "Quoted name/type/byte-size and completed-day/minute find criteria; no destructive find actions."
+            },
+            {
+              "lessons": [
+                "real-linux-textarchive-find"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -1157,6 +1174,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "tar/gzip only; no cpio or general dd file management."
+            },
+            {
+              "lessons": [
+                "real-linux-textarchive-cpio"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -1174,7 +1199,9 @@
         "real-linux-bash-files",
         "real-linux-bash-quoting",
         "real-linux-local-copies",
-        "real-linux-local-search"
+        "real-linux-local-search",
+        "real-linux-textarchive-find",
+        "real-linux-textarchive-cpio"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -1209,10 +1236,11 @@
         "touch",
         "tar",
         "gzip",
-        "file globbing"
+        "file globbing",
+        "cpio"
       ],
       "term_limitations": "A term below is an official scope pointer, not proof of practice. Only explicitly listed bounded-practice terms and concrete subtopic evidence earn any credit; other terms have no demonstrated dedicated practice. Combined labels do not imply every component is exercised.",
-      "remaining_breadth": "No recursive simulator operations or links. Live tar/gzip is scoped; no cpio, full dd transfer or alternate-compression workflow."
+      "remaining_breadth": "No recursive simulator operations or links. Live tar/gzip and known regular-file newc cpio are scoped; full dd transfer and xz/alternate-compression workflows remain missing."
     },
     {
       "id": "103.4",
@@ -1249,6 +1277,14 @@
               "scope": "simulator",
               "automatic": true,
               "note": "Only stdout pipes and final > / >>; no stdin/stderr redirection."
+            },
+            {
+              "lessons": [
+                "real-linux-textarchive-streams"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -1276,6 +1312,15 @@
               "scope": "simulator",
               "automatic": true,
               "note": "Only stdout pipes and final > / >>; no stdin/stderr redirection."
+            },
+            {
+              "lessons": [
+                "real-linux-textarchive-tee",
+                "real-linux-textarchive-composition"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -1283,16 +1328,35 @@
         {
           "official_kka_number": 3,
           "skill": "Output-to-arguments composition",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-textarchive-xargs",
+                "real-linux-textarchive-find"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         },
         {
           "official_kka_number": 4,
           "skill": "tee output duplication",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-textarchive-tee"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         }
       ],
       "lesson_ids": [
@@ -1300,14 +1364,22 @@
         "linux-text-pipeline",
         "linux-text-report",
         "real-linux-bash-handover",
-        "real-linux-bash-streams"
+        "real-linux-bash-streams",
+        "real-linux-textarchive-streams",
+        "real-linux-textarchive-tee",
+        "real-linux-textarchive-composition",
+        "real-linux-textarchive-xargs",
+        "real-linux-textarchive-find"
       ],
       "related_preparation": [],
       "official_terms": [
         "tee",
         "xargs"
       ],
-      "terms_with_bounded_practice": [],
+      "terms_with_bounded_practice": [
+        "tee",
+        "xargs"
+      ],
       "term_limitations": "A term below is an official scope pointer, not proof of practice. Only explicitly listed bounded-practice terms and concrete subtopic evidence earn any credit; other terms have no demonstrated dedicated practice. Combined labels do not imply every component is exercised.",
       "remaining_breadth": "Missing rows and the unpracticed official tool/file breadth remain; evidence rows are partial, never a complete-objective claim."
     },
@@ -2622,6 +2694,15 @@
               "scope": "vm",
               "automatic": false,
               "note": "Small bounded Bash scripts; portability to sh, administrator mail and script suid semantics not fully taught."
+            },
+            {
+              "lessons": [
+                "real-linux-textarchive-tee",
+                "real-linux-textarchive-composition"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -2643,6 +2724,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "Small bounded Bash scripts; portability to sh, administrator mail and script suid semantics not fully taught."
+            },
+            {
+              "lessons": [
+                "real-linux-textarchive-composition"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Text & Archive Tools adds actual bounded command/status/contents comparisons and deliberate incorrect constructions. Trusted tiny fixtures only; interpretation is self-reviewed. No full utility or objective coverage."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -2703,7 +2792,9 @@
         "real-linux-bash-quoting",
         "real-linux-bash-records",
         "real-linux-bash-script",
-        "real-linux-schedule-report"
+        "real-linux-schedule-report",
+        "real-linux-textarchive-tee",
+        "real-linux-textarchive-composition"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -12945,6 +13036,142 @@
       "unit_resource": "app/learning_lab/vm_preview/local-shell-unit.json",
       "guide_sha256": "2c2b0e04308173b2a544e0897564cc42e82aa1ea390a11976d90a221d9ec9b5b",
       "unit_resource_sha256": "01108d54d519c6d16d7137eed25061ae231ac14ddab73fb8fb6569c30ba418da"
+    },
+    "real-linux-textarchive-streams": {
+      "id": "real-linux-textarchive-streams",
+      "title": "Route errors without losing their status",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-streams.json",
+      "sha256": "035dc997c9d74f8dbd9438bc4c399f88e52829e051d50b4b3359a382a5b47c46",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-textarchive-tee": {
+      "id": "real-linux-textarchive-tee",
+      "title": "Keep partial output and inspect every pipeline stage",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-tee.json",
+      "sha256": "f3b3656584be387a4baeacea960b4078d94524702ec67f885495ea738ccf4582",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-textarchive-xargs": {
+      "id": "real-linux-textarchive-xargs",
+      "title": "Pass awkward filenames without splitting them",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-xargs.json",
+      "sha256": "004d7ab94ebc7335bc654c0c0a529b9023df6cb5f83c04456b882bd257dc64d6",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-textarchive-join": {
+      "id": "real-linux-textarchive-join",
+      "title": "Reconcile sorted records without hiding missing keys",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-join.json",
+      "sha256": "1418b0552a1be09d78eb1a615d299c11ed75d5c5cea0b69435bb853a4376277f",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-textarchive-find": {
+      "id": "real-linux-textarchive-find",
+      "title": "Group a bounded search and batch safe inspections",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-find.json",
+      "sha256": "84899231166bb211820fdc25f64d9ec801c9e65e423fa1f76b8176b8bcabe5fc",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-textarchive-cpio": {
+      "id": "real-linux-textarchive-cpio",
+      "title": "Restore a trusted relative newc archive separately",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-cpio.json",
+      "sha256": "282cf9a63850399c60e389827f0f93e29c3c221d4175d93910bac2b660d1fe8b",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-textarchive-composition": {
+      "id": "real-linux-textarchive-composition",
+      "title": "Reject a valid compressed partial backup",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-composition.json",
+      "sha256": "7099d0ba8950895f4a758b67c631780eefdff56c44cb8251b68e748b6592c29f",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-textarchive-handover": {
+      "id": "real-linux-textarchive-handover",
+      "title": "Recover text evidence and hand over uncertainty",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-textarchive-handover.json",
+      "sha256": "059a3cb5ec66b632ac1401ebe6d9d10784465bca2465fc94d7825abe2602c3d3",
+      "guide": "app/docs/vm-preview/text-archive-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; actual developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
+      "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
+      "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
     }
   },
   "removed": [

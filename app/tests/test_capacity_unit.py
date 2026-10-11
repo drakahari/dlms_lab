@@ -1,3 +1,4 @@
+from foundation_preservation import NEW_IDS
 """Bounded trusted registry, independent arithmetic and isolated session fixtures."""
 import copy, hashlib, json, os, tempfile, unittest
 from fractions import Fraction
@@ -26,8 +27,8 @@ class CapacityRegistryTests(unittest.TestCase):
  def test_order_bounds_and_global_identity(self):
   self.assertEqual([u['id'] for u in units()[:2]],[registry.LEGACY_UNIT,UNIT])
   self.assertEqual([len(u['entries']) for u in units()[:2]],[8,8])
-  self.assertEqual(len(entries()),86);self.assertEqual(len({e['id'] for e in entries()}),86)
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(10,16,86))
+  self.assertEqual(len(entries()),94);self.assertEqual(len({e['id'] for e in entries()}),94)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(11,16,94))
   self.assertEqual(list(COMMANDS),[e['id'] for e in catalog(UNIT)['entries']])
  def test_unit_count_version_duplicates_and_paths_rejected(self):
   self.malformed(lambda n,v:v.update(schema_version=2) if n=='units.json' else None)
@@ -51,7 +52,7 @@ class CapacityRegistryTests(unittest.TestCase):
     with self.assertRaises(ValueError):registry._read(bad)
  def test_all_new_pairs_exact_and_production_trust_empty(self):
   c=production_catalog();self.assertEqual(c.keys,{});self.assertEqual(c.releases,{})
-  self.assertEqual(len(c.lessons),86);self.assertEqual(len(c.images),4)
+  self.assertEqual(len(c.lessons),94);self.assertEqual(len(c.images),4)
   for e in entries():
    spec,l=c.defaults(e['id']);self.assertEqual(l,load_lesson(e['id']))
    self.assertEqual(digest(l),c._data['default_lessons'][e['id']])
@@ -62,6 +63,7 @@ class CapacityRegistryTests(unittest.TestCase):
   c=json.loads((registry.ROOT/'image-catalog.json').read_text())
   c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1']
   new={e['id'] for e in entries() if e['id'].startswith(('real-linux-capacity-','real-linux-admin-','real-linux-bash-','real-linux-users-','real-linux-schedule-','real-linux-backup-','real-linux-discovery-','real-linux-storage-','real-linux-local-'))}
+  new |= NEW_IDS
   c.pop('default_images',None);c['images']=c['images'][:1]
   c['lessons']=[x for x in c['lessons'] if x['id'] not in new]
   for image in c['images']:image['lessons']=[x for x in image['lessons'] if x['id'] not in new]

@@ -1,3 +1,4 @@
+from foundation_preservation import NEW_IDS
 """Capacity, exact pins and static fixtures. Real guest evidence is separate."""
 import copy,hashlib,json,os,re,subprocess,tempfile,unittest
 from pathlib import Path
@@ -8,12 +9,12 @@ from learning_lab.vm_preview.sessions import Sessions
 from discovery_guest_fixtures import COMMANDS,UNIT,CLEANUP,CHALLENGE_FAULTS
 class DiscoveryTests(unittest.TestCase):
  def test_capacity_and_unit_order(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(10,86,16))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10]);self.assertEqual(len(registry.entries()),86)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(11,94,16))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8]);self.assertEqual(len(registry.entries()),94)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def test_catalog_capacity_and_unrelated_bounds(self):
-  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(4,86,86));self.assertFalse(c.keys or c.releases)
-  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(86,86));self.assertLess(len(resource('image-catalog.json')),65536)
+  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(4,94,94));self.assertFalse(c.keys or c.releases)
+  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(94,94));self.assertLess(len(resource('image-catalog.json')),65536)
   data=json.loads(resource('image-catalog.json'))
   bad=copy.deepcopy(data);bad['lessons'].append(copy.deepcopy(bad['lessons'][0]))
   with self.assertRaisesRegex(ValueError,'count'):Catalog(bad)
@@ -37,6 +38,7 @@ class DiscoveryTests(unittest.TestCase):
   c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1']
   new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}
   new |= {e['id'] for e in registry.catalog('lpic-local-shell-filesystem')['entries']}
+  new |= NEW_IDS
   for image in c['images']:image['lessons']=[l for l in image['lessons'] if l['id'] not in new]
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for f in ('default_images','default_lessons'):c[f]={k:v for k,v in c[f].items() if k not in new}

@@ -35,7 +35,7 @@ class OfflineEvidenceTests(unittest.TestCase):
  def test_registration_checker_ceiling_and_unchanged_vm_bounds(self):
   self.assertTrue(UNITS);self.assertEqual(len(load_collections()),5+len(UNITS));b=self.build();self.assertEqual(len(b.curated),26+4*len(UNITS));self.assertFalse(b.repository.root.exists())
   from learning_lab.vm_preview.registry import units,entries
-  self.assertEqual((len(units()),len(entries())),(10,86));ids=[]
+  self.assertEqual((len(units()),len(entries())),(11,94));ids=[]
   for unit in UNITS:
    self.assertEqual(len(unit['entries']),4)
    for e in unit['entries']:

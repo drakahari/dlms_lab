@@ -9,7 +9,7 @@ from learning_lab.__main__ import build_application
 from learning_lab.vm_preview.bridge import VmBridge
 from learning_lab.vm_preview.registry import LEGACY_ID,catalog,entries,units
 from learning_lab.profile_backup import snapshot,write_backup,read_backup,restore
-p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add_argument('--native',action='store_true');p.add_argument('--storage-only',action='store_true',help='Review changed storage resources plus shared lifecycle controls');p.add_argument('--evidence-root',type=Path,help='Existing owned directory for persistent screenshots/checks; profile fixtures stay temporary');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--scale',type=float,default=1);p.add_argument('--native',action='store_true');p.add_argument('--foundation-only',action='store_true',help='New foundation lessons plus unchanged shared controls');p.add_argument('--storage-only',action='store_true',help='Review changed storage resources plus shared lifecycle controls');p.add_argument('--evidence-root',type=Path,help='Existing owned directory for persistent screenshots/checks; profile fixtures stay temporary');a=p.parse_args()
 if a.evidence_root:
  assert a.evidence_root.is_absolute() and a.evidence_root.is_dir() and not a.evidence_root.is_symlink() and a.evidence_root.stat().st_uid==os.getuid()
 out=Path(tempfile.mkdtemp(prefix='vm-lessons-ui-',dir=a.evidence_root));sizes=[];messages=[];qInstallMessageHandler(lambda t,c,m:messages.append(m));checks=[]
@@ -52,6 +52,26 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
  def press(name):
   item(name).forceActiveFocus(Qt.TabFocusReason);QTest.keyClick(w,Qt.Key_Return);QTest.qWait(100)
  def select(id):vm.selectLesson(id);wait()
+ def hypr(expr):
+  import subprocess
+  p=subprocess.run(['hyprctl','dispatch',expr],capture_output=True,text=True,timeout=5)
+  assert p.returncode==0 and p.stdout.strip()=='ok',p.stdout+p.stderr
+ def resize(size):
+  if a.native:
+   hypr('hl.dsp.window.resize({x='+str(round(size[0]*a.scale/monitor_scale))+',y='+str(round(size[1]*a.scale/monitor_scale))+',relative=false,window="pid:'+str(os.getpid())+'"})')
+  else:w.resize(*size)
+  deadline=time.monotonic()+5
+  while (w.width(),w.height())!=size:
+   assert time.monotonic()<deadline,'actual logical window size';QTest.qWait(10)
+ if a.native:
+  import subprocess
+  assert QTest.qWaitForWindowExposed(w,5000), "native window exposed before dispatch"
+  deadline=time.monotonic()+5
+  while not any(c["pid"]==os.getpid() for c in json.loads(subprocess.check_output(["hyprctl","clients","-j"],text=True))):
+   assert time.monotonic()<deadline,"native window registered before dispatch";QTest.qWait(10)
+  monitors=json.loads(subprocess.check_output(['hyprctl','monitors','-j'],text=True));monitor_scale=next(m['scale'] for m in monitors if m['name']=='eDP-1')
+  hypr('hl.dsp.window.float({action="set",window="pid:'+str(os.getpid())+'"})')
+  hypr('hl.dsp.window.move({monitor="eDP-1",follow=true,window="pid:'+str(os.getpid())+'"})')
  ids=[e['id'] for e in entries()]
  try:
   check('exposed',QTest.qWaitForWindowExposed(w,5000));check('DPR',abs(w.devicePixelRatio()-a.scale)<.01);check('platform',app.platformName()==('wayland' if a.native else 'offscreen'));check('lazy optional startup',not (root/'vm').exists())
@@ -64,7 +84,7 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
   item('vmUnitChoice').forceActiveFocus(Qt.TabFocusReason)
   for key in (Qt.Key_Space,Qt.Key_Home,Qt.Key_Down,Qt.Key_Return):QTest.keyClick(w,key)
   QTest.qWait(100);wait();check('keyboard unit selection',vm.view['selected_lesson_id']==ids[8])
-  for id in ([ids[0]]+[id for id in ids if id.startswith('real-linux-storage-')] if a.storage_only else ids):
+  for id in ([ids[0]]+[id for id in ids if id.startswith('real-linux-storage-')] if a.storage_only else [ids[0]]+[i for i in ids if i.startswith(('real-linux-textarchive-','real-linux-operations-'))] if a.foundation_only else ids):
    select(id);m=vm.manager
    check(id+' collection matches',vm.view['unit']['id']==next(u['id'] for u in units() if any(e['id']==id for e in u['entries'])))
    check(id+' unit selector visible',item('vmUnitChoice').width()>250)
@@ -111,7 +131,7 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
   vm.refresh();wait();check('legacy untouched by selection',legacy.status()['session']==before)
   for size in ((800,600),(1280,900)):
    select(ids[-2])
-   w.resize(*size);QTest.qWait(100);sizes.append({'requested':list(size),'actual':[w.width(),w.height()]})
+   resize(size);QTest.qWait(100);sizes.append({'requested':list(size),'actual':[w.width(),w.height()]})
    for name in ('vmStart','vmStop','vmReset','vmClose'):
     x=item(name);pos=x.mapToScene(QPointF(0,0));check(name+' contained '+str(size),pos.x()>=0 and pos.y()>=0 and pos.x()+x.width()<=w.width() and pos.y()+x.height()<=w.height())
    check('selection width '+str(size),item('vmLessonChoice').width()>250);check('unit width '+str(size),item('vmUnitChoice').width()>250);w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}.png'))
@@ -124,8 +144,8 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
   # Long manually entered script instructions need full-height, plain wrapping
   # and reachable controls; no QML changes or native guest mocks-as-proof.
   for size in ((800,600),(1280,900)):
-   w.resize(*size);QTest.qWait(100)
-   for id in (() if a.storage_only else ('real-linux-bash-guards','real-linux-bash-records','real-linux-bash-handover')):
+   resize(size);QTest.qWait(100)
+   for id in (() if a.storage_only or a.foundation_only else ('real-linux-bash-guards','real-linux-bash-records','real-linux-bash-handover')):
     select(id);m=vm.manager
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      m.reset('Learn',True);vm.refresh();wait()
@@ -151,8 +171,8 @@ with contextlib.nullcontext(tempfile.mkdtemp(prefix='vm-lessons-profile-',dir=ou
     check(id+' Next reachable after long script '+str(size),next_pos.y()>=0 and next_pos.y()+item('vmNext').height()<=w.height())
     w.grabWindow().save(str(out/f'{app.platformName()}-{a.scale}-{size[0]}-{id}.png'))
   for size in ((800,600),(1280,900)):
-   w.resize(*size);QTest.qWait(100)
-   for id in ([id for id in ids if id.startswith('real-linux-storage-')] if a.storage_only else ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment','real-linux-backup-damage','real-linux-backup-access','real-linux-backup-assessment','real-linux-discovery-identity','real-linux-discovery-kernel','real-linux-discovery-boot','real-linux-discovery-libraries','real-linux-discovery-ownership','real-linux-discovery-integrity','real-linux-discovery-lifecycle','real-linux-discovery-repair',*[id for id in ids if id.startswith('real-linux-storage-')])):
+   resize(size);QTest.qWait(100)
+   for id in ([id for id in ids if id.startswith('real-linux-storage-')] if a.storage_only else [i for i in ids if i.startswith(('real-linux-textarchive-','real-linux-operations-'))] if a.foundation_only else ('real-linux-users-shared','real-linux-users-restrictions','real-linux-users-repair','real-linux-schedule-diagnose','real-linux-schedule-persistence','real-linux-schedule-assessment','real-linux-backup-damage','real-linux-backup-access','real-linux-backup-assessment','real-linux-discovery-identity','real-linux-discovery-kernel','real-linux-discovery-boot','real-linux-discovery-libraries','real-linux-discovery-ownership','real-linux-discovery-integrity','real-linux-discovery-lifecycle','real-linux-discovery-repair',*[id for id in ids if id.startswith('real-linux-storage-')])):
     select(id);m=vm.manager
     with patch.object(m,'admission'),patch.object(m,'image',side_effect=lambda root:os.open(fake,os.O_RDONLY)):
      vm.reset('Learn',True);wait()

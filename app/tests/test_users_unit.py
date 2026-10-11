@@ -1,3 +1,4 @@
+from foundation_preservation import NEW_IDS
 """Bounded users unit, exact administrator routes and legacy compatibility.
 Metadata mocks here are not substitutes for the separate real guest access proof.
 """
@@ -12,9 +13,9 @@ from users_guest_fixtures import COMMANDS,UNIT
 
 class UsersUnitTests(unittest.TestCase):
  def test_exact_limits_nine_units_and_76_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(10,16,86))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10])
-  self.assertEqual(len(registry.entries()),86)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(11,16,94))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8])
+  self.assertEqual(len(registry.entries()),94)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def malformed(self,mutate,pattern):
   original=registry._read;reads=[]
@@ -26,10 +27,10 @@ class UsersUnitTests(unittest.TestCase):
   finally:registry._bundle.cache_clear()
   return reads
  def test_reject_77_before_last_unit_lesson_read(self):
-  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='local-shell-unit.json' else None,'86')
-  self.assertNotIn('real-linux-local-startup.json',reads)
+  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='text-archive-unit.json' else None,'94')
+  self.assertNotIn('real-linux-textarchive-streams.json',reads)
  def test_reject_tenth_unit_before_resource_reads(self):
-  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–10')
+  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–11')
   self.assertEqual(reads,['units.json'])
  def test_reject_17_per_unit_and_oversized_guidance(self):
   self.malformed(lambda n,v:v['entries'].extend(v['entries']+[v['entries'][0]]) if n=='users-unit.json' else None,'1–16')
@@ -55,6 +56,7 @@ class UsersUnitTests(unittest.TestCase):
   new |= {e['id'] for e in registry.catalog('linux-system-discovery-package-fundamentals')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}
   new |= {e['id'] for e in registry.catalog('lpic-local-shell-filesystem')['entries']}
+  new |= NEW_IDS
   c['lessons']=[l for l in c['lessons'] if l['id'] not in new]
   for i in c['images']:i['lessons']=[l for l in i['lessons'] if l['id'] not in new]
   for name in ('default_lessons','default_images'):c[name]={k:v for k,v in c[name].items() if k not in new}

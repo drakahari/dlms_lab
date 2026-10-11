@@ -87,8 +87,8 @@ For details use [Resource guidance](lpic-2-resource-simulator.md),
 ## Separate optional real-Linux path
 
 **Real Linux VM preview…** opens a separate selector, not a simulator lab.
-Ten units / 86 lessons cover Processes; Resources; Services & Recovery; Bash;
-Users & Access; Scheduling; Backup; Discovery & Packages; Storage; and [Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md). Use each
+Eleven units / 94 lessons cover Processes; Resources; Services & Recovery; Bash;
+Users & Access; Scheduling; Backup; Discovery & Packages; Storage; [Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md); and [Text & Archive Tools](vm-preview/text-archive-unit.md). Use each
 unit's stated prerequisites and exact approved image. Missing images fail clearly;
 there is no privileged-image fallback or automatic software installation.
 
@@ -117,3 +117,7 @@ and automatic reasoning checks need separately approved capabilities.
 The owner reports the latest offline-evidence labs work well. Physical-keyboard,
 wheel/trackpad, accessibility and exhaustive native-dialog checks remain
 outstanding; that feedback is not expanded into those claims.
+
+## Text & Archive completion-family checkpoint
+
+[Eight real-guest lessons](vm-preview/text-archive-unit.md) add descriptor routing, tee/statuses, safe xargs, sorted reconciliation, grouped find, newc cpio and independent recovery transfer. Existing lessons/pins and images remain exact; completion is self-reviewed/unscored. Whole-objective rollups remain unchanged; xz/at are absent. [Acceptance](vm-preview/text-operations-acceptance.md) records actual boundaries and outstanding physical-input/accessibility checks.

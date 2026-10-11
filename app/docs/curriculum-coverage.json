@@ -142,13 +142,15 @@
       "units": [
         "text",
         "bash",
-        "backup"
+        "backup",
+        "text-archive"
       ],
-      "implemented_and_missing": "Text & Reports, Bash & Safe Changes, Backup & Recovery. Implemented bounded filters, anchored sed previews and hashes; broader utilities/options and binary/locale cases missing.",
+      "implemented_and_missing": "Text & Reports, Bash & Safe Changes, Backup & Recovery. Implemented bounded filters, anchored sed previews and hashes; broader utilities/options and binary/locale cases missing. Text & Archive Tools. Real sorted join/comm reconciliation and order rejection; no CSV or duplicate-key policy invented.",
       "evidence": [
         "lpic-unit-3.md",
         "vm-preview/bash-unit.md",
-        "vm-preview/backup-unit.md"
+        "vm-preview/backup-unit.md",
+        "vm-preview/text-archive-unit.md"
       ]
     },
     {
@@ -159,14 +161,16 @@
         "organize",
         "bash",
         "backup",
-        "local-shell"
+        "local-shell",
+        "text-archive"
       ],
-      "implemented_and_missing": "Organize & Find, Bash & Safe Changes, Backup & Recovery. Implemented scoped file operations, quoted paths and tar/gzip recovery; recursive management, richer find, cpio and other compression missing. Local Shell & Filesystem Administration. Independent regular copies and bounded quoted type/name/byte-size/time find criteria. No recursive file-management or general archive breadth.",
+      "implemented_and_missing": "Organize & Find, Bash & Safe Changes, Backup & Recovery. Implemented scoped file operations, quoted paths and tar/gzip recovery; recursive management and broader compression remain missing. Local Shell & Filesystem Administration. Independent regular copies and bounded quoted type/name/byte-size/time find criteria. No recursive file-management or general archive breadth. Text & Archive Tools. Grouped/pruned batched find and trusted regular-file newc cpio with separate restoration; xz and general archive breadth remain missing.",
       "evidence": [
         "lpic-unit-2.md",
         "vm-preview/bash-unit.md",
         "vm-preview/backup-unit.md",
-        "vm-preview/local-shell-unit.md"
+        "vm-preview/local-shell-unit.md",
+        "vm-preview/text-archive-unit.md"
       ]
     },
     {
@@ -175,12 +179,14 @@
       "status": "Partial",
       "units": [
         "text",
-        "bash"
+        "bash",
+        "text-archive"
       ],
-      "implemented_and_missing": "Text & Reports, Bash & Safe Changes. Implemented pipes, stdout/stderr, truncation/append and pipeline status; xargs/tee and wider composition missing.",
+      "implemented_and_missing": "Text & Reports, Bash & Safe Changes. Implemented pipes, stdout/stderr, truncation/append and pipeline status; wider composition remains incomplete. Text & Archive Tools. Real descriptor ordering, tee partial bytes, immediate PIPESTATUS, owning-shell pipefail and literal NUL xargs with bounded batches.",
       "evidence": [
         "lpic-unit-3.md",
-        "vm-preview/bash-unit.md"
+        "vm-preview/bash-unit.md",
+        "vm-preview/text-archive-unit.md"
       ]
     },
     {
@@ -344,12 +350,14 @@
       "status": "Partial",
       "units": [
         "bash",
-        "schedule"
+        "schedule",
+        "text-archive"
       ],
-      "implemented_and_missing": "Bash & Safe Changes, Scheduling. Implemented short scripts, arguments, conditions, bounded loops, statuses, environment and repeatable jobs; broader workflows missing.",
+      "implemented_and_missing": "Bash & Safe Changes, Scheduling. Implemented short scripts, arguments, conditions, bounded loops, statuses, environment and repeatable jobs; broader workflows missing. Text & Archive Tools. Status-aware pipeline retry preserving failed output; reinforcement, not general robust-shell coverage.",
       "evidence": [
         "vm-preview/bash-unit.md",
-        "vm-preview/scheduling-unit.md"
+        "vm-preview/scheduling-unit.md",
+        "vm-preview/text-archive-unit.md"
       ]
     },
     {

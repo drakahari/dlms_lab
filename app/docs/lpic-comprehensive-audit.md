@@ -1370,3 +1370,7 @@ outstanding. No warning suppression or claim of runtime repair is made.
 ## First completion-family evidence update
 
 Ten Local Shell & Filesystem Administration lessons add partial link coverage and widen history, temporary editor/startup, find/FHS, sticky and scoped priority/audit skills. Exam101 remains **0 complete /19 partial /4 missing**; the other exams remain0/10/9,0/9/11 and0/6/15. No full objective or automatic guest assessment is claimed. [Unit guide](vm-preview/local-shell-unit.md) and [acceptance](vm-preview/local-shell-acceptance.md) separate new evidence from the original assessment-only checkpoint.
+
+## Second completion-family evidence update
+
+[Text & Archive Tools](vm-preview/text-archive-unit.md) adds eight lessons, for eleven units / 94 lessons. See [acceptance](vm-preview/text-operations-acceptance.md) for exact evidence. Active objective versions and whole-objective rollups remain unchanged: new practice widens partial 103.2/103.3/103.4; 105.2 and recovery are reinforcement. No automatic guest assessment, full coverage, xz or at claim. Earlier counts above are retained historical context.
