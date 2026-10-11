@@ -6,6 +6,17 @@ Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.
 
 The core simulated app remains usable without VM images/QEMU. [Resource Evidence — Offline Snapshots](lpic-2-resource-simulator.md) adds four factual-report activities with self-reviewed interpretation; it adds no live measurement or diagnosis checker. [Network/DNS/Web offline evidence](lpic-2-offline-evidence.md) adds twelve factual-report activities; interpretation remains self-reviewed, with no live service operations. Eight simulator collections fit unchanged bounds. The 76 trusted VM lessons are nine bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
 
+## Comprehensive audit supersedes coarse coverage labels
+
+The [11 October objective/subtopic audit](lpic-comprehensive-audit.md) independently
+verifies **83 active objectives and 378 knowledge-area rows**, with official weights,
+exact lesson IDs/content hashes, practice modality, assessment boundaries and
+accepted validation references. The 84 rows below include removed 104.4 and are
+a coarse roadmap overview, not a complete subtopic audit. Adjacent preparation
+earns no operational credit. See the [staged completion program](lpic-completion-program.md)
+for the revised per-exam counts, version-transition caveat and approval gates.
+No existing lesson or runtime contract changes accompany these analysis reports.
+
 ## LPIC-1 — every published objective
 
 | Objective | Status | Existing unit/evidence and essential gaps |
