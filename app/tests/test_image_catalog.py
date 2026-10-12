@@ -1,3 +1,4 @@
+from platform_preservation import projection as platform_projection
 from foundation_preservation import NEW_IDS
 """Pinned revision/availability fixtures; never launch a guest."""
 import copy,hashlib,json,os,tempfile,unittest,uuid
@@ -27,6 +28,7 @@ class CatalogTests(unittest.TestCase):
   return record
  def inventory(self):return {str(p.relative_to(self.root)):p.read_bytes() for p in (self.root/'vm').rglob('*') if p.is_file()}
  def add_revision(self):
+  self.data=json.loads(platform_projection("image-catalog.json",json.dumps(self.data).encode()))
   # Smaller isolated rollback catalog leaves room for an added retained revision.
   gone={l['id'] for l in self.data['lessons'] if l['id'] in NEW_IDS or l['id'].startswith(('real-linux-discovery-','real-linux-storage-','real-linux-local-'))}
   self.data['lessons']=[l for l in self.data['lessons'] if l['id'] not in gone]
@@ -42,7 +44,7 @@ class CatalogTests(unittest.TestCase):
   cat=production_catalog();old=Manager(self.root/'unused','a'*64);m=self.manager(cat)
   self.assertEqual(old.pin,m.pin);self.assertEqual(m.profile,'a'*64);self.assertFalse(self.root.joinpath('unused').exists())
   cat.allow(m.pin,LEGACY_ID,'new');cat.allow(m.pin,LEGACY_ID,'reset');cat.allow(m.pin,LEGACY_ID,'resume')
-  self.assertEqual(len(cat.lessons),102);self.assertEqual(len(cat.images),4);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
+  self.assertEqual(len(cat.lessons),120);self.assertEqual(len(cat.images),6);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
  def test_catalog_edit_reopen_preserves_exact_learn_challenge_bytes(self):
   for mode,profile in (('Learn','a'*64),('Challenge','b'*64)):
    old=self.manager(profile=profile);self.record(old,mode)

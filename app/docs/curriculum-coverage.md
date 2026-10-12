@@ -4,7 +4,21 @@ Audited against current official [LPIC-1 v5.0, 101-500/102-500](https://www.lpi.
 
 **Implemented** below means the stated subskills have exercises and evidence. **Partial** means significant objective skills still remain. **Reinforcement/preparation only** adds no complete-objective credit. **Missing** means there is no dedicated demonstrated exercise. **No complete official objective is claimed**. Simulated labs have objective grading within a bounded contract; VM completion is self-reviewed, not automatically assessed. Real guest execution evidence validates lesson feasibility, not every learner's mastery.
 
-The core simulated app remains usable without VM images/QEMU. [Resource Evidence — Offline Snapshots](lpic-2-resource-simulator.md) adds four factual-report activities with self-reviewed interpretation; it adds no live measurement or diagnosis checker. [Network/DNS/Web offline evidence](lpic-2-offline-evidence.md) adds twelve factual-report activities; interpretation remains self-reviewed, with no live service operations. Eight simulator collections fit unchanged bounds. The 102 trusted VM lessons are twelve bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
+The core simulated app remains usable without VM images/QEMU. [Resource Evidence — Offline Snapshots](lpic-2-resource-simulator.md) adds four factual-report activities with self-reviewed interpretation; it adds no live measurement or diagnosis checker. [Network/DNS/Web offline evidence](lpic-2-offline-evidence.md) adds twelve factual-report activities; interpretation remains self-reviewed, with no live service operations. Eight simulator collections fit unchanged bounds. The current platform candidate contains120 trusted VM lessons in fourteen bounded units. Source availability is not a public guest-image release. Native physical-keyboard/accessibility acceptance and Qt/ICU redistribution blockers remain open.
+
+## Platform evidence supplement — 12 October 2026
+
+The historical objective rows and rollups below describe the pre-platform audit.
+[Eighteen exact new references](platform-curriculum-evidence.json) and
+[acceptance status](vm-preview/platform-acceptance.md) record the separate
+implementation evidence. RPM102.5 now gains partial real-guest query, dependency,
+bounded installation/upgrade/reinstallation/removal, configuration retention and
+integrity-repair practice. Locale/encoding/timezone widens partial107.3; at widens
+partial108.2. xz adds narrow103.2/103.3 practice and206.2 reinforcement. No whole
+objective is called complete, no weighted percentage is recalculated from tags,
+and self-reviewed outcomes are not automatic assessment. Original YUM, Zypper,
+DNF5, clock/RTC/NTP and live networking remain gaps. Old lesson bytes and pins
+remain unchanged; the earlier planning107.2 at reference was incorrect.
 
 ## Comprehensive audit supersedes coarse coverage labels
 

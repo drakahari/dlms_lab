@@ -1380,3 +1380,22 @@ Ten Local Shell & Filesystem Administration lessons add partial link coverage an
 ## Third completion-family evidence update
 
 [Accounts, Scheduling, Logging & Recovery](vm-preview/operations-unit.md) adds eight lessons for twelve units / 102 lessons. Active objective versions and whole-objective rollups remain unchanged: bounded additions widen partial107.1/108.2 practice;101.3 gains related wall-tool preparation, not advance-event notification; scheduler/access/recovery are reinforcement. No authentication-policy change, at, automatic guest assessment or public-release readiness claim. Earlier counts remain historical context.
+# Platform implementation supplement (2026-10-12)
+
+The historical objective/subtopic matrix in this document remains the audit of its recorded
+baseline. The [platform evidence index](platform-curriculum-evidence.json) adds
+eighteen exact lesson references and resource hashes; the
+[unit guide](vm-preview/platform-unit.md) explains learner evidence and omissions.
+The [acceptance report](vm-preview/platform-acceptance.md) is authoritative for
+whether final native integration checks have completed.
+
+New practice widens partial107.3 (locale/encoding/timezone),108.2 (at) and102.5
+(RPM query, dependency, bounded transactions, configuration and integrity).
+xz provides narrow103.2/103.3 practice and206.2 reinforcement. No whole objective
+is newly classified complete, and no self-reviewed guest outcome becomes an
+automatically assessed outcome. The former planning107.2 at tag was an error;
+107.2 concerns X11 and active scheduling is108.2. Old pinned content is preserved.
+Current candidate capacity is fourteen VM units /120 lessons, plus the separate
+simulator collections. DNF4 exercises do not establish original YUM, DNF5 or
+Zypper proficiency; no clock setting, time synchronization, remote/network or
+public-distribution capability is added.

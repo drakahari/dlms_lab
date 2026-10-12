@@ -1,0 +1,55 @@
+{
+  "id": "real-linux-foundation-localization-handover",
+  "content_version": "1.0.0",
+  "title": "Deliver a localized offline job handover",
+  "goal": "Transfer locale, encoding, time and one-off execution decisions without repeating a guided repair.",
+  "challenge": "Independently deliver exact factual results from a different dataset, a successful bounded job and a readable handover. Retain actual IDs, owners, statuses, contents and failed evidence. Never fixed job numbers or broad cancellation; completion remains self-reviewed.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-localization-handover.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-localization-handover.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+      "explanation": "Record the private path/definitions. Refuse collisions and insufficient space; Resume reuses the recorded workspace, not a new job.",
+      "expected": "Owned700 workspace, actual atd and observed1GiB reserve."
+    },
+    {
+      "command": "here && fresh \"$w/incident.txt\" && printf \"Source bytes: ISO-8859-1 cafe-with-e-acute plus newline.\\nInstant: 2026-07-01 12:00:00 UTC.\\nRequired report: UTF-8, UTC instant and Berlin offset; capture C-locale job.\\nWrong handover calls the source UTF-8 and assumes Berlin is always +0100.\\n\" > incident.txt && fresh \"$w/source-latin1.txt\" && printf \"caf\\351\\n\" > source-latin1.txt && fresh \"$w/source.sha\" && sha256sum source-latin1.txt > source.sha && cat incident.txt",
+      "explanation": "Use this tiny different dataset and deliberately misleading report. Facts have independent byte/time expectations; language/causal reasoning remains self-reviewed.",
+      "expected": "Original incident and encoding evidence retained."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/wrong-partial.txt\" && fresh \"$w/wrong-error.txt\" || return 19; if timeout -k 1s 10s iconv -f UTF-8 -t UTF-8 source-latin1.txt > wrong-partial.txt 2> wrong-error.txt; then return 1; else test $? = 1 && test -s wrong-error.txt && sha256sum -c source.sha; fi; }; foundation_step",
+      "explanation": "Retain a wrong encoding hypothesis and partial output; failure does not authorize discarding the original.",
+      "expected": "Actual strict rejection and original preserved."
+    },
+    {
+      "command": "here && fresh \"$w/recovered-utf8.txt\" && fresh \"$w/expected-utf8.txt\" && timeout -k 1s 10s iconv -f ISO-8859-1 -t UTF-8 source-latin1.txt > recovered-utf8.txt && printf \"caf\\303\\251\\n\" > expected-utf8.txt && cmp recovered-utf8.txt expected-utf8.txt && fresh \"$w/zone.txt\" && env TZ=Europe/Berlin LC_ALL=C date -d \"2026-07-01 12:00:00 UTC\" \"+%F %T %z\" > zone.txt && grep -Fx \"2026-07-01 14:00:00 +0200\" zone.txt && sha256sum -c source.sha",
+      "explanation": "Recover exact UTF-8 and resolve the fixed instant without guest default/clock changes. Do not present a handover sentence or keyword as automated reasoning assessment.",
+      "expected": "Independent recovered bytes and actual summer offset."
+    },
+    {
+      "command": "here && fresh \"$w/job.sh\" && cat > job.sh <<'LL_JOB'\n#!/bin/sh\numask 077 || exit 90\nulimit -f 8 || exit 91\ntest ! -e result && test ! -L result || exit 89\nset -C || exit 92\n{\n /usr/bin/awk '/^Max file size/ {print \"file_limit_soft=\" $4 \" hard=\" $5}' /proc/self/limits\n /usr/bin/timeout --kill-after=2s 6s /bin/sh -c 'printf \"identity=%s\\nuid=%s\\ncwd=%s\\numask=%s\\n\" \"$(id -un)\" \"$(id -u)\" \"$(pwd -P)\" \"$(umask)\"; printf \"LANG=%s\\nLC_ALL=%s\\n\" \"$LANG\" \"$LC_ALL\"; test \"$LANG\" = C && test \"$LC_ALL\" = C && printf \"bounded-job-complete\\n\"'\n rc=$?\n printf 'exit=%s\\n' \"$rc\"\n} > result 2>&1\nexit \"$rc\"\nLL_JOB",
+      "explanation": "Prepare the same bounded result contract, then choose explicit scheduling context for the independent handover.",
+      "expected": "Finite /bin/sh job; no reliance on interactive shell functions."
+    },
+    {
+      "command": "here && fresh \"$w/result\" && regular \"$w/job.sh\" && fresh \"$w/queued.log\" && env LANG=C LC_ALL=C /usr/bin/at -M -f \"$w/job.sh\" now + 1 minute > queued.log 2>&1 && jobid \"$w/queued.log\" && printf \"Recorded job=%s workspace=%s\\n\" \"$job\" \"$w\"",
+      "explanation": "Queue only this owned job; retain its ID/body/context.",
+      "expected": "Distinct recorded run."
+    },
+    {
+      "command": "foundation_step() { here && jobid \"$w/queued.log\" || return 19; deadline=$(( $(date +%s)+150 )); while ! grep -Fxq exit=0 \"$w/result\" 2>/dev/null; do test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; done; regular \"$w/result\" && test \"$(wc -c < result)\" -le 4096 && grep -Fx identity=learner result && grep -Fx \"uid=$(id -u)\" result && grep -Fx \"cwd=$w\" result && grep -Fx umask=0077 result && grep -Fx LANG=C result && grep -Fx LC_ALL=C result && grep -Fx \"file_limit_soft=4096 hard=4096\" result && grep -Fx bounded-job-complete result || return 19; while :; do fresh \"$w/queue-current.txt\" || regular \"$w/queue-current.txt\" || return 19; atq > queue-current.txt || return 19; if awk -v id=\"$job\" '$1==id {f=1} END {exit !f}' queue-current.txt; then test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; else break; fi; done; cat result; }; foundation_step",
+      "explanation": "Verify actual execution evidence before writing the handover: encoding/zone facts and successful job are separate claims.",
+      "expected": "Known output, real identity/cwd/locale/status and no pending owned job."
+    }
+  ],
+  "hints": [
+    "No causal or language-quality score from keywords; correct-looking display alone does not prove correct encoded bytes or execution.",
+    "Use the actual dynamically captured job ID and successful owner-matched queue queries; a command failure is not an empty queue.",
+    "Inspect actual result ownership, bytes and exit status; cancel only positively matched pending work before exact rollback."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s facts, actual identities/results and an incorrect interpretation or attempt.",
+    "I can separate queueing, execution, access policy and self-reviewed reasoning. Completion is unscored and not automatic verification.",
+    "I removed only positively matched owned jobs, restored any exact policy fixture and retained evidence; no authentication or host changes."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 107.3 and108.2 independent transfer; no new objective credit. No full objective, automatic assessment or endorsement. The plan’s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11."
+}

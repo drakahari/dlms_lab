@@ -1,0 +1,12 @@
+{
+  "image_id": "debian13-foundation-admin-local-v1",
+  "sha256": "a183a7db3d05f2a9ed30e5dcc69e93cb0a2a2c899106f013c21ddc224bed3669",
+  "bytes": 17179869184,
+  "format": "raw",
+  "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+  "packages_sha256": "fd157624399f0eb707b891487fc88c0d402c054607ab1114261eb53bcf6eaa6a",
+  "version": 1,
+  "prepared": true,
+  "trust": "Local reviewed foundation administrator build only; not a signed public release",
+  "recipe_version": 1
+}

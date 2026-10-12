@@ -1,0 +1,40 @@
+{
+  "id": "real-linux-foundation-timezones",
+  "content_version": "1.0.0",
+  "title": "Interpret timezones without changing the clock",
+  "goal": "Distinguish UTC instants, local display and DST; configure and restore guest timezone while leaving clock/NTP controls untouched.",
+  "challenge": "Resolve two ambiguous-looking log displays, choose the requested guest zone, and demonstrate fixed-instant equivalence plus live elapsed-time continuity without setting the clock. Retain actual outputs/statuses and preserve originals; report reasoning through self-review, not a score.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-timezones.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-timezones.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+      "explanation": "Record this unique guest-only workspace. On Resume re-establish the recorded path/definitions; never overwrite another exercise.",
+      "expected": "Private learner-owned700 directory and observed1GiB free admission."
+    },
+    {
+      "command": "here && fresh \"$w/time-context.txt\" && fresh \"$w/localtime-before.txt\" && timedatectl > time-context.txt && test -L /etc/localtime && readlink /etc/localtime > localtime-before.txt && test \"$(cat localtime-before.txt)\" = /usr/share/zoneinfo/Etc/UTC && printf \"winter\\n\" && env TZ=Europe/Berlin date -d \"2026-01-01 12:00:00 UTC\" \"+%F %T %z\" && printf \"summer\\n\" && env TZ=Europe/Berlin date -d \"2026-07-01 12:00:00 UTC\" \"+%F %T %z\"",
+      "explanation": "Inspect this pinned UTC guest and fixed winter/summer instants. Display offsets are not a synchronization result.",
+      "expected": "Berlin winter13:00+0100, summer14:00+0200; original absolute UTC link."
+    },
+    {
+      "command": "here && fresh \"$w/epoch-before.txt\" && fresh \"$w/zone-changed.txt\" && fresh \"$w/epoch-after.txt\" && test \"$(readlink /etc/localtime)\" = \"$(cat localtime-before.txt)\" && date +%s > epoch-before.txt && sudo timedatectl set-timezone Europe/Berlin && test \"$(readlink -f /etc/localtime)\" = /usr/share/zoneinfo/Europe/Berlin && readlink /etc/localtime > zone-changed.txt && date \"+%F %T %z\" && date +%s > epoch-after.txt && test \"$(cat epoch-after.txt)\" -ge \"$(cat epoch-before.txt)\"",
+      "explanation": "Set only guest timezone, not clock/RTC/NTP. Epoch continuity plus fixed instants explains display versus instant; this is not time-sync practice.",
+      "expected": "Zone display changed while epoch advances normally."
+    },
+    {
+      "command": "here && test -L /etc/localtime && test \"$(readlink /etc/localtime)\" = \"$(cat zone-changed.txt)\" && test \"$(cat localtime-before.txt)\" = /usr/share/zoneinfo/Etc/UTC && sudo ln -sfn -- /usr/share/zoneinfo/Etc/UTC /etc/localtime && test \"$(readlink /etc/localtime)\" = \"$(cat localtime-before.txt)\" && timedatectl",
+      "explanation": "Restore the exact original absolute link after validating the known changed link. set-timezone alone can restore semantics but create a relative link; record the distinction.",
+      "expected": "Exact original link restored; no clock-writing commands."
+    }
+  ],
+  "hints": [
+    "A zone abbreviation is not a globally unique zone; TZ/date display is not NTP synchronization or setting the system/RTC clock.",
+    "Choose command scope deliberately; compare known bytes and actual statuses, not only a successful-looking display.",
+    "Retain before evidence; refuse collisions and restore exact policy state before leaving. Guest root can bypass guest-side guards."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s actual observations and retained an incorrect or incomplete case.",
+    "I preserved originals and can explain the reasoning and limitations; this records self-review, not automatic assessment.",
+    "I restored any changed default/zone and retained the exact workspace without touching unrelated files."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 107.3 timezone configuration/TZ; 108.1 timezone subskill only. No complete-objective coverage or endorsement."
+}

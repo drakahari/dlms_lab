@@ -43,7 +43,7 @@ from the 102 real-guest lessons. No shipped live Exam202 service unit exists.
 | Accounts/Operations: eight | Alternate database consistency, actual cron ownership/results, timer failure/timeout, journal cursor/fields, private rotation, wall delivery and verified recovery; [guide](vm-preview/operations-unit.md) / [acceptance](vm-preview/text-operations-acceptance.md) | at and scheduler access changes; persistent/size-limited/offline journals; deliberate maintenance/login notices; authentication changes remain separate. |
 | Next platform families | Read-only Debian/kernel/library/package work, current local shell and offline isolation | locale/encoding/timezone, RPM lifecycle, guest/cloud concepts; GUI/accessibility/printing/mail; boot/kernel/storage/network administration separately. |
 
-These units add **limited new107.3 practice, at breadth within107.2,
+These units add **limited new107.3 practice, at breadth within108.2,
 xz breadth within103.2/103.3 and RPM/DNF breadth within102.5**. Timezone
 configuration can add the timezone subskill of108.1; it does not establish clock,
 RTC or NTP administration. LPIC-2 206.2 appears only as reinforcement; this block
@@ -98,12 +98,12 @@ remains self-reviewed; developer acceptance must verify actual outcomes.
 | 1.4 | Make a guest locale default reversible | 107.3 locale configuration; 105.1 environment: reinforcement | Protected before copy, exact changed fields, real fresh-session locale and successful byte/mode/owner rollback. |
 | 1.5 | Interpret timezones without changing the clock | 107.3 timezone configuration/TZ; 108.1 timezone subskill only | Fixed-instant offsets, original/final localtime link or bytes, monotonic/epoch observations, timedatectl fields, rollback. |
 | 1.6 | Inspect an xz stream and recover exact bytes | 103.2 xzcat; 103.3 xz/unxz; 206.2 reinforcement | Source hash, compressed/list/check status, bounded resource options, rejected-copy evidence, restored-byte comparison. |
-| 1.7 | Inspect and cancel the exact one-off job | 107.2 at/atq/atrm | Queue ID/owner/time/body hash before/after, absence of cancelled output after its deadline, foreign job preserved. |
-| 1.8 | Prove a one-off job’s environment and result | 107.2 at execution; 105.2 status: reinforcement | Actual job UID/cwd/umask, exact bytes/status, failed job retained, 6s child timeout and <=150s observation deadline. |
-| 1.9 | Test scheduler access as the intended identity | 107.2 at access controls | Exact policy bytes/modes/owner, queue/run denial and successful UID evidence, unaffected learner/auth/sudo fingerprints. |
-| 1.10 | Deliver a localized offline job handover | 107.3 and107.2 independent transfer; no new objective credit | Facts, units/zone/encoding, job identity/status, original preservation, rejected hypothesis and self-review answers. |
+| 1.7 | Inspect and cancel the exact one-off job | 108.2 at/atq/atrm | Queue ID/owner/time/body hash before/after, absence of cancelled output after its deadline, foreign job preserved. |
+| 1.8 | Prove a one-off job’s environment and result | 108.2 at execution; 105.2 status: reinforcement | Actual job UID/cwd/umask, exact bytes/status, failed job retained, 6s child timeout and <=150s observation deadline. |
+| 1.9 | Test scheduler access as the intended identity | 108.2 at access controls | Exact policy bytes/modes/owner, queue/run denial and successful UID evidence, unaffected learner/auth/sudo fingerprints. |
+| 1.10 | Deliver a localized offline job handover | 107.3 and108.2 independent transfer; no new objective credit | Facts, units/zone/encoding, job identity/status, original preservation, rejected hypothesis and self-review answers. |
 | 2.1 | Identify RPM package state and file providers | 102.5 installed metadata/file-provider; DNF awareness | Actual tool versions, NEVRA, file ownership/provider and metadata; unrelated package list unchanged. |
-| 2.2 | Inspect an offline RPM before admitting it | 102.5 uninstalled contents/dependencies/signatures; rpm2cpio | Inspected payload paths/modes/owners, absence of scripts/triggers/services/accounts/privileged bits, hashes and signature result. |
+| 2.2 | Inspect an offline RPM before admitting it | Partial102.5 uninstalled metadata, contents and dependencies | Inspected payload paths/modes/owners, absence of scripts/triggers, exact external hashes and internal digest results. The project fixtures are unsigned; no signer/authenticity or rpm2cpio practice is claimed. |
 | 2.3 | Observe a dependency failure without forcing installation | 102.5 RPM install/dependencies | Solver/transaction errors, unchanged full unrelated RPM inventory and fixture state, exact required version. |
 | 2.4 | Resolve the offline fixture dependency explicitly | 102.5 DNF awareness/dependency frontend; modern YUM compatibility limitation | Exact versions/actions, plan refusal, execution status, expected files and before/after all nonfixture packages and policy. |
 | 2.5 | Retain edited configuration during an RPM upgrade | 102.5 upgrade/reinstall lifecycle | Versions, original/config/new candidate hashes, owners/modes and expected package-owned contents. |
@@ -389,3 +389,9 @@ production image key, network listener or multiple-guest controller is needed
 now. Source builds206.1 and deliberate notices206.3 are sensible next offline
 LPIC-2 candidates after this foundation, with their own package/fixture approval;
 boot recovery remains separate. Public release and UI polish remain deferred.
+
+## Implementation mapping correction
+
+On2026-10-12 the official active5.0 objectives were rechecked: one-off
+scheduling is108.2, not107.2 (X11). The new runtime lessons use108.2. This
+corrects planning tags only; no accepted existing lesson bytes or pins changed.

@@ -1,0 +1,12 @@
+{
+  "sha256": "12ed328b338f3bd2d045ab9559199441f1fd2bac28c9875599829a741b3a7e9b",
+  "bytes": 17179869184,
+  "packages_sha256": "13ebe948ec26ff3129a1c4a07f565edd0315f1c5ce9eeb5aa79d38afb9b75747",
+  "image_id": "almalinux9-rpm-admin-local-v1",
+  "format": "raw",
+  "source_iso_sha256": "7762a4b45a66235726db145a573658964bf77bf7b9bc1c018afe86a4cf37cc2e",
+  "version": 1,
+  "prepared": true,
+  "trust": "Local candidate, disposable developer policy test only; not a public release",
+  "recipe_version": 1
+}

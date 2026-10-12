@@ -1,0 +1,65 @@
+{
+  "id": "real-linux-foundation-at-access",
+  "content_version": "1.0.0",
+  "title": "Test scheduler access as the intended identity",
+  "goal": "Explain allow-file precedence, deny-file fallback and separate PAM/account restrictions.",
+  "challenge": "Begin with the documented absent allow file and root:daemon0640 deny file. Make a reversible allow fixture admitting learner and ll-at-allow but not ll-at-deny; prove specific admission/denial and owned cancellation without altering passwords/PAM/sudo/accounts. Restore exact original policy; do not claim queue admission alone proves execution. Demonstrate a real finite successful job as ll-at-allow, retain its UID/cwd/status/owned bytes and remove only its exact completed workspace. Queue admission is not completion.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-at-access.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-at-access.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+      "explanation": "Record the private path/definitions. Refuse collisions and insufficient space; Resume reuses the recorded workspace, not a new job.",
+      "expected": "Owned700 workspace, actual atd and observed1GiB reserve."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/policy-before.sha\" && test ! -e /etc/at.allow && test ! -L /etc/at.allow && test -f /etc/at.deny && test ! -L /etc/at.deny && test \"$(stat -c %U:%G:%a:%h /etc/at.deny)\" = root:daemon:640:1 || return 19; rw=$(sudo mktemp -d /var/tmp/ll-at-policy.XXXXXX) || return 19; case \"$rw\" in /var/tmp/ll-at-policy.??????) ;; *) return 19;; esac; sudo cp -p /etc/at.deny \"$rw/deny.before\" && sudo sha256sum /etc/passwd /etc/shadow /etc/group /etc/sudoers /etc/sudoers.d/learning-lab /etc/at.deny > policy-before.sha && printf \"Root snapshot=%s\\n\" \"$rw\" && sudo passwd -S ll-at-allow && sudo passwd -S ll-at-deny && getent passwd ll-at-allow ll-at-deny; }; foundation_step",
+      "explanation": "These pre-created identities have locked passwords and nologin shells. Root-authorized runuser can test scheduler policy without changing either restriction.",
+      "expected": "Original policy/auth hashes and protected root snapshot."
+    },
+    {
+      "command": "here && fresh \"$w/allow-fixture.sha\" && test ! -e /etc/at.allow && test ! -L /etc/at.allow && printf \"learner\\nll-at-allow\\n\" | sudo tee /etc/at.allow >/dev/null && sudo chown root:root /etc/at.allow && sudo chmod 0644 /etc/at.allow && sha256sum /etc/at.allow > allow-fixture.sha",
+      "explanation": "Create only the declared allow list. Its presence takes precedence over deny; inspect actual admission as the intended identity, not root.",
+      "expected": "Learner and ll-at-allow listed, ll-at-deny not listed."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/denied.txt\" || return 19; if printf '/usr/bin/true\\n' | sudo /usr/sbin/runuser -u ll-at-deny -- /usr/bin/at -M now + 2 minutes > denied.txt 2>&1; then return 1; else test $? = 1 && grep -F \"do not have permission\" denied.txt; fi; }; foundation_step",
+      "explanation": "Specific queue-policy refusal is separate from password locking, account expiry or interactive-shell restriction. Do not change PAM/passwords to make it pass.",
+      "expected": "Actual deny identity refusal."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/allowed.log\" && fresh \"$w/allow-queue.txt\" && fresh \"$w/wrong-owner.txt\" && fresh \"$w/allow-after.txt\" || return 19; printf '/usr/bin/true\\n' | sudo /usr/sbin/runuser -u ll-at-allow -- /usr/bin/at -M now + 2 minutes > allowed.log 2>&1 && jobid \"$w/allowed.log\" && sudo /usr/sbin/runuser -u ll-at-allow -- /usr/bin/atq > allow-queue.txt && awk -v id=\"$job\" '$1==id && $NF==\"ll-at-allow\" {f=1} END {exit !f}' allow-queue.txt || return 19; if atrm \"$job\" > wrong-owner.txt 2>&1; then return 1; else test $? -ne 0 || return 19; fi; sudo /usr/sbin/runuser -u ll-at-allow -- /usr/bin/atrm \"$job\" && sudo /usr/sbin/runuser -u ll-at-allow -- /usr/bin/atq > allow-after.txt && ! awk -v id=\"$job\" '$1==id {f=1} END {exit !f}' allow-after.txt; }; foundation_step",
+      "explanation": "Capture actual ownership, prove learner cannot cancel the other identity’s job, then cancel exactly as its owner. Admission/cancellation does not alone prove execution; the companion execution lesson and developer feasibility record demonstrate that separately.",
+      "expected": "Owned cancellation and explicit wrong-owner refusal."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/access-job.sh\" || return 19; aw=$(sudo mktemp -d /var/tmp/ll-at-job.XXXXXX) || return 19; case \"$aw\" in /var/tmp/ll-at-job.??????) ;; *) return 19;; esac; sudo chown ll-at-allow:ll-at-allow \"$aw\" && test \"$(stat -c %U:%G:%a \"$aw\")\" = ll-at-allow:ll-at-allow:700 || return 19; cat > access-job.sh <<'LL_ACCESS'\n#!/bin/sh\numask 077 || exit 90\nulimit -f 8 || exit 91\ntest ! -e result && test ! -L result || exit 89\nset -C || exit 92\n{ /usr/bin/timeout --kill-after=2s 6s /bin/sh -c 'test \"$(id -un)\" = ll-at-allow && printf \"identity=%s\\nuid=%s\\ncwd=%s\\numask=%s\\n\" \"$(id -un)\" \"$(id -u)\" \"$(pwd -P)\" \"$(umask)\" && printf \"bounded-access-job\\n\"'; rc=$?; printf 'exit=%s\\n' \"$rc\"; } > result 2>&1\nexit \"$rc\"\nLL_ACCESS\ncreation_rc=$?; test \"$creation_rc\" = 0 || return 19;\nregular \"$w/access-job.sh\" && sudo install -o ll-at-allow -g ll-at-allow -m 0600 access-job.sh \"$aw/job.sh\" && fresh \"$w/access-queued.log\" && sudo test ! -e \"$aw/result\" && sudo test ! -L \"$aw/result\" && sudo /usr/sbin/runuser -u ll-at-allow -- /bin/sh -c 'cd \"$1\" && exec /usr/bin/at -M -f \"$1/job.sh\" now + 1 minute' sh \"$aw\" > access-queued.log 2>&1 && jobid \"$w/access-queued.log\" && printf \"Recorded owned workspace=%s job=%s\\n\" \"$aw\" \"$job\"; }; foundation_step",
+      "explanation": "Admission alone is not execution. Submit one bounded job from its accessible owner-matched workspace via root-authorized runuser, not by changing its login/password restrictions.",
+      "expected": "Finite owned job and recorded unique path/ID."
+    },
+    {
+      "command": "foundation_step() { here && jobid \"$w/access-queued.log\" || return 19; case \"$aw\" in /var/tmp/ll-at-job.??????) ;; *) return 19;; esac; test \"$(sudo realpath -e \"$aw\")\" = \"$aw\" && test \"$(stat -c %U:%G:%a \"$aw\")\" = ll-at-allow:ll-at-allow:700 || return 19; deadline=$(( $(date +%s)+150 )); while ! sudo grep -Fxq exit=0 \"$aw/result\" 2>/dev/null; do test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; done; sudo test -f \"$aw/result\" && sudo test ! -L \"$aw/result\" && test \"$(sudo stat -c %U:%G:%a:%h \"$aw/result\")\" = ll-at-allow:ll-at-allow:600:1 && test \"$(sudo stat -c %s \"$aw/result\")\" -le 4096 && sudo grep -Fx identity=ll-at-allow \"$aw/result\" && sudo grep -Fx \"uid=$(id -u ll-at-allow)\" \"$aw/result\" && sudo grep -Fx \"cwd=$aw\" \"$aw/result\" && sudo grep -Fx umask=0077 \"$aw/result\" && fresh \"$w/access-result.txt\" && sudo cat \"$aw/result\" > access-result.txt || return 19; while :; do fresh \"$w/access-queue-current.txt\" || regular \"$w/access-queue-current.txt\" || return 19; sudo /usr/sbin/runuser -u ll-at-allow -- atq > access-queue-current.txt || return 19; if awk -v id=\"$job\" '$1==id {f=1} END {exit !f}' access-queue-current.txt; then test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; else break; fi; done; }; foundation_step",
+      "explanation": "Verify actual successful execution as the locked disposable identity, output/status/UID/cwd/umask and owner-query departure.",
+      "expected": "Actual ll-at-allow execution, not root output or admission-only proof."
+    },
+    {
+      "command": "here && sha256sum -c allow-fixture.sha && sudo test -f \"$rw/deny.before\" && sudo test ! -L \"$rw/deny.before\" && test \"$(sudo stat -c %U:%G:%a:%h \"$rw/deny.before\")\" = root:daemon:640:1 && sudo cmp /etc/at.deny \"$rw/deny.before\" && test \"$(stat -c %U:%G:%a:%h /etc/at.allow)\" = root:root:644:1 && sudo rm -- /etc/at.allow && sudo sha256sum -c policy-before.sha && test ! -e /etc/at.allow && test ! -L /etc/at.allow",
+      "explanation": "Restore exact policy by removing only the known byte-matched allow fixture. Keep original deny and identities; no account deletion, shadow or sudo edit.",
+      "expected": "Original auth/sudo/deny bytes unchanged; allow absent again."
+    },
+    {
+      "command": "foundation_step() { here && regular \"$w/access-result.txt\" || return 19; case \"$aw\" in /var/tmp/ll-at-job.??????) ;; *) return 19;; esac; test \"$(sudo realpath -e \"$aw\")\" = \"$aw\" && test \"$(stat -c %U:%G:%a \"$aw\")\" = ll-at-allow:ll-at-allow:700 && sudo test -f \"$aw/job.sh\" && sudo test ! -L \"$aw/job.sh\" && test \"$(sudo stat -c %U:%G:%a:%h \"$aw/job.sh\")\" = ll-at-allow:ll-at-allow:600:1 && sudo cmp \"$w/access-job.sh\" \"$aw/job.sh\" && sudo cmp \"$w/access-result.txt\" \"$aw/result\" || return 19; sudo rm -- \"$aw/job.sh\" \"$aw/result\" && sudo rmdir -- \"$aw\"; }; foundation_step",
+      "explanation": "After successful departure and policy rollback, compare retained script/result then remove only these exact owned files and empty directory. Unknown members cause rmdir refusal; no recursive removal.",
+      "expected": "Owned output retained in learner workspace, exact temporary owner workspace removed."
+    }
+  ],
+  "hints": [
+    "Root bypass is not ordinary-user permission; policy admission does not prove PAM/account execution success; never enable passwords to make a test pass.",
+    "Use the actual dynamically captured job ID and successful owner-matched queue queries; a command failure is not an empty queue.",
+    "Inspect actual result ownership, bytes and exit status; cancel only positively matched pending work before exact rollback."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s facts, actual identities/results and an incorrect interpretation or attempt.",
+    "I can separate queueing, execution, access policy and self-reviewed reasoning. Completion is unscored and not automatic verification.",
+    "I removed only positively matched owned jobs, restored any exact policy fixture and retained evidence; no authentication or host changes."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 108.2 at access controls. No full objective, automatic assessment or endorsement. The plan’s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11."
+}

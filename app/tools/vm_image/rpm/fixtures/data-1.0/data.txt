@@ -1,0 +1,3 @@
+Learning Lab offline inventory
+fixture_data_version=1.0
+items=3

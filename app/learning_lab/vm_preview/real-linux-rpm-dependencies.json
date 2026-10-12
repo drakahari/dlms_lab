@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-rpm-dependencies",
+  "content_version": "1.0.0",
+  "title": "Observe a dependency failure without forcing installation",
+  "goal": "Demonstrate strict local rpm dependency checking and leave unrelated state intact.",
+  "challenge": "With both fixtures absent, inspect report 1.0-1’s exact data dependency; retain both the root-context --test refusal and actual refused install using only the protected report archive. Preview, but do not apply, the compatible pair. Compare final full package state; never use force or nodeps.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/rpm-dependencies.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/rpm-dependencies.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here || return 19; test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; cfg() { case \"$1\" in /etc/learning-lab-rpm/report.conf|/etc/learning-lab-rpm/report.conf.rpmnew|/etc/learning-lab-rpm/report.conf.rpmsave) ;; *) return 19;; esac; here && test \"$(realpath -e /etc/learning-lab-rpm)\" = /etc/learning-lab-rpm && test \"$(stat -c %U:%G:%a /etc/learning-lab-rpm)\" = root:root:755 && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%G:%a:%h \"$1\")\" = root:root:644:1; }; keepcfg() { cfg \"$1\" && fresh \"$w/$2\" && cp -- \"$1\" \"$w/$2\" && cmp -- \"$1\" \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1; }; releasecfg() { cfg \"$1\" && test \"${2##*/}\" = \"$2\" && test -f \"$w/$2\" && test ! -L \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1 && cmp -- \"$1\" \"$w/$2\" && sudo rm -- \"$1\"; }; h=/usr/local/sbin/ll-rpm-fixture; f=/opt/learning-lab/rpm-fixtures; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && fresh \"$w/before.json\" && sudo \"$h\" status > before.json && grep -F '\"fixtures\": {}' before.json && fresh \"$w/before-raw.tsv\" && timeout -k 1s 20s sudo rpm -qa --qf '%{NAME}\\t%{EPOCHNUM}\\t%{VERSION}\\t%{RELEASE}\\t%{ARCH}\\n' > before-raw.tsv && fresh \"$w/before.tsv\" && LC_ALL=C sort before-raw.tsv > before.tsv && pwd",
+      "explanation": "Record this private path and shell definitions. A guard failure stops the exercise; do not continue over existing fixtures. Resume requires recorded path/definitions, not replaying setup.",
+      "expected": "Fixture-free package baseline retained without masking query failure."
+    },
+    {
+      "command": "here && fresh \"$w/requires.txt\" && rpm -qpR \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > requires.txt && cat requires.txt",
+      "explanation": "Inspect the exact version requirement before a root-context transaction test.",
+      "expected": "ll-rpm-data = 2.0-1."
+    },
+    {
+      "command": "rpm_step() { here || return 19; fresh \"$w/dependency.txt\" || return 19; if timeout -k 1s 20s sudo rpm -i --test \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > dependency.txt 2>&1; then return 1; else rc=$?; test \"$rc\" = 1 && grep -F \"ll-rpm-data = 2.0-1 is needed\" dependency.txt; fi; }; rpm_step",
+      "explanation": "--test reports an unsatisfied dependency without installation. This lesson does not apply raw rpm installs or use force/nodeps. An unrelated failure is not evidence.",
+      "expected": "Specific dependency refusal; no package changes."
+    },
+    {
+      "command": "rpm_step() { here && fresh \"$w/install-refused.txt\" || return 19; if timeout -k 1s 20s sudo rpm -i \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > install-refused.txt 2>&1; then return 1; else test $? = 1 && grep -F \"ll-rpm-data = 2.0-1 is needed\" install-refused.txt; fi; }; rpm_step",
+      "explanation": "For this exact inspected script-free archive with both fixtures absent, observe actual installation refusal in the same sudo context as --test. Do not use force or nodeps. The final package comparison must still match.",
+      "expected": "Actual dependency refusal, not merely a simulated plan; no applied fixture."
+    },
+    {
+      "command": "here && fresh \"$w/plan.txt\" && sudo \"$h\" preview pair > plan.txt && cat plan.txt",
+      "explanation": "Resolve both explicit archives through the fixed frontend; this previews without applying.",
+      "expected": "Only data 2.0-1 and report 1.0-1."
+    }
+  ],
+  "hints": [
+    "--nodeps hides the issue; matching a name is not matching required version/architecture.",
+    "Read supported helper operations and the exact plan before APPLY. Unsigned fixture digests do not prove publisher authenticity.",
+    "Verify versions, payload/config bytes and actual learner access; package exit status alone is insufficient."
+  ],
+  "review": [
+    "I retained the requested actual output, statuses, versions and byte/access evidence, including the incorrect case.",
+    "I met the selected mode’s outcomes and can explain the limitations. Completion records self-review, not a score or verified assessment.",
+    "I preserved originals and retained candidates, compared unrelated package state and completed only the exact cleanup."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 RPM install/dependencies. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim."
+}

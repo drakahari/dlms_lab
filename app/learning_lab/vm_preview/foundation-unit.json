@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "id": "linux-localization-offline-jobs",
+  "title": "Locale, Encoding, Time & Offline Jobs",
+  "purpose": "Ten connected real-guest activities: scope localization, preserve encoded originals, restore exact defaults/timezone and observe finite owned one-off jobs. Sequence is guidance, not an unlock.",
+  "prerequisites": "Local Shell, Text Archive, Cron/Timers and Users/Access units. Separate verified foundation administrator image only; no fallback to older images.",
+  "coverage": "Partial active LPIC-1 v5.0 107.3 and108.2; timezone subskill of108.1; original-preservation/compression reinforcement only. No X11, clock/NTP administration, full-objective credit or automatic assessment.",
+  "entries": [
+    {
+      "id": "real-linux-foundation-locale-scope",
+      "resource": "real-linux-foundation-locale-scope.json",
+      "description": "Separate LANG, category overrides and LC_ALL; make one command deterministic without changing a login default.",
+      "objectives": [
+        "107.3 locale environment",
+        "103.1 variables: reinforcement"
+      ],
+      "troubleshooting": [
+        "LANG alone does not override LC_ALL; an unavailable locale is not a valid localized result.",
+        "A missing tool/default or unexpected collision is a refusal, not permission to change image/PAM/packages. Retain the failure and Reset if exact rollback cannot be proved."
+      ],
+      "cleanup": [
+        "Stay inside the recorded private workspace; retain its original and result files as evidence. Do not recursively delete or remove unknown members.",
+        "If default locale/timezone changed, perform only the displayed guarded exact rollback before leaving. Keep root snapshot evidence; no authentication, clock, RTC, NTP or host changes.",
+        "Reset retains disk generations. Resume boots the same disk, not RAM, shell variables or processes. Re-enter only recorded path/function definitions."
+      ],
+      "materials": [
+        "For either mode, this is the non-repair workspace setup: w=$(mktemp -d \"$HOME/foundation-locale-scope.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-locale-scope.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+        "On Resume set w to its recorded exact path, cd there and restore the definitions; do not run mktemp or recreate retained fixtures. Definitions: here() { case \"$w\" in \"$HOME\"/foundation-locale-scope.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }",
+        "Challenge starting context, not repair: here && env LANG=de_DE.UTF-8 LC_ALL=C locale -k decimal_point. Required numeric decimal point is comma in only the corrected child; parent/default remain unchanged. Preserve a parent locale report and /etc/locale.conf hash before investigation."
+      ],
+      "observations": [
+        "Before/child/parent locale output, statuses, byte-exact system-default snapshot, explanation of category precedence.",
+        "Observed command/status/byte outcomes, not automatically graded reasoning."
+      ],
+      "questions": [
+        "Which evidence proves the specific outcome, and what does it not establish?",
+        "LANG alone does not override LC_ALL; an unavailable locale is not a valid localized result."
+      ],
+      "limitations": [
+        "Real offline guest, not supplied snapshots. One worker; <=64KiB input and small fixed-fixture expected outputs below256KiB (cooperative accounting, not a kernel aggregate quota). Each iconv/xz command10s plus1s grace and64MiB xz cap; no large arbitrary streams. Free-space admission is not a quota or guaranteed reserve. Guest root can override guest-side limits.",
+        "No clock/RTC/NTP writes, networking, new credentials, source replacement, automatic grading or public-release claim. Physical keyboard/accessibility checks remain separate."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-locale-formats",
+      "resource": "real-linux-foundation-locale-formats.json",
+      "description": "Use prepared de_DE.UTF-8 and en_US.UTF-8 for numeric/time categories, inspect monetary locale metadata and explicit C sorting.",
+      "objectives": [
+        "107.3 non-English localization and LC_*",
+        "103.2 sorting: reinforcement"
+      ],
+      "troubleshooting": [
+        "Do not assume a localized decimal comma is a TSV separator or that every locale orders every sample differently.",
+        "A missing tool/default or unexpected collision is a refusal, not permission to change image/PAM/packages. Retain the failure and Reset if exact rollback cannot be proved."
+      ],
+      "cleanup": [
+        "Stay inside the recorded private workspace; retain its original and result files as evidence. Do not recursively delete or remove unknown members.",
+        "If default locale/timezone changed, perform only the displayed guarded exact rollback before leaving. Keep root snapshot evidence; no authentication, clock, RTC, NTP or host changes.",
+        "Reset retains disk generations. Resume boots the same disk, not RAM, shell variables or processes. Re-enter only recorded path/function definitions."
+      ],
+      "materials": [
+        "For either mode, this is the non-repair workspace setup: w=$(mktemp -d \"$HOME/foundation-locale-formats.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-locale-formats.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+        "On Resume set w to its recorded exact path, cd there and restore the definitions; do not run mktemp or recreate retained fixtures. Definitions: here() { case \"$w\" in \"$HOME\"/foundation-locale-formats.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }",
+        "Challenge source fixture (not repair): here && fresh \"$w/source.txt\" && printf \"z\\n\\303\\244\\n\" > source.txt. Required localized display: German decimal point, weekday Thursday in German for2026-01-01 UTC; currency metadata inspected. Required machine sort: explicit LC_ALL=C, original UTF8 bytes retained. Compare German sorting without assuming every dataset differs."
+      ],
+      "observations": [
+        "Actual locale availability, category output, retained byte-level input/output and tested sorting interpretation.",
+        "Observed command/status/byte outcomes, not automatically graded reasoning."
+      ],
+      "questions": [
+        "Which evidence proves the specific outcome, and what does it not establish?",
+        "Do not assume a localized decimal comma is a TSV separator or that every locale orders every sample differently."
+      ],
+      "limitations": [
+        "Real offline guest, not supplied snapshots. One worker; <=64KiB input and small fixed-fixture expected outputs below256KiB (cooperative accounting, not a kernel aggregate quota). Each iconv/xz command10s plus1s grace and64MiB xz cap; no large arbitrary streams. Free-space admission is not a quota or guaranteed reserve. Guest root can override guest-side limits.",
+        "No clock/RTC/NTP writes, networking, new credentials, source replacement, automatic grading or public-release claim. Physical keyboard/accessibility checks remain separate."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-encoding",
+      "resource": "real-linux-foundation-encoding.json",
+      "description": "Distinguish UTF-8 bytes/characters from ASCII and ISO-8859-1; detect invalid or unrepresentable input.",
+      "objectives": [
+        "107.3 iconv/encoding terms"
+      ],
+      "troubleshooting": [
+        "Wrong declared source can yield valid but wrong text; //IGNORE/transliteration are not permitted repairs; nonzero status may leave partial output.",
+        "A missing tool/default or unexpected collision is a refusal, not permission to change image/PAM/packages. Retain the failure and Reset if exact rollback cannot be proved."
+      ],
+      "cleanup": [
+        "Stay inside the recorded private workspace; retain its original and result files as evidence. Do not recursively delete or remove unknown members.",
+        "If default locale/timezone changed, perform only the displayed guarded exact rollback before leaving. Keep root snapshot evidence; no authentication, clock, RTC, NTP or host changes.",
+        "Reset retains disk generations. Resume boots the same disk, not RAM, shell variables or processes. Re-enter only recorded path/function definitions."
+      ],
+      "materials": [
+        "For either mode, this is the non-repair workspace setup: w=$(mktemp -d \"$HOME/foundation-encoding.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-encoding.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+        "On Resume set w to its recorded exact path, cd there and restore the definitions; do not run mktemp or recreate retained fixtures. Definitions: here() { case \"$w\" in \"$HOME\"/foundation-encoding.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }",
+        "Challenge fixed original, not repair: here && fresh \"$w/utf8.txt\" && printf \"caf\\303\\251\\n\" > utf8.txt. Known UTF8 octets63 61 66 c3 a9 0a; expected Latin1 63 61 66 e9 0a. Convert strictly to separate paths and show ASCII refusal/partial output without altering source."
+      ],
+      "observations": [
+        "Input hashes, byte counts/od, status/error, independent expected bytes and successful round-trip where representable.",
+        "Observed command/status/byte outcomes, not automatically graded reasoning."
+      ],
+      "questions": [
+        "Which evidence proves the specific outcome, and what does it not establish?",
+        "Wrong declared source can yield valid but wrong text; //IGNORE/transliteration are not permitted repairs; nonzero status may leave partial output."
+      ],
+      "limitations": [
+        "Real offline guest, not supplied snapshots. One worker; <=64KiB input and small fixed-fixture expected outputs below256KiB (cooperative accounting, not a kernel aggregate quota). Each iconv/xz command10s plus1s grace and64MiB xz cap; no large arbitrary streams. Free-space admission is not a quota or guaranteed reserve. Guest root can override guest-side limits.",
+        "No clock/RTC/NTP writes, networking, new credentials, source replacement, automatic grading or public-release claim. Physical keyboard/accessibility checks remain separate."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-locale-persistence",
+      "resource": "real-linux-foundation-locale-persistence.json",
+      "description": "Distinguish per-command settings from a new guest login default; apply and restore one documented locale policy.",
+      "objectives": [
+        "107.3 locale configuration",
+        "105.1 environment: reinforcement"
+      ],
+      "troubleshooting": [
+        "Editing LANG in the current shell is not persistent; LC_ALL can conceal the changed default.",
+        "A missing tool/default or unexpected collision is a refusal, not permission to change image/PAM/packages. Retain the failure and Reset if exact rollback cannot be proved."
+      ],
+      "cleanup": [
+        "Stay inside the recorded private workspace; retain its original and result files as evidence. Do not recursively delete or remove unknown members.",
+        "If default locale/timezone changed, perform only the displayed guarded exact rollback before leaving. Keep root snapshot evidence; no authentication, clock, RTC, NTP or host changes.",
+        "Reset retains disk generations. Resume boots the same disk, not RAM, shell variables or processes. Re-enter only recorded path/function definitions."
+      ],
+      "materials": [
+        "For either mode, this is the non-repair workspace setup: w=$(mktemp -d \"$HOME/foundation-locale-persistence.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-locale-persistence.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+        "On Resume set w to its recorded exact path, cd there and restore the definitions; do not run mktemp or recreate retained fixtures. Definitions: here() { case \"$w\" in \"$HOME\"/foundation-locale-persistence.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }",
+        "Challenge initial policy and protected snapshot (not repair): foundation_step() { here && fresh \"$w/locale-before.sha\" && fresh \"$w/shell-before.txt\" && test \"$(readlink /etc/default/locale)\" = ../locale.conf && test -f /etc/locale.conf && test ! -L /etc/locale.conf && test \"$(stat -c %U:%G:%a:%h /etc/locale.conf)\" = root:root:644:1 || return 19; rw=$(sudo mktemp -d /var/tmp/ll-locale.XXXXXX) || return 19; case \"$rw\" in /var/tmp/ll-locale.??????) ;; *) return 19;; esac; sudo test ! -e \"$rw/before\" && sudo test ! -L \"$rw/before\" && sudo cp -p /etc/locale.conf \"$rw/before\" && sudo sha256sum \"$rw/before\" > \"$w/snapshot-before.sha\" && sha256sum /etc/locale.conf > locale-before.sha && locale > shell-before.txt && printf \"Recorded workspace: %s\\nRoot snapshot: %s\\n\" \"$w\" \"$rw\"; }; foundation_step Required default LANG=de_DE.UTF-8 with no persisted LC_ALL, existing shell unchanged, actual fresh login showing German. Restore exact original after documenting fresh-login behavior; record w/rw before logout and restore the displayed definitions."
+      ],
+      "observations": [
+        "Protected before copy, exact changed fields, real fresh-session locale and successful byte/mode/owner rollback.",
+        "Observed command/status/byte outcomes, not automatically graded reasoning."
+      ],
+      "questions": [
+        "Which evidence proves the specific outcome, and what does it not establish?",
+        "Editing LANG in the current shell is not persistent; LC_ALL can conceal the changed default."
+      ],
+      "limitations": [
+        "Real offline guest, not supplied snapshots. One worker; <=64KiB input and small fixed-fixture expected outputs below256KiB (cooperative accounting, not a kernel aggregate quota). Each iconv/xz command10s plus1s grace and64MiB xz cap; no large arbitrary streams. Free-space admission is not a quota or guaranteed reserve. Guest root can override guest-side limits.",
+        "No clock/RTC/NTP writes, networking, new credentials, source replacement, automatic grading or public-release claim. Physical keyboard/accessibility checks remain separate."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-timezones",
+      "resource": "real-linux-foundation-timezones.json",
+      "description": "Distinguish UTC instants, local display and DST; configure and restore guest timezone while leaving clock/NTP controls untouched.",
+      "objectives": [
+        "107.3 timezone configuration/TZ",
+        "108.1 timezone subskill only"
+      ],
+      "troubleshooting": [
+        "A zone abbreviation is not a globally unique zone; TZ/date display is not NTP synchronization or setting the system/RTC clock.",
+        "A missing tool/default or unexpected collision is a refusal, not permission to change image/PAM/packages. Retain the failure and Reset if exact rollback cannot be proved."
+      ],
+      "cleanup": [
+        "Stay inside the recorded private workspace; retain its original and result files as evidence. Do not recursively delete or remove unknown members.",
+        "If default locale/timezone changed, perform only the displayed guarded exact rollback before leaving. Keep root snapshot evidence; no authentication, clock, RTC, NTP or host changes.",
+        "Reset retains disk generations. Resume boots the same disk, not RAM, shell variables or processes. Re-enter only recorded path/function definitions."
+      ],
+      "materials": [
+        "For either mode, this is the non-repair workspace setup: w=$(mktemp -d \"$HOME/foundation-timezones.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-timezones.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+        "On Resume set w to its recorded exact path, cd there and restore the definitions; do not run mktemp or recreate retained fixtures. Definitions: here() { case \"$w\" in \"$HOME\"/foundation-timezones.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }",
+        "Challenge evidence: two UTC instants2026-01-01 12:00:00 and2026-07-01 12:00:00. Requested guest zone Europe/Berlin; expected local times13:00+0100 and14:00+0200. Snapshot original absolute Etc/UTC localtime link and demonstrate epoch continuity. Change only timezone then restore exact original link; no time/NTP/RTC writes."
+      ],
+      "observations": [
+        "Fixed-instant offsets, original/final localtime link or bytes, monotonic/epoch observations, timedatectl fields, rollback.",
+        "Observed command/status/byte outcomes, not automatically graded reasoning."
+      ],
+      "questions": [
+        "Which evidence proves the specific outcome, and what does it not establish?",
+        "A zone abbreviation is not a globally unique zone; TZ/date display is not NTP synchronization or setting the system/RTC clock."
+      ],
+      "limitations": [
+        "Real offline guest, not supplied snapshots. One worker; <=64KiB input and small fixed-fixture expected outputs below256KiB (cooperative accounting, not a kernel aggregate quota). Each iconv/xz command10s plus1s grace and64MiB xz cap; no large arbitrary streams. Free-space admission is not a quota or guaranteed reserve. Guest root can override guest-side limits.",
+        "No clock/RTC/NTP writes, networking, new credentials, source replacement, automatic grading or public-release claim. Physical keyboard/accessibility checks remain separate."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-xz-evidence",
+      "resource": "real-linux-foundation-xz-evidence.json",
+      "description": "Practice xz/xzcat, bounded memory/threads, container validation versus independent content checks.",
+      "objectives": [
+        "103.2 xzcat",
+        "103.3 xz/unxz; 206.2 reinforcement"
+      ],
+      "troubleshooting": [
+        "xz -t success is not authenticity or the correct report; avoid default source deletion and force overwrite.",
+        "A missing tool/default or unexpected collision is a refusal, not permission to change image/PAM/packages. Retain the failure and Reset if exact rollback cannot be proved."
+      ],
+      "cleanup": [
+        "Stay inside the recorded private workspace; retain its original and result files as evidence. Do not recursively delete or remove unknown members.",
+        "If default locale/timezone changed, perform only the displayed guarded exact rollback before leaving. Keep root snapshot evidence; no authentication, clock, RTC, NTP or host changes.",
+        "Reset retains disk generations. Resume boots the same disk, not RAM, shell variables or processes. Re-enter only recorded path/function definitions."
+      ],
+      "materials": [
+        "For either mode, this is the non-repair workspace setup: w=$(mktemp -d \"$HOME/foundation-xz-evidence.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-xz-evidence.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+        "On Resume set w to its recorded exact path, cd there and restore the definitions; do not run mktemp or recreate retained fixtures. Definitions: here() { case \"$w\" in \"$HOME\"/foundation-xz-evidence.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }",
+        "Challenge starting fixture, not recovery: challenge_fixture() { here && fresh \"$w/source.txt\" && fresh \"$w/source.sha\" && printf \"caf\\303\\251\\n\" > source.txt && sha256sum source.txt > source.sha && test \"$(wc -c < source.txt)\" -le 65536 && fresh \"$w/good.xz\" && timeout -k 1s 10s xz --threads=1 --memlimit-compress=64MiB -1 -c source.txt > good.xz && timeout -k 1s 10s xz --list good.xz && timeout -k 1s 10s xz --memlimit-decompress=64MiB -t good.xz || return 19; here && fresh \"$w/truncated.xz\" && head -c 12 good.xz > truncated.xz; }; challenge_fixture. Required recovered original is UTF8 café plus newline, octets63 61 66 c3 a9 0a. Retain rejected12byte stream and deliberate1MiB-no-adjust failure; compare recovered bytes independently."
+      ],
+      "observations": [
+        "Source hash, compressed/list/check status, bounded resource options, rejected-copy evidence, restored-byte comparison.",
+        "Observed command/status/byte outcomes, not automatically graded reasoning."
+      ],
+      "questions": [
+        "Which evidence proves the specific outcome, and what does it not establish?",
+        "xz -t success is not authenticity or the correct report; avoid default source deletion and force overwrite."
+      ],
+      "limitations": [
+        "Real offline guest, not supplied snapshots. One worker; <=64KiB input and small fixed-fixture expected outputs below256KiB (cooperative accounting, not a kernel aggregate quota). Each iconv/xz command10s plus1s grace and64MiB xz cap; no large arbitrary streams. Free-space admission is not a quota or guaranteed reserve. Guest root can override guest-side limits.",
+        "No clock/RTC/NTP writes, networking, new credentials, source replacement, automatic grading or public-release claim. Physical keyboard/accessibility checks remain separate."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-at-queue",
+      "resource": "real-linux-foundation-at-queue.json",
+      "description": "Distinguish queued work from completion; dynamically identify and remove only the owned practice job.",
+      "objectives": [
+        "108.2 at/atq/atrm"
+      ],
+      "troubleshooting": [
+        "Never fixed job numbers, atrm all, global spool edits or count-only proof; root atq sees others.",
+        "Direct sudo -u practice-user is not authorized by the root-only guest sudo rule. Use the displayed root-authorized runuser; never change sudo/PAM or enter/create passwords."
+      ],
+      "cleanup": [
+        "Before leaving, inspect only each recorded job ID using its successful owner query plus saved body/path/owner evidence. If still queued, cancel that exact owned ID; if a job may be running, wait up to150s for its bounded result/exit. Do not remove its workspace while it can write. Unknown ownership requires refusal, not broad cleanup.",
+        "For at-access perform only the displayed SHA/type/mode guarded removal of the known allow fixture and byte-check original deny/auth/sudo fingerprints. Preserve pre-created practice users and root snapshots; no account deletion or PAM editing.",
+        "Keep the exact private workspace as evidence; no recursive deletion, spool edits or helper-state pruning. Repeated setup refuses existing originals; interruption does not permit replacing a fixture. Reset retains the previous disk; Resume restores disk, not RAM or jobs."
+      ],
+      "materials": [
+        "Fresh Learn or Challenge setup: w=$(mktemp -d \"$HOME/foundation-at-queue.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-at-queue.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+        "For Resume set w to its recorded path and restore these definitions, not mktemp or a new incident: here() { case \"$w\" in \"$HOME\"/foundation-at-queue.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }",
+        "Challenge starting comparison fixture (not target repair/cancellation): foundation_step() { here && fresh \"$w/foreign-queued.log\" || return 19; printf '/usr/bin/true\\n' | sudo /usr/sbin/runuser -u ll-at-allow -- /usr/bin/at -M now + 30 minutes > foreign-queued.log 2>&1 && jobid \"$w/foreign-queued.log\" && fresh \"$w/foreign-queue.txt\" && sudo atq > foreign-queue.txt && awk -v id=\"$job\" '$1==id && $NF==\"ll-at-allow\" {f=1} END {exit !f}' foreign-queue.txt; }; foundation_step. Then submit your own harmless now+2minutes job producing cancelled-result, inspect its ID/owner/body, cancel only it, and show this comparison remains until its separate exact cleanup.",
+        "Independent selected-mode outcome: Submit the declared harmless learner job for now+2minutes, inspect its actual ID/owner/body, cancel only that job, and prove no result after its due time while all unrelated queued rows remain byte-identical. No fixed IDs, all-job cancellation or spool editing. No keyword score or host/remote effects. Fixed handover bytes and summer offset remain as described in the incident."
+      ],
+      "observations": [
+        "Queue ID/owner/time/body hash before/after, absence of cancelled output after its deadline, foreign job preserved.",
+        "Successful owner query, actual result/footer/UID/bytes where executed; reasoning self-reviewed."
+      ],
+      "questions": [
+        "What proves this specific action and what remains uncertain?",
+        "Never fixed job numbers, atrm all, global spool edits or count-only proof; root atq sees others."
+      ],
+      "limitations": [
+        "No runtime network/mail or credentials. at -M prevents mail delivery. /bin/sh is not an interactive Bash session; queueing does not prove PAM/account execution. Locked passwords and nologin do not prohibit authorized root runuser.",
+        "One finite job at a time; child6s plus2s grace, output4KiB, observation150s. Cancellation-only lesson waits130s after submission; every utility query10s where bounded. At most64KiB input/256KiB practice output, observed1GiB guest free admission; not a quota. Root can override guest limits.",
+        "No automatically scored reasoning, preserved RAM/jobs on Resume, physical-keyboard or accessibility certification.",
+        "The harmless foreign comparison is scheduled30minutes ahead; complete observations and exact owned cancellation within15minutes. If interrupted past that budget, inspect actual queue state and retain the inconclusive comparison; never claim it remained queued after its due time."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-at-execution",
+      "resource": "real-linux-foundation-at-execution.json",
+      "description": "Observe /bin/sh execution, captured environment/cwd/umask and actual successful or failed result.",
+      "objectives": [
+        "108.2 at execution",
+        "105.2 status: reinforcement"
+      ],
+      "troubleshooting": [
+        "Queue disappearance is not successful completion; shell functions/Bash syntax are not automatically a /bin/sh environment; no promised mail.",
+        "Direct sudo -u practice-user is not authorized by the root-only guest sudo rule. Use the displayed root-authorized runuser; never change sudo/PAM or enter/create passwords."
+      ],
+      "cleanup": [
+        "Before leaving, inspect only each recorded job ID using its successful owner query plus saved body/path/owner evidence. If still queued, cancel that exact owned ID; if a job may be running, wait up to150s for its bounded result/exit. Do not remove its workspace while it can write. Unknown ownership requires refusal, not broad cleanup.",
+        "For at-access perform only the displayed SHA/type/mode guarded removal of the known allow fixture and byte-check original deny/auth/sudo fingerprints. Preserve pre-created practice users and root snapshots; no account deletion or PAM editing.",
+        "Keep the exact private workspace as evidence; no recursive deletion, spool edits or helper-state pruning. Repeated setup refuses existing originals; interruption does not permit replacing a fixture. Reset retains the previous disk; Resume restores disk, not RAM or jobs."
+      ],
+      "materials": [
+        "Fresh Learn or Challenge setup: w=$(mktemp -d \"$HOME/foundation-at-execution.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-at-execution.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+        "For Resume set w to its recorded path and restore these definitions, not mktemp or a new incident: here() { case \"$w\" in \"$HOME\"/foundation-at-execution.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }",
+        "Challenge starting fault, not repair: challenge_fixture() { here && fresh \"$w/job.sh\" && cat > job.sh <<'LL_JOB'\n#!/bin/sh\numask 077 || exit 90\nulimit -f 8 || exit 91\ntest ! -e result && test ! -L result || exit 89\nset -C || exit 92\n{\n /usr/bin/awk '/^Max file size/ {print \"file_limit_soft=\" $4 \" hard=\" $5}' /proc/self/limits\n /usr/bin/timeout --kill-after=2s 6s /bin/sh -c 'printf \"identity=%s\\nuid=%s\\ncwd=%s\\numask=%s\\n\" \"$(id -un)\" \"$(id -u)\" \"$(pwd -P)\" \"$(umask)\"; printf \"LANG=%s\\nLC_ALL=%s\\n\" \"$LANG\" \"$LC_ALL\"; test \"$LANG\" = C && test \"$LC_ALL\" = C && printf \"bounded-job-complete\\n\"'\n rc=$?\n printf 'exit=%s\\n' \"$rc\"\n} > result 2>&1\nexit \"$rc\"\nLL_JOB\ncreation_rc=$?; test \"$creation_rc\" = 0 || return 19;\nhere && fresh \"$w/result\" && regular \"$w/job.sh\" && fresh \"$w/failed-queued.log\" && env LANG=de_DE.UTF-8 LC_ALL=de_DE.UTF-8 /usr/bin/at -M -f \"$w/job.sh\" now + 1 minute > failed-queued.log 2>&1 && jobid \"$w/failed-queued.log\" && printf \"Failed-attempt job=%s\\n\" \"$job\"; }; challenge_fixture. Observe its actual exit1, preserve failed-result, and retry with the required captured C environment; never replace prior evidence.",
+        "Independent selected-mode outcome: Repair the prepared wrong captured locale in a distinct one-off retry. Preserve the first actual exit1/result, submit C locale and prove actual UID/cwd/umask/file limit/content/exit0 despite a later different display locale. A vanished queue row is insufficient. Use the supplied6s finite body and keep originals. No keyword score or host/remote effects. Fixed handover bytes and summer offset remain as described in the incident."
+      ],
+      "observations": [
+        "Actual job UID/cwd/umask, exact bytes/status, failed job retained, 6s child timeout and <=150s observation deadline.",
+        "Successful owner query, actual result/footer/UID/bytes where executed; reasoning self-reviewed."
+      ],
+      "questions": [
+        "What proves this specific action and what remains uncertain?",
+        "Queue disappearance is not successful completion; shell functions/Bash syntax are not automatically a /bin/sh environment; no promised mail."
+      ],
+      "limitations": [
+        "No runtime network/mail or credentials. at -M prevents mail delivery. /bin/sh is not an interactive Bash session; queueing does not prove PAM/account execution. Locked passwords and nologin do not prohibit authorized root runuser.",
+        "One finite job at a time; child6s plus2s grace, output4KiB, observation150s. Cancellation-only lesson waits130s after submission; every utility query10s where bounded. At most64KiB input/256KiB practice output, observed1GiB guest free admission; not a quota. Root can override guest limits.",
+        "No automatically scored reasoning, preserved RAM/jobs on Resume, physical-keyboard or accessibility certification."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-at-access",
+      "resource": "real-linux-foundation-at-access.json",
+      "description": "Explain allow-file precedence, deny-file fallback and separate PAM/account restrictions.",
+      "objectives": [
+        "108.2 at access controls"
+      ],
+      "troubleshooting": [
+        "Root bypass is not ordinary-user permission; policy admission does not prove PAM/account execution success; never enable passwords to make a test pass.",
+        "Direct sudo -u practice-user is not authorized by the root-only guest sudo rule. Use the displayed root-authorized runuser; never change sudo/PAM or enter/create passwords."
+      ],
+      "cleanup": [
+        "Before leaving, inspect only each recorded job ID using its successful owner query plus saved body/path/owner evidence. If still queued, cancel that exact owned ID; if a job may be running, wait up to150s for its bounded result/exit. Do not remove its workspace while it can write. Unknown ownership requires refusal, not broad cleanup.",
+        "For at-access perform only the displayed SHA/type/mode guarded removal of the known allow fixture and byte-check original deny/auth/sudo fingerprints. Preserve pre-created practice users and root snapshots; no account deletion or PAM editing.",
+        "Keep the exact private workspace as evidence; no recursive deletion, spool edits or helper-state pruning. Repeated setup refuses existing originals; interruption does not permit replacing a fixture. Reset retains the previous disk; Resume restores disk, not RAM or jobs."
+      ],
+      "materials": [
+        "Fresh Learn or Challenge setup: w=$(mktemp -d \"$HOME/foundation-at-access.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-at-access.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+        "For Resume set w to its recorded path and restore these definitions, not mktemp or a new incident: here() { case \"$w\" in \"$HOME\"/foundation-at-access.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }",
+        "Challenge starting fixture: foundation_step() { here && fresh \"$w/policy-before.sha\" && test ! -e /etc/at.allow && test ! -L /etc/at.allow && test -f /etc/at.deny && test ! -L /etc/at.deny && test \"$(stat -c %U:%G:%a:%h /etc/at.deny)\" = root:daemon:640:1 || return 19; rw=$(sudo mktemp -d /var/tmp/ll-at-policy.XXXXXX) || return 19; case \"$rw\" in /var/tmp/ll-at-policy.??????) ;; *) return 19;; esac; sudo cp -p /etc/at.deny \"$rw/deny.before\" && sudo sha256sum /etc/passwd /etc/shadow /etc/group /etc/sudoers /etc/sudoers.d/learning-lab /etc/at.deny > policy-before.sha && printf \"Root snapshot=%s\\n\" \"$rw\" && sudo passwd -S ll-at-allow && sudo passwd -S ll-at-deny && getent passwd ll-at-allow ll-at-deny; }; foundation_step",
+        "Independent selected-mode outcome: Begin with the documented absent allow file and root:daemon0640 deny file. Make a reversible allow fixture admitting learner and ll-at-allow but not ll-at-deny; prove specific admission/denial and owned cancellation without altering passwords/PAM/sudo/accounts. Restore exact original policy; do not claim queue admission alone proves execution. Demonstrate a real finite successful job as ll-at-allow, retain its UID/cwd/status/owned bytes and remove only its exact completed workspace. Queue admission is not completion. No keyword score or host/remote effects. Fixed handover bytes and summer offset remain as described in the incident."
+      ],
+      "observations": [
+        "Exact policy bytes/modes/owner, queue/run denial and successful UID evidence, unaffected learner/auth/sudo fingerprints.",
+        "Successful owner query, actual result/footer/UID/bytes where executed; reasoning self-reviewed."
+      ],
+      "questions": [
+        "What proves this specific action and what remains uncertain?",
+        "Root bypass is not ordinary-user permission; policy admission does not prove PAM/account execution success; never enable passwords to make a test pass."
+      ],
+      "limitations": [
+        "No runtime network/mail or credentials. at -M prevents mail delivery. /bin/sh is not an interactive Bash session; queueing does not prove PAM/account execution. Locked passwords and nologin do not prohibit authorized root runuser.",
+        "One finite job at a time; child6s plus2s grace, output4KiB, observation150s. Cancellation-only lesson waits130s after submission; every utility query10s where bounded. At most64KiB input/256KiB practice output, observed1GiB guest free admission; not a quota. Root can override guest limits.",
+        "No automatically scored reasoning, preserved RAM/jobs on Resume, physical-keyboard or accessibility certification."
+      ]
+    },
+    {
+      "id": "real-linux-foundation-localization-handover",
+      "resource": "real-linux-foundation-localization-handover.json",
+      "description": "Transfer locale, encoding, time and one-off execution decisions without repeating a guided repair.",
+      "objectives": [
+        "107.3 and108.2 independent transfer; no new objective credit"
+      ],
+      "troubleshooting": [
+        "No causal or language-quality score from keywords; correct-looking display alone does not prove correct encoded bytes or execution.",
+        "Direct sudo -u practice-user is not authorized by the root-only guest sudo rule. Use the displayed root-authorized runuser; never change sudo/PAM or enter/create passwords."
+      ],
+      "cleanup": [
+        "Before leaving, inspect only each recorded job ID using its successful owner query plus saved body/path/owner evidence. If still queued, cancel that exact owned ID; if a job may be running, wait up to150s for its bounded result/exit. Do not remove its workspace while it can write. Unknown ownership requires refusal, not broad cleanup.",
+        "For at-access perform only the displayed SHA/type/mode guarded removal of the known allow fixture and byte-check original deny/auth/sudo fingerprints. Preserve pre-created practice users and root snapshots; no account deletion or PAM editing.",
+        "Keep the exact private workspace as evidence; no recursive deletion, spool edits or helper-state pruning. Repeated setup refuses existing originals; interruption does not permit replacing a fixture. Reset retains the previous disk; Resume restores disk, not RAM or jobs."
+      ],
+      "materials": [
+        "Fresh Learn or Challenge setup: w=$(mktemp -d \"$HOME/foundation-localization-handover.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-localization-handover.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+        "For Resume set w to its recorded path and restore these definitions, not mktemp or a new incident: here() { case \"$w\" in \"$HOME\"/foundation-localization-handover.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }",
+        "Challenge starting fixture: here && fresh \"$w/incident.txt\" && printf \"Source bytes: ISO-8859-1 cafe-with-e-acute plus newline.\\nInstant: 2026-07-01 12:00:00 UTC.\\nRequired report: UTF-8, UTC instant and Berlin offset; capture C-locale job.\\nWrong handover calls the source UTF-8 and assumes Berlin is always +0100.\\n\" > incident.txt && fresh \"$w/source-latin1.txt\" && printf \"caf\\351\\n\" > source-latin1.txt && fresh \"$w/source.sha\" && sha256sum source-latin1.txt > source.sha && cat incident.txt",
+        "Independent target: Independently deliver exact factual results from a different dataset, a successful bounded job and a readable handover. Retain actual IDs, owners, statuses, contents and failed evidence. Never fixed job numbers or broad cancellation; completion remains self-reviewed. Fixed handover source Latin1 octets63 61 66 e9 0a; recovered UTF8 63 61 66 c3 a9 0a. July Berlin +0200; queueing alone does not prove completion."
+      ],
+      "observations": [
+        "Facts, units/zone/encoding, job identity/status, original preservation, rejected hypothesis and self-review answers.",
+        "Successful owner query, actual result/footer/UID/bytes where executed; reasoning self-reviewed."
+      ],
+      "questions": [
+        "What proves this specific action and what remains uncertain?",
+        "No causal or language-quality score from keywords; correct-looking display alone does not prove correct encoded bytes or execution."
+      ],
+      "limitations": [
+        "No runtime network/mail or credentials. at -M prevents mail delivery. /bin/sh is not an interactive Bash session; queueing does not prove PAM/account execution. Locked passwords and nologin do not prohibit authorized root runuser.",
+        "One finite job at a time; child6s plus2s grace, output4KiB, observation150s. Cancellation-only lesson waits130s after submission; every utility query10s where bounded. At most64KiB input/256KiB practice output, observed1GiB guest free admission; not a quota. Root can override guest limits.",
+        "No automatically scored reasoning, preserved RAM/jobs on Resume, physical-keyboard or accessibility certification."
+      ]
+    }
+  ]
+}

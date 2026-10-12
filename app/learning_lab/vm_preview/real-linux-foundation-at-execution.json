@@ -1,0 +1,55 @@
+{
+  "id": "real-linux-foundation-at-execution",
+  "content_version": "1.0.0",
+  "title": "Prove a one-off job’s environment and result",
+  "goal": "Observe /bin/sh execution, captured environment/cwd/umask and actual successful or failed result.",
+  "challenge": "Repair the prepared wrong captured locale in a distinct one-off retry. Preserve the first actual exit1/result, submit C locale and prove actual UID/cwd/umask/file limit/content/exit0 despite a later different display locale. A vanished queue row is insufficient. Use the supplied6s finite body and keep originals.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-at-execution.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-at-execution.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+      "explanation": "Record the private path/definitions. Refuse collisions and insufficient space; Resume reuses the recorded workspace, not a new job.",
+      "expected": "Owned700 workspace, actual atd and observed1GiB reserve."
+    },
+    {
+      "command": "here && fresh \"$w/job.sh\" && cat > job.sh <<'LL_JOB'\n#!/bin/sh\numask 077 || exit 90\nulimit -f 8 || exit 91\ntest ! -e result && test ! -L result || exit 89\nset -C || exit 92\n{\n /usr/bin/awk '/^Max file size/ {print \"file_limit_soft=\" $4 \" hard=\" $5}' /proc/self/limits\n /usr/bin/timeout --kill-after=2s 6s /bin/sh -c 'printf \"identity=%s\\nuid=%s\\ncwd=%s\\numask=%s\\n\" \"$(id -un)\" \"$(id -u)\" \"$(pwd -P)\" \"$(umask)\"; printf \"LANG=%s\\nLC_ALL=%s\\n\" \"$LANG\" \"$LC_ALL\"; test \"$LANG\" = C && test \"$LC_ALL\" = C && printf \"bounded-job-complete\\n\"'\n rc=$?\n printf 'exit=%s\\n' \"$rc\"\n} > result 2>&1\nexit \"$rc\"\nLL_JOB",
+      "explanation": "Enter this short /bin/sh job manually. Its own6s child timeout and4KiB output limit are explicit; sudo/root can override guest limits.",
+      "expected": "Private fixed job body, explicit environment/status recording."
+    },
+    {
+      "command": "here && fresh \"$w/result\" && regular \"$w/job.sh\" && fresh \"$w/failed-queued.log\" && env LANG=de_DE.UTF-8 LC_ALL=de_DE.UTF-8 /usr/bin/at -M -f \"$w/job.sh\" now + 1 minute > failed-queued.log 2>&1 && jobid \"$w/failed-queued.log\" && printf \"Failed-attempt job=%s\\n\" \"$job\"",
+      "explanation": "Submit the deliberately wrong captured environment; the job requires C locale. This is a separate actual failed run, not an error invented from queue state.",
+      "expected": "Recorded first job with wrong environment."
+    },
+    {
+      "command": "foundation_step() { here && jobid \"$w/failed-queued.log\" || return 19; deadline=$(( $(date +%s)+150 )); while ! grep -Fxq exit=1 \"$w/result\" 2>/dev/null; do test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; done; regular \"$w/result\" && grep -Fx identity=learner result && grep -Fx LANG=de_DE.UTF-8 result && fresh \"$w/failed-result\" && mv -- result failed-result && regular \"$w/failed-result\" || return 19; while :; do fresh \"$w/failed-queue-current.txt\" || regular \"$w/failed-queue-current.txt\" || return 19; atq > failed-queue-current.txt || return 19; if awk -v id=\"$job\" '$1==id {f=1} END {exit !f}' failed-queue-current.txt; then test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; else break; fi; done; cat failed-result; }; foundation_step",
+      "explanation": "Observe actual exit1 and captured locale, then preserve that regular owned result before retrying. Queue errors do not establish absence.",
+      "expected": "Actual first failure retained; no pending first job."
+    },
+    {
+      "command": "here && fresh \"$w/result\" && regular \"$w/job.sh\" && fresh \"$w/queued.log\" && env LANG=C LC_ALL=C /usr/bin/at -M -f \"$w/job.sh\" now + 1 minute > queued.log 2>&1 && jobid \"$w/queued.log\" && printf \"Recorded job=%s workspace=%s\\n\" \"$job\" \"$w\"",
+      "explanation": "Queue from the current verified workspace with explicit C locale. at -M suppresses mail; no MTA or shell-function inheritance is promised.",
+      "expected": "Actual job ID and captured submission context."
+    },
+    {
+      "command": "here && fresh \"$w/interactive-after.txt\" && env LANG=de_DE.UTF-8 LC_ALL=de_DE.UTF-8 locale > interactive-after.txt && cat interactive-after.txt",
+      "explanation": "A later display command cannot rewrite the queued job’s captured environment. Compare actual result, not queue disappearance.",
+      "expected": "German display context differs from the captured C job."
+    },
+    {
+      "command": "foundation_step() { here && jobid \"$w/queued.log\" || return 19; deadline=$(( $(date +%s)+150 )); while ! grep -Fxq exit=0 \"$w/result\" 2>/dev/null; do test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; done; regular \"$w/result\" && test \"$(wc -c < result)\" -le 4096 && grep -Fx identity=learner result && grep -Fx \"uid=$(id -u)\" result && grep -Fx \"cwd=$w\" result && grep -Fx umask=0077 result && grep -Fx LANG=C result && grep -Fx LC_ALL=C result && grep -Fx \"file_limit_soft=4096 hard=4096\" result && grep -Fx bounded-job-complete result || return 19; while :; do fresh \"$w/queue-current.txt\" || regular \"$w/queue-current.txt\" || return 19; atq > queue-current.txt || return 19; if awk -v id=\"$job\" '$1==id {f=1} END {exit !f}' queue-current.txt; then test \"$(date +%s)\" -lt \"$deadline\" || return 19; sleep 1; else break; fi; done; cat result; }; foundation_step",
+      "explanation": "Observe until the original150s deadline. A result footer and actual UID/cwd/umask/locale/limit plus successful queue query prove this specific run; they are not a tamper-proof assessment.",
+      "expected": "Owned600 result, expected actual fields/status and confirmed departure from queue."
+    }
+  ],
+  "hints": [
+    "Queue disappearance is not successful completion; shell functions/Bash syntax are not automatically a /bin/sh environment; no promised mail.",
+    "Use the actual dynamically captured job ID and successful owner-matched queue queries; a command failure is not an empty queue.",
+    "Inspect actual result ownership, bytes and exit status; cancel only positively matched pending work before exact rollback."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s facts, actual identities/results and an incorrect interpretation or attempt.",
+    "I can separate queueing, execution, access policy and self-reviewed reasoning. Completion is unscored and not automatic verification.",
+    "I removed only positively matched owned jobs, restored any exact policy fixture and retained evidence; no authentication or host changes."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 108.2 at execution; 105.2 status: reinforcement. No full objective, automatic assessment or endorsement. The plan’s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11."
+}

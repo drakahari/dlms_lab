@@ -45,7 +45,7 @@ def phase(root, resume, require_icon):
     assert (package/'vm_preview/runner.py').is_file()
     from learning_lab.vm_preview.image_catalog import production_catalog
     images=production_catalog()
-    assert len(images.images)==4 and len(images.lessons)==102
+    assert len(images.images)==6 and len(images.lessons)==120
     assert not images.keys and not images.releases
     for lesson_id,revision in images.lessons:
         images.resolve({'backend':'offline-qemu-preview-1','image':images.defaults(lesson_id)[0],'lesson_sha256':revision},lesson_id)
@@ -57,7 +57,7 @@ def phase(root, resume, require_icon):
     from learning_lab.vm_preview.sessions import Sessions
     import uuid
     vm_unit=vm_catalog(); assert len(vm_unit['entries'])==8
-    assert len(vm_units())==12 and len(vm_entries())==102
+    assert len(vm_units())==14 and len(vm_entries())==120
     assert vm_unit['entries'][2]['id']==LEGACY_ID
     vm_sessions=Sessions(root/'vm-metadata-fixture','c'*64,root/'vm-gate-fixture')
     for index,entry in enumerate(vm_entries()):
@@ -201,7 +201,7 @@ def phase(root, resume, require_icon):
         return {'phase': 'resume' if resume else 'start', 'result': 'PASS',
                 'elapsed_seconds': time.monotonic() - started,
                 'package': str(package), 'platform': app.platformName(),
-                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'resource_evidence_packs':4, 'resource_evidence_both_modes':True, 'offline_evidence_packs':12, 'offline_evidence_both_modes':True, 'vm_lessons':94, 'vm_units':11, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
+                'collection_packs': len(entries), 'lpic_unit_packs':len(unit['entries']), 'collections':len(collections), 'file_management_packs':6, 'file_management_both_modes':True, 'text_unit_packs':8, 'text_unit_both_modes':True, 'resource_evidence_packs':4, 'resource_evidence_both_modes':True, 'offline_evidence_packs':12, 'offline_evidence_both_modes':True, 'vm_lessons':120, 'vm_units':14, 'vm_metadata_resume':True, 'vm_guest_boot':False, 'authoring_resources':True, 'authored_learn_challenge_resume':True, 'pyside': version('PySide6')}
     finally:
         window.close(); app.processEvents(); lock.unlock()
 

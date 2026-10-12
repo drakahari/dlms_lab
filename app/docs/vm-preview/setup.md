@@ -1,6 +1,6 @@
 # Local image preparation and preview launch
 
-**Current curriculum:** nine units / 76 lessons, at the enforced capacity limit.
+**Current candidate curriculum:** fourteen units /120 lessons, at the enforced capacity limit.
 The unit sections below retain the earlier expansion figures as historical
 checkpoints; they are not the current aggregate limit. Use the [current learner
 guide](../learning-guide.md) and [coverage inventory](../curriculum-coverage.md)
@@ -145,10 +145,33 @@ The existing administrator image also supports [Backup & Safe File Recovery](bac
 
 ## System discovery and package practice
 
-[System Discovery & Package Fundamentals](discovery-unit.md) requires its exact fresh package-administrator image. Nine units/76 lessons are bounded; existing image/session pins are unchanged. Missing images fail without substitution. Production admission remains disabled.
+[System Discovery & Package Fundamentals](discovery-unit.md) requires its exact fresh package-administrator image. The nine-unit/76-lesson figure was its historical checkpoint; existing image/session pins are unchanged. Missing images fail without substitution. Production admission remains disabled.
 
 **Package image revision:** the original candidate is retained withdrawn after its inventory discrepancy. New discovery lessons select the separately finalized version2 image; old records are preserved without substitution. See [finalization evidence](discovery-acceptance.md).
 
 ## Storage practice
 
 [Linux Storage: Filesystems, Mounts & Safe Maintenance](storage-unit.md) uses the existing administrator image. Only regular-file practice images inside the guest; no added QEMU disk or live-fstab edits. Read the strict target, UUID, reserve and offline-repair guards before writing. Completion remains self-reviewed/unscored.
+
+## Two separate offline platform candidates
+
+[Locale, Encoding, Time & Offline Jobs / RPM & Offline Package Administration](platform-unit.md)
+adds ten Debian and eight Alma lessons, after the Local Shell, Text & Archive and
+Accounts/Operations units. Read [provenance](platform-image-provenance.md) and
+[acceptance](platform-acceptance.md) before using these local development images.
+The exact descriptors are `foundation-image.json` and `rpm-image.json`; neither
+changes an old lesson's image default. Runtime networking and sharing remain off.
+The RPM fixture helper is a guest-only visibly invoked teaching guard; guest root
+can bypass it. No signer or public-release admission is established.
+
+The isolated preparation has already registered each exact candidate in its own
+review VM home under the recovery root: `debian-policy-vmhome` and
+`alma-policy-vmhome`. Use the matching home when launching isolated review runs.
+The legacy `tools/register_vm_image.py` registers only the original preview image;
+it does not select these new images from the catalog. No general registration or
+public-image acquisition workflow is added by this batch.
+
+The recovery paths and full image hashes are recorded in
+`platform-image-provenance.json`. Never substitute a failed builder disk or a
+used practice generation. A lesson whose exact image is absent fails clearly;
+there is no older-image or privileged-image fallback.

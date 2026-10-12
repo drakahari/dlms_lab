@@ -1,3 +1,4 @@
+from platform_preservation import projection as platform_projection
 from foundation_preservation import NEW_IDS
 """Capacity, exact pins and static fixtures. Real guest evidence is separate."""
 import copy,hashlib,json,os,re,subprocess,tempfile,unittest
@@ -9,12 +10,12 @@ from learning_lab.vm_preview.sessions import Sessions
 from discovery_guest_fixtures import COMMANDS,UNIT,CLEANUP,CHALLENGE_FAULTS
 class DiscoveryTests(unittest.TestCase):
  def test_capacity_and_unit_order(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(12,102,16))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8]);self.assertEqual(len(registry.entries()),102)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(14,120,16))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8,10,8]);self.assertEqual(len(registry.entries()),120)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def test_catalog_capacity_and_unrelated_bounds(self):
-  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(4,102,102));self.assertFalse(c.keys or c.releases)
-  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(102,102));self.assertLess(len(resource('image-catalog.json')),65536)
+  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons),len(c.default_images)),(6,120,120));self.assertFalse(c.keys or c.releases)
+  self.assertEqual((MAX_RETAINED_LESSONS,MAX_DEFAULT_LESSONS),(120,120));self.assertLess(len(resource('image-catalog.json')),65536)
   data=json.loads(resource('image-catalog.json'))
   bad=copy.deepcopy(data);bad['lessons'].append(copy.deepcopy(bad['lessons'][0]))
   with self.assertRaisesRegex(ValueError,'count'):Catalog(bad)
@@ -34,7 +35,7 @@ class DiscoveryTests(unittest.TestCase):
   with self.assertRaisesRegex(ValueError,'Missing default lesson'):Catalog(data)
  def test_protected_legacy_bytes_and_catalog_projection(self):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256((registry.ROOT/name).read_bytes()).hexdigest(),h,name)
-  c=json.loads(resource('image-catalog.json'));new=set(COMMANDS)
+  c=json.loads(platform_projection('image-catalog.json', resource('image-catalog.json')));new=set(COMMANDS)
   c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1']
   new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}
   new |= {e['id'] for e in registry.catalog('lpic-local-shell-filesystem')['entries']}

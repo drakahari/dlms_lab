@@ -137,3 +137,29 @@ firmware. See the [remediation report](docs/vm-preview/admin-provenance-remediat
 This does not replace the earlier image inventory or establish public release
 clearance. Per-file licensing review, production signing/distribution decisions,
 the unfinished Qt review and the ICU signing-key warning remain outstanding.
+
+
+## Two additional local platform candidates (2026-10-12)
+
+The independently prepared Debian foundation206-package and AlmaLinux learner
+190-software-package images are local development artifacts, **not included in
+this application wheel or a public release**. The separate Alma builder contains
+283 software packages and remains builder-only. RPM vendor public-key state is
+validated separately, not silently omitted from trust checks.
+
+See [platform provenance](docs/vm-preview/platform-image-provenance.md) and its
+[hash index](docs/vm-preview/platform-image-provenance.json). Debian exact source
+closure127 versions, Alma learner127 and builder187 source versions, authenticated
+binary/source manifests and available notices are retained outside Git. Alma’s
+251 notices/40 unresolved binary-provider mappings are collection evidence, not
+per-file licensing clearance. Its EULA and individual licenses remain applicable.
+Modified Anaconda installer input and generated patch remain under their original
+GPL terms; retaining corresponding source and patch does not relicense Anaconda.
+Only the project-owned fixture source/spec/payload and original preparation code
+use the project MIT license. Full images are not claimed byte-reproducible.
+
+No production signing keys or release allowlists have been added. No published
+image, generic upstream URL or project MIT statement substitutes for exact
+corresponding-source and notice obligations. Qt/ICU review, the existing ICU
+signing-key warning, embedded-component review and distribution/signing decisions
+remain explicit public-release blockers.

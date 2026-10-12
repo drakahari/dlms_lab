@@ -1,0 +1,40 @@
+{
+  "id": "real-linux-rpm-integrity",
+  "content_version": "1.0.0",
+  "title": "Repair package-owned contents with independent verification",
+  "goal": "Distinguish rpm -V flags, package-owned digest state and expected application output; reinstall exact local archive.",
+  "challenge": "Repair the prepared damaged package-owned data 2.0-1 file without changing configuration or unrelated packages. Retain the failed verification, prove restored expected bytes against the supplied SHA-256 and preserved original, and actually read it as learner. Do not merely hide rpm -V output or regenerate a checksum from the damaged file.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/rpm-integrity.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/rpm-integrity.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here || return 19; test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; cfg() { case \"$1\" in /etc/learning-lab-rpm/report.conf|/etc/learning-lab-rpm/report.conf.rpmnew|/etc/learning-lab-rpm/report.conf.rpmsave) ;; *) return 19;; esac; here && test \"$(realpath -e /etc/learning-lab-rpm)\" = /etc/learning-lab-rpm && test \"$(stat -c %U:%G:%a /etc/learning-lab-rpm)\" = root:root:755 && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%G:%a:%h \"$1\")\" = root:root:644:1; }; keepcfg() { cfg \"$1\" && fresh \"$w/$2\" && cp -- \"$1\" \"$w/$2\" && cmp -- \"$1\" \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1; }; releasecfg() { cfg \"$1\" && test \"${2##*/}\" = \"$2\" && test -f \"$w/$2\" && test ! -L \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1 && cmp -- \"$1\" \"$w/$2\" && sudo rm -- \"$1\"; }; h=/usr/local/sbin/ll-rpm-fixture; f=/opt/learning-lab/rpm-fixtures; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && fresh \"$w/before.json\" && sudo \"$h\" status > before.json && grep -F '\"fixtures\": {}' before.json && fresh \"$w/before-raw.tsv\" && timeout -k 1s 20s sudo rpm -qa --qf '%{NAME}\\t%{EPOCHNUM}\\t%{VERSION}\\t%{RELEASE}\\t%{ARCH}\\n' > before-raw.tsv && fresh \"$w/before.tsv\" && LC_ALL=C sort before-raw.tsv > before.tsv && pwd",
+      "explanation": "Record this private path and shell definitions. A guard failure stops the exercise; do not continue over existing fixtures. Resume requires recorded path/definitions, not replaying setup.",
+      "expected": "Fixture-free package baseline retained without masking query failure."
+    },
+    {
+      "command": "here && sudo \"$h\" apply data1 && sudo \"$h\" apply upgrade && fresh \"$w/verify-before.txt\" && rpm -V ll-rpm-data > verify-before.txt && test ! -s verify-before.txt && fresh \"$w/original-data.txt\" && cp /usr/share/learning-lab-rpm/data.txt original-data.txt",
+      "explanation": "Use only supported operations: data1 then upgrade. Preserve clean package-owned bytes independently.",
+      "expected": "Clean verification and data 2.0."
+    },
+    {
+      "command": "rpm_step() { here || return 19; test -f /usr/share/learning-lab-rpm/data.txt && test ! -L /usr/share/learning-lab-rpm/data.txt && test \"$(realpath -e /usr/share/learning-lab-rpm)\" = /usr/share/learning-lab-rpm && test \"$(stat -c %U:%G:%a:%h /usr/share/learning-lab-rpm/data.txt)\" = root:root:644:1 && fresh \"$w/verify-damaged.txt\" || return 19; printf \"%s\\n\" damaged | sudo tee /usr/share/learning-lab-rpm/data.txt >/dev/null || return 19; if rpm -V ll-rpm-data > verify-damaged.txt; then return 1; else test $? = 1 && grep -F /usr/share/learning-lab-rpm/data.txt verify-damaged.txt; fi; }; rpm_step",
+      "explanation": "Change only the approved regular payload and retain actual RPM verification output. A learner-generated checksum alone is different evidence.",
+      "expected": "Verification detects changed package-owned data."
+    },
+    {
+      "command": "here && sudo \"$h\" preview reinstall && sudo \"$h\" apply reinstall && fresh \"$w/verify-after.txt\" && rpm -V ll-rpm-data > verify-after.txt && test ! -s verify-after.txt && cmp original-data.txt /usr/share/learning-lab-rpm/data.txt && test \"$(sha256sum /usr/share/learning-lab-rpm/data.txt | cut -d \" \" -f1)\" = efcc5782abc5684c58caca66d0f23fbf64bc72109e4f937575ff834bb7c1cac4 && cat /usr/share/learning-lab-rpm/data.txt",
+      "explanation": "Reinstall the exact admitted archive and prove independent byte recovery plus actual learner read access.",
+      "expected": "Correct content/access and clean package verification."
+    }
+  ],
+  "hints": [
+    "Listing files or a successful reinstall does not prove content/access; configured files may legitimately differ and need policy.",
+    "Read supported helper operations and the exact plan before APPLY. Unsigned fixture digests do not prove publisher authenticity.",
+    "Verify versions, payload/config bytes and actual learner access; package exit status alone is insufficient."
+  ],
+  "review": [
+    "I retained the requested actual output, statuses, versions and byte/access evidence, including the incorrect case.",
+    "I met the selected mode’s outcomes and can explain the limitations. Completion records self-review, not a score or verified assessment.",
+    "I preserved originals and retained candidates, compared unrelated package state and completed only the exact cleanup."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 integrity/reinstall. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim."
+}

@@ -1,0 +1,50 @@
+{
+  "id": "real-linux-foundation-at-queue",
+  "content_version": "1.0.0",
+  "title": "Inspect and cancel the exact one-off job",
+  "goal": "Distinguish queued work from completion; dynamically identify and remove only the owned practice job.",
+  "challenge": "Submit the declared harmless learner job for now+2minutes, inspect its actual ID/owner/body, cancel only that job, and prove no result after its due time while all unrelated queued rows remain byte-identical. No fixed IDs, all-job cancellation or spool editing.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-at-queue.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-at-queue.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; jobid() { regular \"$1\" || return 19; job=$(awk '$1==\"job\" && $2 ~ /^[0-9]+$/ {print $2}' \"$1\"); case \"$job\" in ''|*[!0-9]*) return 19;; *) test \"$job\" -gt 0;; esac; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && systemctl is-active atd && pwd",
+      "explanation": "Record the private path/definitions. Refuse collisions and insufficient space; Resume reuses the recorded workspace, not a new job.",
+      "expected": "Owned700 workspace, actual atd and observed1GiB reserve."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/foreign-queued.log\" || return 19; printf '/usr/bin/true\\n' | sudo /usr/sbin/runuser -u ll-at-allow -- /usr/bin/at -M now + 30 minutes > foreign-queued.log 2>&1 && jobid \"$w/foreign-queued.log\" && fresh \"$w/foreign-queue.txt\" && sudo atq > foreign-queue.txt && awk -v id=\"$job\" '$1==id && $NF==\"ll-at-allow\" {f=1} END {exit !f}' foreign-queue.txt; }; foundation_step",
+      "explanation": "Create only this separately recorded harmless comparison job. It must survive learner-job cancellation; later cancel it exactly as its owner. Do not treat the root queue as learner-owned.",
+      "expected": "Known ll-at-allow comparison job remains queued."
+    },
+    {
+      "command": "here && fresh \"$w/queue-before.txt\" && sudo atq > queue-before.txt && fresh \"$w/job.sh\" && printf 'set -C || exit 92\\nprintf \"cancelled-job-ran\\\\n\" > \"%s/cancelled-result\"\\n' \"$w\" > job.sh && regular \"$w/job.sh\" && fresh \"$w/cancelled-result\" && fresh \"$w/queued.log\" && at -M -f job.sh now + 2 minutes > queued.log 2>&1 && jobid \"$w/queued.log\" && fresh \"$w/queue-during.txt\" && sudo atq > queue-during.txt && awk -v id=\"$job\" '$1==id && $NF==\"learner\" {f=1} END {exit !f}' queue-during.txt",
+      "explanation": "Dynamically capture the exact owned job ID and unchanged unrelated rows. A queued job is not a completed job.",
+      "expected": "One declared future learner job with retained ownership evidence."
+    },
+    {
+      "command": "here && jobid \"$w/queued.log\" && fresh \"$w/body.txt\" && timeout -k 1s 10s at -c \"$job\" > body.txt && grep -F \"$w/cancelled-result\" body.txt && atrm \"$job\" && fresh \"$w/queue-after.txt\" && sudo atq > queue-after.txt && cmp queue-before.txt queue-after.txt && test ! -e \"$w/cancelled-result\" && test ! -L \"$w/cancelled-result\"",
+      "explanation": "Inspect the expected body/path before exact cancellation. Never assume a fixed job number or remove all jobs. Immediate absence is observed; wait until the recorded due time for stronger absence evidence.",
+      "expected": "Owned cancellation; identical other queue rows; no immediate result."
+    },
+    {
+      "command": "here && sleep 130 && test ! -e \"$w/cancelled-result\" && test ! -L \"$w/cancelled-result\" && fresh \"$w/queue-deadline.txt\" && sudo atq > queue-deadline.txt && cmp queue-before.txt queue-deadline.txt",
+      "explanation": "This bounded wait exceeds the now+2minutes deadline, without changing the clock. Retain cancellation evidence and no-result check.",
+      "expected": "Cancelled output absent after its due time, unrelated queue unchanged."
+    },
+    {
+      "command": "foundation_step() { here && jobid \"$w/foreign-queued.log\" && fresh \"$w/foreign-before-cleanup.txt\" && sudo atq > foreign-before-cleanup.txt && awk -v id=\"$job\" '$1==id && $NF==\"ll-at-allow\" {f=1} END {exit !f}' foreign-before-cleanup.txt && fresh \"$w/foreign-body.txt\" && sudo /usr/sbin/runuser -u ll-at-allow -- at -c \"$job\" > foreign-body.txt && grep -Fx /usr/bin/true foreign-body.txt || return 19; sudo /usr/sbin/runuser -u ll-at-allow -- atrm \"$job\" && fresh \"$w/foreign-after-cleanup.txt\" && sudo atq > foreign-after-cleanup.txt && ! awk -v id=\"$job\" '$1==id {f=1} END {exit !f}' foreign-after-cleanup.txt; }; foundation_step",
+      "explanation": "After comparison, cancel only the positively matched declared comparison job. This does not authorize cancelling an unrelated owner job.",
+      "expected": "Comparison job safely removed; unrelated rows preserved."
+    }
+  ],
+  "hints": [
+    "Never fixed job numbers, atrm all, global spool edits or count-only proof; root atq sees others.",
+    "Use the actual dynamically captured job ID and successful owner-matched queue queries; a command failure is not an empty queue.",
+    "Inspect actual result ownership, bytes and exit status; cancel only positively matched pending work before exact rollback."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s facts, actual identities/results and an incorrect interpretation or attempt.",
+    "I can separate queueing, execution, access policy and self-reviewed reasoning. Completion is unscored and not automatic verification.",
+    "I removed only positively matched owned jobs, restored any exact policy fixture and retained evidence; no authentication or host changes."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 108.2 at/atq/atrm. No full objective, automatic assessment or endorsement. The plan’s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11."
+}

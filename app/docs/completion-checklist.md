@@ -61,3 +61,19 @@ The approved tenth unit adds ten substantive lessons: isolated startup/history/e
 ## Accounts, Scheduling, Logging & Recovery checkpoint
 
 [Eight real-guest lessons](vm-preview/operations-unit.md) add fabricated account-pair consistency, exact cron ownership, loaded timer outcomes, journal cursor/field semantics, open-descriptor rotation, local notices and independent recovery transfer. Existing images and guest policies remain unchanged. Completion is self-reviewed and unscored; at/mesg remain absent. [Acceptance](vm-preview/text-operations-acceptance.md) distinguishes native automation from physical input and accessibility.
+
+## Authorized two-image platform candidate
+
+[Ten Locale/Encoding/Time/Offline Jobs and eight RPM lessons](vm-preview/platform-unit.md)
+extend the bounded registry to fourteen units /120 lessons /16 per unit. Original
+102 resources, exact defaults, retained revisions and saved-session compatibility
+remain protected. New images are independent, locally verified candidates, not
+public releases. [Acceptance](vm-preview/platform-acceptance.md) records final-gate
+status; [per-lesson mappings](platform-curriculum-evidence.json) add partial
+107.3/108.2/102.5 practice and narrow xz reinforcement without whole-objective credit.
+
+The absent-at statement above is historical: at is available only in the new
+foundation image. mesg/write, full YUM/Zypper breadth, clock/RTC/NTP, networking,
+new automatic assessment and public-distribution obligations remain deferred.
+The older twelve-unit/102 ceiling in the historical table is superseded only by
+this explicitly approved14/120 boundary; simulator limits remain unchanged.

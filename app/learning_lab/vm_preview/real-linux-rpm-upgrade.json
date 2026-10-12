@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-rpm-upgrade",
+  "content_version": "1.0.0",
+  "title": "Retain edited configuration during an RPM upgrade",
+  "goal": "Practice %config(noreplace), installed version and actual .rpmnew/.rpmsave behavior.",
+  "challenge": "Starting from data 1.0-1, preserve the original and set header=owner-kept in only its declared configuration. Upgrade to data 2.0-1 without replacing that local value. Retain and inspect .rpmnew, verify actual package contents/version and deliberate config discrepancy, then clean up with candidates preserved first.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/rpm-upgrade.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/rpm-upgrade.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here || return 19; test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; cfg() { case \"$1\" in /etc/learning-lab-rpm/report.conf|/etc/learning-lab-rpm/report.conf.rpmnew|/etc/learning-lab-rpm/report.conf.rpmsave) ;; *) return 19;; esac; here && test \"$(realpath -e /etc/learning-lab-rpm)\" = /etc/learning-lab-rpm && test \"$(stat -c %U:%G:%a /etc/learning-lab-rpm)\" = root:root:755 && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%G:%a:%h \"$1\")\" = root:root:644:1; }; keepcfg() { cfg \"$1\" && fresh \"$w/$2\" && cp -- \"$1\" \"$w/$2\" && cmp -- \"$1\" \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1; }; releasecfg() { cfg \"$1\" && test \"${2##*/}\" = \"$2\" && test -f \"$w/$2\" && test ! -L \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1 && cmp -- \"$1\" \"$w/$2\" && sudo rm -- \"$1\"; }; h=/usr/local/sbin/ll-rpm-fixture; f=/opt/learning-lab/rpm-fixtures; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && fresh \"$w/before.json\" && sudo \"$h\" status > before.json && grep -F '\"fixtures\": {}' before.json && fresh \"$w/before-raw.tsv\" && timeout -k 1s 20s sudo rpm -qa --qf '%{NAME}\\t%{EPOCHNUM}\\t%{VERSION}\\t%{RELEASE}\\t%{ARCH}\\n' > before-raw.tsv && fresh \"$w/before.tsv\" && LC_ALL=C sort before-raw.tsv > before.tsv && pwd",
+      "explanation": "Record this private path and shell definitions. A guard failure stops the exercise; do not continue over existing fixtures. Resume requires recorded path/definitions, not replaying setup.",
+      "expected": "Fixture-free package baseline retained without masking query failure."
+    },
+    {
+      "command": "here && sudo \"$h\" preview data1 && sudo \"$h\" apply data1",
+      "explanation": "Confirm initial data 1.0 installation.",
+      "expected": "Only data 1.0-1 installed."
+    },
+    {
+      "command": "here && keepcfg /etc/learning-lab-rpm/report.conf original.conf && cfg /etc/learning-lab-rpm/report.conf && printf \"%s\\n\" header=owner-kept | sudo tee /etc/learning-lab-rpm/report.conf >/dev/null && keepcfg /etc/learning-lab-rpm/report.conf edited.conf && sudo \"$h\" preview upgrade",
+      "explanation": "Preserve original before changing only this declared config. Guard its type, ownership, mode, links and parent.",
+      "expected": "Preserved original and edit; exact upgrade plan."
+    },
+    {
+      "command": "here && sudo \"$h\" apply upgrade",
+      "explanation": "Confirm the exact upgrade. %config(noreplace) behavior is package-specific, not universal RPM policy.",
+      "expected": "Data 2.0; edit retained and a .rpmnew candidate."
+    },
+    {
+      "command": "rpm_step() { here || return 19; cfg /etc/learning-lab-rpm/report.conf && cmp edited.conf /etc/learning-lab-rpm/report.conf && keepcfg /etc/learning-lab-rpm/report.conf.rpmnew candidate.conf && grep -Fx header=inventory-2.0 candidate.conf && fresh \"$w/verification.txt\" || return 19; if rpm -V ll-rpm-data > verification.txt; then return 1; else rc=$?; test \"$rc\" = 1 && grep -F /etc/learning-lab-rpm/report.conf verification.txt; fi; }; rpm_step",
+      "explanation": "Retain and inspect old/edit/new versions. Verification should report the deliberate configuration difference; earlier guard failure must not be accepted as rpm evidence.",
+      "expected": "Actual config discrepancy, independent copies and upgraded payload."
+    }
+  ],
+  "hints": [
+    "Do not assume Debian conffile semantics or silently overwrite user content; skipped/different-version transactions are not upgrades.",
+    "Read supported helper operations and the exact plan before APPLY. Unsigned fixture digests do not prove publisher authenticity.",
+    "Verify versions, payload/config bytes and actual learner access; package exit status alone is insufficient."
+  ],
+  "review": [
+    "I retained the requested actual output, statuses, versions and byte/access evidence, including the incorrect case.",
+    "I met the selected mode’s outcomes and can explain the limitations. Completion records self-review, not a score or verified assessment.",
+    "I preserved originals and retained candidates, compared unrelated package state and completed only the exact cleanup."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 upgrade/reinstall lifecycle. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim."
+}

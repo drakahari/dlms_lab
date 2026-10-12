@@ -87,9 +87,12 @@ For details use [Resource guidance](lpic-2-resource-simulator.md),
 ## Separate optional real-Linux path
 
 **Real Linux VM preview…** opens a separate selector, not a simulator lab.
-Twelve units / 102 lessons cover Processes; Resources; Services & Recovery; Bash;
-Users & Access; Scheduling; Backup; Discovery & Packages; Storage; [Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md); and [Text & Archive Tools](vm-preview/text-archive-unit.md). Use each
-unit's stated prerequisites and exact approved image. Missing images fail clearly;
+Fourteen units /120 lessons cover Processes; Resources; Services & Recovery; Bash;
+Users & Access; Scheduling; Backup; Discovery & Packages; Storage; [Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md); and [Text & Archive Tools](vm-preview/text-archive-unit.md).
+The two [offline platform units](vm-preview/platform-unit.md) add ten locale,
+encoding, timezone, xz and at activities, and eight RPM/DNF4 activities, each using
+its own new local image. Accounts/Operations remains a separate earlier unit.
+Use each unit's stated prerequisites and exact approved image. Missing images fail clearly;
 there is no privileged-image fallback or automatic software installation.
 
 Start opens a native guest console; Stop shuts it down; Resume boots existing
@@ -105,7 +108,7 @@ evidence and is not a restorable profile. See [backup rules](profile-backup.md).
 
 ## Coverage and unfinished work
 
-Official objectives rechecked **2026-10-11**: [LPIC-1 v5.0](https://www.lpi.org/our-certifications/exam-101-102-objectives/)
+Official objectives rechecked **2026-10-12**: [LPIC-1 v5.0](https://www.lpi.org/our-certifications/exam-101-102-objectives/)
 and [LPIC-2 v4.5.0](https://www.lpi.org/our-certifications/exam-201-202-objectives/).
 The snapshot collections reinforce selected resource, network, DNS and web
 interpretation skills. They do not provide live administration or complete exam

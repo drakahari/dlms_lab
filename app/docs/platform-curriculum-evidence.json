@@ -1,0 +1,392 @@
+{
+  "version": 1,
+  "verification_date": "2026-10-12",
+  "baseline": "d5dcad728a7e2de3bae5d2444354bd43b5fe153f",
+  "official_sources": [
+    {
+      "url": "https://www.lpi.org/our-certifications/exam-101-102-objectives/",
+      "version": "5.0",
+      "exams": [
+        "101-500",
+        "102-500"
+      ]
+    },
+    {
+      "url": "https://www.lpi.org/our-certifications/exam-201-202-objectives/",
+      "version": "4.5",
+      "exams": [
+        "201-450",
+        "202-450"
+      ]
+    }
+  ],
+  "mapping_correction": "The planning at reference107.2 was wrong; active scheduling is108.2. No old lesson pins changed.",
+  "lessons": [
+    {
+      "lesson_id": "real-linux-foundation-locale-scope",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Choose the locale scope deliberately",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 107.3 locale environment; 103.1 variables: reinforcement. No complete-objective coverage or endorsement.",
+      "objectives": [
+        "107.3 locale environment",
+        "103.1 variables: reinforcement"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-locale-scope.json",
+      "resource_sha256": "cd08944d538794721fca1f07943c5a9a267166cc9018f89879b99502317b5bef",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-locale-formats",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Compare localized formats without corrupting data",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 107.3 non-English localization and LC_*; 103.2 sorting: reinforcement. No complete-objective coverage or endorsement.",
+      "objectives": [
+        "107.3 non-English localization and LC_*",
+        "103.2 sorting: reinforcement"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-locale-formats.json",
+      "resource_sha256": "8e7afc1779b9153241c3d4031d504046efe364b6cd8d7d30d9469f7bc4abda39",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-encoding",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Convert text strictly and preserve a recovery path",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 107.3 iconv/encoding terms. No complete-objective coverage or endorsement.",
+      "objectives": [
+        "107.3 iconv/encoding terms"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-encoding.json",
+      "resource_sha256": "ba55c75059ce032b800bc43715b8c290513d8b55873319c294f2f243a1dfb93c",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-locale-persistence",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Make a guest locale default reversible",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 107.3 locale configuration; 105.1 environment: reinforcement. No complete-objective coverage or endorsement.",
+      "objectives": [
+        "107.3 locale configuration",
+        "105.1 environment: reinforcement"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-locale-persistence.json",
+      "resource_sha256": "a8db8163de09afcb433961c15fbe961dadaf495bd0c9cd44da7660d1baa8a345",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-timezones",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Interpret timezones without changing the clock",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 107.3 timezone configuration/TZ; 108.1 timezone subskill only. No complete-objective coverage or endorsement.",
+      "objectives": [
+        "107.3 timezone configuration/TZ",
+        "108.1 timezone subskill only"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-timezones.json",
+      "resource_sha256": "01938eb1861c9f226c460abe3c7fe342ca84f105a429ec4d463a998a96e36432",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-xz-evidence",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Inspect an xz stream and recover exact bytes",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial103.2 xzcat and103.3 xz/unxz; limited LPIC-2 activev4.5 206.2 compression reinforcement only. Container validation is not correct-content/authenticity proof; no complete-objective credit.",
+      "objectives": [
+        "103.2 xzcat",
+        "103.3 xz/unxz; 206.2 reinforcement"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-xz-evidence.json",
+      "resource_sha256": "29b774d5cc4c29044c8f7458dbce4b3403ae0529d995cd119343ce1c16c016e3",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-at-queue",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Inspect and cancel the exact one-off job",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 108.2 at/atq/atrm. No full objective, automatic assessment or endorsement. The plan\u2019s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11.",
+      "objectives": [
+        "108.2 at/atq/atrm"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-at-queue.json",
+      "resource_sha256": "3dc1664a85bc905eb422ea5aa8be56cc46ea16211162563a9ffeab79e7d8ac6a",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-at-execution",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Prove a one-off job\u2019s environment and result",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 108.2 at execution; 105.2 status: reinforcement. No full objective, automatic assessment or endorsement. The plan\u2019s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11.",
+      "objectives": [
+        "108.2 at execution",
+        "105.2 status: reinforcement"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-at-execution.json",
+      "resource_sha256": "a841728e671d7d2ce5fc62e25af6001637f1ee8c0ca17ad9a29fdcf83d944ab6",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-at-access",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Test scheduler access as the intended identity",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 108.2 at access controls. No full objective, automatic assessment or endorsement. The plan\u2019s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11.",
+      "objectives": [
+        "108.2 at access controls"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-at-access.json",
+      "resource_sha256": "0f4b628d6fc90dcac64b3a64340b516b07dab753b36c8a272e8993c67b8ff5cc",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-foundation-localization-handover",
+      "unit_id": "linux-localization-offline-jobs",
+      "title": "Deliver a localized offline job handover",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 107.3 and108.2 independent transfer; no new objective credit. No full objective, automatic assessment or endorsement. The plan\u2019s 107.2 at tags were corrected to active108.2;107.2 concerns display/X11.",
+      "objectives": [
+        "107.3 and108.2 independent transfer; no new objective credit"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-foundation-localization-handover.json",
+      "resource_sha256": "70f3fbf22202a7993cf2d311e27b3a3a8b1850bca8f0bfb507343c58ffb4d3d6",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-foundation-native-36ift_2t",
+        "platform-foundation-native-36ift_2t"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-inventory",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Identify RPM package state and file providers",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 installed metadata/file-provider; DNF awareness. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim.",
+      "objectives": [
+        "102.5 installed metadata/file-provider; DNF awareness"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-inventory.json",
+      "resource_sha256": "00cd4983c9e13911fd686794b516b4688af2b9446a70feeeb4b048546ec7644f",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-4izgj9f5",
+        "platform-rpm-native-4izgj9f5"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-archive",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Inspect an offline RPM before admitting it",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5: uninstalled metadata, contents, requirements and digest inspection. Signature trust explained only; no rpm2cpio extraction, repository, YUM or Zypper practice. Self-reviewed, not automatic assessment.",
+      "objectives": [
+        "102.5 uninstalled contents/dependencies/digests; signature distinction conceptual, no rpm2cpio practice claim"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-archive.json",
+      "resource_sha256": "fcf222c2b050d431b2c1c0f8cb1d3c3e4c335d1d6b2853db88d699690426406a",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-gkdgxisw",
+        "platform-rpm-native-gkdgxisw"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-dependencies",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Observe a dependency failure without forcing installation",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 RPM install/dependencies. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim.",
+      "objectives": [
+        "102.5 RPM install/dependencies"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-dependencies.json",
+      "resource_sha256": "5e7f59cd2645f4bb823060c66a2dafe826ea5e5ed47a0ad12c6cf18cb19629f0",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-gkdgxisw",
+        "platform-rpm-native-gkdgxisw"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-dnf-transaction",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Resolve the offline fixture dependency explicitly",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 DNF awareness/dependency frontend; modern YUM compatibility limitation. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim.",
+      "objectives": [
+        "102.5 DNF awareness/dependency frontend; modern YUM compatibility limitation"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-dnf-transaction.json",
+      "resource_sha256": "eec6d3a8dc4ac38b596ca43ca7fadad7075a816a41a83ed69b4d7fd8cd8daf6d",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-ep24397l",
+        "platform-rpm-native-ep24397l"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-upgrade",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Retain edited configuration during an RPM upgrade",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 upgrade/reinstall lifecycle. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim.",
+      "objectives": [
+        "102.5 upgrade/reinstall lifecycle"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-upgrade.json",
+      "resource_sha256": "edae6c32ecda46b161fc983dfed35170eb162a8b91090a844a6d50a255778838",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-ep24397l",
+        "platform-rpm-native-ep24397l"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-integrity",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Repair package-owned contents with independent verification",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 integrity/reinstall. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim.",
+      "objectives": [
+        "102.5 integrity/reinstall"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-integrity.json",
+      "resource_sha256": "37de56a7ba76b7d5991b71850504a53eae1f58881d28732dbaca40dda7be12d9",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-ep24397l",
+        "platform-rpm-native-ep24397l"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-remove",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Remove only intended packages and explain retained files",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 RPM removal. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim.",
+      "objectives": [
+        "102.5 RPM removal"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-remove.json",
+      "resource_sha256": "e849104ee8c62b8fd88b3166ef9ef1892b9362d3b1572622e010c0a6e60c292f",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-ep24397l",
+        "platform-rpm-native-ep24397l"
+      ]
+    },
+    {
+      "lesson_id": "real-linux-rpm-recovery",
+      "unit_id": "linux-rpm-offline-administration",
+      "title": "Repair an offline package incident and hand it over",
+      "content_version": "1.0.0",
+      "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 transfer; no claim of full objective or Zypper/YUM mastery. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim.",
+      "objectives": [
+        "102.5 transfer; no claim of full objective or Zypper/YUM mastery"
+      ],
+      "guide": "vm-preview/platform-unit.md",
+      "resource": "learning_lab/vm_preview/real-linux-rpm-recovery.json",
+      "resource_sha256": "c7e27d11b1c99c3b037fa18ffdac9c5621f87c0f721a1168bdab2c5bbce41819",
+      "evidence_kind": "real-guest developer acceptance; learner completion self-reviewed/unscored",
+      "acceptance_status": "Both modes passed on exact final lesson and entry hashes; see platform-acceptance.md for installed/UI gates.",
+      "omissions": "No comprehensive objective coverage, automatic guest-state assessment or exam endorsement",
+      "native_evidence": [
+        "platform-rpm-native-ep24397l",
+        "platform-rpm-native-ep24397l"
+      ]
+    }
+  ]
+}

@@ -1,11 +1,13 @@
 """Exact authorized projections for the two foundation families only."""
 import json
+from platform_preservation import projection as platform_projection
 
 NEW_UNITS={'lpic-text-archive-tools','lpic-accounts-logging-recovery'}
 NEW_IDS={'real-linux-textarchive-'+s for s in ('streams','tee','xargs','join','find','cpio','composition','handover')}
 NEW_IDS|={'real-linux-operations-'+s for s in ('accountfiles','cronaccess','timerresult','journalcursor','journalfields','rotationfd','notices','handover')}
 
 def projection(name,raw):
+    raw=platform_projection(name,raw)
     if name.endswith('registry.py'):
         for new in (94,102):raw=raw.replace(('MAX_TOTAL_LESSONS = '+str(new)).encode(),b'MAX_TOTAL_LESSONS = 86').replace(('at most '+str(new)+' total').encode(),b'at most 86 total')
         for new in (11,12):raw=raw.replace(('MAX_UNITS = '+str(new)).encode(),b'MAX_UNITS = 10').replace(('1–'+str(new)+' bundled').encode(),'1–10 bundled'.encode())

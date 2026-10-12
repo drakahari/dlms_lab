@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-rpm-archive",
+  "content_version": "1.0.0",
+  "title": "Inspect an offline RPM before admitting it",
+  "goal": "Inspect trusted uninstalled RPM metadata, dependencies, payload modes and digests; distinguish internal integrity from publisher authenticity.",
+  "challenge": "Inspect the three protected unsigned RPM archives, record their exact hashes, declared files/modes/owners, requirements and absence of scripts/triggers. Reject the supplied truncated private copy without installing it. Explain internal digest checking versus publisher authenticity; do not claim verified signatures or rpm2cpio practice.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/rpm-archive.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/rpm-archive.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here || return 19; test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; cfg() { case \"$1\" in /etc/learning-lab-rpm/report.conf|/etc/learning-lab-rpm/report.conf.rpmnew|/etc/learning-lab-rpm/report.conf.rpmsave) ;; *) return 19;; esac; here && test \"$(realpath -e /etc/learning-lab-rpm)\" = /etc/learning-lab-rpm && test \"$(stat -c %U:%G:%a /etc/learning-lab-rpm)\" = root:root:755 && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%G:%a:%h \"$1\")\" = root:root:644:1; }; keepcfg() { cfg \"$1\" && fresh \"$w/$2\" && cp -- \"$1\" \"$w/$2\" && cmp -- \"$1\" \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1; }; releasecfg() { cfg \"$1\" && test \"${2##*/}\" = \"$2\" && test -f \"$w/$2\" && test ! -L \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1 && cmp -- \"$1\" \"$w/$2\" && sudo rm -- \"$1\"; }; h=/usr/local/sbin/ll-rpm-fixture; f=/opt/learning-lab/rpm-fixtures; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && fresh \"$w/before.json\" && sudo \"$h\" status > before.json && grep -F '\"fixtures\": {}' before.json && fresh \"$w/before-raw.tsv\" && timeout -k 1s 20s sudo rpm -qa --qf '%{NAME}\\t%{EPOCHNUM}\\t%{VERSION}\\t%{RELEASE}\\t%{ARCH}\\n' > before-raw.tsv && fresh \"$w/before.tsv\" && LC_ALL=C sort before-raw.tsv > before.tsv && pwd",
+      "explanation": "Record this private path and shell definitions. A guard failure stops the exercise; do not continue over existing fixtures. Resume requires recorded path/definitions, not replaying setup.",
+      "expected": "Fixture-free package baseline retained without masking query failure."
+    },
+    {
+      "command": "here && fresh \"$w/archive-hashes.txt\" && fresh \"$w/metadata.txt\" && fresh \"$w/files.txt\" && fresh \"$w/requires.txt\" && sha256sum \"$f\"/*.rpm > archive-hashes.txt && rpm -qpi \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > metadata.txt && rpm -qpl \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > files.txt && rpm -qpR \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > requires.txt && cat archive-hashes.txt metadata.txt files.txt requires.txt",
+      "explanation": "Inspect only the three reviewed teaching archives. Compare whole-file hashes with the retained fixture manifest, not an arbitrary download. Source/specs are protected from ordinary users, not guest root.",
+      "expected": "Exact report dependency on data 2.0-1 and /usr/bin/sh; two declared ordinary files."
+    },
+    {
+      "command": "here && fresh \"$w/scripts.txt\" && fresh \"$w/triggers.txt\" && rpm -qp --scripts \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > scripts.txt && rpm -qp --triggers \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > triggers.txt && test ! -s scripts.txt && test ! -s triggers.txt && rpm -qp --qf \"[%{FILENAMES} %{FILEMODES:perms} %{FILEUSERNAME}:%{FILEGROUPNAME}\\n]\" \"$f/ll-rpm-report-1.0-1.noarch.rpm\"",
+      "explanation": "Read-only metadata inspection complements the retained build admission. Do not extract unknown RPMs or claim these queries safely sandbox arbitrary packages.",
+      "expected": "Root-owned 0755 report script and 0644 license; no scripts or triggers."
+    },
+    {
+      "command": "rpm_step() { here || return 19; fresh \"$w/signature.txt\" || return 19; if rpm -K \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > signature.txt 2>&1; then cat signature.txt && grep -F \"digests OK\" signature.txt; else return 1; fi; }; rpm_step",
+      "explanation": "The original project archive is intentionally unsigned. Digest validity detects internal damage, not publisher authenticity; official vendor authentication was performed in preparation, not this lesson.",
+      "expected": "Digest check succeeds; no signature-authentication claim."
+    },
+    {
+      "command": "rpm_step() { here && fresh \"$w/truncated-report.rpm\" && fresh \"$w/rejected.txt\" && head -c 64 \"$f/ll-rpm-report-1.0-1.noarch.rpm\" > truncated-report.rpm || return 19; if rpm -K truncated-report.rpm > rejected.txt 2>&1; then return 1; else test $? -ne 0 && test -s rejected.txt && test \"$(stat -c %s truncated-report.rpm)\" = 64; fi; }; rpm_step",
+      "explanation": "Retain and reject a deliberately truncated private copy using read-only inspection. Never install it. A failed check detects this damage, not authenticity of the unsigned original.",
+      "expected": "Rejected 64-byte private candidate; protected original unchanged."
+    }
+  ],
+  "hints": [
+    "Unsigned local fixture is not authenticated; rpm digest verification is not publisher trust; no scripts, links or unsafe extraction.",
+    "Read supported helper operations and the exact plan before APPLY. Unsigned fixture digests do not prove publisher authenticity.",
+    "Verify versions, payload/config bytes and actual learner access; package exit status alone is insufficient."
+  ],
+  "review": [
+    "I retained the requested actual output, statuses, versions and byte/access evidence, including the incorrect case.",
+    "I met the selected mode’s outcomes and can explain the limitations. Completion records self-review, not a score or verified assessment.",
+    "I preserved originals and retained candidates, compared unrelated package state and completed only the exact cleanup."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 102.5: uninstalled metadata, contents, requirements and digest inspection. Signature trust explained only; no rpm2cpio extraction, repository, YUM or Zypper practice. Self-reviewed, not automatic assessment."
+}

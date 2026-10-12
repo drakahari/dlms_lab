@@ -186,6 +186,29 @@ any new environment, guest credentials/network/controller/assessment capability.
 Public distribution/signing/hosting and runtime-warning remediation remain
 separate decisions. No routine owner walkthrough is a completion gate.
 
+## Authorized platform implementation candidate
+
+The [platform unit guide](vm-preview/platform-unit.md) describes ten Locale,
+Encoding, Time & Offline Jobs lessons and eight RPM & Offline Package
+Administration lessons. The exact bounded capacity is fourteen units /120
+lessons /16 per unit; retained revisions and default maps are120. The original
+102 lessons retain their exact bytes, image defaults and session pins.
+[Acceptance](vm-preview/platform-acceptance.md) distinguishes completed checks
+from remaining gates; the [per-lesson evidence index](platform-curriculum-evidence.json)
+records resource hashes and partial subtopic mappings.
+
+These additions widen partial107.3,108.2 and102.5 practice. xz adds limited
+103.2/103.3 practice and206.2 reinforcement. They do not close whole-objective
+gaps or change automatic-assessment coverage: learner completion remains
+self-reviewed and unscored. The planning reference107.2 for at was incorrect;
+the active scheduling objective is108.2. Existing pinned lessons were not edited.
+No clock/RTC/NTP, original YUM, Zypper, DNF5, remote administration or networking
+proficiency is implied. Debian's missing mesg/write remain deferred.
+
+Both new images are local development candidates, independently prepared from
+authenticated inputs; they are not public releases. The earlier proposal section
+below is retained planning history, not the current implementation status.
+
 ## First authorized family delivered
 
 [Local Shell & Filesystem Administration](vm-preview/local-shell-unit.md) implements ten of the proposed 10–12 exercises using the unchanged guests. The exact approved capacity is ten units /86 total/16 per unit, with retained/default maps86 and unchanged parser/image limits. It widens partial history, startup/editor, find/FHS, special-bit/priority coverage and adds partial link coverage; no full objective is claimed. The original family estimate and historical 9/76 constraint above describe the pre-approval plan. No later family is authorized by this delivery. [Acceptance](vm-preview/local-shell-acceptance.md) records the frozen-content evidence and remaining platform/release gaps.

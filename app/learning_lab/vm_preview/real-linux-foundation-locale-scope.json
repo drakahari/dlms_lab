@@ -1,0 +1,40 @@
+{
+  "id": "real-linux-foundation-locale-scope",
+  "content_version": "1.0.0",
+  "title": "Choose the locale scope deliberately",
+  "goal": "Separate LANG, category overrides and LC_ALL; make one command deterministic without changing a login default.",
+  "challenge": "A child command inherits LANG=de_DE.UTF-8 but LC_ALL=C. Demonstrate why its decimal point remains a dot. Supply a corrected one-command environment whose numeric category is German while machine processing remains explicit C elsewhere. Prove parent locale/default unchanged; do not edit system policy.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-locale-scope.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-locale-scope.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+      "explanation": "Record this unique guest-only workspace. On Resume re-establish the recorded path/definitions; never overwrite another exercise.",
+      "expected": "Private learner-owned700 directory and observed1GiB free admission."
+    },
+    {
+      "command": "here && fresh \"$w/parent.txt\" && fresh \"$w/default.sha\" && locale > parent.txt && sha256sum /etc/locale.conf > default.sha && locale -a && locale charmap",
+      "explanation": "Record parent and system default before isolated command environments. Generated locales are real guest resources.",
+      "expected": "Both en_US.utf8/de_DE.utf8 available; UTF-8 charmap."
+    },
+    {
+      "command": "here && fresh \"$w/precedence.txt\" && env LANG=de_DE.UTF-8 LC_ALL=C locale -k decimal_point > precedence.txt && grep -Fx 'decimal_point=\".\"' precedence.txt && fresh \"$w/category.txt\" && env -u LC_ALL LANG=en_US.UTF-8 LC_NUMERIC=de_DE.UTF-8 locale -k decimal_point > category.txt && grep -Fx 'decimal_point=\",\"' category.txt",
+      "explanation": "LC_ALL overrides LANG and category variables. Remove only the child override, then apply LC_NUMERIC deliberately.",
+      "expected": "Actual decimal point changes only in the selected child category."
+    },
+    {
+      "command": "here && fresh \"$w/after.txt\" && locale > after.txt && cmp parent.txt after.txt && sha256sum -c default.sha",
+      "explanation": "Compare real parent environment and default bytes. A displayed language does not by itself establish persistence.",
+      "expected": "Parent/default unchanged."
+    }
+  ],
+  "hints": [
+    "LANG alone does not override LC_ALL; an unavailable locale is not a valid localized result.",
+    "Choose command scope deliberately; compare known bytes and actual statuses, not only a successful-looking display.",
+    "Retain before evidence; refuse collisions and restore exact policy state before leaving. Guest root can bypass guest-side guards."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s actual observations and retained an incorrect or incomplete case.",
+    "I preserved originals and can explain the reasoning and limitations; this records self-review, not automatic assessment.",
+    "I restored any changed default/zone and retained the exact workspace without touching unrelated files."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 107.3 locale environment; 103.1 variables: reinforcement. No complete-objective coverage or endorsement."
+}

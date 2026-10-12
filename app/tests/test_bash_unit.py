@@ -1,3 +1,4 @@
+from platform_preservation import projection as platform_projection
 from foundation_preservation import NEW_IDS
 """Trusted Bash unit bounds, explicit image routing and pinned-record preservation."""
 import copy,hashlib,json,os,tempfile,unittest
@@ -11,19 +12,19 @@ from learning_lab.vm_preview.sessions import Sessions
 from bash_guest_fixtures import COMMANDS,SCRIPT_ROWS,UNIT
 class BashUnitTests(unittest.TestCase):
  def test_exact_bounds_and_all_76_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(12,16,102))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8]);self.assertEqual(len(registry.entries()),102)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(14,16,120))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8,10,8]);self.assertEqual(len(registry.entries()),120)
  def test_reject_77_before_reading_eighth_unit_lessons(self):
   original=registry._read;reads=[]
   def read(name):
    reads.append(name);d=original(name)
-   if name=='operations-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
+   if name=='rpm-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
    return d
   registry._bundle.cache_clear()
   try:
    with patch.object(registry,'_read',side_effect=read):
-    with self.assertRaisesRegex(ValueError,'102'):registry.units()
-   self.assertNotIn('real-linux-operations-accountfiles.json',reads)
+    with self.assertRaisesRegex(ValueError,'120'):registry.units()
+   self.assertNotIn('real-linux-rpm-inventory.json',reads)
   finally:registry._bundle.cache_clear()
  def test_reject_tenth_unit_before_resources(self):
   original=registry._read;reads=[]
@@ -40,7 +41,7 @@ class BashUnitTests(unittest.TestCase):
  def test_existing_controller_images_and_24_lessons_exact_bytes(self):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256(projection(name,(registry.ROOT/name).read_bytes())).hexdigest(),h,name)
  def test_exact_old_catalog_projection(self):
-  c=json.loads(resource('image-catalog.json'));c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1'];new=set(COMMANDS)|{e['id'] for e in registry.catalog('linux-users-groups-access')['entries']}|{e['id'] for e in registry.catalog('linux-scheduling-automation')['entries']}
+  c=json.loads(platform_projection('image-catalog.json', resource('image-catalog.json')));c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1'];new=set(COMMANDS)|{e['id'] for e in registry.catalog('linux-users-groups-access')['entries']}|{e['id'] for e in registry.catalog('linux-scheduling-automation')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-backup-safe-recovery')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-system-discovery-package-fundamentals')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}

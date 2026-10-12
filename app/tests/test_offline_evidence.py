@@ -35,7 +35,7 @@ class OfflineEvidenceTests(unittest.TestCase):
  def test_registration_checker_ceiling_and_unchanged_vm_bounds(self):
   self.assertTrue(UNITS);self.assertEqual(len(load_collections()),5+len(UNITS));b=self.build();self.assertEqual(len(b.curated),26+4*len(UNITS));self.assertFalse(b.repository.root.exists())
   from learning_lab.vm_preview.registry import units,entries
-  self.assertEqual((len(units()),len(entries())),(12,102));ids=[]
+  self.assertEqual((len(units()),len(entries())),(14,120));ids=[]
   for unit in UNITS:
    self.assertEqual(len(unit['entries']),4)
    for e in unit['entries']:
@@ -109,7 +109,8 @@ print('Exact pinned incomplete Challenge resume PASS')
   for name in subprocess.check_output(['git','ls-tree','-r','--name-only',base,'app/learning_lab'],cwd=ROOT.parent).decode().splitlines():
    if name=='app/learning_lab/qml/Main.qml':
     from presentation_revision import MAIN_SHA256
-    self.assertEqual(hashlib.sha256((ROOT.parent/name).read_bytes()).hexdigest(),MAIN_SHA256,name)
+    from platform_preservation import projection as platform_projection
+    self.assertEqual(hashlib.sha256(platform_projection(name,(ROOT.parent/name).read_bytes())).hexdigest(),MAIN_SHA256,name)
    elif name!='app/learning_lab/collections/index.json':self.assertEqual(projection(name,(ROOT.parent/name).read_bytes()),projection(name,subprocess.check_output(['git','show',base+':'+name],cwd=ROOT.parent)),name)
 
  def test_exact_approved_registration_bounds_and_reserved_evidence(self):

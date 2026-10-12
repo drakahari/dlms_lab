@@ -48,6 +48,14 @@
     {
       "id": "lpic-accounts-logging-recovery",
       "resource": "operations-unit.json"
+    },
+    {
+      "id": "linux-localization-offline-jobs",
+      "resource": "foundation-unit.json"
+    },
+    {
+      "id": "linux-rpm-offline-administration",
+      "resource": "rpm-unit.json"
     }
   ]
 }

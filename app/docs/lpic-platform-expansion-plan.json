@@ -186,7 +186,7 @@
           "title": "Inspect and cancel the exact one-off job",
           "outcome": "Distinguish queued work from completion; dynamically identify and remove only the owned practice job.",
           "objective_subtopics": [
-            "107.2 at/atq/atrm"
+            "108.2 at/atq/atrm"
           ],
           "prerequisites": "Cron/timer unit; guest at service",
           "learn": "Queue a harmless file-producing job with at -M at a short future time; capture actual ID/UID, inspect at -c, cancel, prove no result and unrelated jobs unchanged.",
@@ -202,7 +202,7 @@
           "title": "Prove a one-off job\u2019s environment and result",
           "outcome": "Observe /bin/sh execution, captured environment/cwd/umask and actual successful or failed result.",
           "objective_subtopics": [
-            "107.2 at execution",
+            "108.2 at execution",
             "105.2 status: reinforcement"
           ],
           "prerequisites": "At queue; shell statuses",
@@ -219,7 +219,7 @@
           "title": "Test scheduler access as the intended identity",
           "outcome": "Explain allow-file precedence, deny-file fallback and separate PAM/account restrictions.",
           "objective_subtopics": [
-            "107.2 at access controls"
+            "108.2 at access controls"
           ],
           "prerequisites": "Existing Users/Groups access and at execution",
           "learn": "Use two named locked-password practice accounts via guest sudo/runuser; snapshot policies; apply one bounded at.allow/deny fixture and demonstrate actual admission/denial.",
@@ -235,7 +235,7 @@
           "title": "Deliver a localized offline job handover",
           "outcome": "Transfer locale, encoding, time and one-off execution decisions without repeating a guided repair.",
           "objective_subtopics": [
-            "107.3 and107.2 independent transfer; no new objective credit"
+            "107.3 and108.2 independent transfer; no new objective credit"
           ],
           "prerequisites": "Previous nine proposed lessons",
           "learn": "Trace one wrong locale/time assumption and partial output in a tiny supplied incident; retain before evidence, demonstrate corrected report and write uncertainty.",
@@ -394,5 +394,12 @@
     "Two unsigned project RPM package identities/three archives, explicit narrow local-fixture verification exception only",
     "14units/120total/120retained/120bothdefaults; compact trusted catalog within unchanged64KiB",
     "No controller/launch/QMP/image-disk/backup-format/network changes"
+  ],
+  "implementation_deviations": [
+    {
+      "lesson": "real-linux-rpm-archive",
+      "delivered": "Exact external hashes, internal digests, metadata, dependencies, payload paths and script/trigger absence on three unsigned project fixtures.",
+      "deferred": "No rpm2cpio or official vendor-signature inspection exercise. Vendor signatures were authenticated during developer image-input preparation, not attributed to learner practice. The original planning row is retained as historical scope; no full102.5 coverage claimed."
+    }
   ]
 }

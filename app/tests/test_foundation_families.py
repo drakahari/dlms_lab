@@ -22,22 +22,22 @@ class FoundationTests(unittest.TestCase):
   registry._bundle.cache_clear()
   with patch.object(registry,'_read',side_effect=read),self.assertRaisesRegex(ValueError,pattern):registry.units()
  def test_exact_bounds_and_parser_sizes(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(12,102,16))
-  self.assertEqual(len(registry.units()),12);self.assertEqual(len(registry.entries()),102)
-  c=production_catalog();self.assertEqual((len(c.lessons),len(c.default_images),len(c._data['default_lessons'])),(102,102,102));self.assertFalse(c.keys or c.releases)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(14,120,16))
+  self.assertEqual(len(registry.units()),14);self.assertEqual(len(registry.entries()),120)
+  c=production_catalog();self.assertEqual((len(c.lessons),len(c.default_images),len(c._data['default_lessons'])),(120,120,120));self.assertFalse(c.keys or c.releases)
   for name in ('image-catalog.json','text-archive-unit.json','operations-unit.json'):self.assertLessEqual(len(resource(name)),65536);read_json(resource(name))
   self.assertTrue(all(len(i['lessons'])<=64 for i in c.images.values()))
  def test_immediate_total_overflow(self):
-  self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='operations-unit.json' else None,'102')
+  self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='rpm-unit.json' else None,'120')
  def test_immediate_unit_overflow(self):
-  self.malformed(lambda n,v:v['units'].append(copy.deepcopy(v['units'][0])) if n=='units.json' else None,'1–12')
+  self.malformed(lambda n,v:v['units'].append(copy.deepcopy(v['units'][0])) if n=='units.json' else None,'1–14')
  def test_seventeenth_lesson_rejected(self):
   self.malformed(lambda n,v:v['entries'].extend([copy.deepcopy(v['entries'][0])]*9) if n=='text-archive-unit.json' else None,'1–16')
  def test_sixteenth_lesson_accepted(self):
   original=registry._read;first=copy.deepcopy(original('unit.json'));last=copy.deepcopy(original('text-archive-unit.json'));second=copy.deepcopy(original('resource-unit.json'))
   last['entries']+=first['entries'][1:]+second['entries'][:1];first['entries']=first['entries'][:1];second['entries']=second['entries'][1:]
   registry._bundle.cache_clear();values={'unit.json':first,'text-archive-unit.json':last,'resource-unit.json':second}
-  with patch.object(registry,'_read',side_effect=lambda n:copy.deepcopy(values.get(n,original(n)))):self.assertEqual(len(registry.entries()),102)
+  with patch.object(registry,'_read',side_effect=lambda n:copy.deepcopy(values.get(n,original(n)))):self.assertEqual(len(registry.entries()),120)
  def test_default_retained_and_unrelated_limits(self):
   original=json.loads(resource('image-catalog.json'))
   for field in ('lessons','default_images','default_lessons'):

@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-foundation-locale-persistence",
+  "content_version": "1.0.0",
+  "title": "Make a guest locale default reversible",
+  "goal": "Distinguish per-command settings from a new guest login default; apply and restore one documented locale policy.",
+  "challenge": "Correct one prepared default/category inconsistency and prove new-session versus existing-shell behavior. Retain actual outputs/statuses and preserve originals; report reasoning through self-review, not a score.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-locale-persistence.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-locale-persistence.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+      "explanation": "Record this unique guest-only workspace. On Resume re-establish the recorded path/definitions; never overwrite another exercise.",
+      "expected": "Private learner-owned700 directory and observed1GiB free admission."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/locale-before.sha\" && fresh \"$w/shell-before.txt\" && test \"$(readlink /etc/default/locale)\" = ../locale.conf && test -f /etc/locale.conf && test ! -L /etc/locale.conf && test \"$(stat -c %U:%G:%a:%h /etc/locale.conf)\" = root:root:644:1 || return 19; rw=$(sudo mktemp -d /var/tmp/ll-locale.XXXXXX) || return 19; case \"$rw\" in /var/tmp/ll-locale.??????) ;; *) return 19;; esac; sudo test ! -e \"$rw/before\" && sudo test ! -L \"$rw/before\" && sudo cp -p /etc/locale.conf \"$rw/before\" && sudo sha256sum \"$rw/before\" > \"$w/snapshot-before.sha\" && sha256sum /etc/locale.conf > locale-before.sha && locale > shell-before.txt && printf \"Recorded workspace: %s\\nRoot snapshot: %s\\n\" \"$w\" \"$rw\"; }; foundation_step",
+      "explanation": "Write down both exact paths for the fresh login. Preserve the resolved regular target, not an accidentally replaced /etc/default/locale symlink.",
+      "expected": "Root-only original snapshot and unchanged parent environment."
+    },
+    {
+      "command": "here && fresh \"$w/locale-change.sha\" && fresh \"$w/shell-after.txt\" && sha256sum -c locale-before.sha && test \"$(readlink /etc/default/locale)\" = ../locale.conf && test \"$(stat -c %U:%G:%a:%h /etc/locale.conf)\" = root:root:644:1 && sudo /usr/sbin/update-locale --reset LANG=de_DE.UTF-8 && sha256sum /etc/locale.conf > locale-change.sha && grep -Fx LANG=de_DE.UTF-8 /etc/locale.conf && locale > shell-after.txt && cmp shell-before.txt shell-after.txt",
+      "explanation": "Change only the approved guest locale default. update-locale writes an unquoted LANG line; this does not modify the already-running shell.",
+      "expected": "Changed default bytes, unchanged current shell."
+    },
+    {
+      "command": "exit",
+      "explanation": "Log out of only the learner guest console. Getty logs learner in again automatically; this is a new login, not a password/PAM change. Re-enter the recorded w/rw paths and here/fresh/regular definitions before continuing.",
+      "expected": "Fresh console login, LANG=de_DE.UTF-8 and LC_ALL unset."
+    },
+    {
+      "command": "foundation_step() { case \"$rw\" in /var/tmp/ll-locale.??????) ;; *) return 19;; esac; test \"$(sudo realpath -e \"$rw\")\" = \"$rw\" && test \"$(sudo stat -c %U:%G:%a \"$rw\")\" = root:root:700 && sudo sha256sum -c \"$w/snapshot-before.sha\" && here && test \"$LANG\" = de_DE.UTF-8 && test -z \"${LC_ALL-}\" && test \"$(date -d \"2026-01-01 UTC\" +%A)\" = Donnerstag && sha256sum -c locale-change.sha && test \"$(readlink /etc/default/locale)\" = ../locale.conf && test \"$(stat -c %U:%G:%a:%h /etc/locale.conf)\" = root:root:644:1 && sudo test -f \"$rw/before\" && sudo test ! -L \"$rw/before\" && test \"$(sudo stat -c %U:%G:%a:%h \"$rw/before\")\" = root:root:644:1 || return 19; sudo cp -- \"$rw/before\" /etc/locale.conf && sha256sum -c locale-before.sha && test \"$(readlink /etc/default/locale)\" = ../locale.conf; }; foundation_step",
+      "explanation": "Verify actual new-login values before byte-exact rollback. Refuse unexpected target/snapshot changes. Exit once more to observe the original default; retained paths remain evidence.",
+      "expected": "Original bytes/mode/link restored; a later login uses original locale."
+    }
+  ],
+  "hints": [
+    "Editing LANG in the current shell is not persistent; LC_ALL can conceal the changed default.",
+    "Choose command scope deliberately; compare known bytes and actual statuses, not only a successful-looking display.",
+    "Retain before evidence; refuse collisions and restore exact policy state before leaving. Guest root can bypass guest-side guards."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s actual observations and retained an incorrect or incomplete case.",
+    "I preserved originals and can explain the reasoning and limitations; this records self-review, not automatic assessment.",
+    "I restored any changed default/zone and retained the exact workspace without touching unrelated files."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 107.3 locale configuration; 105.1 environment: reinforcement. No complete-objective coverage or endorsement."
+}

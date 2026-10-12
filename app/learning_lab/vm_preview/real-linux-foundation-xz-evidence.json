@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-foundation-xz-evidence",
+  "content_version": "1.0.0",
+  "title": "Inspect an xz stream and recover exact bytes",
+  "goal": "Practice xz/xzcat, bounded memory/threads, container validation versus independent content checks.",
+  "challenge": "Select and recover the correct small stream, prove independent expected bytes and retain the rejected candidate. Retain actual outputs/statuses and preserve originals; report reasoning through self-review, not a score.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/foundation-xz-evidence.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/foundation-xz-evidence.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here && test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; regular() { here && test \"${1%/*}\" = \"$w\" && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%a:%h \"$1\")\" = learner:600:1; }; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && pwd",
+      "explanation": "Record this unique guest-only workspace. On Resume re-establish the recorded path/definitions; never overwrite another exercise.",
+      "expected": "Private learner-owned700 directory and observed1GiB free admission."
+    },
+    {
+      "command": "here && fresh \"$w/source.txt\" && fresh \"$w/source.sha\" && printf \"caf\\303\\251\\n\" > source.txt && sha256sum source.txt > source.sha && test \"$(wc -c < source.txt)\" -le 65536 && fresh \"$w/good.xz\" && timeout -k 1s 10s xz --threads=1 --memlimit-compress=64MiB -1 -c source.txt > good.xz && timeout -k 1s 10s xz --list good.xz && timeout -k 1s 10s xz --memlimit-decompress=64MiB -t good.xz",
+      "explanation": "Keep the source using -c; one worker and small fixed input. Container integrity is neither authentication nor correct-content proof.",
+      "expected": "Bounded xz creation/list/test; original retained."
+    },
+    {
+      "command": "here && fresh \"$w/restored.txt\" && timeout -k 1s 10s xzcat --memlimit-decompress=64MiB good.xz > restored.txt && cmp source.txt restored.txt && sha256sum -c source.sha && fresh \"$w/truncated.xz\" && head -c 12 good.xz > truncated.xz",
+      "explanation": "Recover separately and compare independent original bytes; create only a tiny private damaged candidate.",
+      "expected": "Exact recovery and retained 12-byte rejected candidate."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/damaged.log\" || return 19; if timeout -k 1s 10s xz --memlimit-decompress=64MiB -t truncated.xz > damaged.log 2>&1; then return 1; else test $? = 1 && test -s damaged.log && sha256sum -c source.sha; fi; }; foundation_step",
+      "explanation": "Require actual damage refusal, not any earlier guard failure. Do not overwrite source or retained stream.",
+      "expected": "Container test rejects known truncated copy."
+    },
+    {
+      "command": "foundation_step() { here && fresh \"$w/low-partial.xz\" && fresh \"$w/low.log\" || return 19; if timeout -k 1s 10s xz --threads=1 --memlimit-compress=1MiB --no-adjust -9 -c source.txt > low-partial.xz 2> low.log; then return 1; else test $? = 1 && grep -F \"Memory usage limit is too low for the given filter setup.\" low.log && grep -F \"The limit is 1 MiB.\" low.log && sha256sum -c source.sha; fi; }; foundation_step",
+      "explanation": "This deliberate refusal tests requested resource setup without allocating the reported674MiB. --no-adjust prevents silent preset reduction.",
+      "expected": "Actual low-memory refusal; unchanged source."
+    }
+  ],
+  "hints": [
+    "xz -t success is not authenticity or the correct report; avoid default source deletion and force overwrite.",
+    "Choose command scope deliberately; compare known bytes and actual statuses, not only a successful-looking display.",
+    "Retain before evidence; refuse collisions and restore exact policy state before leaving. Guest root can bypass guest-side guards."
+  ],
+  "review": [
+    "I demonstrated the selected mode’s actual observations and retained an incorrect or incomplete case.",
+    "I preserved originals and can explain the reasoning and limitations; this records self-review, not automatic assessment.",
+    "I restored any changed default/zone and retained the exact workspace without touching unrelated files."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial103.2 xzcat and103.3 xz/unxz; limited LPIC-2 activev4.5 206.2 compression reinforcement only. Container validation is not correct-content/authenticity proof; no complete-objective credit."
+}

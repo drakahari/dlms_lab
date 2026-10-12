@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "status": "local-development-candidates-not-public-releases",
+  "recovery_root": "/home/drak/.local/state/omarchy-learning-lab/recovery/platform-expansion-20261012T020417739056Z",
+  "evidence": {
+    "foundation-source-closure.json": {
+      "sha256": "6298caddbe239ee5ceb7225f50d55e72a76c208789223b125135e295b7ec3f3e",
+      "bytes": 6731
+    },
+    "retained-debian-source-verification.json": {
+      "sha256": "c659f760b9d1d36cd9a0f87134b3546a9163c9f090365cd4a5b47e120da15fa6",
+      "bytes": 225
+    },
+    "alma-final-verified-binaries.json": {
+      "sha256": "521a27601d5f2e7fad2e02daacfdb25b08397161caa0fd9afc0c29a85304689a",
+      "bytes": 4678469
+    },
+    "alma-final-verified-sources.json": {
+      "sha256": "56fa8b96131e65bed2b9b772fc49c208f9b653e5130e8d20a29b82fe01c3756b",
+      "bytes": 941080
+    },
+    "alma-final-frozen-builder-closure.json": {
+      "sha256": "ab960eeac61f2ccd16ab062510c300620a48daba684124600c421542636a14dc",
+      "bytes": 95100
+    },
+    "alma-final-verified-builder-sources.json": {
+      "sha256": "ef544a69913ace66ec3cd5e693982adca773c1d7957ab267cc17624e3a8d2a60",
+      "bytes": 1038696
+    },
+    "alma-final-notice-inventory.json": {
+      "sha256": "d8f52805f1bbdeea3eb705fb016ea0e8fdf36a2d438d3b09d1f41174297fa743",
+      "bytes": 208914
+    },
+    "debian13-foundation-admin-local-v1": {
+      "raw_sha256": "a183a7db3d05f2a9ed30e5dcc69e93cb0a2a2c899106f013c21ddc224bed3669",
+      "logical_bytes": 17179869184,
+      "package_count": 206,
+      "inventory_sha256": "fd157624399f0eb707b891487fc88c0d402c054607ab1114261eb53bcf6eaa6a",
+      "inventory_source": "app/tools/vm_image/foundation/expected-packages.tsv",
+      "normal_boot_evidence": "debian-normal-boot-20261012T034304Z"
+    },
+    "almalinux9-rpm-admin-local-v1": {
+      "raw_sha256": "12ed328b338f3bd2d045ab9559199441f1fd2bac28c9875599829a741b3a7e9b",
+      "logical_bytes": 17179869184,
+      "package_count": 190,
+      "inventory_sha256": "13ebe948ec26ff3129a1c4a07f565edd0315f1c5ce9eeb5aa79d38afb9b75747",
+      "inventory_source": "app/tools/vm_image/rpm/expected-learner.tsv",
+      "normal_boot_evidence": "alma-normal-boot-20261012T134256Z"
+    },
+    "supplemental-alma-final-policy-20261012/evidence.json": {
+      "sha256": "4ddec5203ddefe6712963d0c98557a973235610e2a6517edf7cad9d0a5a0dc19",
+      "bytes": 1596
+    }
+  },
+  "production_signing_keys": 0,
+  "production_releases": 0,
+  "remaining_obligations": [
+    "Qt/ICU review and recorded signing-key warning remain open",
+    "Alma package-specific embedded-component and notice review:40 binary provider gaps",
+    "Public release image repeatability, licensing/source hosting and independent signing trust not established"
+  ]
+}

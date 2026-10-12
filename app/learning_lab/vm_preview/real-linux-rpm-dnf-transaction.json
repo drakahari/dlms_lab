@@ -1,0 +1,45 @@
+{
+  "id": "real-linux-rpm-dnf-transaction",
+  "content_version": "1.0.0",
+  "title": "Resolve the offline fixture dependency explicitly",
+  "goal": "Install only the two approved fixture identities using explicit local files and a checked DNF plan.",
+  "challenge": "Reject the named unsupported helper operation unapproved and retain its specific refusal. Review and apply only the compatible pair from the fixed helper; verify actual installed identities/versions and the exact unprivileged report. Compare unrelated package state and perform exact cleanup. This is not arbitrary DNF solver or repository practice.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/rpm-dnf-transaction.XXXXXX\") && cd \"$w\" && umask 077; here() { case \"$w\" in \"$HOME\"/rpm-dnf-transaction.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(pwd -P)\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700; }; fresh() { here || return 19; test \"${1%/*}\" = \"$w\" && test ! -e \"$1\" && test ! -L \"$1\"; }; cfg() { case \"$1\" in /etc/learning-lab-rpm/report.conf|/etc/learning-lab-rpm/report.conf.rpmnew|/etc/learning-lab-rpm/report.conf.rpmsave) ;; *) return 19;; esac; here && test \"$(realpath -e /etc/learning-lab-rpm)\" = /etc/learning-lab-rpm && test \"$(stat -c %U:%G:%a /etc/learning-lab-rpm)\" = root:root:755 && test -f \"$1\" && test ! -L \"$1\" && test \"$(stat -c %U:%G:%a:%h \"$1\")\" = root:root:644:1; }; keepcfg() { cfg \"$1\" && fresh \"$w/$2\" && cp -- \"$1\" \"$w/$2\" && cmp -- \"$1\" \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1; }; releasecfg() { cfg \"$1\" && test \"${2##*/}\" = \"$2\" && test -f \"$w/$2\" && test ! -L \"$w/$2\" && test \"$(stat -c %U:%a:%h \"$w/$2\")\" = learner:600:1 && cmp -- \"$1\" \"$w/$2\" && sudo rm -- \"$1\"; }; h=/usr/local/sbin/ll-rpm-fixture; f=/opt/learning-lab/rpm-fixtures; here && test \"$(df -B1 --output=avail / | tail -1)\" -ge 1073741824 && fresh \"$w/before.json\" && sudo \"$h\" status > before.json && grep -F '\"fixtures\": {}' before.json && fresh \"$w/before-raw.tsv\" && timeout -k 1s 20s sudo rpm -qa --qf '%{NAME}\\t%{EPOCHNUM}\\t%{VERSION}\\t%{RELEASE}\\t%{ARCH}\\n' > before-raw.tsv && fresh \"$w/before.tsv\" && LC_ALL=C sort before-raw.tsv > before.tsv && pwd",
+      "explanation": "Record this private path and shell definitions. A guard failure stops the exercise; do not continue over existing fixtures. Resume requires recorded path/definitions, not replaying setup.",
+      "expected": "Fixture-free package baseline retained without masking query failure."
+    },
+    {
+      "command": "rpm_step() { here && fresh \"$w/unapproved-operation.txt\" || return 19; if sudo \"$h\" preview unapproved > unapproved-operation.txt 2>&1; then return 1; else test $? = 1 && grep -F \"Supported operations:\" unapproved-operation.txt; fi; }; rpm_step",
+      "explanation": "The helper rejects an unsupported operation before application. This is not the developer-only resolved foreign-package test.",
+      "expected": "Explicit operation refusal, unchanged fixture state."
+    },
+    {
+      "command": "here && sudo \"$h\" preview pair",
+      "explanation": "Inspect names, versions, architectures and actions. File names and --no-download alone do not bound solver effects.",
+      "expected": "Exactly the two declared installations."
+    },
+    {
+      "command": "here && sudo \"$h\" apply pair",
+      "explanation": "Type APPLY only after reviewing the displayed plan; another answer cancels. One DNF transaction object is validated and applied.",
+      "expected": "Exact pair installed without unrelated changes or downloads."
+    },
+    {
+      "command": "here && fresh \"$w/report.txt\" && fresh \"$w/expected-report.txt\" && rpm -q ll-rpm-data ll-rpm-report && /usr/bin/ll-rpm-report > report.txt && printf \"%s\\n\" \"Learning Lab package report\" header=inventory-2.0 \"Learning Lab offline inventory\" fixture_data_version=2.0 items=3 > expected-report.txt && cmp expected-report.txt report.txt && test \"$(stat -c %U:%G:%a:%h /usr/share/learning-lab-rpm/data.txt)\" = root:root:644:1 && cat report.txt",
+      "explanation": "Verify actual unprivileged execution, full expected bytes and payload ownership. A solver exit status is insufficient.",
+      "expected": "Data 2.0/report 1.0, exactly the expected report readable by learner."
+    }
+  ],
+  "hints": [
+    "No-download/repo disabling alone is not a boundary; unprivileged preview need not match privileged execution.",
+    "Read supported helper operations and the exact plan before APPLY. Unsigned fixture digests do not prove publisher authenticity.",
+    "Verify versions, payload/config bytes and actual learner access; package exit status alone is insufficient."
+  ],
+  "review": [
+    "I retained the requested actual output, statuses, versions and byte/access evidence, including the incorrect case.",
+    "I met the selected mode’s outcomes and can explain the limitations. Completion records self-review, not a score or verified assessment.",
+    "I preserved originals and retained candidates, compared unrelated package state and completed only the exact cleanup."
+  ],
+  "coverage": "LPIC-1 active v5.0 partial 102.5 102.5 DNF awareness/dependency frontend; modern YUM compatibility limitation. DNF4 awareness, not original YUM, DNF5 or Zypper proficiency. No complete-objective or LPI endorsement claim."
+}

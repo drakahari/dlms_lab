@@ -1,3 +1,4 @@
+from platform_preservation import projection as platform_projection
 from foundation_preservation import NEW_IDS
 """Bounded scheduling unit, exact administrator routes and legacy compatibility.
 Metadata mocks here are not substitutes for the separate real guest access proof.
@@ -13,9 +14,9 @@ from scheduling_guest_fixtures import COMMANDS,UNIT
 
 class SchedulingUnitTests(unittest.TestCase):
  def test_exact_limits_nine_units_and_76_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(12,16,102))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8])
-  self.assertEqual(len(registry.entries()),102)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(14,16,120))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8,10,8])
+  self.assertEqual(len(registry.entries()),120)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def malformed(self,mutate,pattern):
   original=registry._read;reads=[]
@@ -27,10 +28,10 @@ class SchedulingUnitTests(unittest.TestCase):
   finally:registry._bundle.cache_clear()
   return reads
  def test_reject_77_before_last_unit_lesson_read(self):
-  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='operations-unit.json' else None,'102')
-  self.assertNotIn('real-linux-operations-accountfiles.json',reads)
+  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='rpm-unit.json' else None,'120')
+  self.assertNotIn('real-linux-rpm-inventory.json',reads)
  def test_reject_tenth_unit_before_resource_reads(self):
-  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–12')
+  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–14')
   self.assertEqual(reads,['units.json'])
  def test_reject_17_per_unit_and_oversized_guidance(self):
   self.malformed(lambda n,v:v['entries'].extend(v['entries']+[v['entries'][0]]) if n=='scheduling-unit.json' else None,'1–16')
@@ -51,7 +52,7 @@ class SchedulingUnitTests(unittest.TestCase):
  def test_original_44_lesson_controller_image_bytes(self):
   for name,h in PROTECTED.items():self.assertEqual(hashlib.sha256(projection(name,(registry.ROOT/name).read_bytes())).hexdigest(),h,name)
  def test_exact_catalog_projection(self):
-  c=json.loads(resource('image-catalog.json'));c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1'];new=set(COMMANDS)
+  c=json.loads(platform_projection('image-catalog.json', resource('image-catalog.json')));c['images']=[i for i in c['images'] if i['descriptor']['image_id']!='debian13-package-admin-local-v1'];new=set(COMMANDS)
   new |= {e['id'] for e in registry.catalog('linux-backup-safe-recovery')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-system-discovery-package-fundamentals')['entries']}
   new |= {e['id'] for e in registry.catalog('linux-storage-filesystems-mounts-safe-maintenance')['entries']}

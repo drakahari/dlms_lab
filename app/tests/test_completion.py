@@ -1,3 +1,4 @@
+from platform_preservation import projection as platform_projection
 """Current documentation parity and immutable accepted teaching contracts."""
 import hashlib
 import json
@@ -19,7 +20,7 @@ class CompletionTests(unittest.TestCase):
         self.assertEqual(len(collections), 8)
         self.assertEqual(sum(len(c['entries']) for c in collections), 42)
         self.assertEqual(len({e['scenario'].key for c in collections for e in c['entries']}), 38)
-        self.assertEqual((len(units()), len(entries())), (12, 102))
+        self.assertEqual((len(units()), len(entries())), (14, 120))
         guide = (ROOT / 'docs/learning-guide.md').read_text()
         self.assertIn('41 distinct simulator activities', guide)
         for c in collections:
@@ -71,7 +72,7 @@ class CompletionTests(unittest.TestCase):
         for path in paths:
             if path == 'app/learning_lab/qml/Main.qml':
                 from presentation_revision import MAIN_SHA256
-                self.assertEqual(hashlib.sha256((ROOT.parent/path).read_bytes()).hexdigest(), MAIN_SHA256)
+                self.assertEqual(hashlib.sha256(platform_projection("Main.qml", (ROOT.parent/path).read_bytes())).hexdigest(), MAIN_SHA256)
                 continue
             if path in ('app/learning_lab/vm_preview/registry.py', 'app/learning_lab/vm_preview/image_catalog.py', 'app/learning_lab/vm_preview/image-catalog.json', 'app/learning_lab/vm_preview/units.json'):
                 # New exact bounded capacity and catalog projection are independently
@@ -88,7 +89,7 @@ class CompletionTests(unittest.TestCase):
         qml = (ROOT / 'learning_lab/qml/Main.qml').read_text()
         self.assertIn('different content under the same identity/version', guide)
         self.assertIn('Networking labs use tasks', guide)
-        for message in ('diagnostic reasoning, forecasts', 'twelve units / 102 lessons',
+        for message in ('diagnostic reasoning, forecasts', 'fourteen units / 120 lessons',
                         'VM disks and sessions are excluded', 'not restore RAM or shell jobs'):
             self.assertIn(message, qml)
         self.assertNotIn('Optional · Manage a background job', qml)
