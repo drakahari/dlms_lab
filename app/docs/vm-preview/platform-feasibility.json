@@ -1,0 +1,163 @@
+{
+  "kind": "planning-only-disposable-guest-probe-evidence",
+  "baseline": "90035155ffcd704ec1d5bc5e9171a01beb7bb99d",
+  "local_date": "2026-10-11",
+  "utc_date": "2026-10-12",
+  "recovery_directory": "/home/drak/.local/state/omarchy-learning-lab/recovery/platform-plan-20261012T011629036827Z",
+  "run_directory": "/home/drak/.local/state/omarchy-learning-lab/recovery/platform-plan-20261012T011629036827Z/foundation-live-94publcz",
+  "result": "PASS: 18 checks across two sequential guests; no new lessons tested",
+  "probes": [
+    {
+      "lesson": "real-linux-textarchive-streams",
+      "result": "PASS",
+      "pin": {
+        "backend": "offline-qemu-preview-1",
+        "image": {
+          "image_id": "debian13-jobs-local-v1",
+          "sha256": "a9bd127cc641ecf877896d86eea74e7e528d584158f0b12374c136cd3ea46d3d",
+          "bytes": 17179869184,
+          "format": "raw",
+          "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+          "packages_sha256": "b7fa4bd31fe10f95c7d3b6ea81de07d3099ba039813804260a618ca125a2367d",
+          "version": 1,
+          "prepared": true,
+          "trust": "Local reviewed build only; not a signed public release",
+          "recipe_version": 1
+        },
+        "lesson_sha256": "010bc2cd6a0fdb9ed29d0ec41e995941976fd8cfbbb96a61f5f6c3e0283fc71f"
+      },
+      "generation": "f1d26f9e-1d38-4153-a67b-10be6da8d3de",
+      "session": "47070504-9126-489c-9c63-ab27fd144229",
+      "seconds": 398.91
+    },
+    {
+      "lesson": "real-linux-operations-journalcursor",
+      "result": "PASS",
+      "pin": {
+        "backend": "offline-qemu-preview-1",
+        "image": {
+          "image_id": "debian13-admin-local-v1",
+          "sha256": "f956d5c98848296f6887235c742ee4cc44ed5981acd0d2efd0a593b16d8a578f",
+          "bytes": 17179869184,
+          "format": "raw",
+          "source_iso_sha256": "347b6c67a3cc0b7ddb60b178f683470c4e2b7ac426c996d9337a2ff36c1a32d2",
+          "packages_sha256": "22c40a10a16f763fd74749bd36da66547f8619fd6970172cc25da474b43f462b",
+          "version": 1,
+          "prepared": true,
+          "trust": "Local reviewed administrator build only; not a signed public release",
+          "recipe_version": 1
+        },
+        "lesson_sha256": "aa6270d01ba09d81f5a3ccdf2087bb7d5e9c58dc83c754cd0abadf20b7a2c01e"
+      },
+      "generation": "f829e01d-e3bb-40a2-8862-bc0cc4341967",
+      "session": "356daf82-c886-4dd9-91af-8e880ccd19ec",
+      "seconds": 398.74
+    }
+  ],
+  "checks": [
+    "planning tools real-linux-textarchive-streams",
+    "planning versions real-linux-textarchive-streams",
+    "planning locale real-linux-textarchive-streams",
+    "planning encoding real-linux-textarchive-streams",
+    "planning time real-linux-textarchive-streams",
+    "planning read-only-policy real-linux-textarchive-streams",
+    "exact temporary cleanup real-linux-textarchive-streams",
+    "normal Stop real-linux-textarchive-streams",
+    "unchanged read-only base real-linux-textarchive-streams",
+    "planning tools real-linux-operations-journalcursor",
+    "planning versions real-linux-operations-journalcursor",
+    "planning locale real-linux-operations-journalcursor",
+    "planning encoding real-linux-operations-journalcursor",
+    "planning time real-linux-operations-journalcursor",
+    "planning read-only-policy real-linux-operations-journalcursor",
+    "exact temporary cleanup real-linux-operations-journalcursor",
+    "normal Stop real-linux-operations-journalcursor",
+    "unchanged read-only base real-linux-operations-journalcursor"
+  ],
+  "final_state": {
+    "task_owned_guests": "cleanly stopped through unchanged controller",
+    "host_qemu_processes_after": [],
+    "shared_coordination": "stopped; no records removed or bypassed"
+  },
+  "evidence_hashes": {
+    "foundation-live-94publcz/report.json": "7b0685a6bc74872ef901316cf542a8cf7fc4ebf50ee065a1bee98fdea88cedd1",
+    "foundation-live-94publcz/events.jsonl": "a487aab0e54ee471325b45f4b8a067adcc259a9dcbcb08baeca97ec405b4a968",
+    "platform_probe.py": "4901cbc0a3f54ca0a45d02c4356b1a056b360e8b495c0b63cc47b2eeb58687b6",
+    "probe_body.py": "8b0985393981fa652894e131d403aaae8e1d5a6f12387b73af2cb6c48fe9846b",
+    "cleanup-verification.json": "da9bd1f0751294df920d90b0c90846907879bfd01e331032639fb0a686e00b47",
+    "capacity-projection.json": "5cf63a3b98cb234128582689069410b01befbba458941914903a267f92d5d7c9",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-encoding-txt.png": "fa34feb72ab9055e22b6ec6a20441b58b90f81654a9c42c0a35f2ce75af44522",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-locale-txt.png": "927f462cac69a6e3ac2423fdb7b58bdfd2a961a9c3858cc4b508635b929a38b1",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-policy-txt.png": "63256e297ea296c830b71748cd8863586b54c0bb2ee395e86c5d24f9e0154ec0",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-time-txt.png": "b17c4ba6c0b37852fd11b73c6a2f417335f380edc5e6011472fa4f8ae0999642",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-tools-txt-1.png": "29379a83d69c2c4a830ad79c68b02ebe2da8b43239a667841a03675d1bbfae71",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-tools-txt-19.png": "938041d6efd923aab873b5611d28d8e69436f33b784b078aa4896b0921dcb418",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-versions-txt.png": "9952771531bb850dbe85ebbb3e16d127f66e3b7a8586934f2e86b64265ce74ca",
+    "foundation-live-94publcz/real-linux-textarchive-streams-encoding-txt.png": "45dd3899b590dd67b0ab58c36e0a4f9e5f927b5ec7ca1eb920edc396f54ec02f",
+    "foundation-live-94publcz/real-linux-textarchive-streams-locale-txt.png": "d586706b2ca0d7e84a65a9e95d7c60d5fa588b13e9652b7923453c9c54160177",
+    "foundation-live-94publcz/real-linux-textarchive-streams-policy-txt.png": "1ab763ffe91241d1134755e05bd14ce715f8c5c03ed3591ec86d533db81c4bbe",
+    "foundation-live-94publcz/real-linux-textarchive-streams-time-txt.png": "e0590249203fc2154bab1e683da13f3d77c0bef56fc591ec8552714c6136c854",
+    "foundation-live-94publcz/real-linux-textarchive-streams-tools-txt-1.png": "16957d558ded1694b5661969923e401a810f065ef64a0f0b9552944536d80d63",
+    "foundation-live-94publcz/real-linux-textarchive-streams-tools-txt-19.png": "f64c946148f0ddf522e1d6d548c3f575e06b192d5c0a5a984030cd2542c716e0",
+    "foundation-live-94publcz/real-linux-textarchive-streams-versions-txt.png": "7941893b3f404949ef9c2325a6cbf6184886a8c27fec5b0af21eadd766071333",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-encoding-txt.png.txt": "a0f5863825e4488f07fa0606bf46003cd0d5dc08c02b06528fa51253d49336a8",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-locale-txt.png.txt": "e2263f708c0f89488950b2db7fd68ebbbff827f7a30f0a64f94df4178730b075",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-policy-txt.png.txt": "e0f5e75be9f28a823af05bf74e1be647047a90389feb3294ccea89a42d15ffa5",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-time-txt.png.txt": "6ea1c764b0fa9570a4600c1a0f394b59ae80f56fdf94a192bae0b06ad8d74d2b",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-tools-txt-1.png.txt": "d509157c2fa68c81bff5d4db560de3cf1b1eab30fa5a9dc9c03975b94e7fde67",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-tools-txt-19.png.txt": "9fd082e7695e2b57c981cdadc81ea8a4d66bec11ad4133167d664d3d06de142f",
+    "foundation-live-94publcz/real-linux-operations-journalcursor-versions-txt.png.txt": "26c77f5a2cc1a746943836ed251c27cc764f5f31255cd9e2d2c9a88bd72cf31e",
+    "foundation-live-94publcz/real-linux-textarchive-streams-encoding-txt.png.txt": "9d4888168159ffb9d785eeda3543d63fdf2f337be4cd3f19d72c4042d5938c6b",
+    "foundation-live-94publcz/real-linux-textarchive-streams-locale-txt.png.txt": "3c158c094c8d517d31480bf2862e2a3f9c41e3483071e7fee2b6ef1b4d0f5b5d",
+    "foundation-live-94publcz/real-linux-textarchive-streams-policy-txt.png.txt": "10245434b54020cbbc1362e884ac7e47e366021dc9393633ba4562eaf975942d",
+    "foundation-live-94publcz/real-linux-textarchive-streams-time-txt.png.txt": "7212d8542b6267395301df3ddeac9a47a89cea35da88e857f9859b1da06e5cd6",
+    "foundation-live-94publcz/real-linux-textarchive-streams-tools-txt-1.png.txt": "854149fa2eb3f04138f400c88a65d4c94985aa16a50d4259ebba846156e87cd2",
+    "foundation-live-94publcz/real-linux-textarchive-streams-tools-txt-19.png.txt": "fd47058ce4699515853730db51b1defb2f14a1234f6c34524122433b96e51e92",
+    "foundation-live-94publcz/real-linux-textarchive-streams-versions-txt.png.txt": "f417f5844069564a206a5311d4b39e8ee20ad1fb4f5127a99658819360e2b3d8",
+    "final-base-preservation.json": "d1d1739964a7d0cb37880d1d4996e74e01f8d6168d5751e2b299f7bebc9e724f",
+    "planning-preservation-check.json": "a27418ea3fb56b08864f17936b5fbadb4d674358cce0767a1313db5984700b6c",
+    "lsb-provider-inspection.json": "eaa4f6370e16750d2f7c052114b2e5fbf977a509b31bb91c7d1462c8d48ed3cc",
+    "focused-tests.log": "c3d24b190147ce2618c82ff96d51fc33fcd43574c60b8631e81ac6f929782767"
+  },
+  "official_metadata_hashes": {
+    "alma-app.txt": "19d08618c8bbbcdeddb4718c9ca1867ad15788c5cb706b2bad8f263782a531f2",
+    "alma-base.txt": "562680d297e762c55499573b29977e713369d6d602b5fffbeb69a1fd4c1260b2",
+    "alma-isos.txt": "1354535d18c13687fe0f0855c7c08d71043e2948ea33e222b9092db481a4e6ab",
+    "alma-minimal-iso-manifest.txt": "ded6a4e11b17e4a8466288aa03745bfa4dd928de4a0d04f5037eb9079deabdeb",
+    "debian-at-copyright.txt": "d8717d88757af438b8ac94fbc28aac9207b8b2cb82837609471f0d224476e846",
+    "debian-xz-copyright.txt": "d755588e2d89d7845d0d4e718ac45d49ae9fc53cec4540af105963c20598f9d7"
+  },
+  "limitations": [
+    "Native QMP-driven developer automation is not physical-keyboard or accessibility acceptance.",
+    "Only read-only queries and bounded temporary files were exercised. New packages, non-English locale generation, persistent timezone/locale policy, at jobs and RPM behavior remain future gates.",
+    "Inventory source-only residual dpkg rows are not proof that a binary is installed. Tool lookup and actual execution are distinguished.",
+    "No full regression, new wheel or repeated legacy acceptance suite was required for planning-only documentation."
+  ],
+  "retained_failures": [
+    "Unsupported cp --reflink=always/--sparse=always combination refused before copy; corrected to sparse=auto.",
+    "Controller correctly rejected newly created 0755 private runtime root before guest launch; only new disposable directories changed to 0700. No existing permissions/coordination changed."
+  ],
+  "official_metadata_directory": "/home/drak/.local/state/omarchy-learning-lab/recovery/platform-plan-20261012T011629036827Z/official-metadata",
+  "probed_tool_count": 33,
+  "focused_tests": {
+    "count": 25,
+    "seconds": 4.043,
+    "result": "PASS",
+    "scope": "Existing catalog and foundation capacity/preservation/default-routing checks, isolated fixtures; no guest or host learner-command execution"
+  },
+  "independent_review": {
+    "result": "READY for documentation-only commit",
+    "corrections": [
+      "33 actual tools",
+      "explicit official metadata base directory",
+      "existing runtime code versus disposable runtime state",
+      "fixed-instant time equivalence and live elapsed-time continuity"
+    ],
+    "remaining_implementation_gates": [
+      "Authenticated exact new-package and RPM builder closure",
+      "Actual new guest policy/services/solver behavior",
+      "Final catalog serialization budget",
+      "Every proposed lesson mode and installed-wheel/native acceptance after implementation"
+    ]
+  }
+}

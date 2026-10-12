@@ -197,3 +197,21 @@ separate decisions. No routine owner walkthrough is a completion gate.
 ## Third completion-family evidence update
 
 [Accounts, Scheduling, Logging & Recovery](vm-preview/operations-unit.md) adds eight lessons for twelve units / 102 lessons. Active objective versions and whole-objective rollups remain unchanged: bounded additions widen partial107.1/108.2 practice;101.3 gains related wall-tool preparation, not advance-event notification; scheduler/access/recovery are reinforcement. No authentication-policy change, at, automatic guest assessment or public-release readiness claim. Earlier counts remain historical context.
+
+## Next platform expansion — proposal only
+
+The [reviewed platform approval bundle](lpic-platform-expansion-plan.md) and
+[detailed lesson matrix](lpic-platform-expansion-plan.json) propose a fresh
+Debian locale/encoding/time/at/xz unit and an independent AlmaLinux RPM/DNF
+unit: 16–18 distinct outcomes, at most14 units/120 lessons with unchanged
+per-unit and parser bounds. [Actual disposable probes](vm-preview/platform-feasibility.md)
+confirmed existing locale/encoding/time inspection support and missing xz/at/RPM
+tools. Debian13 deliberately removed mesg/write; those are not silently restored.
+
+This is not authorization or delivered coverage. The shipped baseline remains
+12 units/102 lessons and the comprehensive audit's active-version rollups stay
+unchanged. Image/package/service/guest-policy and bounded capacity decisions
+require owner approval before implementation. No controller, profile, backup,
+network or automatic assessment change is proposed. LPIC-2 source builds,
+maintenance notifications, boot/kernel and authentic network administration
+remain separate later work.

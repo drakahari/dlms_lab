@@ -1,0 +1,398 @@
+{
+  "kind": "planning only; not runtime lesson data",
+  "baseline": "90035155ffcd704ec1d5bc5e9171a01beb7bb99d",
+  "verified_local_date": "2026-10-11",
+  "utc_date": "2026-10-12",
+  "active_objectives": {
+    "101-500": "5.0",
+    "102-500": "5.0",
+    "201-450": "4.5.0",
+    "202-450": "4.5.0"
+  },
+  "draft_separate": "LPIC-2 v5.0.0 remains draft; checked sources did not announce a dated transition",
+  "recommended_range": {
+    "units": 2,
+    "new_lessons_min": 16,
+    "new_lessons_max": 18
+  },
+  "recommended_scope": {
+    "units": 14,
+    "new_lessons": 18,
+    "total_lessons": 120,
+    "per_unit": 16,
+    "retained_lesson_revisions": 120,
+    "default_lessons": 120,
+    "default_images": 120,
+    "per_image_compatible_revisions": 64,
+    "catalog_bytes": 65536,
+    "json_nodes": 8192,
+    "json_depth": 32
+  },
+  "capacity_projection": {
+    "current": {
+      "pretty_bytes": 62885,
+      "compact_bytes": 52087,
+      "lessons": 102
+    },
+    "projection": {
+      "new_units": 2,
+      "new_lessons": 18,
+      "units": 14,
+      "total": 120,
+      "pretty_bytes": 74835,
+      "compact_bytes": 61998,
+      "compact_headroom": 3538,
+      "nodes": 1323,
+      "depth": 5,
+      "per_image_new": [
+        10,
+        8
+      ]
+    },
+    "note": "Synthetic descriptors/revision hashes are planning-only, never registered. Final resource names/descriptors must be remeasured before publication.",
+    "proposed_ids": {
+      "debian13-foundation-admin-local-v1": [
+        "real-linux-foundation-locale-scope",
+        "real-linux-foundation-locale-formats",
+        "real-linux-foundation-encoding",
+        "real-linux-foundation-locale-persistence",
+        "real-linux-foundation-timezones",
+        "real-linux-foundation-xz-evidence",
+        "real-linux-foundation-at-queue",
+        "real-linux-foundation-at-execution",
+        "real-linux-foundation-at-access",
+        "real-linux-foundation-localization-handover"
+      ],
+      "almalinux9-rpm-admin-local-v1": [
+        "real-linux-rpm-inventory",
+        "real-linux-rpm-archive",
+        "real-linux-rpm-dependencies",
+        "real-linux-rpm-dnf-transaction",
+        "real-linux-rpm-upgrade",
+        "real-linux-rpm-integrity",
+        "real-linux-rpm-remove",
+        "real-linux-rpm-recovery"
+      ]
+    }
+  },
+  "units": [
+    {
+      "proposed_unit_id": "linux-localization-offline-jobs",
+      "image": "debian13-foundation-admin-local-v1",
+      "lessons": [
+        {
+          "proposed_id": "real-linux-foundation-locale-scope",
+          "title": "Choose the locale scope deliberately",
+          "outcome": "Separate LANG, category overrides and LC_ALL; make one command deterministic without changing a login default.",
+          "objective_subtopics": [
+            "107.3 locale environment",
+            "103.1 variables: reinforcement"
+          ],
+          "prerequisites": "Local Shell startup/quoting; Text Archive join",
+          "learn": "Inspect locale/charmap; compare controlled child environments with env; demonstrate LC_ALL precedence and remove it.",
+          "challenge": "Repair an inherited category override in an isolated shell; show that the parent and system default remain unchanged.",
+          "negative_case": "LANG alone does not override LC_ALL; an unavailable locale is not a valid localized result.",
+          "expected_evidence": "Before/child/parent locale output, statuses, byte-exact system-default snapshot, explanation of category precedence.",
+          "cleanup": "Exit only the practice child shell; delete enumerated private report files.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-locale-formats",
+          "title": "Compare localized formats without corrupting data",
+          "outcome": "Use prepared de_DE.UTF-8 and en_US.UTF-8 for numeric/time categories, inspect monetary locale metadata and explicit C sorting.",
+          "objective_subtopics": [
+            "107.3 non-English localization and LC_*",
+            "103.2 sorting: reinforcement"
+          ],
+          "prerequisites": "Locale scope",
+          "learn": "Read locale -k decimal_point and date formats; compare actual category outputs; keep machine TSV processing explicitly C.",
+          "challenge": "Choose display categories and machine-processing locale independently for a supplied small dataset.",
+          "negative_case": "Do not assume a localized decimal comma is a TSV separator or that every locale orders every sample differently.",
+          "expected_evidence": "Actual locale availability, category output, retained byte-level input/output and tested sorting interpretation.",
+          "cleanup": "Unset child overrides; retain originals; remove only exact private outputs.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-encoding",
+          "title": "Convert text strictly and preserve a recovery path",
+          "outcome": "Distinguish UTF-8 bytes/characters from ASCII and ISO-8859-1; detect invalid or unrepresentable input.",
+          "objective_subtopics": [
+            "107.3 iconv/encoding terms"
+          ],
+          "prerequisites": "Quoting, wc, cmp, checksums",
+          "learn": "Use tiny manually entered or octal-byte fixtures; strict iconv to a separate destination; compare expected bytes and round-trip; capture a failure and partial destination.",
+          "challenge": "Identify the correct source encoding, recover an independently specified payload, and explain a rejected conversion.",
+          "negative_case": "Wrong declared source can yield valid but wrong text; //IGNORE/transliteration are not permitted repairs; nonzero status may leave partial output.",
+          "expected_evidence": "Input hashes, byte counts/od, status/error, independent expected bytes and successful round-trip where representable.",
+          "cleanup": "Remove named conversion candidates only after source hashes match; no rewriting originals.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-locale-persistence",
+          "title": "Make a guest locale default reversible",
+          "outcome": "Distinguish per-command settings from a new guest login default; apply and restore one documented locale policy.",
+          "objective_subtopics": [
+            "107.3 locale configuration",
+            "105.1 environment: reinforcement"
+          ],
+          "prerequisites": "Locale scope/formats; admin image",
+          "learn": "Snapshot /etc/default/locale as bytes/mode/owner; use update-locale in the disposable guest; verify a new login context without changing passwords/PAM.",
+          "challenge": "Correct one prepared default/category inconsistency and prove new-session versus existing-shell behavior.",
+          "negative_case": "Editing LANG in the current shell is not persistent; LC_ALL can conceal the changed default.",
+          "expected_evidence": "Protected before copy, exact changed fields, real fresh-session locale and successful byte/mode/owner rollback.",
+          "cleanup": "Restore only the unchanged-identity snapshot through a reviewed guard; refuse unexpected policy edits; Reset if rollback cannot be established.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-timezones",
+          "title": "Interpret timezones without changing the clock",
+          "outcome": "Distinguish UTC instants, local display and DST; configure and restore guest timezone while leaving clock/NTP controls untouched.",
+          "objective_subtopics": [
+            "107.3 timezone configuration/TZ",
+            "108.1 timezone subskill only"
+          ],
+          "prerequisites": "Locale scope; admin rollback",
+          "learn": "Use fixed winter/summer UTC instants with TZ; inspect timedatectl/RTC/NTP; snapshot localtime state; set-timezone and restore the prior zone.",
+          "challenge": "Resolve two ambiguous-looking log displays, choose the requested guest zone, and demonstrate fixed-instant equivalence plus live elapsed-time continuity without setting the clock.",
+          "negative_case": "A zone abbreviation is not a globally unique zone; TZ/date display is not NTP synchronization or setting the system/RTC clock.",
+          "expected_evidence": "Fixed-instant offsets, original/final localtime link or bytes, monotonic/epoch observations, timedatectl fields, rollback.",
+          "cleanup": "Restore exact prior guest zone; unset TZ in the practice shell. Never date -s, timedatectl set-time/set-ntp/set-local-rtc or hwclock writes.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-xz-evidence",
+          "title": "Inspect an xz stream and recover exact bytes",
+          "outcome": "Practice xz/xzcat, bounded memory/threads, container validation versus independent content checks.",
+          "objective_subtopics": [
+            "103.2 xzcat",
+            "103.3 xz/unxz; 206.2 reinforcement"
+          ],
+          "prerequisites": "Text Archive streams and original preservation",
+          "learn": "Create one tiny xz candidate with original retained; list/test/decompress separately; exercise a truncated copy and memory-limit refusal without large allocations.",
+          "challenge": "Select and recover the correct small stream, prove independent expected bytes and retain the rejected candidate.",
+          "negative_case": "xz -t success is not authenticity or the correct report; avoid default source deletion and force overwrite.",
+          "expected_evidence": "Source hash, compressed/list/check status, bounded resource options, rejected-copy evidence, restored-byte comparison.",
+          "cleanup": "One worker; <=64 KiB inputs and <=256 KiB cumulative outputs, 10s/1s grace, 64 MiB xz memory cap; exact named cleanup, no arbitrary archives.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-at-queue",
+          "title": "Inspect and cancel the exact one-off job",
+          "outcome": "Distinguish queued work from completion; dynamically identify and remove only the owned practice job.",
+          "objective_subtopics": [
+            "107.2 at/atq/atrm"
+          ],
+          "prerequisites": "Cron/timer unit; guest at service",
+          "learn": "Queue a harmless file-producing job with at -M at a short future time; capture actual ID/UID, inspect at -c, cancel, prove no result and unrelated jobs unchanged.",
+          "challenge": "Cancel a stale practice job using retained identity evidence; leave another declared job intact.",
+          "negative_case": "Never fixed job numbers, atrm all, global spool edits or count-only proof; root atq sees others.",
+          "expected_evidence": "Queue ID/owner/time/body hash before/after, absence of cancelled output after its deadline, foreign job preserved.",
+          "cleanup": "Remove only positively matched owned jobs; do not delete workspace while a matching queued/running job can still write.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-at-execution",
+          "title": "Prove a one-off job\u2019s environment and result",
+          "outcome": "Observe /bin/sh execution, captured environment/cwd/umask and actual successful or failed result.",
+          "objective_subtopics": [
+            "107.2 at execution",
+            "105.2 status: reinforcement"
+          ],
+          "prerequisites": "At queue; shell statuses",
+          "learn": "Queue one finite script using absolute paths, at -M and explicit output/status recording; compare captured values with later interactive changes.",
+          "challenge": "Repair an environment/path error, retain the first failure, and prove expected UID/content/status of a distinct retry.",
+          "negative_case": "Queue disappearance is not successful completion; shell functions/Bash syntax are not automatically a /bin/sh environment; no promised mail.",
+          "expected_evidence": "Actual job UID/cwd/umask, exact bytes/status, failed job retained, 6s child timeout and <=150s observation deadline.",
+          "cleanup": "Wait for verified child exit, cancel exact pending retry if interrupted, remove exact files; do not claim disk Resume preserves processes.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-at-access",
+          "title": "Test scheduler access as the intended identity",
+          "outcome": "Explain allow-file precedence, deny-file fallback and separate PAM/account restrictions.",
+          "objective_subtopics": [
+            "107.2 at access controls"
+          ],
+          "prerequisites": "Existing Users/Groups access and at execution",
+          "learn": "Use two named locked-password practice accounts via guest sudo/runuser; snapshot policies; apply one bounded at.allow/deny fixture and demonstrate actual admission/denial.",
+          "challenge": "Repair an overbroad scheduler list without changing learner/sudo/PAM or another account; verify both identities.",
+          "negative_case": "Root bypass is not ordinary-user permission; policy admission does not prove PAM/account execution success; never enable passwords to make a test pass.",
+          "expected_evidence": "Exact policy bytes/modes/owner, queue/run denial and successful UID evidence, unaffected learner/auth/sudo fingerprints.",
+          "cleanup": "Restore exact saved at policies; remove only owned jobs and then exact disposable accounts/homes; refuse changed snapshots.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-foundation-localization-handover",
+          "title": "Deliver a localized offline job handover",
+          "outcome": "Transfer locale, encoding, time and one-off execution decisions without repeating a guided repair.",
+          "objective_subtopics": [
+            "107.3 and107.2 independent transfer; no new objective credit"
+          ],
+          "prerequisites": "Previous nine proposed lessons",
+          "learn": "Trace one wrong locale/time assumption and partial output in a tiny supplied incident; retain before evidence, demonstrate corrected report and write uncertainty.",
+          "challenge": "Independently deliver exact factual results from a different dataset, a successful bounded job and a readable handover.",
+          "negative_case": "No causal or language-quality score from keywords; correct-looking display alone does not prove correct encoded bytes or execution.",
+          "expected_evidence": "Facts, units/zone/encoding, job identity/status, original preservation, rejected hypothesis and self-review answers.",
+          "cleanup": "Exact jobs/policy rollback first, then named report files; completion remains self-reviewed.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        }
+      ]
+    },
+    {
+      "proposed_unit_id": "linux-rpm-offline-administration",
+      "image": "almalinux9-rpm-admin-local-v1",
+      "lessons": [
+        {
+          "proposed_id": "real-linux-rpm-inventory",
+          "title": "Identify RPM package state and file providers",
+          "outcome": "Query installed NEVRA, architecture, ownership and package/source/license fields; distinguish RPM from its dependency frontend.",
+          "objective_subtopics": [
+            "102.5 installed metadata/file-provider; DNF awareness"
+          ],
+          "prerequisites": "Debian Discovery package queries",
+          "learn": "Read rpm -q/-qi/-ql/-qf on known installed paths; inspect dnf/yum implementation/version; compare Debian terms.",
+          "challenge": "Find the provider of a declared installed file and justify the exact installed release, without repository access.",
+          "negative_case": "Missing package differs from unowned file; DNF-compatible yum does not demonstrate legacy YUM; Zypper is absent.",
+          "expected_evidence": "Actual tool versions, NEVRA, file ownership/provider and metadata; unrelated package list unchanged.",
+          "cleanup": "Read-only system queries; remove only private evidence reports.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-rpm-archive",
+          "title": "Inspect an offline RPM before admitting it",
+          "outcome": "Compare archive metadata/payload/digests, vendor signature trust and independent fixture expectations.",
+          "objective_subtopics": [
+            "102.5 uninstalled contents/dependencies/signatures; rpm2cpio"
+          ],
+          "prerequisites": "RPM inventory; trusted archive boundary",
+          "learn": "Inspect two project package names/three revisions; list bounded regular payloads, configuration flags, requirements, notices and signature status; one known official signed RPM can be inspected without installing.",
+          "challenge": "Reject an altered or unexpected candidate and explain exactly what trusted signature versus digest evidence establishes.",
+          "negative_case": "Unsigned local fixture is not authenticated; rpm digest verification is not publisher trust; no scripts, links or unsafe extraction.",
+          "expected_evidence": "Inspected payload paths/modes/owners, absence of scripts/triggers/services/accounts/privileged bits, hashes and signature result.",
+          "cleanup": "Retain bad candidate; extraction only to a guarded fresh private directory; exact members, no parent/link escapes.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-rpm-dependencies",
+          "title": "Observe a dependency failure without forcing installation",
+          "outcome": "Demonstrate strict local rpm dependency checking and leave unrelated state intact.",
+          "objective_subtopics": [
+            "102.5 RPM install/dependencies"
+          ],
+          "prerequisites": "Archive inspection",
+          "learn": "Use report package requiring exact data2.0; show rpm --test then actual refused install with matching root/configuration; no force/nodeps.",
+          "challenge": "Diagnose the unavailable requirement and preserve the refused candidate; do not substitute an arbitrary version.",
+          "negative_case": "--nodeps hides the issue; matching a name is not matching required version/architecture.",
+          "expected_evidence": "Solver/transaction errors, unchanged full unrelated RPM inventory and fixture state, exact required version.",
+          "cleanup": "No failed-state repair outside two fixture identities; remove only private reports.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-rpm-dnf-transaction",
+          "title": "Resolve the offline fixture dependency explicitly",
+          "outcome": "Install only the two approved fixture identities using explicit local files and a checked DNF plan.",
+          "objective_subtopics": [
+            "102.5 DNF awareness/dependency frontend; modern YUM compatibility limitation"
+          ],
+          "prerequisites": "RPM dependency failure; guest root policy",
+          "learn": "Preview under same sudo/root/configuration; exact transaction allowlist; install data2.0+report1.0 without enabled repos, weak deps or automatic removals.",
+          "challenge": "Reject an unexpected plan, then produce the permitted transaction and prove installed result and account state.",
+          "negative_case": "No-download/repo disabling alone is not a boundary; unprivileged preview need not match privileged execution.",
+          "expected_evidence": "Exact versions/actions, plan refusal, execution status, expected files and before/after all nonfixture packages and policy.",
+          "cleanup": "Remove report then data only through equivalent checked plan; never autoremove, upgrade-all or arbitrary dnf history undo.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-rpm-upgrade",
+          "title": "Retain edited configuration during an RPM upgrade",
+          "outcome": "Practice %config(noreplace), installed version and actual .rpmnew/.rpmsave behavior.",
+          "objective_subtopics": [
+            "102.5 upgrade/reinstall lifecycle"
+          ],
+          "prerequisites": "Bounded DNF transaction",
+          "learn": "Install data1.0; edit only declared conffile, upgrade data2.0 and inspect packaged/new/user bytes; record actual RPM behavior before writing guidance.",
+          "challenge": "Upgrade while preserving an independently given local setting and retaining replacement evidence.",
+          "negative_case": "Do not assume Debian conffile semantics or silently overwrite user content; skipped/different-version transactions are not upgrades.",
+          "expected_evidence": "Versions, original/config/new candidate hashes, owners/modes and expected package-owned contents.",
+          "cleanup": "Retain config candidates; checked exact-package cleanup refuses additional names/types; no broad /etc deletion.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-rpm-integrity",
+          "title": "Repair package-owned contents with independent verification",
+          "outcome": "Distinguish rpm -V flags, package-owned digest state and expected application output; reinstall exact local archive.",
+          "objective_subtopics": [
+            "102.5 integrity/reinstall"
+          ],
+          "prerequisites": "RPM upgrade; checksums",
+          "learn": "Change one approved regular payload, capture real verification flags, reinstall same exact package using checked plan, then inspect expected bytes/access.",
+          "challenge": "Repair damage rather than hide verification output; preserve independent reference and unrelated configuration.",
+          "negative_case": "Listing files or a successful reinstall does not prove content/access; configured files may legitimately differ and need policy.",
+          "expected_evidence": "Actual rpm verification before/after, reference comparison, intended unprivileged-user read/result, unchanged other packages.",
+          "cleanup": "Preserve damage report; remove exact fixtures through allowlisted plan; root can bypass practice guards.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-rpm-remove",
+          "title": "Remove only intended packages and explain retained files",
+          "outcome": "Distinguish rpm erase, dependency order and config retention from Debian remove/purge.",
+          "objective_subtopics": [
+            "102.5 RPM removal"
+          ],
+          "prerequisites": "RPM upgrade/configuration evidence",
+          "learn": "Refuse removal of required data while report remains; remove in correct order; inspect retained changed configuration and separate user-created data.",
+          "challenge": "Return to fixture-free package state while retaining owner data and explaining any .rpmsave.",
+          "negative_case": "No universal RPM purge; --nodeps and autoremove can harm unrelated state; absence of rpm row does not mean every user file vanished.",
+          "expected_evidence": "Dependency refusal, exact erased identities, retained configuration/content and byte-identical nonfixture inventory.",
+          "cleanup": "Only explicit inspected retained fixture files after independent preservation checks; source archives remain protected.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        },
+        {
+          "proposed_id": "real-linux-rpm-recovery",
+          "title": "Repair an offline package incident and hand it over",
+          "outcome": "Independently select a compatible fixture version, restore verified content/config and leave unrelated packages untouched.",
+          "objective_subtopics": [
+            "102.5 transfer; no claim of full objective or Zypper/YUM mastery"
+          ],
+          "prerequisites": "Previous seven RPM lessons",
+          "learn": "Supply partial/misleading metadata and one retained bad candidate; explain bounded recovery and expected evidence.",
+          "challenge": "Independent dependency/version/config/integrity recovery, user-access proof, wrong-candidate retention and exact cleanup.",
+          "negative_case": "A valid signature/digest or zero transaction status alone is insufficient; do not invent complete RPM objective coverage.",
+          "expected_evidence": "All intended fixture outcomes, negative-plan refusal, exact versions/file bytes/access and unchanged unrelated package/guest policy.",
+          "cleanup": "Checked fixture removal, preserved original config/archive hashes, finite output, retain failure evidence.",
+          "practice": "Real disposable guest; completion self-reviewed and unscored",
+          "status": "proposed, not shipped"
+        }
+      ]
+    }
+  ],
+  "assessment": "Display-only lesson registry; self-reviewed/unscored completion; developer live acceptance is not learner auto-assessment",
+  "production_trust": "No production key/release admission change",
+  "required_decisions": [
+    "Two independently prepared versioned guest images, not old-overlay derivatives",
+    "Exact Debian xz-utils/liblzma5 5.8.1-1+deb13u2 and at3.2.5-2.2; inspect at packaged helpers/account/PAM/service effects",
+    "Generate de_DE.UTF-8 and en_US.UTF-8; reversible guest locale/timezone/at access policy practice only",
+    "AlmaLinux9.8 minimalISO, pinned RPM4.16.1.3-40.el9/DNF4.14.0-34.el9_8.alma.1, separate approved fixture builder closure",
+    "Guest-only locked learner/root passwords, console autologin and existing passwordless sudo model; SELinux enforcing",
+    "Two unsigned project RPM package identities/three archives, explicit narrow local-fixture verification exception only",
+    "14units/120total/120retained/120bothdefaults; compact trusted catalog within unchanged64KiB",
+    "No controller/launch/QMP/image-disk/backup-format/network changes"
+  ]
+}
