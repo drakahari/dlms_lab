@@ -1,0 +1,49 @@
+{
+  "id": "real-linux-operations-timerresult",
+  "content_version": "1.0.0",
+  "title": "Separate timer activation from job success",
+  "goal": "Read a loaded oneshot service\u2019s limits, identity and failure result, then retry only a private job and verify its actual output.",
+  "challenge": "Create a uniquely named monotonic timer for a finite learner job. Observe a deliberate exit7 while the unit is loaded, distinguish the timer trigger from failed work, retain the failed script, repair a separate private script and verify learner-owned successful output. Stop only these named units.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/operations-timerresult.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-timerresult.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh failed.sh job.sh limits.txt failed.txt timeout.txt result.txt uid.txt report.txt && unit=ll-ops-result-${w##*.} && test \"$(sudo systemctl show \"$unit.service\" -p LoadState --value)\" = not-found && test \"$(sudo systemctl show \"$unit.timer\" -p LoadState --value)\" = not-found && printf '%s\\n' '#!/bin/sh' 'umask 077' 'w='\"'$w'\" '/usr/bin/id -u > \"$w/uid.txt\" || exit 19' '/bin/sleep 2' 'exit 7' > failed.sh && cp -- failed.sh job.sh",
+      "explanation": "Refuse collisions; no existing unit or account is changed. This name belongs only to this recorded workspace.",
+      "expected": "Private two-second failing script; both unit names absent."
+    },
+    {
+      "command": "timer_wait() { deadline=$((SECONDS+12)); until test \"$(sudo systemctl show \"$unit.service\" -p ActiveState --value)\" = activating; do test \"$SECONDS\" -lt \"$deadline\" || return 19; sleep 0.1; done; sudo systemctl show \"$unit.service\" -p User -p Type -p TimeoutStartUSec -p MemoryMax -p TasksMax > limits.txt; until test \"$(sudo systemctl show \"$unit.service\" -p Result --value)\" = exit-code; do test \"$SECONDS\" -lt \"$deadline\" || return 19; sleep 0.1; done; sudo systemctl show \"$unit.service\" -p Result -p ExecMainStatus -p ActiveState > failed.txt; }; here && fresh limits.txt failed.txt uid.txt && sudo systemd-run --unit=\"$unit\" --on-active=1s --timer-property=AccuracySec=100ms --property=Type=oneshot --property=User=learner --property=TimeoutStartSec=4s --property=MemoryMax=64M --property=TasksMax=16 --property=RemainAfterExit=yes /usr/bin/timeout -k 1s 6s /bin/sh \"$w/job.sh\" && timer_wait && grep -qx ExecMainStatus=7 failed.txt && grep -qx User=learner limits.txt && cat limits.txt failed.txt",
+      "explanation": "Read limits during execution, before transient collection. TimeoutStartSec bounds a oneshot start, not RuntimeMaxSec. The timer can fire even when the job fails.",
+      "expected": "Loaded User=learner, four-second start timeout,64MiB/16tasks; actual exit7."
+    },
+    {
+      "command": "here && fresh timeout.txt && test -f job.sh && test ! -L job.sh && test \"$(stat -c %U:%a:%h job.sh)\" = learner:600:1 && printf '%s\\n' '#!/bin/sh' '/bin/sleep 6' > job.sh && { begin=$SECONDS; sudo systemctl restart \"$unit.service\"; rc=$?; elapsed=$((SECONDS-begin)); test \"$rc\" != 0 && test \"$elapsed\" -ge 3 && test \"$elapsed\" -le 8; } && sudo systemctl show \"$unit.service\" -p Result -p ExecMainStatus -p TimeoutStartUSec > timeout.txt && grep -qx Result=timeout timeout.txt && grep -qx TimeoutStartUSec=4s timeout.txt",
+      "explanation": "Exercise the real loaded oneshot timeout with one six-second child, no busy loop. Retain failure and elapsed time; guest root could change limits.",
+      "expected": "Actual Result=timeout after the configured four-second limit; finite child terminated."
+    },
+    {
+      "command": "here && fresh result.txt report.txt && test -f uid.txt && test ! -L uid.txt && test \"$(stat -c %U:%a:%h uid.txt)\" = learner:600:1 && test -f job.sh && test ! -L job.sh && test \"$(stat -c %U:%a:%h job.sh)\" = learner:600:1 && test \"$(cat uid.txt)\" = \"$(id -u)\" && printf '%s\\n' '#!/bin/sh' 'umask 077' 'w='\"'$w'\" '/usr/bin/id -u > \"$w/uid.txt\" || exit 19' 'printf \"TIMER_OK\\n\" > \"$w/report.txt\"' > job.sh && sudo systemctl restart \"$unit.service\" && sudo systemctl show \"$unit.service\" -p Result -p ExecMainStatus -p ActiveState > result.txt && grep -qx Result=success result.txt && grep -qx ExecMainStatus=0 result.txt && test \"$(cat report.txt)\" = TIMER_OK && test \"$(stat -c %U:%a report.txt)\" = learner:600 && test \"$(cat uid.txt)\" = \"$(id -u)\"",
+      "explanation": "A manual retry is deliberately separate from a new timer tick. Preserve failed.sh; verify status, output and identity, not merely an active label.",
+      "expected": "Successful learner-owned report, exit0; original failing script retained."
+    },
+    {
+      "command": "unit_quiet() { load=$(sudo systemctl show \"$1\" -p LoadState --value) || return 19; if test \"$load\" = not-found; then return 0; fi; test \"$load\" = loaded || return 19; state=$(sudo systemctl show \"$1\" -p ActiveState --value) || return 19; case \"$state\" in inactive|failed) ;; *) return 19;; esac; main=$(sudo systemctl show \"$1\" -p MainPID --value) || return 19; control=$(sudo systemctl show \"$1\" -p ControlPID --value) || return 19; test \"$main\" = 0 && test \"$control\" = 0; }; stop_private() { here || return 19; test \"${unit:-}\" = \"ll-ops-result-${w##*.}\" || return 19; service_load=$(sudo systemctl show \"$unit.service\" -p LoadState --value) || return 19; test \"$service_load\" = loaded || return 19; service_user=$(sudo systemctl show \"$unit.service\" -p User --value) || return 19; test \"$service_user\" = learner || return 19; exec_start=$(sudo systemctl show \"$unit.service\" -p ExecStart --value) || return 19; printf '%s\\n' \"$exec_start\" | grep -Fq \"argv[]=/usr/bin/timeout -k 1s 6s /bin/sh $w/job.sh ;\" || return 19; timer_load=$(sudo systemctl show \"$unit.timer\" -p LoadState --value) || return 19; if test \"$timer_load\" = not-found; then true; elif test \"$timer_load\" = loaded; then triggers=$(sudo systemctl show \"$unit.timer\" -p Triggers --value) || return 19; test \"$triggers\" = \"$unit.service\" || return 19; sudo systemctl stop \"$unit.timer\" || unit_quiet \"$unit.timer\" || return 19; else return 19; fi; sudo systemctl stop \"$unit.service\" || unit_quiet \"$unit.service\" || return 19; unit_quiet \"$unit.timer\" && unit_quiet \"$unit.service\"; }; stop_private",
+      "explanation": "Before Stop verify the exact service identity/path. A one-shot transient timer may already be collected: accept only a successful exact LoadState=not-found query; otherwise verify its target before Stop. Stop only these two names; never reset all failed units or delete unrelated units.",
+      "expected": "This private timer and service stopped; evidence remains."
+    }
+  ],
+  "hints": [
+    "Inspect the associated service, not just the timer.",
+    "A timeout for Type=oneshot belongs to start; inspect while loaded."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 107.2 systemd timer result reinforcement. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

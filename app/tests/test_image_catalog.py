@@ -42,7 +42,7 @@ class CatalogTests(unittest.TestCase):
   cat=production_catalog();old=Manager(self.root/'unused','a'*64);m=self.manager(cat)
   self.assertEqual(old.pin,m.pin);self.assertEqual(m.profile,'a'*64);self.assertFalse(self.root.joinpath('unused').exists())
   cat.allow(m.pin,LEGACY_ID,'new');cat.allow(m.pin,LEGACY_ID,'reset');cat.allow(m.pin,LEGACY_ID,'resume')
-  self.assertEqual(len(cat.lessons),94);self.assertEqual(len(cat.images),4);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
+  self.assertEqual(len(cat.lessons),102);self.assertEqual(len(cat.images),4);self.assertEqual(cat.keys,{});self.assertEqual(cat.releases,{})
  def test_catalog_edit_reopen_preserves_exact_learn_challenge_bytes(self):
   for mode,profile in (('Learn','a'*64),('Challenge','b'*64)):
    old=self.manager(profile=profile);self.record(old,mode)

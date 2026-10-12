@@ -13,9 +13,9 @@ from scheduling_guest_fixtures import COMMANDS,UNIT
 
 class SchedulingUnitTests(unittest.TestCase):
  def test_exact_limits_nine_units_and_76_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(11,16,94))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8])
-  self.assertEqual(len(registry.entries()),94)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(12,16,102))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8])
+  self.assertEqual(len(registry.entries()),102)
   self.assertEqual([e['id'] for e in registry.catalog(UNIT)['entries']],list(COMMANDS))
  def malformed(self,mutate,pattern):
   original=registry._read;reads=[]
@@ -27,10 +27,10 @@ class SchedulingUnitTests(unittest.TestCase):
   finally:registry._bundle.cache_clear()
   return reads
  def test_reject_77_before_last_unit_lesson_read(self):
-  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='text-archive-unit.json' else None,'94')
-  self.assertNotIn('real-linux-textarchive-streams.json',reads)
+  reads=self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='operations-unit.json' else None,'102')
+  self.assertNotIn('real-linux-operations-accountfiles.json',reads)
  def test_reject_tenth_unit_before_resource_reads(self):
-  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–11')
+  reads=self.malformed(lambda n,v:v['units'].append({'id':'seventh','resource':'seventh.json'}) if n=='units.json' else None,'1–12')
   self.assertEqual(reads,['units.json'])
  def test_reject_17_per_unit_and_oversized_guidance(self):
   self.malformed(lambda n,v:v['entries'].extend(v['entries']+[v['entries'][0]]) if n=='scheduling-unit.json' else None,'1–16')

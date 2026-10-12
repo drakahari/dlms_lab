@@ -11,19 +11,19 @@ from learning_lab.vm_preview.sessions import Sessions
 from bash_guest_fixtures import COMMANDS,SCRIPT_ROWS,UNIT
 class BashUnitTests(unittest.TestCase):
  def test_exact_bounds_and_all_76_lessons(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(11,16,94))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8]);self.assertEqual(len(registry.entries()),94)
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(12,16,102))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8]);self.assertEqual(len(registry.entries()),102)
  def test_reject_77_before_reading_eighth_unit_lessons(self):
   original=registry._read;reads=[]
   def read(name):
    reads.append(name);d=original(name)
-   if name=='text-archive-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
+   if name=='operations-unit.json':d['entries'].append(copy.deepcopy(d['entries'][0]))
    return d
   registry._bundle.cache_clear()
   try:
    with patch.object(registry,'_read',side_effect=read):
-    with self.assertRaisesRegex(ValueError,'94'):registry.units()
-   self.assertNotIn('real-linux-textarchive-streams.json',reads)
+    with self.assertRaisesRegex(ValueError,'102'):registry.units()
+   self.assertNotIn('real-linux-operations-accountfiles.json',reads)
   finally:registry._bundle.cache_clear()
  def test_reject_tenth_unit_before_resources(self):
   original=registry._read;reads=[]

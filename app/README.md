@@ -1,6 +1,6 @@
 # Omarchy Learning Lab — native workspace and portable scenarios
 
-A standalone, offline Qt Quick learning workspace: **41 distinct simulator activities** (38 Linux scenarios in eight collections plus three networking labs), and an optional **eleven-unit / 94-lesson real-Linux VM preview**.
+A standalone, offline Qt Quick learning workspace: **41 distinct simulator activities** (38 Linux scenarios in eight collections plus three networking labs), and an optional **twelve-unit / 102-lesson real-Linux VM preview**.
 
 ## License
 
@@ -279,3 +279,7 @@ See the [acceptance evidence and remaining limitations](docs/vm-preview/storage-
 ## Text & Archive completion-family checkpoint
 
 [Eight real-guest lessons](docs/vm-preview/text-archive-unit.md) add descriptor routing, tee/statuses, safe xargs, sorted reconciliation, grouped find, newc cpio and independent recovery transfer. Existing lessons/pins and images remain exact; completion is self-reviewed/unscored. Whole-objective rollups remain unchanged; xz/at are absent. [Acceptance](docs/vm-preview/text-operations-acceptance.md) records actual boundaries and outstanding physical-input/accessibility checks.
+
+## Accounts, Scheduling, Logging & Recovery checkpoint
+
+[Eight real-guest lessons](docs/vm-preview/operations-unit.md) add fabricated account-pair consistency, exact cron ownership, loaded timer outcomes, journal cursor/field semantics, open-descriptor rotation, local notices and independent recovery transfer. Existing images and guest policies remain unchanged. Completion is self-reviewed and unscored; at/mesg remain absent. [Acceptance](docs/vm-preview/text-operations-acceptance.md) distinguishes native automation from physical input and accessibility.

@@ -68,6 +68,7 @@ def ocr_until(label,predicate,seconds=30,header=False):
  deadline=time.monotonic()+seconds
  while True:
   path=shot(label);ocr_path=path
+  notice_line=False
   if header:
    from PySide6.QtGui import QImage
    im=QImage(str(path));ocr_path=out/(label+'-header.png');assert im.copy(0,0,im.width(),16).scaled(im.width()*2,32).save(str(ocr_path))
@@ -76,7 +77,20 @@ def ocr_until(label,predicate,seconds=30,header=False):
    from PySide6.QtCore import Qt
    im=QImage(str(path));im.invertPixels();im=im.scaled(im.width()*3,im.height()*3,Qt.IgnoreAspectRatio,Qt.FastTransformation)
    ocr_path=out/(label+'-ocr.png');assert im.save(str(ocr_path))
-  value=subprocess.run(['/usr/bin/tesseract',str(ocr_path),'stdout','--psm','7' if header else '6'],capture_output=True,text=True,check=True).stdout
+  elif label.startswith('notice-delivery-'):
+   # Whole-screen OCR confused this pinned console's n with m. Locate the
+   # unique notice row, then use single-line recognition without relaxing the
+   # original identifier AND exact "no action required" assertion.
+   import csv,io
+   from PySide6.QtGui import QImage
+   tsv=subprocess.run(['/usr/bin/tesseract',str(path),'stdout','--psm','6','tsv'],capture_output=True,text=True,check=True).stdout
+   (out/(label+'.tsv')).write_text(tsv)
+   rows=[row for row in csv.DictReader(io.StringIO(tsv),delimiter='\t') if row.get('text')=='LL_PRACTICE_NOTICE:']
+   if len(rows)==1:
+    im=QImage(str(path));top=(int(rows[0]['top'])//16)*16
+    assert im.width()==800 and im.height()==600 and 0<=top<=584
+    ocr_path=out/(label+'-line.png');assert im.copy(0,top,800,16).save(str(ocr_path));notice_line=True
+  value=subprocess.run(['/usr/bin/tesseract',str(ocr_path),'stdout','--psm','7' if header or notice_line else '6'],capture_output=True,text=True,check=True).stdout
   (out/(path.name+'.txt')).write_text(value)
   if predicate(value):return
   assert time.monotonic()<deadline,'Guest readiness/completion timeout: '+label
@@ -170,6 +184,11 @@ def line_many(values):
   for index,(command,label,seq,token) in enumerate(group):
    await_ack('batch-command-'+str(seq).zfill(4),token)
    command_sequence=seq;check(label,True)
+   if 'real-linux-operations-notices' in label and label.endswith('actual step 2'):
+    # Clear-console step and no prior cat of notice.txt distinguish delivery
+    # from displayed input bytes; status0 by itself is insufficient evidence.
+    ocr_until('notice-delivery-'+str(seq),lambda value:re.search(r'LL[_ ]PRACTICE[_ ]NOTICE',value) is not None and 'no action required' in value,10)
+    check(label+' actual own-console notice delivery',True)
    if index<len(group)-1:key('ret')
   values=values[len(group):]
 

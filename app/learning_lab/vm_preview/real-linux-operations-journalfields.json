@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-operations-journalfields",
+  "content_version": "1.0.0",
+  "title": "Match journal fields without conflating their logic",
+  "goal": "Compare same-field alternatives, different-field conjunction and explicit disjunction against real events from two existing identities.",
+  "challenge": "Generate four harmless uniquely tagged events using learner and the existing ll-service identity. Compare UID-and-tag, two-tag alternatives, explicit + disjunction and severity filtering. Explain why a supplied tag is not proof of authentication.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/operations-journalfields.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-journalfields.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh metadata.txt and.txt or.txt plus.txt warning.txt exactwarning.txt && a=ll-field-a-${w##*.} && b=ll-field-b-${w##*.} && uid=$(id -u) && service_uid=$(id -u ll-service) && logger -t \"$a\" -p user.info LEARNER_INFO && logger -t \"$b\" -p user.err LEARNER_ERROR && sudo runuser -u ll-service -- /usr/bin/logger -t \"$a\" -p user.err SERVICE_ERROR && sudo runuser -u ll-service -- /usr/bin/logger -t \"$b\" -p user.info SERVICE_INFO && sudo journalctl --sync",
+      "explanation": "Four tiny events, existing identities only. runuser here is guest administration, not an authentication claim or account change.",
+      "expected": "Two tags and two actual originating UIDs, each with one info and one error."
+    },
+    {
+      "command": "here && fresh and.txt or.txt metadata.txt && sudo journalctl -b --no-pager -o cat \"_UID=$uid\" \"SYSLOG_IDENTIFIER=$a\" > and.txt && cmp and.txt <(printf 'LEARNER_INFO\\n') && sudo journalctl -b --no-pager -o cat \"SYSLOG_IDENTIFIER=$a\" \"SYSLOG_IDENTIFIER=$b\" > or.txt && test \"$(wc -l < or.txt)\" = 4 && sudo journalctl -b --no-pager -o verbose \"SYSLOG_IDENTIFIER=$a\" \"SYSLOG_IDENTIFIER=$b\" > metadata.txt && grep -q \"_UID=$service_uid\" metadata.txt",
+      "explanation": "Different fields AND; multiple alternatives for the same field OR. Retain UID metadata, not only text.",
+      "expected": "Conjunction isolates learner-info; tag alternatives include all four."
+    },
+    {
+      "command": "here && fresh plus.txt warning.txt exactwarning.txt && sudo journalctl -b --no-pager -o cat \"_UID=$uid\" \"SYSLOG_IDENTIFIER=$a\" + \"_UID=$service_uid\" \"SYSLOG_IDENTIFIER=$b\" > plus.txt && LC_ALL=C sort plus.txt | cmp - <(printf 'LEARNER_INFO\\nSERVICE_INFO\\n') && sudo journalctl -b --no-pager -o cat -p warning \"SYSLOG_IDENTIFIER=$a\" \"SYSLOG_IDENTIFIER=$b\" > warning.txt && LC_ALL=C sort warning.txt | cmp - <(printf 'LEARNER_ERROR\\nSERVICE_ERROR\\n') && sudo journalctl -b --no-pager --quiet -o cat PRIORITY=4 \"SYSLOG_IDENTIFIER=$a\" \"SYSLOG_IDENTIFIER=$b\" > exactwarning.txt && test ! -s exactwarning.txt",
+      "explanation": "-p warning includes warning and more severe priorities, hence errors. PRIORITY=4 means exactly warning. + separates OR groups of field conjunctions.",
+      "expected": "Two info events for explicit disjunction; two errors at severity threshold; no exact-warning event."
+    }
+  ],
+  "hints": [
+    "Separate OR within one field from AND across fields.",
+    "Severity threshold is not exact PRIORITY matching."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 108.2 journal field/severity queries. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "id": "lpic-accounts-logging-recovery",
+  "title": "Accounts, Scheduling, Logging & Recovery",
+  "purpose": "Extend earlier administration with account consistency, exact scheduler ownership, loaded job results, journal evidence, private rotation, local notices and recovery access. Sequence is guidance, not an unlock.",
+  "prerequisites": "Earlier users/groups, cron/timers, logs, quoting/statuses and separate-destination backup. Existing administrator guest only; no credential, login-policy or package changes.",
+  "coverage": "LPIC-1 active v5.0:partial107.1/107.2/108.2;101.3 wall-tool preparation;104.5 reinforcement. LPIC-2 active v4.5.0:206.2 reinforcement only. Self-reviewed and unscored; no full objectives or exam-readiness claim.",
+  "entries": [
+    {
+      "id": "real-linux-operations-accountfiles",
+      "resource": "real-linux-operations-accountfiles.json",
+      "description": "Distinguish database consistency from authentication or access, using fabricated private group files and read-only evidence for an existing service identity.",
+      "objectives": [
+        "partial 107.1 account databases; restricted-identity reinforcement"
+      ],
+      "troubleshooting": [
+        "A locked password does not universally prevent cron, sudo or existing sessions.",
+        "nologin affects shell/login paths that honor it, not every way a process can run as that UID."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './identity.txt' -o -path './aging.txt' -o -path './good.group' -o -path './good.gshadow' -o -path './bad.group' -o -path './bad.gshadow' -o -path './originals.sha' -o -path './repaired.group' -o -path './repaired.gshadow' -o -path './rejected.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'identity.txt' && test ! -L 'identity.txt' || return 19; test -f 'aging.txt' && test ! -L 'aging.txt' || return 19; test -f 'good.group' && test ! -L 'good.group' || return 19; test -f 'good.gshadow' && test ! -L 'good.gshadow' || return 19; test -f 'bad.group' && test ! -L 'bad.group' || return 19; test -f 'bad.gshadow' && test ! -L 'bad.gshadow' || return 19; test -f 'originals.sha' && test ! -L 'originals.sha' || return 19; test -f 'repaired.group' && test ! -L 'repaired.group' || return 19; test -f 'repaired.gshadow' && test ! -L 'repaired.gshadow' || return 19; test -f 'rejected.txt' && test ! -L 'rejected.txt' || return 19; rm -- 'identity.txt' 'aging.txt' 'good.group' 'good.gshadow' 'bad.group' 'bad.gshadow' 'originals.sha' 'repaired.group' 'repaired.gshadow' 'rejected.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-accountfiles.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-accountfiles.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Fabricated pair: ll-note:x:49999:learner and ll-note:!::learner. The bad group file repeats the same row twice; gshadow has one row. Do not install these files or create the fictional group."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "No credentials, PAM, authentication policy or real account database is changed. The fake ! marker is not copied secret material."
+      ]
+    },
+    {
+      "id": "real-linux-operations-cronaccess",
+      "resource": "real-linux-operations-cronaccess.json",
+      "description": "Distinguish access policy from other-user privilege, then verify and remove only a byte-matched, initially absent learner crontab.",
+      "objectives": [
+        "partial 107.2 cron access; scheduling reinforcement"
+      ],
+      "troubleshooting": [
+        "A timer or cron tick is not a successful job.",
+        "A printed literal0 is not a captured exit status.",
+        "-u privilege denial is not allow/deny evidence."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; cron_absent() { table=$(LC_ALL=C env -u CRONTAB_NOHEADER crontab -l 2>&1); code=$?; test \"$code\" = 1 && test \"$table\" = 'no crontab for learner'; }; cron_absent || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './policy.txt' -o -path './before.txt' -o -path './other.txt' -o -path './job.sh' -o -path './wrapper.sh' -o -path './cron.txt' -o -path './current.txt' -o -path './mismatch.txt' -o -path './run/uid.txt' -o -path './run/report.txt' -o -path './run/exit.txt' -o -path './run' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'policy.txt' && test ! -L 'policy.txt' || return 19; test -f 'before.txt' && test ! -L 'before.txt' || return 19; test -f 'other.txt' && test ! -L 'other.txt' || return 19; test -f 'job.sh' && test ! -L 'job.sh' || return 19; test -f 'wrapper.sh' && test ! -L 'wrapper.sh' || return 19; test -f 'cron.txt' && test ! -L 'cron.txt' || return 19; test -f 'current.txt' && test ! -L 'current.txt' || return 19; test -f 'mismatch.txt' && test ! -L 'mismatch.txt' || return 19; test -f 'run/uid.txt' && test ! -L 'run/uid.txt' || return 19; test -f 'run/report.txt' && test ! -L 'run/report.txt' || return 19; test -f 'run/exit.txt' && test ! -L 'run/exit.txt' || return 19; test -d 'run' && test ! -L 'run' || return 19; rm -- 'policy.txt' 'before.txt' 'other.txt' 'job.sh' 'wrapper.sh' 'cron.txt' 'current.txt' 'mismatch.txt' 'run/uid.txt' 'run/report.txt' 'run/exit.txt' || return 19; rmdir -- 'run' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-cronaccess.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-cronaccess.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Interruption: return to the recorded workspace and restore its here guard. Define and run this exact-table removal before any file cleanup: cron_absent() { table=$(LC_ALL=C env -u CRONTAB_NOHEADER crontab -l 2>&1); code=$?; test \"$code\" = 1 && test \"$table\" = 'no crontab for learner'; }; owncron() { here && test -f cron.txt && test ! -L cron.txt && test \"$(stat -c %U:%a cron.txt)\" = learner:600 && test -f current.txt && test ! -L current.txt && test \"$(stat -c %U:%a current.txt)\" = learner:600 && LC_ALL=C env -u CRONTAB_NOHEADER crontab -l > current.txt && cmp -s cron.txt current.txt; }; removecron() { here && { cron_absent || { owncron && crontab -r && cron_absent; }; }; }; removecron. If a table differs, retain everything. Partial workspace cleanup must refuse missing members; do not relax it.",
+        "Fixture job: actual id -u in run/uid.txt; one REPORT_OK newline in run/report.txt; wrapper captures actual child status in run/exit.txt. Timeout6s, one atomic run-directory gate. Whole-table installation is allowed only after proving the fresh learner table absent; no other-user table changes."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "No at, policy edit, password or authentication change. Crontab comparison/removal is cooperative, not atomic against a concurrent guest-root writer. Cleanup refuses while any table exists."
+      ]
+    },
+    {
+      "id": "real-linux-operations-timerresult",
+      "resource": "real-linux-operations-timerresult.json",
+      "description": "Read a loaded oneshot service\u2019s limits, identity and failure result, then retry only a private job and verify its actual output.",
+      "objectives": [
+        "107.2 systemd timer result reinforcement"
+      ],
+      "troubleshooting": [
+        "Triggered is not completed.",
+        "Readbacks after collection are not limit evidence."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; test \"${unit:-}\" = \"ll-ops-result-${w##*.}\" || return 19; unit_quiet() { load=$(sudo systemctl show \"$1\" -p LoadState --value) || return 19; if test \"$load\" = not-found; then return 0; fi; test \"$load\" = loaded || return 19; state=$(sudo systemctl show \"$1\" -p ActiveState --value) || return 19; case \"$state\" in inactive|failed) ;; *) return 19;; esac; main=$(sudo systemctl show \"$1\" -p MainPID --value) || return 19; control=$(sudo systemctl show \"$1\" -p ControlPID --value) || return 19; test \"$main\" = 0 && test \"$control\" = 0; }; unit_quiet \"$unit.timer\" && unit_quiet \"$unit.service\" || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './failed.sh' -o -path './job.sh' -o -path './limits.txt' -o -path './failed.txt' -o -path './timeout.txt' -o -path './result.txt' -o -path './uid.txt' -o -path './report.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'failed.sh' && test ! -L 'failed.sh' || return 19; test -f 'job.sh' && test ! -L 'job.sh' || return 19; test -f 'limits.txt' && test ! -L 'limits.txt' || return 19; test -f 'failed.txt' && test ! -L 'failed.txt' || return 19; test -f 'timeout.txt' && test ! -L 'timeout.txt' || return 19; test -f 'result.txt' && test ! -L 'result.txt' || return 19; test -f 'uid.txt' && test ! -L 'uid.txt' || return 19; test -f 'report.txt' && test ! -L 'report.txt' || return 19; rm -- 'failed.sh' 'job.sh' 'limits.txt' 'failed.txt' 'timeout.txt' 'result.txt' 'uid.txt' 'report.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-timerresult.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-timerresult.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Interruption: retain this exact unit name and workspace. Inspect User and ExecStart before stopping only its .timer/.service as in the final step; do not clean files while a unit is active.",
+        "Initial job: capture id -u in uid.txt; sleep2; exit7. Required timer User=learner, Type=oneshot, TimeoutStartSec=4s, MemoryMax=64M, TasksMax=16. Prove a separate six-second sleep times out, then produce TIMER_OK with actual exit0. Keep failed.sh unchanged."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "Guest root can override limits. This exercise verifies a real oneshot timeout while the unit is loaded, not just configured values. No calendar or at exercise."
+      ]
+    },
+    {
+      "id": "real-linux-operations-journalcursor",
+      "resource": "real-linux-operations-journalcursor.json",
+      "description": "Retain a boot identity and opaque journal cursor, then isolate only later practice events without changing journal retention.",
+      "objectives": [
+        "partial 108.2 journal cursor/boot/persistence"
+      ],
+      "troubleshooting": [
+        "Resume boots disk; it does not preserve RAM or shell variables.",
+        "Size alone does not establish guaranteed retention."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './boot.txt' -o -path './first.txt' -o -path './cursor.txt' -o -path './later.txt' -o -path './rejected.txt' -o -path './storage.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'boot.txt' && test ! -L 'boot.txt' || return 19; test -f 'first.txt' && test ! -L 'first.txt' || return 19; test -f 'cursor.txt' && test ! -L 'cursor.txt' || return 19; test -f 'later.txt' && test ! -L 'later.txt' || return 19; test -f 'rejected.txt' && test ! -L 'rejected.txt' || return 19; test -f 'storage.txt' && test ! -L 'storage.txt' || return 19; rm -- 'boot.txt' 'first.txt' 'cursor.txt' 'later.txt' 'rejected.txt' 'storage.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-journalcursor.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-journalcursor.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Boot ID and cursor are saved in the declared files. Record the workspace path; after disk Resume, recover its tag as ll-cursor- followed by that workspace\u2019s six-character suffix. Query the saved boot ID; do not assume it is current or exactly -1."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "No journal vacuum, persistent-store policy change or automatic guest assessment. The separate installed lifecycle check tests retained old-boot entries on this existing image."
+      ]
+    },
+    {
+      "id": "real-linux-operations-journalfields",
+      "resource": "real-linux-operations-journalfields.json",
+      "description": "Compare same-field alternatives, different-field conjunction and explicit disjunction against real events from two existing identities.",
+      "objectives": [
+        "partial 108.2 journal field/severity queries"
+      ],
+      "troubleshooting": [
+        "A SYSLOG_IDENTIFIER is sender-supplied, not a security identity.",
+        "-p warning does not mean warnings only."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './metadata.txt' -o -path './and.txt' -o -path './or.txt' -o -path './plus.txt' -o -path './warning.txt' -o -path './exactwarning.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'metadata.txt' && test ! -L 'metadata.txt' || return 19; test -f 'and.txt' && test ! -L 'and.txt' || return 19; test -f 'or.txt' && test ! -L 'or.txt' || return 19; test -f 'plus.txt' && test ! -L 'plus.txt' || return 19; test -f 'warning.txt' && test ! -L 'warning.txt' || return 19; test -f 'exactwarning.txt' && test ! -L 'exactwarning.txt' || return 19; rm -- 'metadata.txt' 'and.txt' 'or.txt' 'plus.txt' 'warning.txt' 'exactwarning.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-journalfields.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-journalfields.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Four events: learner/tagA/info/LEARNER_INFO; learner/tagB/err/LEARNER_ERROR; ll-service/tagA/err/SERVICE_ERROR; ll-service/tagB/info/SERVICE_INFO. Use uniquely suffixed A/B tags in this recorded workspace; existing identities only."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "No authentication-policy changes. The journal UID metadata identifies process origin; it does not authenticate the business content or prove causality."
+      ]
+    },
+    {
+      "id": "real-linux-operations-rotationfd",
+      "resource": "real-linux-operations-rotationfd.json",
+      "description": "Show why rename-based rotation does not redirect an already-open writer, then reopen it and verify both retained log generations.",
+      "objectives": [
+        "partial 108.2 rotation/open-descriptor behavior"
+      ],
+      "troubleshooting": [
+        "Rename is not a reopen signal.",
+        "copytruncate has different semantics and is not tested here."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; test ! -e /proc/$$/fd/9 || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './live.log' -o -path './live.log.1' -o -path './rotate.conf' -o -path './rotate.state' -o -path './old-id.txt' -o -path './new-id.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'live.log' && test ! -L 'live.log' || return 19; test -f 'live.log.1' && test ! -L 'live.log.1' || return 19; test -f 'rotate.conf' && test ! -L 'rotate.conf' || return 19; test -f 'rotate.state' && test ! -L 'rotate.state' || return 19; test -f 'old-id.txt' && test ! -L 'old-id.txt' || return 19; test -f 'new-id.txt' && test ! -L 'new-id.txt' || return 19; rm -- 'live.log' 'live.log.1' 'rotate.conf' 'rotate.state' 'old-id.txt' 'new-id.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-rotationfd.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-rotationfd.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "On interruption close only the descriptor you opened: exec 9>&-. Retain a partial rotation or incomplete member set; cleanup must refuse missing/unexpected files. Do not repeat force rotation and overwrite .1."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "Only this private rename/create configuration; no rsyslog/system rotation-policy changes. No claim of race-safe lossless daemon rotation."
+      ]
+    },
+    {
+      "id": "real-linux-operations-notices",
+      "resource": "real-linux-operations-notices.json",
+      "description": "Deliver a short notice to the current guest console and distinguish delivery evidence from recipient comprehension or remote notification.",
+      "objectives": [
+        "101.3 wall-tool preparation; not advance-notification assessment"
+      ],
+      "troubleshooting": [
+        "status0 cannot prove comprehension.",
+        "Ordinary wall -n warns and retains its banner on this guest; a banner-suppression restriction is not a delivery failure."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './context.txt' -o -path './notice.txt' -o -path './sent.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'context.txt' && test ! -L 'context.txt' || return 19; test -f 'notice.txt' && test ! -L 'notice.txt' || return 19; test -f 'sent.txt' && test ! -L 'sent.txt' || return 19; rm -- 'context.txt' 'notice.txt' 'sent.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-notices.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-notices.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Notice text: LL_PRACTICE_NOTICE: private guest exercise; no action required. Clear the guest console immediately before sending; do not echo the message first and mistake that for delivery."
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "mesg is absent. No remote notice, permission policy, authentication or recipient-setting change. Native evidence proves only the task guest\u2019s console delivery."
+      ]
+    },
+    {
+      "id": "real-linux-operations-handover",
+      "resource": "real-linux-operations-handover.json",
+      "description": "Resolve a misleading recovery handover where both backups are valid and privileged reading hides a restored-file access fault.",
+      "objectives": [
+        "104.5 access reinforcement",
+        "206.2 recovery reinforcement"
+      ],
+      "troubleshooting": [
+        "A privileged read can mask an access fault.",
+        "Changing the independent hash to accept the wrong payload destroys verification."
+      ],
+      "cleanup": [
+        "Stop any declared finite practice work first. Re-establish this recorded workspace and its guards after reopening; do not create a new workspace and pretend it is the old one.",
+        "clean_family() { here || return 19; extra=$(find -P . -mindepth 1 ! \\( -path './original.txt' -o -path './old.txt' -o -path './expected.sha' -o -path './old.gz' -o -path './good.gz' -o -path './archive.sha' -o -path './restored.txt' -o -path './denied.txt' \\) -print -quit) || return 19; test -z \"$extra\" || return 19; test -f 'original.txt' && test ! -L 'original.txt' || return 19; test -f 'old.txt' && test ! -L 'old.txt' || return 19; test -f 'expected.sha' && test ! -L 'expected.sha' || return 19; test -f 'old.gz' && test ! -L 'old.gz' || return 19; test -f 'good.gz' && test ! -L 'good.gz' || return 19; test -f 'archive.sha' && test ! -L 'archive.sha' || return 19; test -f 'restored.txt' && test ! -L 'restored.txt' || return 19; test -f 'denied.txt' && test ! -L 'denied.txt' || return 19; rm -- 'original.txt' 'old.txt' 'expected.sha' 'old.gz' 'good.gz' 'archive.sha' 'restored.txt' 'denied.txt' || return 19; cd \"$HOME\" && rmdir -- \"$w\" && umask \"$saved_umask\"; }; clean_family",
+        "Refuse unexpected members/types or failed enumeration. Retain evidence on refusal; never use recursive deletion or adopt another path."
+      ],
+      "materials": [
+        "Create the isolated fixture and guard: w=$(mktemp -d \"$HOME/operations-handover.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-handover.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+        "Initial fixture, not repair: here && fresh original.txt old.txt expected.sha old.gz good.gz archive.sha restored.txt denied.txt && printf 'CHANGE-42 approved\\n' > original.txt && printf 'CHANGE-41 superseded\\n' > old.txt && sha256sum original.txt > expected.sha && gzip -n -c original.txt > good.gz && gzip -n -c old.txt > old.gz && sha256sum good.gz old.gz > archive.sha && gzip -t good.gz old.gz"
+      ],
+      "observations": [
+        "Retain exact outputs, statuses, contents and identity/metadata comparisons before cleanup."
+      ],
+      "questions": [
+        "Which observation proves the required outcome, and what does it leave uncertain?",
+        "How would the stated incorrect approach fail or mislead?"
+      ],
+      "limitations": [
+        "Display-only instructions; no learner command is executed by Learning Lab. Guest practice only; VM disks and records are excluded from profile backups. Resume boots disk, not RAM, jobs or shell variables.",
+        "These are cooperative practice guards, not race-resistant containment against guest root. Existing guest root can override guest-side limits.",
+        "LPIC-1 v5.0 104.5 and LPIC-2 v4.5.0 206.2 reinforcement only; no new complete-objective claim. Known tiny fixture streams only; no hostile archive or live recovery."
+      ]
+    }
+  ]
+}

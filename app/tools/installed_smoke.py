@@ -45,7 +45,7 @@ def phase(root, resume, require_icon):
     assert (package/'vm_preview/runner.py').is_file()
     from learning_lab.vm_preview.image_catalog import production_catalog
     images=production_catalog()
-    assert len(images.images)==4 and len(images.lessons)==94
+    assert len(images.images)==4 and len(images.lessons)==102
     assert not images.keys and not images.releases
     for lesson_id,revision in images.lessons:
         images.resolve({'backend':'offline-qemu-preview-1','image':images.defaults(lesson_id)[0],'lesson_sha256':revision},lesson_id)
@@ -57,7 +57,7 @@ def phase(root, resume, require_icon):
     from learning_lab.vm_preview.sessions import Sessions
     import uuid
     vm_unit=vm_catalog(); assert len(vm_unit['entries'])==8
-    assert len(vm_units())==11 and len(vm_entries())==94
+    assert len(vm_units())==12 and len(vm_entries())==102
     assert vm_unit['entries'][2]['id']==LEGACY_ID
     vm_sessions=Sessions(root/'vm-metadata-fixture','c'*64,root/'vm-gate-fixture')
     for index,entry in enumerate(vm_entries()):

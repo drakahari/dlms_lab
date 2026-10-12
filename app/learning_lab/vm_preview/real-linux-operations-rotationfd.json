@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-operations-rotationfd",
+  "content_version": "1.0.0",
+  "title": "Follow the open descriptor through a private log rotation",
+  "goal": "Show why rename-based rotation does not redirect an already-open writer, then reopen it and verify both retained log generations.",
+  "challenge": "Use one private regular log, explicit private rotation state/config and one retained generation. Hold a writer descriptor across rotation, compare device/inode identities, and prove old-descriptor bytes land only in the rotated file. Reopen for new bytes; never rotate system logs.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/operations-rotationfd.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-rotationfd.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && test ! -L /proc/$$/fd/9 && test ! -e /proc/$$/fd/9 && fresh live.log live.log.1 rotate.conf rotate.state old-id.txt new-id.txt && printf 'BEFORE\\n' > live.log && printf '%s\\n' '\"'\"$w/live.log\"'\" {' 'rotate 1' 'size 1' 'create 0600 learner learner' '}' > rotate.conf && stat -c '%d:%i' live.log > old-id.txt && exec 9>>live.log",
+      "explanation": "One tiny cooperative fixture, no include/scripts/compression/copytruncate. Its directory and configuration are private.",
+      "expected": "Descriptor9 points to the current regular log inode."
+    },
+    {
+      "command": "rotate_once() { here && fresh live.log.1 rotate.state new-id.txt && test -f live.log && test ! -L live.log && test \"$(stat -c %d:%i live.log)\" = \"$(cat old-id.txt)\" && test \"$(readlink /proc/$$/fd/9)\" = \"$w/live.log\" && timeout -k 1s 5s /usr/sbin/logrotate -f -s \"$w/rotate.state\" \"$w/rotate.conf\"; }; here && rotate_once && test -f live.log.1 && test ! -L live.log.1 && test \"$(stat -c %d:%i live.log.1)\" = \"$(cat old-id.txt)\" && stat -c '%d:%i' live.log > new-id.txt && ! cmp -s old-id.txt new-id.txt && printf 'OLD_FD\\n' >&9 && grep -qx OLD_FD live.log.1 && test ! -s live.log",
+      "explanation": "Rename preserves the old inode while create supplies a new pathname inode. Force only this explicit private config/state.",
+      "expected": "Original inode is .1; descriptor9 appends there, not to the empty new file."
+    },
+    {
+      "command": "here && exec 9>&- && exec 9>>live.log && printf 'REOPENED\\n' >&9 && exec 9>&- && cmp live.log.1 <(printf 'BEFORE\\nOLD_FD\\n') && cmp live.log <(printf 'REOPENED\\n') && test \"$(stat -c %U:%a live.log)\" = learner:600",
+      "explanation": "A real daemon needs its own documented reopen mechanism; this shell demonstration explicitly closes/reopens its private descriptor. Never send broad signals.",
+      "expected": "Both generations match intended bytes; writer closed; new file learner0600."
+    }
+  ],
+  "hints": [
+    "A pathname and an open file description are different.",
+    "Compare dev:inode, then reopen only this writer."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 108.2 rotation/open-descriptor behavior. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

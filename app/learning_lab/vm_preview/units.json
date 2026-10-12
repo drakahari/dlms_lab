@@ -44,6 +44,10 @@
     {
       "id": "lpic-text-archive-tools",
       "resource": "text-archive-unit.json"
+    },
+    {
+      "id": "lpic-accounts-logging-recovery",
+      "resource": "operations-unit.json"
     }
   ]
 }

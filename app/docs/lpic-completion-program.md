@@ -193,3 +193,7 @@ separate decisions. No routine owner walkthrough is a completion gate.
 ## Second completion-family evidence update
 
 [Text & Archive Tools](vm-preview/text-archive-unit.md) adds eight lessons, for eleven units / 94 lessons. See [acceptance](vm-preview/text-operations-acceptance.md) for exact evidence. Active objective versions and whole-objective rollups remain unchanged: new practice widens partial 103.2/103.3/103.4; 105.2 and recovery are reinforcement. No automatic guest assessment, full coverage, xz or at claim. Earlier counts above are retained historical context.
+
+## Third completion-family evidence update
+
+[Accounts, Scheduling, Logging & Recovery](vm-preview/operations-unit.md) adds eight lessons for twelve units / 102 lessons. Active objective versions and whole-objective rollups remain unchanged: bounded additions widen partial107.1/108.2 practice;101.3 gains related wall-tool preparation, not advance-event notification; scheduler/access/recovery are reinforcement. No authentication-policy change, at, automatic guest assessment or public-release readiness claim. Earlier counts remain historical context.

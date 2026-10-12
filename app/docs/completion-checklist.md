@@ -11,7 +11,7 @@ does not establish product or certification completeness.
 | Three original networking simulations | Gateway/DNS, subnet boundary and ordered firewall; [native acceptance](native-acceptance.md) and later regression suites |
 | Eight Linux simulator collections | 42 appearances, 38 distinct packs; Fundamentals, Files & Permissions, Organize & Find, Text & Reports, Resource, Network, DNS and Web evidence. [Learning guide](learning-guide.md) lists their prerequisites and limits. |
 | Four resource and twelve network/DNS/web evidence labs | [Resource acceptance](resource-simulator-acceptance.md), [offline acceptance](offline-evidence-acceptance.md): both modes, wrong/incomplete reports, reset, exact pinned reopening, actual installed resources. Owner reports these latest evidence labs work well; no broader native approval inferred. |
-| Optional real-Linux curriculum | Eleven units / 94 lessons; accepted guest evidence remains in the linked [coverage inventory](curriculum-coverage.md). Self-reviewed, unscored. The historical completion checkpoint ran no guests; the later authorized local-shell batch has separate disposable-guest evidence. |
+| Optional real-Linux curriculum | Twelve units / 102 lessons; accepted guest evidence remains in the linked [coverage inventory](curriculum-coverage.md). Self-reviewed, unscored. The historical completion checkpoint ran no guests; the later authorized local-shell batch has separate disposable-guest evidence. |
 | Framework lifecycle and installation | Pinned attempts, separate modes, retained history/drafts, import/authoring, reversible visibility, profile backup/restore and user-local installer; historical acceptance remains available. |
 | Navigation repair | Accepted collection/lesson synchronization, stable popups, readable selection and guarded control wiring; [navigation acceptance](vm-preview/navigation-acceptance.md) |
 
@@ -37,7 +37,7 @@ The remaining roadmap is not permission to invent additional extraction labs.
 | Independently assessed reasoning, numeric forecasts, semantic configuration checks | Current text contract checks exact reports and declared actions. A trusted answer/semantic contract would need separate design and approval. |
 | Live networking, DNS/web deployment, identity services and mail | Require approved guest tools/images, isolated networking and sometimes multiple guests; supplied snapshots do not establish administration skills. |
 | LVM/RAID/swap, boot recovery, kernel/source builds and distro breadth | Need separate verified capabilities/images and recoverable infrastructure; preserve accepted existing pins. |
-| Additional collections / VM units | Simulator bound is eight collections; the approved first-family VM bound is eleven units / 94 lessons, still 16 per unit. Do not silently raise either. |
+| Additional collections / VM units | Simulator bound is eight collections; the approved two-family VM bound is twelve units / 102 lessons, still 16 per unit. Further increases require authorization; do not silently raise either. |
 | Public distribution | Production image trust remains empty; Qt review, ICU signing-key warning, notices/source retention and clean release image work remain open. MIT does not clear guest/dependency redistribution. |
 | Runtime finalization warning | Class-level PySide Property objects remain uncollectable at shutdown. No observed save failure; shared-runtime correction requires separate maintenance scope. |
 | Platform acceptance | Physical keyboard, wheel/trackpad, screen reader/accessibility and exhaustive native file dialogs remain outstanding. Automated QtTest is distinct. |
@@ -57,3 +57,7 @@ The approved tenth unit adds ten substantive lessons: isolated startup/history/e
 ## Text & Archive completion-family checkpoint
 
 [Eight real-guest lessons](vm-preview/text-archive-unit.md) add descriptor routing, tee/statuses, safe xargs, sorted reconciliation, grouped find, newc cpio and independent recovery transfer. Existing lessons/pins and images remain exact; completion is self-reviewed/unscored. Whole-objective rollups remain unchanged; xz/at are absent. [Acceptance](vm-preview/text-operations-acceptance.md) records actual boundaries and outstanding physical-input/accessibility checks.
+
+## Accounts, Scheduling, Logging & Recovery checkpoint
+
+[Eight real-guest lessons](vm-preview/operations-unit.md) add fabricated account-pair consistency, exact cron ownership, loaded timer outcomes, journal cursor/field semantics, open-descriptor rotation, local notices and independent recovery transfer. Existing images and guest policies remain unchanged. Completion is self-reviewed and unscored; at/mesg remain absent. [Acceptance](vm-preview/text-operations-acceptance.md) distinguishes native automation from physical input and accessibility.

@@ -50,11 +50,13 @@
       "objective": "101.3",
       "status": "Partial",
       "units": [
-        "admin"
+        "admin",
+        "operations"
       ],
-      "implemented_and_missing": "Services & Recovery. Implemented clean reboot/service enabled-state observations; targets, runlevels and user notification missing.",
+      "implemented_and_missing": "Services & Recovery. Implemented clean reboot/service enabled-state observations; targets, runlevels and timed advance-notification practice still missing. Accounts, Scheduling, Logging & Recovery. Bounded local wall delivery is related tool preparation; timed advance-notification before a major event remains missing, and sender success cannot establish comprehension.",
       "evidence": [
-        "vm-preview/admin-unit.md"
+        "vm-preview/admin-unit.md",
+        "vm-preview/operations-unit.md"
       ]
     },
     {
@@ -389,11 +391,13 @@
       "objective": "107.1",
       "status": "Partial",
       "units": [
-        "users"
+        "users",
+        "operations"
       ],
-      "implemented_and_missing": "Users & Access. Implemented disposable accounts, homes/shells, primary/supplementary groups, expiry/locking distinctions; complete account policy and credential administration omitted.",
+      "implemented_and_missing": "Users & Access. Implemented disposable accounts, homes/shells, primary/supplementary groups, expiry/locking distinctions; complete account policy and credential administration omitted. Accounts, Scheduling, Logging & Recovery. Fabricated alternate-file grpck consistency and separate-copy repair; installed identity and aging inspection remain read-only.",
       "evidence": [
-        "vm-preview/users-unit.md"
+        "vm-preview/users-unit.md",
+        "vm-preview/operations-unit.md"
       ]
     },
     {
@@ -401,11 +405,13 @@
       "objective": "107.2",
       "status": "Partial",
       "units": [
-        "schedule"
+        "schedule",
+        "operations"
       ],
-      "implemented_and_missing": "Scheduling. Implemented real cron, system/user timers, identities, catch-up/overlap and cleanup; at, access policies, mail/DST and complete scheduling coverage omitted.",
+      "implemented_and_missing": "Scheduling. Implemented real cron, system/user timers, identities, catch-up/overlap and cleanup; at, access policies, mail/DST and complete scheduling coverage omitted. Accounts, Scheduling, Logging & Recovery. Read-only allow/deny interpretation and -u privilege distinction; exact initially absent table ownership, actual results and loaded oneshot timeout. No allow/deny administration; at remains absent.",
       "evidence": [
-        "vm-preview/scheduling-unit.md"
+        "vm-preview/scheduling-unit.md",
+        "vm-preview/operations-unit.md"
       ]
     },
     {
@@ -433,11 +439,13 @@
       "objective": "108.2",
       "status": "Partial",
       "units": [
-        "admin"
+        "admin",
+        "operations"
       ],
-      "implemented_and_missing": "Services & Recovery. Implemented journal/rsyslog correlation, local rules and rotation; remote logging and full facility/configuration workflows missing.",
+      "implemented_and_missing": "Services & Recovery. Implemented journal/rsyslog correlation, local rules and rotation; remote logging and full facility/configuration workflows missing. Accounts, Scheduling, Logging & Recovery. Real saved cursor/boot continuation, journal field logic/severity, and private rename/create rotation with writer descriptor evidence.",
       "evidence": [
-        "vm-preview/admin-unit.md"
+        "vm-preview/admin-unit.md",
+        "vm-preview/operations-unit.md"
       ]
     },
     {

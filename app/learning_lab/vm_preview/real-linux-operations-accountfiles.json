@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-operations-accountfiles",
+  "content_version": "1.0.0",
+  "title": "Check account evidence without changing login policy",
+  "goal": "Distinguish database consistency from authentication or access, using fabricated private group files and read-only evidence for an existing service identity.",
+  "challenge": "Inspect the existing ll-service identity without changing it. Check the supplied private group/gshadow pairs, retain the rejected pair, repair a separate copy and prove consistency. Explain why neither a lock marker nor grpck success establishes all access behavior.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/operations-accountfiles.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-accountfiles.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh identity.txt aging.txt rejected.txt good.group good.gshadow bad.group bad.gshadow originals.sha repaired.group repaired.gshadow && getent passwd ll-service > identity.txt && sudo passwd -S ll-service >> identity.txt && sudo chage -l ll-service > aging.txt && cat identity.txt aging.txt",
+      "explanation": "These are read-only inspections of an existing locked, non-login service account. Password locking, account expiry and shell restrictions have different scopes; do not edit them.",
+      "expected": "ll-service exists with a locked password and nologin shell. No policy changes."
+    },
+    {
+      "command": "here && fresh good.group good.gshadow bad.group bad.gshadow originals.sha && printf 'll-note:x:49999:learner\\n' > good.group && printf 'll-note:!::learner\\n' > good.gshadow && cp -- good.group bad.group && cp -- good.gshadow bad.gshadow && cat good.group >> bad.group && sha256sum good.group good.gshadow bad.group bad.gshadow > originals.sha && timeout -k 1s 5s /usr/sbin/grpck -r good.group good.gshadow",
+      "explanation": "These are fabricated data files, not copies of real secrets or installed accounts. The alternate-file arguments and -r prevent database modification. A unique fake group name and matching member lists are checked against existing users.",
+      "expected": "Valid pair exits0; originals remain available."
+    },
+    {
+      "command": "here && fresh rejected.txt && { timeout -k 1s 5s /usr/sbin/grpck -r bad.group bad.gshadow > rejected.txt 2>&1; rc=$?; test \"$rc\" = 2; } && sha256sum -c originals.sha && cat rejected.txt",
+      "explanation": "The duplicate is deliberately bad. Preserve status and diagnostic output; do not answer deletion prompts against live account databases.",
+      "expected": "Status2, duplicate finding, all source hashes unchanged."
+    },
+    {
+      "command": "here && fresh repaired.group repaired.gshadow && awk -F: '!seen[$1]++' bad.group > repaired.group && cp -- good.gshadow repaired.gshadow && timeout -k 1s 5s /usr/sbin/grpck -r repaired.group repaired.gshadow && sha256sum -c originals.sha",
+      "explanation": "Repair a new copy, not either retained original. Consistency is not a login test or a grant of membership to the fictional group.",
+      "expected": "Separate repaired pair passes; no installed account or policy changed."
+    }
+  ],
+  "hints": [
+    "Use explicit alternate-file arguments and -r.",
+    "Retain the bad pair and fix a new pair; a database check is not an access check."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 107.1 account databases; restricted-identity reinforcement. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

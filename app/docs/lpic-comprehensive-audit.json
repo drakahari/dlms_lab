@@ -7,8 +7,8 @@
     "simulator_collection_appearances": 42,
     "unique_linux_simulator_labs": 38,
     "original_network_simulator_labs": 3,
-    "vm_units": 11,
-    "vm_lessons": 94
+    "vm_units": 12,
+    "vm_lessons": 102
   },
   "method": {
     "complete": "All substantive objective skills taught, independently practiced at appropriate fidelity, with positive/negative evidence and clearly stated assessment. No current objective meets this gate.",
@@ -371,7 +371,9 @@
         "real-linux-admin-lifecycle",
         "real-linux-targeted-signals"
       ],
-      "related_preparation": [],
+      "related_preparation": [
+        "real-linux-operations-notices"
+      ],
       "official_terms": [
         "/etc/inittab",
         "shutdown",
@@ -3026,6 +3028,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "Disposable identities and locked/expiry/shell distinctions; no real credential creation/full policy administration."
+            },
+            {
+              "lessons": [
+                "real-linux-operations-accountfiles"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Accounts, Scheduling, Logging & Recovery adds bounded real outcomes from unchanged guest tools. Account inspection is read-only and group-pair repair uses fabricated alternate files, not installed database edits. Interpretation remains self-reviewed; no full objective credit."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -3056,7 +3066,8 @@
         "real-linux-users-inspect",
         "real-linux-users-membership",
         "real-linux-users-repair",
-        "real-linux-users-restrictions"
+        "real-linux-users-restrictions",
+        "real-linux-operations-accountfiles"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -3126,9 +3137,18 @@
         {
           "official_kka_number": 2,
           "skill": "Scheduler access control",
-          "status": "missing",
-          "evidence": [],
-          "reasoning_assessment": "not available"
+          "status": "partial",
+          "evidence": [
+            {
+              "lessons": [
+                "real-linux-operations-cronaccess"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Accounts, Scheduling, Logging & Recovery adds bounded real outcomes from unchanged guest tools. Account inspection is read-only and group-pair repair uses fabricated alternate files, not installed database edits. Interpretation remains self-reviewed; no full objective credit."
+            }
+          ],
+          "reasoning_assessment": "self-review only"
         },
         {
           "official_kka_number": 3,
@@ -3147,6 +3167,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "cron/system/user timers with identities, catch-up/overlap and cleanup; at absent and policy breadth omitted."
+            },
+            {
+              "lessons": [
+                "real-linux-operations-timerresult"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Accounts, Scheduling, Logging & Recovery adds bounded real outcomes from unchanged guest tools. Account inspection is read-only and group-pair repair uses fabricated alternate files, not installed database edits. Interpretation remains self-reviewed; no full objective credit."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -3158,7 +3186,9 @@
         "real-linux-schedule-cron",
         "real-linux-schedule-diagnose",
         "real-linux-schedule-monotonic",
-        "real-linux-schedule-persistence"
+        "real-linux-schedule-persistence",
+        "real-linux-operations-cronaccess",
+        "real-linux-operations-timerresult"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -3384,6 +3414,15 @@
               "scope": "vm",
               "automatic": false,
               "note": "Dedicated local rsyslog/journal/rotation; no general persistence/retention/rescue/remote logging."
+            },
+            {
+              "lessons": [
+                "real-linux-operations-journalcursor",
+                "real-linux-operations-journalfields"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Accounts, Scheduling, Logging & Recovery adds bounded real outcomes from unchanged guest tools. Account inspection is read-only and group-pair repair uses fabricated alternate files, not installed database edits. Interpretation remains self-reviewed; no full objective credit."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -3402,6 +3441,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "Dedicated local rsyslog/journal/rotation; no general persistence/retention/rescue/remote logging."
+            },
+            {
+              "lessons": [
+                "real-linux-operations-journalfields"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Accounts, Scheduling, Logging & Recovery adds bounded real outcomes from unchanged guest tools. Account inspection is read-only and group-pair repair uses fabricated alternate files, not installed database edits. Interpretation remains self-reviewed; no full objective credit."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -3459,6 +3506,14 @@
               "scope": "vm",
               "automatic": false,
               "note": "Dedicated local rsyslog/journal/rotation; no general persistence/retention/rescue/remote logging."
+            },
+            {
+              "lessons": [
+                "real-linux-operations-rotationfd"
+              ],
+              "scope": "vm",
+              "automatic": false,
+              "note": "Accounts, Scheduling, Logging & Recovery adds bounded real outcomes from unchanged guest tools. Account inspection is read-only and group-pair repair uses fabricated alternate files, not installed database edits. Interpretation remains self-reviewed; no full objective credit."
             }
           ],
           "reasoning_assessment": "self-review only"
@@ -3474,7 +3529,10 @@
       "lesson_ids": [
         "real-linux-admin-incident",
         "real-linux-admin-logs",
-        "real-linux-admin-rotation"
+        "real-linux-admin-rotation",
+        "real-linux-operations-journalcursor",
+        "real-linux-operations-journalfields",
+        "real-linux-operations-rotationfd"
       ],
       "related_preparation": [],
       "official_terms": [
@@ -13172,6 +13230,150 @@
       "unit_resource": "app/learning_lab/vm_preview/text-archive-unit.json",
       "guide_sha256": "a486d39f19db1db009f168c9cb7f63305a1a0a3ea4925dfc9e8ffee3b401e924",
       "unit_resource_sha256": "ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026"
+    },
+    "real-linux-operations-accountfiles": {
+      "id": "real-linux-operations-accountfiles",
+      "title": "Check account evidence without changing login policy",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-accountfiles.json",
+      "sha256": "0a6d02857652501be4f8e7d35cd38fa5881a3cdf0eec8047ea302fb7b6c71c0a",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
+    },
+    "real-linux-operations-cronaccess": {
+      "id": "real-linux-operations-cronaccess",
+      "title": "Separate cron access policy from table ownership",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-cronaccess.json",
+      "sha256": "ab4402723c8226c26ad63918738963624d9590e709e5fe71dd3ed02a8c502098",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
+    },
+    "real-linux-operations-timerresult": {
+      "id": "real-linux-operations-timerresult",
+      "title": "Separate timer activation from job success",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-timerresult.json",
+      "sha256": "d9467a0aabf0c39c5ef6e2c6cf1d1a01fd425e2f4c8df519deda8a9e4e5850b2",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
+    },
+    "real-linux-operations-journalcursor": {
+      "id": "real-linux-operations-journalcursor",
+      "title": "Continue a journal investigation from an exact cursor",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-journalcursor.json",
+      "sha256": "8c2df1428a2ee673540e142cae1dd09ab53b1e8c46ef83e36327b74f3128758b",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
+    },
+    "real-linux-operations-journalfields": {
+      "id": "real-linux-operations-journalfields",
+      "title": "Match journal fields without conflating their logic",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-journalfields.json",
+      "sha256": "7b90729a1028c66700fb47bed0686c17f6e199bbacfac9c0710a7c0d53ebe7e8",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
+    },
+    "real-linux-operations-rotationfd": {
+      "id": "real-linux-operations-rotationfd",
+      "title": "Follow the open descriptor through a private log rotation",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-rotationfd.json",
+      "sha256": "092101118060e50092b1079a460fc1b327c5ce9e76b4c696ddbbf08cb1e5d9c7",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
+    },
+    "real-linux-operations-notices": {
+      "id": "real-linux-operations-notices",
+      "title": "Send a bounded local notice and retain its limits",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-notices.json",
+      "sha256": "f2df84516c67e8d5a15d9b601e6a72956f655c1dedc8fabe8e34df6725b8bedd",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
+    },
+    "real-linux-operations-handover": {
+      "id": "real-linux-operations-handover",
+      "title": "Recover the right note and prove intended-user access",
+      "kind": "vm",
+      "content": "app/learning_lab/vm_preview/real-linux-operations-handover.json",
+      "sha256": "bddc448ec3007597e46117093e8aed2086c6fd86bff7c458c5fc8284d344c8f7",
+      "guide": "app/docs/vm-preview/operations-unit.md",
+      "acceptance": "app/docs/vm-preview/text-operations-acceptance.md",
+      "tests": [
+        "app/tests/test_foundation_families.py",
+        "app/tests/test_operations_guards.py",
+        "app/tests/foundation_unit_live.py"
+      ],
+      "assessment": "self-reviewed, unscored; real developer guest assertions establish feasible outcomes, not automatic learner assessment",
+      "unit_resource": "app/learning_lab/vm_preview/operations-unit.json",
+      "guide_sha256": "d176d3affe8d84c79627f6ff971fab0c27789d47de27071afc879d4daf6683f0",
+      "unit_resource_sha256": "a22d53950d8334a399d44dd4561fb8f0e06c38ed07b085f1c531bbc53b372aed"
     }
   },
   "removed": [

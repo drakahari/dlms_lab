@@ -51,7 +51,7 @@ class AdminProvenanceTests(unittest.TestCase):
 class AdminCatalogTests(unittest.TestCase):
  def setUp(self):self.data=json.loads(resource('image-catalog.json'))
  def test_exact_explicit_routes_and_no_production_admission(self):
-  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons)),(4,94));self.assertFalse(c.keys or c.releases)
+  c=production_catalog();self.assertEqual((len(c.images),len(c.lessons)),(4,102));self.assertFalse(c.keys or c.releases)
   for id in OLD_IDS:self.assertEqual(c.defaults(id)[0],image_spec())
   for id in COMMANDS:
    spec,lesson=c.defaults(id);self.assertEqual(spec['image_id'],'debian13-admin-local-v1');self.assertNotEqual(spec,image_spec());self.assertEqual(lesson['id'],id);self.assertEqual(spec,json.loads(resource('admin-image.json')))
@@ -111,7 +111,7 @@ class AdminRegistryTests(unittest.TestCase):
   finally:registry._bundle.cache_clear()
   return reads
  def test_76_lessons_and_nine_units_are_valid(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(11,16,94));self.assertEqual(len(registry.entries()),94);self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8])
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_LESSONS_PER_UNIT,registry.MAX_TOTAL_LESSONS),(12,16,102));self.assertEqual(len(registry.entries()),102);self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8])
  def test_four_units_can_fit_total_bound(self):
   def change(n,v):
    if n=='units.json':v['units']=v['units'][:3]+[{'id':'fourth-unit','resource':'fourth-unit.json'}]

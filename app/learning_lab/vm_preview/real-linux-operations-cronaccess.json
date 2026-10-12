@@ -1,0 +1,44 @@
+{
+  "id": "real-linux-operations-cronaccess",
+  "content_version": "1.0.0",
+  "title": "Separate cron access policy from table ownership",
+  "goal": "Distinguish access policy from other-user privilege, then verify and remove only a byte-matched, initially absent learner crontab.",
+  "challenge": "Inspect existing cron policy without editing it. Refuse any existing learner table. Install one uniquely marked finite job, retain actual UID, bytes, mode and captured exit status. Show a changed table is refused, then remove only the table whose bytes you retained. Explain the limits of these cooperative guards.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/operations-cronaccess.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-cronaccess.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh policy.txt before.txt other.txt job.sh wrapper.sh cron.txt current.txt mismatch.txt run && { for f in /etc/cron.allow /etc/cron.deny; do if sudo test -e \"$f\"; then sudo stat -c '%n %a %U:%G' \"$f\"; sudo cat -- \"$f\"; else printf '%s absent\\n' \"$f\"; fi; done; } > policy.txt && { LC_ALL=C env -u CRONTAB_NOHEADER crontab -l > before.txt 2>&1; rc=$?; test \"$rc\" = 1 && grep -qx 'no crontab for learner' before.txt; } && { LC_ALL=C crontab -u ll-service -l > other.txt 2>&1; rc=$?; test \"$rc\" != 0; } && : > current.txt && cat policy.txt before.txt other.txt",
+      "explanation": "A specific no-crontab result is required, not just any error. -u requires privilege; its denial is not an allow/deny-policy finding.",
+      "expected": "Policy evidence, genuine absence, other-user privilege refusal; no policy changes."
+    },
+    {
+      "command": "cron_absent() { table=$(LC_ALL=C env -u CRONTAB_NOHEADER crontab -l 2>&1); code=$?; test \"$code\" = 1 && test \"$table\" = 'no crontab for learner'; }; owncron() { here && test -f cron.txt && test ! -L cron.txt && test \"$(stat -c %U:%a cron.txt)\" = learner:600 && test -f current.txt && test ! -L current.txt && test \"$(stat -c %U:%a current.txt)\" = learner:600 && LC_ALL=C env -u CRONTAB_NOHEADER crontab -l > current.txt && cmp -s cron.txt current.txt; }; removecron() { here && { cron_absent || { owncron && crontab -r && cron_absent; }; }; }; here && fresh job.sh wrapper.sh cron.txt run && { printf '%s\\n' '#!/bin/sh' 'umask 077' '/usr/bin/id -u > \"$w/run/uid.txt\" || exit 19' 'printf \"REPORT_OK\\n\" > \"$w/run/report.txt\"' > job.sh && printf '%s\\n' '#!/bin/sh' 'umask 077' 'w='\"'$w'\" 'export w' '[ -d \"$w\" ] && [ ! -L \"$w\" ] && [ \"$(realpath -e \"$w\")\" = \"$w\" ] || exit 19' 'mkdir \"$w/run\" 2>/dev/null || exit 19' '/usr/bin/timeout -k 1s 6s /bin/sh \"$w/job.sh\"' 'rc=$?' 'printf \"%s\\n\" \"$rc\" > \"$w/run/exit.txt\"' 'exit \"$rc\"' > wrapper.sh && printf '%s\\n' '# LL_OPERATIONS_'\"${w##*.}\" 'SHELL=/bin/sh' 'PATH=/usr/bin:/bin' 'MAILTO=\"\"' '* * * * * /bin/sh '\"'$w/wrapper.sh'\"' >/dev/null 2>&1' > cron.txt && crontab -n cron.txt; } && cron_absent && crontab cron.txt && owncron",
+      "explanation": "Absolute paths and explicit environment; one atomic mkdir gate and a six-second child. The wrapper saves the actual timeout/job status immediately, rather than printing a claimed success.",
+      "expected": "One bounded learner job; no unrelated crontab replaced."
+    },
+    {
+      "command": "here && cron_wait() { deadline=$((SECONDS+80)); until test -f run/exit.txt && test ! -L run/exit.txt; do test \"$SECONDS\" -lt \"$deadline\" || return 19; sleep 1; done; dir_ok run && test \"$(cat run/uid.txt)\" = \"$(id -u)\" && test \"$(cat run/report.txt)\" = REPORT_OK && test \"$(cat run/exit.txt)\" = 0 && test \"$(stat -c %U:%a run/report.txt)\" = learner:600 && test \"$(stat -c %s run/report.txt)\" = 10 && /bin/sh wrapper.sh; rc=$?; test \"$rc\" = 19 && test \"$(cat run/exit.txt)\" = 0 && cat run/uid.txt run/report.txt run/exit.txt; }; here && cron_wait",
+      "explanation": "Verify identity, bytes, mode and captured process status. A manual repeat is refused by this fixture gate; this does not mean cron universally prevents overlap.",
+      "expected": "Actual learner execution and exit0; repeat refuses without overwriting evidence."
+    },
+    {
+      "command": "cron_absent() { table=$(LC_ALL=C env -u CRONTAB_NOHEADER crontab -l 2>&1); code=$?; test \"$code\" = 1 && test \"$table\" = 'no crontab for learner'; }; owncron() { here && test -f cron.txt && test ! -L cron.txt && test \"$(stat -c %U:%a cron.txt)\" = learner:600 && test -f current.txt && test ! -L current.txt && test \"$(stat -c %U:%a current.txt)\" = learner:600 && LC_ALL=C env -u CRONTAB_NOHEADER crontab -l > current.txt && cmp -s cron.txt current.txt; }; removecron() { here && { cron_absent || { owncron && crontab -r && cron_absent; }; }; }; here && fresh mismatch.txt && owncron && cp -- cron.txt mismatch.txt && printf '# changed\\n' >> mismatch.txt && crontab mismatch.txt && ! removecron && env -u CRONTAB_NOHEADER crontab -l > current.txt && cmp mismatch.txt current.txt && crontab cron.txt && owncron && removecron && cron_absent",
+      "explanation": "The deliberately changed table is retained and refused. Restore the exact original fixture table only after matching this known changed fixture; then remove it. Stop on any unknown change.",
+      "expected": "Exact table removed; genuine absence restored; all output evidence retained."
+    }
+  ],
+  "hints": [
+    "Do not turn an unexpected crontab error into permission to replace it.",
+    "Compare the whole uniquely marked table before removal; preserve a mismatch."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 107.2 cron access; scheduling reinforcement. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

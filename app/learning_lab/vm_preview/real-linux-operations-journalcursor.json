@@ -1,0 +1,39 @@
+{
+  "id": "real-linux-operations-journalcursor",
+  "content_version": "1.0.0",
+  "title": "Continue a journal investigation from an exact cursor",
+  "goal": "Retain a boot identity and opaque journal cursor, then isolate only later practice events without changing journal retention.",
+  "challenge": "Record a unique tag and current boot ID. Emit and retain a first marker/cursor, emit a later marker, and prove the after-cursor query excludes the first. Retain invalid-cursor failure and inspect disk use/boots read-only. Explain persistence, Resume and the limits of retained evidence.",
+  "steps": [
+    {
+      "command": "w=$(mktemp -d \"$HOME/operations-journalcursor.XXXXXX\") && cd \"$w\" && saved_umask=$(umask) && umask 077 && pwd && here() { case \"$w\" in \"$HOME\"/operations-journalcursor.??????) ;; *) return 19;; esac; test \"${w%/*}\" = \"$HOME\" && test -d \"$w\" && test ! -L \"$w\" && test \"$(realpath -e \"$w\")\" = \"$w\" && test \"$(stat -c %U:%a \"$w\")\" = learner:700 && test \"$(pwd -P)\" = \"$w\"; }; dir_ok() { test -d \"$1\" && test ! -L \"$1\" && test \"$(realpath -e -- \"$1\")\" = \"$w/$1\"; }; fresh() { for f; do test ! -e \"$f\" && test ! -L \"$f\" || return 19; done; }; here && test \"$(df --output=avail -k . | tail -1)\" -gt 65536",
+      "explanation": "Create and record a new private guest workspace. Stop on any failed guard; the free-space check is an observation, not a guaranteed reserve. Do not use the host terminal.",
+      "expected": "A unique learner-owned mode0700 directory; no originals overwritten."
+    },
+    {
+      "command": "here && fresh boot.txt first.txt cursor.txt later.txt rejected.txt storage.txt && tag=ll-cursor-${w##*.} && tr -d '-' < /proc/sys/kernel/random/boot_id > boot.txt && logger -t \"$tag\" FIRST && sudo journalctl --sync && sudo journalctl -b \"$(cat boot.txt)\" -t \"$tag\" --no-pager -n 1 -o cat --show-cursor > first.txt && sed -n 's/^-- cursor: //p' first.txt > cursor.txt && test \"$(wc -l < cursor.txt)\" = 1 && grep -qx FIRST first.txt && cat first.txt",
+      "explanation": "journalctl -b requires the 32-character boot ID: remove only the kernel UUID\u2019s hyphens. The cursor is an opaque position, not a timestamp or guarantee of indefinite retention. Pin the explicit boot ID rather than assuming -1 is the desired boot.",
+      "expected": "FIRST and one journal cursor; exact boot ID retained."
+    },
+    {
+      "command": "here && fresh later.txt && logger -t \"$tag\" SECOND && sudo journalctl --sync && sudo journalctl -b \"$(cat boot.txt)\" -t \"$tag\" --after-cursor=\"$(cat cursor.txt)\" --no-pager -o cat > later.txt && grep -qx SECOND later.txt && ! grep -qx FIRST later.txt && cat later.txt",
+      "explanation": "Quote the entire cursor. Cursor continuation selects later matching entries; no record deletion or journal configuration change.",
+      "expected": "Only SECOND in the later practice query."
+    },
+    {
+      "command": "here && fresh rejected.txt storage.txt && { sudo journalctl --after-cursor=NOT_A_CURSOR --no-pager > rejected.txt 2>&1; rc=$?; test \"$rc\" != 0; } && sudo journalctl --disk-usage > storage.txt && sudo journalctl --list-boots --no-pager >> storage.txt && cat storage.txt",
+      "explanation": "Disk use and boot availability are observations, not a promised retention period. Invalid cursors fail; do not silently switch to a broader query.",
+      "expected": "Invalid cursor retained as failure; current storage/boot list read-only."
+    }
+  ],
+  "hints": [
+    "Use a saved exact boot ID and quote the opaque cursor.",
+    "Missing old entries are not proof an event never happened."
+  ],
+  "review": [
+    "I retained actual statuses, bytes and relevant identities, including the incorrect case; successful command exit alone is not my evidence.",
+    "I can explain the stated limitations and independently meet the Challenge outcomes. Completion records my self-review, not an automatic assessment.",
+    "I preserved originals and inspected the exact cleanup inventory before deleting only this recorded practice workspace."
+  ],
+  "coverage": "LPIC-1 v5.0 partial 108.2 journal cursor/boot/persistence. Self-reviewed and unscored; no complete-objective, exam-readiness or LPI-endorsement claim."
+}

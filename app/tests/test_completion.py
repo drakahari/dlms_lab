@@ -19,7 +19,7 @@ class CompletionTests(unittest.TestCase):
         self.assertEqual(len(collections), 8)
         self.assertEqual(sum(len(c['entries']) for c in collections), 42)
         self.assertEqual(len({e['scenario'].key for c in collections for e in c['entries']}), 38)
-        self.assertEqual((len(units()), len(entries())), (11, 94))
+        self.assertEqual((len(units()), len(entries())), (12, 102))
         guide = (ROOT / 'docs/learning-guide.md').read_text()
         self.assertIn('41 distinct simulator activities', guide)
         for c in collections:
@@ -88,7 +88,7 @@ class CompletionTests(unittest.TestCase):
         qml = (ROOT / 'learning_lab/qml/Main.qml').read_text()
         self.assertIn('different content under the same identity/version', guide)
         self.assertIn('Networking labs use tasks', guide)
-        for message in ('diagnostic reasoning, forecasts', 'eleven units / 94 lessons',
+        for message in ('diagnostic reasoning, forecasts', 'twelve units / 102 lessons',
                         'VM disks and sessions are excluded', 'not restore RAM or shell jobs'):
             self.assertIn(message, qml)
         self.assertNotIn('Optional · Manage a background job', qml)

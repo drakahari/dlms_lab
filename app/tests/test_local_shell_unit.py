@@ -11,10 +11,10 @@ BASE=json.loads(Path(__file__).with_name('local_shell_baseline.json').read_text(
 class LocalShellTests(unittest.TestCase):
  def tearDown(self):registry._bundle.cache_clear()
  def test_exact_bounds_and_parser_capacity(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(11,94,16))
-  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8])
-  self.assertEqual(len(registry.entries()),94)
-  c=production_catalog();self.assertEqual((len(c.lessons),len(c._data['default_lessons']),len(c.default_images)),(94,94,94))
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(12,102,16))
+  self.assertEqual([len(u['entries']) for u in registry.units()],[8,8,8,12,8,8,8,8,8,10,8,8])
+  self.assertEqual(len(registry.entries()),102)
+  c=production_catalog();self.assertEqual((len(c.lessons),len(c._data['default_lessons']),len(c.default_images)),(102,102,102))
   self.assertFalse(c.keys or c.releases)
   for name in ('image-catalog.json','local-shell-unit.json'):self.assertLessEqual(len(resource(name)),65536);read_json(resource(name))
  def changed(self,change,pattern):
@@ -24,16 +24,16 @@ class LocalShellTests(unittest.TestCase):
   registry._bundle.cache_clear()
   with patch.object(registry,'_read',side_effect=read),self.assertRaisesRegex(ValueError,pattern):registry.units()
  def test_87th_lesson_rejected(self):
-  self.changed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='text-archive-unit.json' else None,'94')
+  self.changed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='operations-unit.json' else None,'102')
  def test_eleventh_unit_rejected(self):
-  self.changed(lambda n,v:v['units'].append(copy.deepcopy(v['units'][0])) if n=='units.json' else None,'1–11')
+  self.changed(lambda n,v:v['units'].append(copy.deepcopy(v['units'][0])) if n=='units.json' else None,'1–12')
  def test_seventeenth_per_unit_rejected(self):
   self.changed(lambda n,v:v['entries'].extend([copy.deepcopy(v['entries'][0])]*7) if n=='local-shell-unit.json' else None,'1–16')
  def test_exact_sixteenth_per_unit_acceptance(self):
   original=registry._read;first=copy.deepcopy(original('unit.json'));last=copy.deepcopy(original('local-shell-unit.json'))
   last['entries']+=first['entries'][2:];first['entries']=first['entries'][:2]
   registry._bundle.cache_clear()
-  with patch.object(registry,'_read',side_effect=lambda n:copy.deepcopy(first if n=='unit.json' else last if n=='local-shell-unit.json' else original(n))):self.assertEqual(len(registry.entries()),94)
+  with patch.object(registry,'_read',side_effect=lambda n:copy.deepcopy(first if n=='unit.json' else last if n=='local-shell-unit.json' else original(n))):self.assertEqual(len(registry.entries()),102)
  def test_catalog_retained_and_default_overflow(self):
   original=json.loads(resource('image-catalog.json'))
   bad=copy.deepcopy(original);bad['lessons'].append(copy.deepcopy(bad['lessons'][0]))

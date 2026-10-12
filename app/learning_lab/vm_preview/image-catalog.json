@@ -378,6 +378,38 @@
         {
           "id": "real-linux-local-priority",
           "sha256": "a13d3c921cd50f5021b580ef18af5345de6a408eea4c4e51a8729df825788738"
+        },
+        {
+          "id": "real-linux-operations-accountfiles",
+          "sha256": "a04a2cf26682d3a51a488dec45a22a1231666464d78f60c8642b315f485a65af"
+        },
+        {
+          "id": "real-linux-operations-cronaccess",
+          "sha256": "23e9c20415552d87e459ecfa81c492643d77f1c235cea8fee67f3626011702f7"
+        },
+        {
+          "id": "real-linux-operations-timerresult",
+          "sha256": "d61f18c46c5f035e42977691c02933519ea95f6fcf5acf31c50de7ec0191d10b"
+        },
+        {
+          "id": "real-linux-operations-journalcursor",
+          "sha256": "aa6270d01ba09d81f5a3ccdf2087bb7d5e9c58dc83c754cd0abadf20b7a2c01e"
+        },
+        {
+          "id": "real-linux-operations-journalfields",
+          "sha256": "6938f3f507ad23990d4185d3a3e01688adea58e685633aca7e1c6656ef941320"
+        },
+        {
+          "id": "real-linux-operations-rotationfd",
+          "sha256": "fdfbb653eaef9e383d34715150aa72a6040c4fccc1c242d1e1f7862d44ef4340"
+        },
+        {
+          "id": "real-linux-operations-notices",
+          "sha256": "13b46944c923d02130d32c6634391a1f3458c358291364773959f3e3cf648973"
+        },
+        {
+          "id": "real-linux-operations-handover",
+          "sha256": "c9c2c92ebb4fc21498fceee5112a1d909dc605e45a047f27af654cc4e54a471a"
         }
       ]
     },
@@ -1046,6 +1078,54 @@
       "sha256": "e08571536bb5247107c66968f3293e6c71fa522c0978d9273fd58e086f1270fa",
       "resource": "real-linux-textarchive-handover.json",
       "state": "active"
+    },
+    {
+      "id": "real-linux-operations-accountfiles",
+      "sha256": "a04a2cf26682d3a51a488dec45a22a1231666464d78f60c8642b315f485a65af",
+      "resource": "real-linux-operations-accountfiles.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-operations-cronaccess",
+      "sha256": "23e9c20415552d87e459ecfa81c492643d77f1c235cea8fee67f3626011702f7",
+      "resource": "real-linux-operations-cronaccess.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-operations-timerresult",
+      "sha256": "d61f18c46c5f035e42977691c02933519ea95f6fcf5acf31c50de7ec0191d10b",
+      "resource": "real-linux-operations-timerresult.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-operations-journalcursor",
+      "sha256": "aa6270d01ba09d81f5a3ccdf2087bb7d5e9c58dc83c754cd0abadf20b7a2c01e",
+      "resource": "real-linux-operations-journalcursor.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-operations-journalfields",
+      "sha256": "6938f3f507ad23990d4185d3a3e01688adea58e685633aca7e1c6656ef941320",
+      "resource": "real-linux-operations-journalfields.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-operations-rotationfd",
+      "sha256": "fdfbb653eaef9e383d34715150aa72a6040c4fccc1c242d1e1f7862d44ef4340",
+      "resource": "real-linux-operations-rotationfd.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-operations-notices",
+      "sha256": "13b46944c923d02130d32c6634391a1f3458c358291364773959f3e3cf648973",
+      "resource": "real-linux-operations-notices.json",
+      "state": "active"
+    },
+    {
+      "id": "real-linux-operations-handover",
+      "sha256": "c9c2c92ebb4fc21498fceee5112a1d909dc605e45a047f27af654cc4e54a471a",
+      "resource": "real-linux-operations-handover.json",
+      "state": "active"
     }
   ],
   "default_image": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
@@ -1143,7 +1223,15 @@
     "real-linux-textarchive-find": "cc5c1bbddbc54c84774e3adf1e2f9b88620c5b19f46ccb13b93e613feba0c91d",
     "real-linux-textarchive-cpio": "342bcd9f609c80cfa4d0d4dcbb202263292c9a31cc7725a2c24afeea23d3c626",
     "real-linux-textarchive-composition": "415a83d97090c9d3a094fd5a8f82c54927eb3dcfc44e192759aebce4e392a82c",
-    "real-linux-textarchive-handover": "e08571536bb5247107c66968f3293e6c71fa522c0978d9273fd58e086f1270fa"
+    "real-linux-textarchive-handover": "e08571536bb5247107c66968f3293e6c71fa522c0978d9273fd58e086f1270fa",
+    "real-linux-operations-accountfiles": "a04a2cf26682d3a51a488dec45a22a1231666464d78f60c8642b315f485a65af",
+    "real-linux-operations-cronaccess": "23e9c20415552d87e459ecfa81c492643d77f1c235cea8fee67f3626011702f7",
+    "real-linux-operations-timerresult": "d61f18c46c5f035e42977691c02933519ea95f6fcf5acf31c50de7ec0191d10b",
+    "real-linux-operations-journalcursor": "aa6270d01ba09d81f5a3ccdf2087bb7d5e9c58dc83c754cd0abadf20b7a2c01e",
+    "real-linux-operations-journalfields": "6938f3f507ad23990d4185d3a3e01688adea58e685633aca7e1c6656ef941320",
+    "real-linux-operations-rotationfd": "fdfbb653eaef9e383d34715150aa72a6040c4fccc1c242d1e1f7862d44ef4340",
+    "real-linux-operations-notices": "13b46944c923d02130d32c6634391a1f3458c358291364773959f3e3cf648973",
+    "real-linux-operations-handover": "c9c2c92ebb4fc21498fceee5112a1d909dc605e45a047f27af654cc4e54a471a"
   },
   "releases": [],
   "keys": [],
@@ -1241,6 +1329,14 @@
     "real-linux-textarchive-find": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
     "real-linux-textarchive-cpio": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
     "real-linux-textarchive-composition": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
-    "real-linux-textarchive-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548"
+    "real-linux-textarchive-handover": "0a289a55b446de28e6e1ad0872a50cea82f19925212b247a850f01ade01a9548",
+    "real-linux-operations-accountfiles": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-operations-cronaccess": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-operations-timerresult": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-operations-journalcursor": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-operations-journalfields": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-operations-rotationfd": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-operations-notices": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d",
+    "real-linux-operations-handover": "dcbdec81fc5aab2b775168cde1a350364ec8e017e67d1c25e1035f74cc8fb25d"
   }
 }

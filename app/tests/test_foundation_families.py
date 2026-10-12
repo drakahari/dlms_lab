@@ -7,35 +7,37 @@ from learning_lab.vm_preview.image_catalog import Catalog,digest,production_cata
 from learning_lab.vm_preview.sessions import Sessions
 from foundation_preservation import projection,NEW_IDS
 from text_archive_guest_fixtures import DATA as TEXT
+from operations_guest_fixtures import DATA as OPS
 
+TEXT_PINS={'app/learning_lab/vm_preview/real-linux-textarchive-composition.json': '7099d0ba8950895f4a758b67c631780eefdff56c44cb8251b68e748b6592c29f', 'app/learning_lab/vm_preview/real-linux-textarchive-cpio.json': '282cf9a63850399c60e389827f0f93e29c3c221d4175d93910bac2b660d1fe8b', 'app/learning_lab/vm_preview/real-linux-textarchive-find.json': '84899231166bb211820fdc25f64d9ec801c9e65e423fa1f76b8176b8bcabe5fc', 'app/learning_lab/vm_preview/real-linux-textarchive-handover.json': '059a3cb5ec66b632ac1401ebe6d9d10784465bca2465fc94d7825abe2602c3d3', 'app/learning_lab/vm_preview/real-linux-textarchive-join.json': '1418b0552a1be09d78eb1a615d299c11ed75d5c5cea0b69435bb853a4376277f', 'app/learning_lab/vm_preview/real-linux-textarchive-streams.json': '035dc997c9d74f8dbd9438bc4c399f88e52829e051d50b4b3359a382a5b47c46', 'app/learning_lab/vm_preview/real-linux-textarchive-tee.json': 'f3b3656584be387a4baeacea960b4078d94524702ec67f885495ea738ccf4582', 'app/learning_lab/vm_preview/real-linux-textarchive-xargs.json': '004d7ab94ebc7335bc654c0c0a529b9023df6cb5f83c04456b882bd257dc64d6', 'app/learning_lab/vm_preview/text-archive-unit.json': 'ed93bd7bf81542ce5af2ef2f61afc1137000ce50040cfcef38711f8d0c5b7026'}
 BASE=json.loads(Path(__file__).with_name('foundation_baseline.json').read_text())
 ROOT=registry.ROOT.parents[2]
 class FoundationTests(unittest.TestCase):
  def tearDown(self):registry._bundle.cache_clear()
  def data(self):
-  return TEXT
+  return TEXT+OPS
  def malformed(self,change,pattern):
   original=registry._read
   def read(name):v=copy.deepcopy(original(name));change(name,v);return v
   registry._bundle.cache_clear()
   with patch.object(registry,'_read',side_effect=read),self.assertRaisesRegex(ValueError,pattern):registry.units()
  def test_exact_bounds_and_parser_sizes(self):
-  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(11,94,16))
-  self.assertEqual(len(registry.units()),11);self.assertEqual(len(registry.entries()),94)
-  c=production_catalog();self.assertEqual((len(c.lessons),len(c.default_images),len(c._data['default_lessons'])),(94,94,94));self.assertFalse(c.keys or c.releases)
-  for name in ('image-catalog.json','text-archive-unit.json'):self.assertLessEqual(len(resource(name)),65536);read_json(resource(name))
+  self.assertEqual((registry.MAX_UNITS,registry.MAX_TOTAL_LESSONS,registry.MAX_LESSONS_PER_UNIT),(12,102,16))
+  self.assertEqual(len(registry.units()),12);self.assertEqual(len(registry.entries()),102)
+  c=production_catalog();self.assertEqual((len(c.lessons),len(c.default_images),len(c._data['default_lessons'])),(102,102,102));self.assertFalse(c.keys or c.releases)
+  for name in ('image-catalog.json','text-archive-unit.json','operations-unit.json'):self.assertLessEqual(len(resource(name)),65536);read_json(resource(name))
   self.assertTrue(all(len(i['lessons'])<=64 for i in c.images.values()))
  def test_immediate_total_overflow(self):
-  self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='text-archive-unit.json' else None,'94')
+  self.malformed(lambda n,v:v['entries'].append(copy.deepcopy(v['entries'][0])) if n=='operations-unit.json' else None,'102')
  def test_immediate_unit_overflow(self):
-  self.malformed(lambda n,v:v['units'].append(copy.deepcopy(v['units'][0])) if n=='units.json' else None,'1–11')
+  self.malformed(lambda n,v:v['units'].append(copy.deepcopy(v['units'][0])) if n=='units.json' else None,'1–12')
  def test_seventeenth_lesson_rejected(self):
   self.malformed(lambda n,v:v['entries'].extend([copy.deepcopy(v['entries'][0])]*9) if n=='text-archive-unit.json' else None,'1–16')
  def test_sixteenth_lesson_accepted(self):
   original=registry._read;first=copy.deepcopy(original('unit.json'));last=copy.deepcopy(original('text-archive-unit.json'));second=copy.deepcopy(original('resource-unit.json'))
   last['entries']+=first['entries'][1:]+second['entries'][:1];first['entries']=first['entries'][:1];second['entries']=second['entries'][1:]
   registry._bundle.cache_clear();values={'unit.json':first,'text-archive-unit.json':last,'resource-unit.json':second}
-  with patch.object(registry,'_read',side_effect=lambda n:copy.deepcopy(values.get(n,original(n)))):self.assertEqual(len(registry.entries()),94)
+  with patch.object(registry,'_read',side_effect=lambda n:copy.deepcopy(values.get(n,original(n)))):self.assertEqual(len(registry.entries()),102)
  def test_default_retained_and_unrelated_limits(self):
   original=json.loads(resource('image-catalog.json'))
   for field in ('lessons','default_images','default_lessons'):
@@ -49,7 +51,7 @@ class FoundationTests(unittest.TestCase):
   bad=copy.deepcopy(original);bad['images'][0]['lessons']=[bad['images'][0]['lessons'][0]]*65
   with self.assertRaisesRegex(ValueError,'compatibility'):Catalog(bad)
  def test_original_bytes_and_exact_authorized_code_delta(self):
-  for name,h in BASE['protected'].items():self.assertEqual(hashlib.sha256((ROOT/name).read_bytes()).hexdigest(),h,name)
+  for name,h in (BASE['protected']|TEXT_PINS).items():self.assertEqual(hashlib.sha256((ROOT/name).read_bytes()).hexdigest(),h,name)
   for name,key in [('registry.py','registry_sha256'),('image_catalog.py','image_catalog_code_sha256')]:self.assertEqual(hashlib.sha256(projection(name,(registry.ROOT/name).read_bytes())).hexdigest(),BASE[key])
   self.assertEqual(hashlib.sha256(projection('Main.qml',(ROOT/'app/learning_lab/qml/Main.qml').read_bytes())).hexdigest(),BASE['main_sha256'])
  def test_exact_original_catalog_and_unit_pins(self):
@@ -97,7 +99,7 @@ class FoundationTests(unittest.TestCase):
   from foundation_guest_fixtures import quote
   for x in self.data():
    leaf=x['files'][0];definition=x['cleanup_command'].removesuffix('; clean_family')
-   stubs='here() { return 0; }; find() { return 0; }; test() { if builtin test "$1" = -f && builtin test "$2" = '+quote(leaf)+'; then return 1; fi; return 0; }; rm() { echo REMOVE_CALLED; }; rmdir() { echo REMOVE_CALLED; }; cd() { echo CHANGED_DIRECTORY; }; umask() { echo CHANGED_UMASK; }'
+   stubs='sudo() { echo not-found; }; env() { echo \"no crontab for learner\"; return 1; }; here() { return 0; }; find() { return 0; }; test() { if builtin test "$1" = -f && builtin test "$2" = '+quote(leaf)+'; then return 1; fi; if builtin test \"$1\" = -e && builtin test \"$2\" = /proc/$$/fd/9; then return 1; fi; return 0; }; rm() { echo REMOVE_CALLED; }; rmdir() { echo REMOVE_CALLED; }; cd() { echo CHANGED_DIRECTORY; }; umask() { echo CHANGED_UMASK; }'
    with tempfile.TemporaryDirectory() as td:
     v=subprocess.run(['/usr/bin/bash','--noprofile','--norc','-c',stubs+'; '+definition+'; clean_family; rc=$?; printf "STATUS=%s\\n" "$rc"'],cwd=td,env={'PATH':'/nonexistent','LC_ALL':'C'},capture_output=True,text=True,timeout=5)
     self.assertEqual(v.stdout,'STATUS=19\n',x['id']+v.stderr);self.assertEqual(list(Path(td).iterdir()),[])
